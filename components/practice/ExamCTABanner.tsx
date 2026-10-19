@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { getDaysUntilExam, getExamDateDisplay } from "@/lib/constants/practice";
+import { ArrowRight, Sparkles, Target, Calendar } from "lucide-react";
 
 interface ExamCTABannerProps {
   examName: string;
@@ -12,55 +13,44 @@ export default function ExamCTABanner({ examName }: ExamCTABannerProps) {
   const dateDisplay = getExamDateDisplay(examName);
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 p-8 text-white shadow-lg">
-      {/* Decorative background elements */}
-      <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10" />
-      <div className="absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-white/5" />
+    <div className="relative overflow-hidden rounded-2xl border border-primary/25 bg-card p-6 sm:p-10 shadow-sm text-foreground">
+      {/* Subtle warm glow background */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl -z-10"
+      />
 
-      <div className="relative z-10 flex flex-col items-center text-center">
-        {daysRemaining !== null && daysRemaining > 0 ? (
-          <>
-            <p className="mb-2 text-lg font-semibold text-indigo-100">
-              You have{" "}
-              <span className="text-3xl font-extrabold text-white">
-                {daysRemaining}
-              </span>{" "}
-              days until {examName}
-            </p>
-            {dateDisplay && (
-              <p className="mb-6 text-sm text-indigo-200">
-                Exam date: {dateDisplay}
-              </p>
+      <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="space-y-2 max-w-xl">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-0.5 text-xs font-semibold text-primary">
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Calibrated Retrieval Schedule</span>
+          </div>
+
+          <h3 className="font-heading text-2xl sm:text-3xl font-normal text-foreground tracking-tight">
+            Ready to master {examName}?
+          </h3>
+
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {daysRemaining !== null && daysRemaining > 0 ? (
+              <>
+                Only <strong className="text-foreground">{daysRemaining} days</strong> remaining until {examName}{dateDisplay ? ` (${dateDisplay})` : ""}. Eliminate the forgetting curve with adaptive micro-retrievals.
+              </>
+            ) : (
+              `Take the 2-minute diagnostic setup to establish your memory retention baseline and schedule spaced reviews across all ${examName} subjects.`
             )}
-          </>
-        ) : (
-          <p className="mb-6 text-lg font-semibold text-indigo-100">
-            Ready to prepare for {examName}?
           </p>
-        )}
+        </div>
 
-        <Link
-          href="/setup"
-          className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-base font-semibold text-indigo-700 shadow-md transition-all hover:bg-indigo-50 hover:shadow-lg active:scale-[0.97]"
-        >
-          Start Your Free Assessment
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            className="h-5 w-5"
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full md:w-auto">
+          <Link
+            href="/setup"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:scale-[0.98] transition-all"
           >
-            <path
-              fillRule="evenodd"
-              d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </Link>
-
-        <p className="mt-4 text-sm text-indigo-200">
-          AI-powered practice with spaced repetition
-        </p>
+            <span>Start Free Assessment</span>
+            <ArrowRight className="h-4 w-4 shrink-0" />
+          </Link>
+        </div>
       </div>
     </div>
   );

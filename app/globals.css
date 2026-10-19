@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Plus+Jakarta+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,89 +10,90 @@ html {
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans, "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  letter-spacing: -0.011em;
 }
 
 @layer base {
   :root {
-    /* Light Mode */
-    --background: 0 0% 96%; /* #F3F4F6 - Light Gray from your theme */
-    --foreground: 215 20% 15%; /* #1F2937 - Dark Gray */
-    --card: 0 0% 100%; /* #FFFFFF - White cards */
-    --card-foreground: 215 20% 15%; /* #1F2937 */
-    --popover: 0 0% 100%; /* #FFFFFF */
-    --popover-foreground: 215 20% 15%; /* #1F2937 */
-    --primary: 172 80% 50%; /* #2DD4BF - Teal */
-    --primary-foreground: 215 20% 15%; /* #1F2937 - Darker text for buttons */
-    --secondary: 35 90% 50%; /* #F59E0B - Amber */
-    --secondary-foreground: 215 20% 15%; /* #1F2937 - dark text for legibility on amber */
-    --muted: 215 10% 45%; /* #6B7280 - Gray */
-    --muted-foreground: 215 10% 45%; /* #6B7280 */
-    --accent: 35 90% 50%; /* #F59E0B - Reuse Amber as accent for simplicity */
-    --accent-foreground: 215 20% 15%; /* #1F2937 - dark text for legibility on amber */
-    --destructive: 0 84% 60%; /* #EF4444 - Red */
-    --destructive-foreground: 0 0% 98%; /* #F9FAFB */
-    --border: 215 20% 83%; /* #D1D5DB - Gray-300 */
-    --input: 215 20% 90%; /* #E2E8F0 - Slightly darker input bg */
-    --ring: 172 80% 50%; /* #2DD4BF - Matches primary */
-    --radius: 0.5rem;
+    /* Claude-inspired warm parchment & ink palette */
+    --background: 38 28% 97.5%; /* #FAF8F5 - Warm Ivory Parchment */
+    --foreground: 24 10% 12%; /* #1F1D1B - Deep Warm Charcoal */
+    --card: 38 25% 99%; /* #FDFCFB - Clean Warm White Card */
+    --card-foreground: 24 10% 12%; /* #1F1D1B */
+    --popover: 38 25% 99%; /* #FDFCFB */
+    --popover-foreground: 24 10% 12%;
+    --primary: 16 72% 48%; /* #D05433 - Warm Terracotta Ember */
+    --primary-foreground: 0 0% 100%; /* #FFFFFF */
+    --secondary: 35 25% 92%; /* #ECE9E2 - Soft Warm Stone */
+    --secondary-foreground: 24 10% 16%;
+    --muted: 35 15% 91%; /* #EAE6DE - Warm Muted Gray */
+    --muted-foreground: 25 8% 46%; /* #76716B */
+    --accent: 38 35% 93%; /* #F3EFE7 */
+    --accent-foreground: 24 10% 12%;
+    --destructive: 0 72% 51%; /* #DC2626 */
+    --destructive-foreground: 0 0% 98%;
+    --border: 35 14% 87%; /* #E2DED6 - Hairline Warm Border */
+    --input: 35 14% 87%;
+    --ring: 16 72% 48%; /* #D05433 */
+    --radius: 0.75rem;
 
-    /* Sidebar (optional, adjust if used) */
-    --sidebar-background: 0 0% 98%; /* #F3F4F6 */
-    --sidebar-foreground: 240 5.3% 26.1%; /* #1F2937 */
-    --sidebar-primary: 240 5.9% 10%; /* #2DD4BF */
-    --sidebar-primary-foreground: 0 0% 98%; /* #FFFFFF */
-    --sidebar-accent: 240 4.8% 95.9%; /* #F59E0B */
-    --sidebar-accent-foreground: 240 5.9% 10%; /* #FFFFFF */
-    --sidebar-border: 220 13% 91%; /* #D1D5DB */
-    --sidebar-ring: 217.2 91.2% 59.8%; /* #2DD4BF */
+    /* Sidebar tokens */
+    --sidebar-background: 38 28% 97.5%;
+    --sidebar-foreground: 24 10% 12%;
+    --sidebar-primary: 16 72% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 35 25% 92%;
+    --sidebar-accent-foreground: 24 10% 12%;
+    --sidebar-border: 35 14% 87%;
+    --sidebar-ring: 16 72% 48%;
 
-    /* Charts (aligned with theme) */
-    --chart-1: 172 80% 50%; /* #2DD4BF - Teal */
-    --chart-2: 35 90% 50%; /* #F59E0B - Amber */
-    --chart-3: 0 84% 60%; /* #EF4444 - Red */
-    --chart-4: 160 60% 45%; /* Green-ish for variety */
-    --chart-5: 280 65% 60%; /* Purple-ish for variety */
+    /* Charts */
+    --chart-1: 16 72% 48%; /* Terracotta */
+    --chart-2: 35 85% 45%; /* Warm Amber */
+    --chart-3: 155 55% 40%; /* Forest Sage */
+    --chart-4: 215 35% 45%; /* Slate Blue */
+    --chart-5: 28 65% 55%; /* Ochre */
   }
 
   .dark {
-    /* Dark Mode */
-    --background: 215 20% 15%; /* #1F2937 - Dark Gray */
-    --foreground: 0 0% 96%; /* #F3F4F6 - Light Gray */
-    --card: 215 20% 20%; /* #2D3748 - Slightly lighter dark gray */
-    --card-foreground: 0 0% 96%; /* #F3F4F6 */
-    --popover: 215 20% 20%; /* #2D3748 */
-    --popover-foreground: 0 0% 96%; /* #F3F4F6 */
-    --primary: 172 80% 60%; /* #5EEAD4 - Lighter Teal for contrast */
-    --primary-foreground: 215 20% 15%; /* #1F2937 */
-    --secondary: 35 90% 60%; /* #FDBA74 - Lighter Amber */
-    --secondary-foreground: 215 20% 15%; /* #1F2937 */
-    --muted: 215 10% 60%; /* #9CA3AF - Lighter Gray */
-    --muted-foreground: 215 10% 60%; /* #9CA3AF */
-    --accent: 35 90% 60%; /* #FDBA74 - Reuse Amber */
-    --accent-foreground: 215 20% 15%; /* #1F2937 */
-    --destructive: 0 84% 70%; /* #F87171 - Brighter Red */
-    --destructive-foreground: 0 0% 96%; /* #F3F4F6 */
-    --border: 215 20% 25%; /* #374151 - Darker Gray */
-    --input: 215 20% 20%; /* #2D3748 - Dark input bg */
-    --ring: 172 80% 60%; /* #5EEAD4 - Matches primary */
+    /* Claude-inspired warm obsidian dark mode */
+    --background: 24 9% 10%; /* #1A1816 - Warm Deep Espresso */
+    --foreground: 36 20% 94%; /* #F3EFEA - Warm Soft Cream */
+    --card: 24 8% 13%; /* #221F1C - Elevated Warm Obsidian */
+    --card-foreground: 36 20% 94%;
+    --popover: 24 8% 13%;
+    --popover-foreground: 36 20% 94%;
+    --primary: 16 78% 60%; /* #E27352 - Luminous Terracotta */
+    --primary-foreground: 24 10% 10%;
+    --secondary: 24 7% 18%; /* #2E2A27 */
+    --secondary-foreground: 36 20% 94%;
+    --muted: 24 7% 20%; /* #34302D */
+    --muted-foreground: 32 10% 64%; /* #A39E96 */
+    --accent: 24 7% 19%; /* #312D2A */
+    --accent-foreground: 36 20% 94%;
+    --destructive: 0 75% 65%; /* #F87171 */
+    --destructive-foreground: 0 0% 96%;
+    --border: 24 6% 22%; /* #393532 - Subtle Dark Border */
+    --input: 24 6% 22%;
+    --ring: 16 78% 60%;
 
-    /* Sidebar (optional, adjust if used) */
-    --sidebar-background: 240 5.9% 10%; /* #1F2937 */
-    --sidebar-foreground: 240 4.8% 95.9%; /* #F3F4F6 */
-    --sidebar-primary: 224.3 76.3% 48%; /* #5EEAD4 */
-    --sidebar-primary-foreground: 0 0% 100%; /* #1F2937 */
-    --sidebar-accent: 240 3.7% 15.9%; /* #FDBA74 */
-    --sidebar-accent-foreground: 240 4.8% 95.9%; /* #1F2937 */
-    --sidebar-border: 240 3.7% 15.9%; /* #374151 */
-    --sidebar-ring: 217.2 91.2% 59.8%; /* #5EEAD4 */
+    /* Sidebar tokens */
+    --sidebar-background: 24 9% 10%;
+    --sidebar-foreground: 36 20% 94%;
+    --sidebar-primary: 16 78% 60%;
+    --sidebar-primary-foreground: 24 10% 10%;
+    --sidebar-accent: 24 7% 18%;
+    --sidebar-accent-foreground: 36 20% 94%;
+    --sidebar-border: 24 6% 22%;
+    --sidebar-ring: 16 78% 60%;
 
-    /* Charts (aligned with theme) */
-    --chart-1: 172 80% 60%; /* #5EEAD4 - Lighter Teal */
-    --chart-2: 35 90% 60%; /* #FDBA74 - Lighter Amber */
-    --chart-3: 0 84% 70%; /* #F87171 - Brighter Red */
-    --chart-4: 160 60% 55%; /* Brighter Green-ish */
-    --chart-5: 280 65% 70%; /* Brighter Purple-ish */
+    /* Charts */
+    --chart-1: 16 78% 60%;
+    --chart-2: 35 85% 60%;
+    --chart-3: 155 55% 55%;
+    --chart-4: 215 45% 65%;
+    --chart-5: 28 75% 65%;
   }
 }
 
@@ -101,6 +104,11 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.font-heading {
+  font-family: var(--font-serif, "Newsreader", "Charter", "Bitstream Charter", "Sitka Text", Cambria, serif);
+  letter-spacing: -0.02em;
 }
 
 .dark .katex {

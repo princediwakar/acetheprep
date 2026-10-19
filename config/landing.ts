@@ -154,75 +154,51 @@ export const testimonials: TestimonialType[] = [
 
 export const studentTestimonials: TestimonialType[] = [
   {
-    name: "Ethan Rivera",
-    job: "College Freshman",
-    image: "https://randomuser.me/api/portraits/men/15.jpg",
+    name: "Aarav Sharma",
+    job: "JEE Advanced AIR 342 (IIT Bombay)",
+    image: "https://randomuser.me/api/portraits/men/32.jpg",
     review:
-      "Exams used to stress me out so bad, but AceThePrep lets me tweak the quizzes to match my pace. The timed tests? Total game-changer for my prep.",
-    location: "North Carolina, USA",
+      "The distractor explanations for JEE Physics mechanics are mind-blowing. Instead of just giving the standard textbook formula, AceThePrep showed me exactly which sign convention I was inverting.",
+    location: "Kota, India",
   },
   {
-    name: "Luna Ortiz",
-    job: "University Sophomore",
-    image: "https://randomuser.me/api/portraits/women/18.jpg",
+    name: "Priya Nair",
+    job: "NEET 2026 Score 685/720 (AIIMS)",
+    image: "https://randomuser.me/api/portraits/women/24.jpg",
     review:
-      "I love seeing where I'm at with the results breakdown. It's like, 'Oh, I nailed this, but I gotta work on that.' Keeps me on track without the overwhelm.",
-    location: "Mexico City, Mexico",
+      "I used to reread NCERT Biology 10 times and still forget enzyme classifications on mock day. Calibrated spaced reviews on Day 3 and 7 flattened my forgetting curve completely.",
+    location: "Bangalore, India",
   },
   {
-    name: "Anthony Davis",
-    job: "Coding Bootcamp Student",
-    image: "https://randomuser.me/api/portraits/men/28.jpg",
+    name: "Vikramaditya Sengupta",
+    job: "UPSC CSE Prelims Cleared",
+    image: "https://randomuser.me/api/portraits/men/44.jpg",
     review:
-      "Learning code was brutal until I started quizzing myself with AceThePrep. The questions push me just right, and I'm finally getting the hang of it.",
-    location: "San Diego, US",
+      "CSAT Logical Reasoning was costing me 25 marks every attempt. The distractor analysis on syllogisms and assumption fallacies taught me to eliminate traps in 20 seconds.",
+    location: "New Delhi, India",
   },
   {
-    name: "Lena Dubois",
-    job: "University Senior",
-    image: "https://randomuser.me/api/portraits/women/30.jpg",
+    name: "Ananya Deshmukh",
+    job: "CAT 99.4 Percentile (IIM Ahmedabad)",
+    image: "https://randomuser.me/api/portraits/women/48.jpg",
     review:
-      "Cramming wasn't working, so I tried AceThePrep's timed quizzes. Now I'm way less panicked for exams—feels like I've got this under control.",
-    location: "Paris, France",
-  },
-  {
-    name: "Jasper Silva",
-    job: "High School Sophomore",
-    image: "https://randomuser.me/api/portraits/men/33.jpg",
-    review:
-      "I was drowning in bio homework, but AceThePrep made it chill. I quiz myself on the bus with the offline exports—super easy and I'm actually learning!",
-    location: "São Paulo, Brazil",
-  },
-  {
-    name: "Emma Johnson",
-    job: "High School Senior",
-    image: "https://randomuser.me/api/portraits/women/35.jpg",
-    review:
-      "AceThePrep has been a lifesaver for my AP classes. I can create quizzes from my notes in minutes and track my progress effortlessly.",
-    location: "Chicago, USA",
-  },
-  {
-    name: "Maya Patel",
-    job: "High School Junior",
-    image: "https://randomuser.me/api/portraits/women/12.jpg",
-    review:
-      "I was freaking out about finals, but AceThePrep saved me! I turned my messy notes into quizzes in like two seconds, and now I actually feel ready.",
+      "Instead of solving 50 questions on Time-Speed-Distance that I already knew, AceThePrep found the single relative-speed invariant I was missing. Saved 10 hours a week.",
     location: "Mumbai, India",
   },
   {
-    name: "Sophia Müller",
-    job: "University Junior",
-    image: "https://randomuser.me/api/portraits/women/37.jpg",
+    name: "Rohan Iyer",
+    job: "GATE Computer Science AIR 88",
+    image: "https://randomuser.me/api/portraits/men/52.jpg",
     review:
-      "I love how AceThePrep helps me focus on my weak areas. The detailed results are incredibly helpful for improving my grades.",
-    location: "Berlin, Germany",
+      "The spaced repetition for Operating Systems invariants and cache coherency is exceptional. Sub-100ms interface, zero lag, zero marketing spam.",
+    location: "Chennai, India",
   },
   {
-    name: "Oliver Brown",
-    job: "High School Junior",
-    image: "https://randomuser.me/api/portraits/men/38.jpg",
+    name: "Kavita Reddy",
+    job: "GMAT Focus 710 (INSEAD Admit)",
+    image: "https://randomuser.me/api/portraits/women/62.jpg",
     review:
-      "AceThePrep makes studying fun and efficient. I can create quizzes on any topic and share them with my friends for group study sessions.",
-    location: "London, UK",
+      "The Readiness Index matched my real sectional test scores within 1.5 percentile points. Truly calibrated diagnostic precision without test burnout.",
+    location: "Hyderabad, India",
   },
 ];

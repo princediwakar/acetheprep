@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { calculateReadinessIndex } from "@/lib/sm2";
 import { computeStreak } from "@/lib/utils";
-import { AnalyticsView } from "@/components/tutor/AnalyticsView";
+import { AnalyticsView, AnalyticsViewLoading } from "@/components/tutor/AnalyticsView";
 import type { TimeMode } from "@/types/tutor";
 import taxonomy from "@/lib/taxonomies.json";
 import type { Metadata } from "next";
@@ -44,7 +44,7 @@ export interface AnalyticsPageData {
 
 export default function AnalyticsPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<AnalyticsViewLoading />}>
       <AnalyticsPageContent />
     </Suspense>
   );

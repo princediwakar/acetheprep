@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import InteractiveDemoHero from "@/components/landing/InteractiveDemoHero";
 import CognitiveFlowSection from "@/components/landing/CognitiveFlowSection";
 import ReliefComparisonSection from "@/components/landing/ReliefComparisonSection";
+import ExamTracksSection from "@/components/landing/ExamTracksSection";
 import CTA from "@/components/landing/CTA";
 import SiteFooter from "@/components/landing/SiteFooter";
 
@@ -16,15 +17,16 @@ const PeerInsightsSection = dynamic(
 
 const StudentsLanding = async () => {
   return (
-    <div>
+    <main className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
       <InteractiveDemoHero />
-      <SocialProofSection />
       <CognitiveFlowSection />
       <ReliefComparisonSection />
+      <ExamTracksSection />
       <PeerInsightsSection />
+      <SocialProofSection />
       <CTA />
       <SiteFooter />
-    </div>
+    </main>
   );
 };
 

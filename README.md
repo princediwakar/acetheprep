@@ -77,7 +77,8 @@ Visit [http://localhost:3000](http://localhost:3000) to see the app.
 Required environment variables:
 
 - `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase anonymous key
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: Your Supabase publishable key (`sb_publishable_...`, or legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
+- `SUPABASE_SECRET_KEY`: Your Supabase backend secret key (`sb_secret_...`, or legacy `SUPABASE_SERVICE_ROLE_KEY`)
 - `OPENAI_API_KEY`: Your OpenAI API key
 - `RESEND_API_KEY`: Your Resend API key for emails
 - `NEXT_PUBLIC_BASE_URL`: Your application's base URL

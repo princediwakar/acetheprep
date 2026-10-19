@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   BarChart,
   Bar,
@@ -67,8 +68,24 @@ export function AnalyticsDashboard() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="p-5 border border-border/70 bg-card">
+              <div className="flex items-center gap-4">
+                <Skeleton className="w-12 h-12 rounded-xl shrink-0" />
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-16 rounded-md" />
+                  <Skeleton className="h-3.5 w-28 rounded-md" />
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+        <Card className="p-6 border border-border/70 bg-card space-y-4">
+          <Skeleton className="h-6 w-48 rounded-md" />
+          <Skeleton className="h-64 w-full rounded-xl" />
+        </Card>
       </div>
     );
   }

@@ -121,7 +121,7 @@ export default function PracticeQuestion({ question, index }: PracticeQuestionPr
         })}
       </div>
 
-      {/* Explanation (blurred until revealed) */}
+      {/* Common Trap Misconception */}
       {question.misconception && (
         <div
           className={`mt-4 rounded-lg border border-amber-200 bg-amber-50/50 p-3 dark:border-amber-800 dark:bg-amber-950/10 transition-all duration-500 ${
@@ -129,9 +129,21 @@ export default function PracticeQuestion({ question, index }: PracticeQuestionPr
           }`}
           style={revealed ? { filter: "blur(0px)" } : { filter: "blur(6px)" }}
         >
-          <p className="text-xs italic text-amber-600 dark:text-amber-400">
-            Common trap: {question.misconception}
+          <p className="text-xs italic text-amber-700 dark:text-amber-400">
+            <strong>Common trap:</strong> {question.misconception}
           </p>
+        </div>
+      )}
+
+      {/* Step-by-Step Derivation & Solution (Revealed) */}
+      {revealed && question.explanation && (
+        <div className="mt-4 rounded-lg border border-border/80 bg-muted/30 p-3.5 space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-wide text-foreground">
+            Step-by-Step Solution & Derivation
+          </p>
+          <div className="text-xs text-muted-foreground leading-relaxed">
+            {renderMathContent(question.explanation)}
+          </div>
         </div>
       )}
 
@@ -139,7 +151,7 @@ export default function PracticeQuestion({ question, index }: PracticeQuestionPr
       {revealed && question.distractor_analysis && (
         <div className="mt-3 space-y-2">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-            Why each option is wrong
+            Distractor Trap Deconstruction
           </p>
           {OPTION_LABELS.map((label) => {
             const da = question.distractor_analysis!;

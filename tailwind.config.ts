@@ -10,6 +10,41 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          "Plus Jakarta Sans",
+          "Inter",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "sans-serif",
+        ],
+        serif: [
+          "Newsreader",
+          "Charter",
+          "Bitstream Charter",
+          "Sitka Text",
+          "Cambria",
+          "serif",
+        ],
+        heading: [
+          "Newsreader",
+          "Charter",
+          "Bitstream Charter",
+          "Sitka Text",
+          "Cambria",
+          "serif",
+        ],
+        mono: [
+          "JetBrains Mono",
+          "SFMono-Regular",
+          "Menlo",
+          "Monaco",
+          "Consolas",
+          "monospace",
+        ],
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -80,11 +115,15 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-20px)" },
         },
+        shimmer: {
+          "100%": { transform: "translateX(100%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         float: "float 6s ease-in-out infinite",
+        shimmer: "shimmer 2s infinite linear",
       },
     },
   },

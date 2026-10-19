@@ -75,10 +75,10 @@ export default function SiteFooter({ className }: React.HTMLAttributes<HTMLEleme
           ))}
 
           <div className="col-span-full md:col-span-1">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">
+            <h4 className="font-heading text-base font-medium tracking-tight text-foreground">
               {siteConfig.name}
             </h4>
-            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
               Cognitive-science retrieval practice platform. We track memory decay curves and deconstruct question distractors so you stop forgetting.
             </p>
             <div className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">

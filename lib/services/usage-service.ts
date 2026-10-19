@@ -1,23 +1,10 @@
 // Path: lib/services/usage-service.ts
 "use server";
 
-import { createClient } from "@supabase/supabase-js";
+import { supabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/admin";
 import { QUIZ_CONFIG } from "@/lib/constants/quiz";
 
 const DAILY_GENERATION_LIMIT = QUIZ_CONFIG.DAILY_GENERATION_LIMIT;
-
-function getServiceClient() {
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set");
-  }
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    throw new Error("NEXT_PUBLIC_SUPABASE_URL is not set");
-  }
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
-}
 
 export async function checkGenerationLimit(userId: string): Promise<{
   allowed: boolean;
@@ -25,9 +12,11 @@ export async function checkGenerationLimit(userId: string): Promise<{
   limit: number;
 }> {
   try {
-    const supabase = getServiceClient();
+    if (!isSupabaseConfigured) {
+      return { allowed: true, used: 0, limit: DAILY_GENERATION_LIMIT };
+    }
     const today = new Date().toISOString().slice(0, 10);
-    const { count, error } = await supabase
+    const { count, error } = await supabaseAdmin
       .from("generation_usage")
       .select("*", { count: "exact", head: true })
       .eq("user_id", userId)
@@ -54,9 +43,9 @@ export async function recordGeneration(
   questionCount: number,
   tokenEstimate: number
 ): Promise<void> {
+  if (!isSupabaseConfigured) return;
   try {
-    const supabase = getServiceClient();
-    await supabase.from("generation_usage").insert({
+    await supabaseAdmin.from("generation_usage").insert({
       user_id: userId,
       quiz_id: quizId,
       question_count: questionCount,

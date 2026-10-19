@@ -80,21 +80,32 @@ export const QuizHistory = ({ activeExamName }: QuizHistoryProps) => {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold">Your Quiz History</h2>
+        <h1 className="font-heading text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+          Your Quiz History
+        </h1>
+        {/* Shimmer for Category Tabs to prevent CLS layout shift */}
+        <div className="flex flex-wrap gap-2 pb-1">
+          <Skeleton className="h-9 w-24 rounded-full" />
+          <Skeleton className="h-9 w-28 rounded-full" />
+          <Skeleton className="h-9 w-36 rounded-full" />
+          <Skeleton className="h-9 w-24 rounded-full" />
+          <Skeleton className="h-9 w-44 rounded-full" />
+          <Skeleton className="h-9 w-32 rounded-full" />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <Card key={i} className="overflow-hidden">
-              <CardHeader className="pb-2">
-                <Skeleton className="h-6 w-3/4" />
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Card key={i} className="overflow-hidden border border-border/70 bg-card">
+              <CardHeader className="pb-3">
+                <Skeleton className="h-5 w-4/5 rounded-md" />
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-3.5">
                   <div className="flex justify-between items-center">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-32 rounded-md" />
+                    <Skeleton className="h-4 w-16 rounded-md" />
                   </div>
-                  <Skeleton className="h-4 w-28" />
-                  <Skeleton className="h-10 w-full mt-2" />
+                  <Skeleton className="h-4 w-24 rounded-md" />
+                  <Skeleton className="h-10 w-full rounded-xl mt-3" />
                 </div>
               </CardContent>
             </Card>
@@ -187,7 +198,9 @@ export const QuizHistory = ({ activeExamName }: QuizHistoryProps) => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Your Quiz History</h2>
+      <h1 className="font-heading text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+        Your Quiz History
+      </h1>
       
       {subjects.length > 0 ? (
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

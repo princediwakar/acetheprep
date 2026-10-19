@@ -9,14 +9,14 @@ export default function SocialProofSection() {
   const testimonials = studentTestimonials.slice(0, 6);
 
   return (
-    <section className="relative py-24">
+    <section className="relative py-20 sm:py-28">
       <MaxWidthWrapper>
         <HeaderSection
-          label="Trusted By Students"
-          title="50,000+ Students Already Fixed Their Retention. They're Not Going Back."
-          subtitle="Don't take our word for it. Here's what real students say after switching to AceThePrep."
+          label="Candidate Telemetry & Results"
+          title="Over 50,000 candidates have eliminated the forgetting curve."
+          subtitle="Real results from students across JEE, NEET, UPSC, and CAT who replaced passive cramming with calibrated retrieval."
         />
-        <div className="mt-16 space-y-16">
+        <div className="mt-16">
           <SocialProofClient testimonials={testimonials} />
         </div>
       </MaxWidthWrapper>

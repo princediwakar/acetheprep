@@ -2,111 +2,103 @@
 
 import { Metadata } from "next";
 import Link from "next/link";
-import { BarChart3, Brain } from "lucide-react";
+import { BarChart3, Brain, ArrowRight, Activity, Sparkles } from "lucide-react";
 import { getInsightsExams } from "@/lib/insights-queries";
+import { examToSlug } from "@/lib/slugs";
+import taxonomyRaw from "@/lib/taxonomies.json";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Free Exam Insights & Statistics | AceThePrep",
+  title: "Exam Difficulty Telemetry & Misconception Insights | AceThePrep",
   description:
-    "Data-driven exam prep insights. Discover the most failed concepts and hardest topics across major exams like JEE Main, NEET, UPSC, and more — powered by real practice data.",
+    "Data-driven competitive exam difficulty telemetry. Discover hardest topics and most-failed concepts across JEE Main, NEET, UPSC, and CAT — powered by cognitive practice analytics.",
 };
 
+const ALL_EXAMS = Object.keys(taxonomyRaw).filter((k) => k !== "_schema_version");
+
 export default async function InsightsPage() {
-  let exams: string[] = [];
-  let fetchError = false;
+  let liveExams: string[] = [];
 
   try {
-    exams = await getInsightsExams();
+    liveExams = await getInsightsExams();
   } catch {
-    fetchError = true;
+    liveExams = [];
   }
 
-  if (fetchError) {
-    return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4">
-        <div className="text-center">
-          <div className="w-14 h-14 rounded-2xl bg-rose-500/20 flex items-center justify-center mx-auto mb-4">
-            <BarChart3 className="w-7 h-7 text-rose-400" />
-          </div>
-          <h1 className="text-xl font-bold text-white mb-2">
-            Failed to load insights
-          </h1>
-          <p className="text-sm text-slate-400 max-w-sm">
-            Something went wrong fetching exam data. Please try again later.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (exams.length === 0) {
-    return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4">
-        <div className="text-center max-w-md">
-          <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 flex items-center justify-center mx-auto mb-4">
-            <BarChart3 className="w-7 h-7 text-indigo-400" />
-          </div>
-          <h1 className="text-xl font-bold text-white mb-2">
-            Not enough data yet
-          </h1>
-          <p className="text-sm text-slate-400">
-            As more students practice, insights will appear here. Start a
-            practice session to contribute.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const displayExams = liveExams.length > 0 ? liveExams : ALL_EXAMS;
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] px-4 py-8 sm:py-12">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-10">
-          <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 flex items-center justify-center mx-auto mb-4">
-            <BarChart3 className="w-7 h-7 text-indigo-400" />
-          </div>
-          <h1 className="text-3xl font-bold text-white mb-3">
-            Exam Insights & Statistics
+    <div className="min-h-[calc(100vh-4rem)] px-4 py-8 sm:py-14 bg-background">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-12 max-w-2xl mx-auto space-y-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
+            <Activity className="h-3.5 w-3.5" />
+            Distractor Telemetry
+          </span>
+          <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-foreground">
+            Exam Difficulty Telemetry
           </h1>
-          <p className="text-sm text-slate-400 max-w-lg mx-auto">
-            Discover which topics students find most challenging across major
-            exams. Data is aggregated from real practice sessions on AceThePrep.
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+            Discover which topics students find most challenging across major competitive tracks. Ranked by student error rates and time-to-solve.
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {exams.map((exam) => (
-            <div
-              key={exam}
-              className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/50 p-6 shadow-lg"
-            >
-              <h2 className="text-lg font-bold text-white mb-1">{exam}</h2>
-              <p className="text-xs text-slate-500 mb-5">
-                Aggregated practice data
-              </p>
-              <div className="flex flex-col gap-2">
-                <Link
-                  href={`/insights/${encodeURIComponent(exam)}/most-failed-concepts`}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  Most Failed Concepts
-                </Link>
-                <Link
-                  href={`/insights/${encodeURIComponent(exam)}/hardest-topics`}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
-                >
-                  <Brain className="w-4 h-4" />
-                  Hardest Topics
-                </Link>
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {displayExams.map((exam) => {
+            const slug = examToSlug(exam);
+            return (
+              <div
+                key={exam}
+                className="group relative flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-6 shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
+              >
+                <div>
+                  <div className="flex items-center justify-between pb-3 border-b border-border/60">
+                    <span className="rounded-md border border-border bg-muted/60 px-2 py-0.5 text-xs font-mono font-medium text-foreground">
+                      {exam}
+                    </span>
+                    <span className="text-[11px] font-mono text-muted-foreground uppercase">
+                      Curriculum
+                    </span>
+                  </div>
+
+                  <h2 className="font-heading mt-4 text-xl font-medium tracking-tight text-foreground">
+                    {exam}
+                  </h2>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Telemetry & distractor analytics
+                  </p>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-border/50 flex flex-col gap-2.5">
+                  <Link
+                    href={`/insights/${slug}/hardest-topics`}
+                    className="inline-flex items-center justify-between text-xs font-medium text-foreground hover:text-primary transition-colors"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Brain className="w-3.5 h-3.5 text-primary" />
+                      Hardest Topics Ranking
+                    </span>
+                    <ArrowRight className="w-3 h-3 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
+                  </Link>
+                  <Link
+                    href={`/insights/${slug}/most-failed-concepts`}
+                    className="inline-flex items-center justify-between text-xs font-medium text-foreground hover:text-primary transition-colors"
+                  >
+                    <span className="flex items-center gap-2">
+                      <BarChart3 className="w-3.5 h-3.5 text-primary" />
+                      Most Failed Concepts
+                    </span>
+                    <ArrowRight className="w-3 h-3 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
+                  </Link>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        <p className="text-xs text-slate-600 text-center mt-10">
-          Data refreshes as more students practice on AceThePrep. Only domains with
-          at least 10 attempts are included.
+        <p className="text-xs text-muted-foreground text-center mt-12">
+          Telemetry is updated automatically as candidates complete practice sessions on AceThePrep.
         </p>
       </div>
     </div>

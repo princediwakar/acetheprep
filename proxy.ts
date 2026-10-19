@@ -32,7 +32,9 @@ export async function proxy(request: NextRequest) {
     rawUrl && (rawUrl.startsWith("http://") || rawUrl.startsWith("https://"))
       ? rawUrl
       : undefined;
-  const rawKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const rawKey =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const supabaseAnonKey =
     rawKey && !rawKey.startsWith("[") && rawKey.length > 10
       ? rawKey

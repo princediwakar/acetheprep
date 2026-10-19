@@ -32,15 +32,22 @@ export default function SetupPage() {
 
 function SetupSkeleton() {
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col items-center justify-center px-4 py-16">
+    <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col justify-center px-4 py-12">
       <div className="w-full space-y-6">
-        <Skeleton className="h-8 w-48 mx-auto" />
-        <Skeleton className="h-5 w-72 mx-auto" />
-        <Card>
+        {/* Step indicator pills */}
+        <div className="flex justify-center gap-2 mb-2">
+          <Skeleton className="h-2 w-20 rounded-full" />
+          <Skeleton className="h-2 w-20 rounded-full" />
+        </div>
+        <div className="text-center space-y-2">
+          <Skeleton className="h-8 w-56 mx-auto rounded-lg" />
+          <Skeleton className="h-4 w-72 mx-auto rounded" />
+        </div>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-sm">
           <CardContent className="space-y-5 pt-6">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-10 w-full rounded-xl" />
+            <Skeleton className="h-10 w-full rounded-xl" />
+            <Skeleton className="h-24 w-full rounded-xl" />
           </CardContent>
         </Card>
       </div>

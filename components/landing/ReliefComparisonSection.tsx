@@ -1,5 +1,4 @@
 // Path: components/landing/ReliefComparisonSection.tsx
-
 "use client";
 
 import { useState } from "react";
@@ -7,18 +6,35 @@ import { motion, AnimatePresence } from "framer-motion";
 import MaxWidthWrapper from "@/components/shared/MaxWidthWrapper";
 import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/useMobile";
-import { XCircle, CheckCircle2 } from "lucide-react";
+import { X, Check, Flame, Sparkles } from "lucide-react";
 
-const oldWayBullets = [
-  "Linear Progression: Solve 50 questions on one topic, move on, and slowly forget 70% over three weeks.",
-  "One-Size-Fits-All: Everyone gets the same mock test, regardless of their unique hidden weak spots.",
-  "Rigid Schedules: Impossible to adapt your review to match what your teacher taught in class today.",
-];
+interface ComparisonItem {
+  dimension: string;
+  oldWay: string;
+  aceWay: string;
+}
 
-const aceWayBullets = [
-  "Algorithmic Review: We track your memory decay curve and schedule reviews the exact day you need them.",
-  "Personalized Baseline: Your 5-question diagnostic seeds a custom Readiness Index, targeting exactly where you need to grow.",
-  "Active Targets: Pin the exact topic you learned in class today and instantly generate a focused practice session.",
+const COMPARISONS: ComparisonItem[] = [
+  {
+    dimension: "Retention & Decay",
+    oldWay: "Reread textbooks and notes for 8 hours. Forget 70% of facts by the following weekend due to exponential memory decay.",
+    aceWay: "Algorithmic Spaced Retrieval scheduled on Days 3, 7, and 14. Locks knowledge into permanent long-term memory with minimal time investment.",
+  },
+  {
+    dimension: "Practice Efficiency",
+    oldWay: "Solve 50 repetitive questions on comfortable topics, creating a false illusion of competence without addressing weak spots.",
+    aceWay: "Targeted Gap Isolation: Diagnostics identify the exact sub-domain where you slip, eliminating wasted time on mastered material.",
+  },
+  {
+    dimension: "Error Analysis",
+    oldWay: "Glance at the correct option letter, nod along passively, and repeat the same algebraic or conceptual trap on exam day.",
+    aceWay: "Distractor Telemetry: Deconstructs the exact misconception 70% of candidates fell for, turning every mistake into cognitive immunity.",
+  },
+  {
+    dimension: "Mental Fatigue",
+    oldWay: "Draining 3-hour marathon mock exams every weekend that produce test anxiety and burnout rather than actionable insights.",
+    aceWay: "5-minute daily calibrated assessments that continuously update your Readiness Index with zero test fatigue.",
+  },
 ];
 
 export default function ReliefComparisonSection() {
@@ -26,78 +42,115 @@ export default function ReliefComparisonSection() {
   const [activeTab, setActiveTab] = useState<"old" | "ace">("ace");
 
   return (
-    <section className="relative py-24">
+    <section className="relative py-20 sm:py-28 border-t border-border/70">
       <MaxWidthWrapper>
-        <div className="text-center mb-16">
-          <span className="inline-block rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium tracking-wide text-primary uppercase">
-            See The Difference
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <span className="inline-block rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
+            Comparative Physics
           </span>
-          <h2 className="mt-4 font-heading text-3xl md:text-4xl lg:text-[40px]">
-            How You Study Now vs. How You&apos;ll Study Tomorrow
+          <h2 className="mt-4 font-heading text-3xl md:text-4xl lg:text-5xl font-normal tracking-tight text-foreground leading-[1.15] text-balance">
+            The Passive Cramming Trap vs. Calibrated Retrieval
           </h2>
+          <p className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed text-balance">
+            Most aspirants don&apos;t fail because they lacked commitment. They fail because their study mechanics violate cognitive learning laws.
+          </p>
         </div>
 
         {isMobile ? (
-          <MobileToggle activeTab={activeTab} setActiveTab={setActiveTab} />
+          <MobileComparison activeTab={activeTab} setActiveTab={setActiveTab} />
         ) : (
-          <DesktopCards />
+          <DesktopComparison />
         )}
       </MaxWidthWrapper>
     </section>
   );
 }
 
-function DesktopCards() {
+function DesktopComparison() {
   return (
-    <div className="grid gap-8 md:grid-cols-2">
-      {/* The Old Way */}
-      <div className="rounded-2xl border bg-card p-8 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted/40">
-            <XCircle className="h-5 w-5 text-muted-foreground" />
+    <div className="grid gap-6 md:grid-cols-2">
+      {/* The Passive Way */}
+      <div className="rounded-2xl border border-border/80 bg-card/60 p-7 sm:p-8 backdrop-blur-sm shadow-sm flex flex-col justify-between">
+        <div>
+          <div className="flex items-center gap-3 pb-6 border-b border-border/60">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <X className="h-4 w-4" />
+            </div>
+            <div>
+              <h3 className="font-heading text-xl font-medium text-foreground">
+                The Passive Cramming Treadmill
+              </h3>
+              <p className="text-xs text-muted-foreground">Traditional coaching rote practice</p>
+            </div>
           </div>
-          <h3 className="text-lg font-semibold text-muted-foreground">
-            The Old Way
-          </h3>
+
+          <div className="mt-6 space-y-6">
+            {COMPARISONS.map((item, i) => (
+              <div key={i} className="space-y-1.5">
+                <span className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground/80">
+                  {item.dimension}
+                </span>
+                <p className="text-sm leading-relaxed text-muted-foreground flex items-start gap-2.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 mt-2 shrink-0" />
+                  <span>{item.oldWay}</span>
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-        <ul className="space-y-4">
-          {oldWayBullets.map((bullet, i) => (
-            <li key={i} className="flex items-start gap-3">
-              <XCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground/50" />
-              <span className="text-sm leading-relaxed text-muted-foreground">
-                {bullet}
-              </span>
-            </li>
-          ))}
-        </ul>
+
+        <div className="mt-8 pt-4 border-t border-border/50 text-xs font-mono text-muted-foreground flex items-center gap-1.5">
+          <Flame className="h-3.5 w-3.5 text-muted-foreground/60" />
+          <span>Result: High anxiety, volatile exam-day recall</span>
+        </div>
       </div>
 
       {/* The AceThePrep Way */}
-      <div className="rounded-2xl border bg-gradient-to-br from-primary/5 to-secondary/5 p-8 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15">
-            <CheckCircle2 className="h-5 w-5 text-primary" />
+      <div className="rounded-2xl border border-primary/30 bg-card p-7 sm:p-8 shadow-sm flex flex-col justify-between relative overflow-hidden">
+        {/* Subtle accent glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-primary/10 blur-3xl"
+        />
+
+        <div>
+          <div className="flex items-center gap-3 pb-6 border-b border-border/60">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <Check className="h-4 w-4" />
+            </div>
+            <div>
+              <h3 className="font-heading text-xl font-medium text-foreground">
+                The Calibrated Retrieval Engine
+              </h3>
+              <p className="text-xs text-primary font-medium">AceThePrep Cognitive Architecture</p>
+            </div>
           </div>
-          <h3 className="text-lg font-semibold text-foreground">
-            The AceThePrep Way
-          </h3>
+
+          <div className="mt-6 space-y-6">
+            {COMPARISONS.map((item, i) => (
+              <div key={i} className="space-y-1.5">
+                <span className="text-xs font-mono font-semibold uppercase tracking-wider text-primary/80">
+                  {item.dimension}
+                </span>
+                <p className="text-sm leading-relaxed text-foreground flex items-start gap-2.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                  <span>{item.aceWay}</span>
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-        <ul className="space-y-4">
-          {aceWayBullets.map((bullet, i) => (
-            <li key={i} className="flex items-start gap-3">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-              <span className="text-sm leading-relaxed text-foreground">
-                {bullet}
-              </span>
-            </li>
-          ))}
-        </ul>
+
+        <div className="mt-8 pt-4 border-t border-border/50 text-xs font-mono text-primary font-semibold flex items-center gap-1.5">
+          <Sparkles className="h-3.5 w-3.5 text-primary" />
+          <span>Result: 90%+ long-term retention with 50% less study time</span>
+        </div>
       </div>
     </div>
   );
 }
 
-function MobileToggle({
+function MobileComparison({
   activeTab,
   setActiveTab,
 }: {
@@ -106,90 +159,76 @@ function MobileToggle({
 }) {
   return (
     <div>
-      {/* Tab buttons */}
-      <div className="flex rounded-xl border bg-muted/30 p-1">
+      <div className="flex rounded-xl border border-border bg-muted/40 p-1">
         <button
           onClick={() => setActiveTab("old")}
           className={cn(
-            "flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors",
+            "flex-1 rounded-lg px-4 py-2 text-xs font-medium transition-colors",
             activeTab === "old"
-              ? "bg-background text-foreground shadow-sm"
+              ? "bg-background text-foreground shadow-sm font-semibold"
               : "text-muted-foreground hover:text-foreground",
           )}
         >
-          The Old Way
+          Passive Cramming
         </button>
         <button
           onClick={() => setActiveTab("ace")}
           className={cn(
-            "flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors",
+            "flex-1 rounded-lg px-4 py-2 text-xs font-medium transition-colors",
             activeTab === "ace"
-              ? "bg-background text-foreground shadow-sm"
+              ? "bg-primary text-primary-foreground shadow-sm font-semibold"
               : "text-muted-foreground hover:text-foreground",
           )}
         >
-          The AceThePrep Way
+          Calibrated Retrieval
         </button>
       </div>
 
-      {/* Tab content */}
-      <div className="mt-6 min-h-[200px]">
+      <div className="mt-6">
         <AnimatePresence mode="wait">
           {activeTab === "old" ? (
             <motion.div
               key="old"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.2 }}
-              className="rounded-2xl border bg-card p-6 shadow-sm"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm space-y-5"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted/40">
-                  <XCircle className="h-4 w-4 text-muted-foreground" />
+              <h3 className="font-heading text-lg font-medium text-foreground">
+                The Passive Cramming Treadmill
+              </h3>
+              {COMPARISONS.map((item, i) => (
+                <div key={i} className="space-y-1">
+                  <span className="text-[11px] font-mono uppercase text-muted-foreground font-semibold">
+                    {item.dimension}
+                  </span>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {item.oldWay}
+                  </p>
                 </div>
-                <h3 className="text-base font-semibold text-muted-foreground">
-                  The Old Way
-                </h3>
-              </div>
-              <ul className="space-y-3">
-                {oldWayBullets.map((bullet, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <XCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground/50" />
-                    <span className="text-sm leading-relaxed text-muted-foreground">
-                      {bullet}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              ))}
             </motion.div>
           ) : (
             <motion.div
               key="ace"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.2 }}
-              className="rounded-2xl border bg-gradient-to-br from-primary/5 to-secondary/5 p-6 shadow-sm"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="rounded-2xl border border-primary/40 bg-card p-6 shadow-sm space-y-5"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15">
-                  <CheckCircle2 className="h-4 w-4 text-primary" />
+              <h3 className="font-heading text-lg font-medium text-foreground">
+                The Calibrated Retrieval Engine
+              </h3>
+              {COMPARISONS.map((item, i) => (
+                <div key={i} className="space-y-1">
+                  <span className="text-[11px] font-mono uppercase text-primary font-semibold">
+                    {item.dimension}
+                  </span>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {item.aceWay}
+                  </p>
                 </div>
-                <h3 className="text-base font-semibold text-foreground">
-                  The AceThePrep Way
-                </h3>
-              </div>
-              <ul className="space-y-3">
-                {aceWayBullets.map((bullet, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                    <span className="text-sm leading-relaxed text-foreground">
-                      {bullet}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              ))}
             </motion.div>
           )}
         </AnimatePresence>
