@@ -23,9 +23,8 @@ export const Header = memo(() => {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
       setIsDropdownOpen(false);
-      toast.success("Signed out successfully.");
+      await signOut();
     } catch (error) {
       console.error("Sign-out failed:", error);
       toast.error("Failed to sign out. Please try again.");

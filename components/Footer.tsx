@@ -25,9 +25,6 @@ export default function Footer() {
           <Link href="/blog" className="hover:text-primary transition-colors">
             Blog & Research
           </Link>
-          <Link href="/llms.txt" className="hover:text-primary transition-colors">
-            LLM Feed
-          </Link>
           <Link href="/feedback" className="hover:text-primary transition-colors">
             Feedback
           </Link>

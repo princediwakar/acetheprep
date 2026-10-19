@@ -1,7 +1,5 @@
-// lib/supabase/auth.ts
-import Cookies from "js-cookie";
 import { supabase } from "@/lib/supabase/client";
-
+import { signOutAction } from "@/lib/actions/auth";
 
 export async function signInWithGoogle() {
   const redirectTo = `${window.location.origin}/api/auth/callback`;
@@ -11,37 +9,31 @@ export async function signInWithGoogle() {
     options: {
       redirectTo: redirectTo,
     },
-  })
-
+  });
 }
 
 export async function signOut(): Promise<void> {
   try {
-    console.log("Starting sign-out process");
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error("Supabase signOut error:", error);
-      throw error;
-    }
-    console.log("Supabase session signed out");
+    await supabase.auth.signOut();
+  } catch (error) {
+    console.error("Client Supabase signOut error:", error);
+  }
 
-    // Clear all sb- cookies
-    const allCookies = Cookies.get();
-    for (const name of Object.keys(allCookies)) {
-      if (name.startsWith("sb-")) {
-        Cookies.remove(name, { path: "/" });
-        console.log("Removed cookie:", name);
-      }
-    }
-
-    // Clear storage
+  try {
     window.localStorage.clear();
     window.sessionStorage.clear();
-    console.log("Storage cleared");
   } catch (error) {
-    console.error("Sign-out failed:", error);
-    throw error;
+    console.error("Storage clear error:", error);
   }
+
+  try {
+    await signOutAction();
+  } catch (error) {
+    console.error("Server signOutAction error:", error);
+  }
+
+  // Force clean browser navigation to purge in-memory React state and router cache
+  window.location.href = "/";
 }
 
 export function storeReturnUrl(path: string): void {

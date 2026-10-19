@@ -5,7 +5,12 @@ import { createClient } from '@supabase/supabase-js';
 // }
 
 
+const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseUrl = rawUrl && (rawUrl.startsWith("http://") || rawUrl.startsWith("https://"))
+  ? rawUrl
+  : "https://placeholder.supabase.co";
+
 export const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co",
+  supabaseUrl,
   process.env.SUPABASE_SERVICE_ROLE_KEY || "placeholder-key"
 );

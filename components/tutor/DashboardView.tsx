@@ -21,7 +21,8 @@ import {
   ArrowRight,
   Clock,
   Lock,
-  BookOpen
+  BookOpen,
+  SlidersHorizontal,
 } from "lucide-react";
 
 export function DashboardViewLoading() {
@@ -60,11 +61,25 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
   const [linearNextLoading, setLinearNextLoading] = useState(false);
   const [domainLoading, setDomainLoading] = useState<string | null>(null);
   const [isLinearMode, setIsLinearMode] = useState(false);
+  const [sessionQuestionCount, setSessionQuestionCount] = useState<number>(10);
+
+  const SESSION_SIZE_PRESETS = [
+    { count: 10, label: "10 Sprint" },
+    { count: 25, label: "25 Practice" },
+    { count: 50, label: "50 Mock" },
+  ] as const;
 
   useEffect(() => {
-    const saved = localStorage.getItem("acetheprep_linear_mode") ?? localStorage.getItem("gibbi_linear_mode");
-    if (saved) {
-      setIsLinearMode(saved === "true");
+    const savedLinear = localStorage.getItem("acetheprep_linear_mode") ?? localStorage.getItem("gibbi_linear_mode");
+    if (savedLinear) {
+      setIsLinearMode(savedLinear === "true");
+    }
+    const savedCount = localStorage.getItem("acetheprep_session_count");
+    if (savedCount) {
+      const parsed = parseInt(savedCount, 10);
+      if ([10, 25, 50].includes(parsed)) {
+        setSessionQuestionCount(parsed);
+      }
     }
   }, []);
 
@@ -73,10 +88,16 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
     localStorage.setItem("acetheprep_linear_mode", String(checked));
   }, []);
 
-  async function startSession(intent: string, focusDomains?: string[]) {
+  const handleSelectSessionSize = useCallback((count: number) => {
+    setSessionQuestionCount(count);
+    localStorage.setItem("acetheprep_session_count", String(count));
+  }, []);
+
+  async function startSession(intent: string, focusDomains?: string[], count: number = sessionQuestionCount) {
     const body: Record<string, unknown> = {
       exam_profile_id: data.profileId,
       session_intent: intent,
+      question_count: count,
     };
     if (focusDomains && focusDomains.length > 0) {
       body.focus_domains = focusDomains;
@@ -174,6 +195,33 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
         </div>
       </div>
 
+      {/* Session Size Selector Strip */}
+      <div className="flex items-center justify-between bg-card p-3 px-4 rounded-xl border shadow-sm">
+        <div className="flex items-center gap-2">
+          <SlidersHorizontal className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Session Size</span>
+        </div>
+        <div className="flex items-center gap-1.5 bg-muted/60 p-1 rounded-lg">
+          {SESSION_SIZE_PRESETS.map((preset) => {
+            const isActive = sessionQuestionCount === preset.count;
+            return (
+              <button
+                key={preset.count}
+                type="button"
+                onClick={() => handleSelectSessionSize(preset.count)}
+                className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                }`}
+              >
+                {preset.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Section 2: Smart Start Strip */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5 hover:border-primary/40 transition-colors">
@@ -194,9 +242,9 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
               disabled={algoReviewLoading || linearNextLoading}
             >
               {algoReviewLoading ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Starting...</>
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Starting {sessionQuestionCount}Q...</>
               ) : (
-                <><Play className="mr-2 h-4 w-4" /> Start Spaced Review</>
+                <><Play className="mr-2 h-4 w-4" /> Start Spaced Review ({sessionQuestionCount}Q)</>
               )}
             </Button>
           </CardContent>
@@ -223,9 +271,9 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
               disabled={!nextLinearDomain || algoReviewLoading || linearNextLoading}
             >
               {linearNextLoading ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Starting...</>
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Starting {sessionQuestionCount}Q...</>
               ) : (
-                <><Play className="mr-2 h-4 w-4" /> Practice {nextLinearDomain?.name || "Next"}</>
+                <><Play className="mr-2 h-4 w-4" /> Practice {nextLinearDomain?.name || "Next"} ({sessionQuestionCount}Q)</>
               )}
             </Button>
           </CardContent>

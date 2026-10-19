@@ -95,7 +95,7 @@ export const PREREQUISITE_WEIGHTS: Record<string, number> = {
 };
 
 export const TUTOR_AI_CONFIG = {
-  MODEL: process.env.TUTOR_AI_MODEL || "deepseek-v4-flash",
+  MODEL: process.env.TUTOR_AI_MODEL || "deepseek-flash",
   FEATURES: {
     thinking: { type: "disabled" },
   },

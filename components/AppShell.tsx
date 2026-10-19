@@ -47,7 +47,6 @@ export function AppShell({ children, sidebarData }: { children: React.ReactNode;
   const handleSignOut = async () => {
     try {
       await signOut();
-      toast.success("Signed out successfully.");
     } catch (error) {
       console.error("Sign-out failed:", error);
       toast.error("Failed to sign out. Please try again.");
@@ -66,17 +65,7 @@ export function AppShell({ children, sidebarData }: { children: React.ReactNode;
   const shouldShowSidebar = showOnRoutes.includes(pathname) && !!user;
   const isQuizPage = pathname.startsWith("/quiz/") || pathname.startsWith("/play/") || pathname.startsWith("/session/");
 
-  if (!mounted || isUserLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse">
-          <div className="h-8 w-8 bg-primary/20 rounded-full"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!shouldShowSidebar || isQuizPage) {
+  if (!mounted || !shouldShowSidebar || isQuizPage) {
     return (
       <div className="min-h-screen">
         <Header />

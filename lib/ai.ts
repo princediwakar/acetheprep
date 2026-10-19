@@ -20,33 +20,28 @@ interface ProviderConfig {
   model: string;
 }
 
-const PROVIDER: AIProvider = (process.env.AI_PROVIDER as AIProvider) || "deepseek";
+const rawProvider = process.env.AI_PROVIDER;
+const PROVIDER: AIProvider = rawProvider === "openai" ? "openai" : "deepseek";
 
-const PROVIDER_CONFIGS: Record<AIProvider, ProviderConfig> = {
-  openai: {
-    apiKey: process.env.OPENAI_API_KEY!,
-    baseURL: process.env.AI_BASE_URL || "https://api.openai.com",
-    model: process.env.OPENAI_MODEL || "gpt-4o",
-  },
-  deepseek: {
-    apiKey: process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY!,
-    baseURL: process.env.AI_BASE_URL || "https://api.deepseek.com",
-    model: process.env.OPENAI_MODEL || "deepseek-flash",
-  },
-};
+const defaultBaseURL = PROVIDER === "openai" ? "https://api.openai.com" : "https://api.deepseek.com";
+const rawBaseURL = process.env.AI_BASE_URL;
+const baseURL = rawBaseURL && (rawBaseURL.startsWith("http://") || rawBaseURL.startsWith("https://"))
+  ? rawBaseURL
+  : defaultBaseURL;
 
-const config = PROVIDER_CONFIGS[PROVIDER];
-if (!config.apiKey) {
-  const keyVar = PROVIDER === "openai" ? "OPENAI_API_KEY" : "DEEPSEEK_API_KEY";
-  throw new Error(`Missing ${keyVar}`);
-}
+const rawApiKey = PROVIDER === "openai"
+  ? process.env.OPENAI_API_KEY
+  : (process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY);
+const apiKey = rawApiKey && !rawApiKey.startsWith("[") ? rawApiKey : "placeholder-key";
 
-export const MODEL = config.model;
+const model = process.env.OPENAI_MODEL || (PROVIDER === "openai" ? "gpt-4o" : "deepseek-flash");
+
+export const MODEL = model;
 const IS_OPENAI = PROVIDER === "openai";
 
 export const openai = new OpenAI({
-  apiKey: config.apiKey,
-  baseURL: config.baseURL,
+  apiKey,
+  baseURL,
 });
 
 const CURRENT_AFFAIRS_PATTERNS = [
@@ -271,11 +266,11 @@ export async function createQuizWithAI(
     throw lastError ?? new Error("Failed to generate quiz");
   }
 
-  const chunks: GeneratedQuiz[] = [];
   const chunkSizes = distributeChunks(questionCount, CHUNK_SIZE);
   let failedChunks = 0;
+  let totalDone = 0;
 
-  for (let i = 0; i < chunkSizes.length; i++) {
+  const chunkPromises = chunkSizes.map(async (chunkSize, i) => {
     let chunkResult: GeneratedQuiz | null = null;
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
@@ -285,7 +280,7 @@ export async function createQuizWithAI(
 
       try {
         chunkResult = await generateSingleChunk(
-          content, chunkSizes[i], difficulty, language,
+          content, chunkSize, difficulty, language,
           sessionFingerprint, searchContext, focusTopics
         );
         break;
@@ -302,16 +297,17 @@ export async function createQuizWithAI(
     }
 
     if (chunkResult) {
-      chunks.push(chunkResult);
+      const questionsInChunk = (chunkResult.questions?.length ?? 0) +
+        (chunkResult.question_groups?.reduce((s, g) => s + (g.questions?.length ?? 0), 0) ?? 0);
+      totalDone += questionsInChunk;
+      onProgress?.({ done: Math.min(totalDone, questionCount), total: questionCount });
     }
 
-    const totalDone = chunks.reduce((sum, c) =>
-      sum + (c.questions?.length ?? 0) +
-      (c.question_groups?.reduce((s, g) => s + (g.questions?.length ?? 0), 0) ?? 0),
-    0);
+    return chunkResult;
+  });
 
-    onProgress?.({ done: Math.min(totalDone, questionCount), total: questionCount });
-  }
+  const chunkResults = await Promise.all(chunkPromises);
+  const chunks = chunkResults.filter((c): c is GeneratedQuiz => c !== null);
 
   if (chunks.length === 0) {
     throw new Error("All chunks failed to generate");

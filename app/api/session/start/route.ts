@@ -1,6 +1,9 @@
 // Path: app/api/session/start/route.ts
 import { NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+
+export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
 import { SessionStartSchema } from "@/lib/validations/tutor";
 import {
   selectTargetDomains,
@@ -227,92 +230,164 @@ async function generateAndCreateSession(
   }
 
   // ----- Prompt Generation (Intent-Aware) -----
-  const systemPrompt = getTutorSystemPrompt();
-  const difficultyDistribution = isDiagnostic
-    ? { easy: 1, medium: 2, hard: 2 }
-    : computeDifficultyDistribution(questionCount, timeMode);
-
-  let userMessage: string;
-  if (isDiagnostic) {
-    const strata = getDiagnosticStrata();
-    userMessage = buildDiagnosticUserMessage({
-      examName: profile.exam_name,
-      examYear,
-      strata,
-    });
-  } else {
-    userMessage = buildTutorUserMessage({
-      examName: profile.exam_name,
-      examYear,
-      timeMode,
-      daysRemaining,
-      targetDomains,
-      questionCount,
-      difficultyDistribution,
-    });
-  }
-
   const targetDomainNames = targetDomains.map((d) => d.skillDomain);
-  const maxTokens = questionCount * 600 + 1000;
+  const systemPrompt = getTutorSystemPrompt();
 
   console.log(
     `[SessionStart] model=${MODEL} baseURL=${(openai as any).baseURL || "default"} ` +
     `domains=${targetDomainNames.length} questions=${questionCount} intent=${sessionIntent}`,
   );
 
-  // ----- AI Generation with Retry via parseWithRecovery -----
-  async function callAI(temp: number, promptOverride?: string): Promise<string> {
-    const completion = await openai.chat.completions.create({
-      model: MODEL,
-      messages: [
-        { role: "system" as const, content: systemPrompt },
-        { role: "user" as const, content: promptOverride ?? userMessage },
-      ],
-      temperature: temp,
-      max_tokens: maxTokens,
-      response_format: { type: "json_object" as const },
-    });
-    return completion.choices[0]?.message?.content || "";
-  }
+  let questionsArray: unknown[] = [];
+  const BATCH_SIZE = 10;
 
-  const retryFn1 = () => callAI(0.7);
-  const retryFn2 = () => callAI(0.95);
+  if (questionCount <= BATCH_SIZE) {
+    // Single batch generation
+    const difficultyDistribution = isDiagnostic
+      ? { easy: 1, medium: 2, hard: 2 }
+      : computeDifficultyDistribution(questionCount, timeMode);
 
-  // First attempt
-  const firstResponse = await callAI(0.7);
+    const userMessage = isDiagnostic
+      ? buildDiagnosticUserMessage({
+          examName: profile.exam_name,
+          examYear,
+          strata: getDiagnosticStrata(),
+        })
+      : buildTutorUserMessage({
+          examName: profile.exam_name,
+          examYear,
+          timeMode,
+          daysRemaining,
+          targetDomains,
+          questionCount,
+          difficultyDistribution,
+        });
 
-  let questionsArray: unknown[];
-  try {
-    const recoveryResult = await parseWithRecovery(
-      firstResponse,
-      QuestionSchema,
-      questionCount,
-      retryFn1,
-      retryFn2,
-    );
-    questionsArray = recoveryResult.questions;
-  } catch (err) {
-    // Last resort: emergency fallback with a bare-minimum prompt
+    const maxTokens = questionCount * 600 + 1000;
+
+    async function callAI(temp: number, promptOverride?: string): Promise<string> {
+      const completion = await openai.chat.completions.create({
+        model: MODEL,
+        messages: [
+          { role: "system" as const, content: systemPrompt },
+          { role: "user" as const, content: promptOverride ?? userMessage },
+        ],
+        temperature: temp,
+        max_tokens: maxTokens,
+        response_format: { type: "json_object" as const },
+      });
+      return completion.choices[0]?.message?.content || "";
+    }
+
     try {
-      const fallbackPrompt = `Generate ${questionCount} multiple choice questions about ${targetDomainNames.join(", ")} for ${profile.exam_name} exam preparation. Each question must have: question_text (string), options (object with keys A, B, C, D mapping to answer strings), correct_option (the letter key of the correct answer), and explanation (string). Return valid JSON: {"questions": [...]}`;
-
-      const emergencyRaw = await callAI(1.0, fallbackPrompt);
-      const emergencyResult = await parseWithRecovery(
-        emergencyRaw,
+      const firstResponse = await callAI(0.7);
+      const recoveryResult = await parseWithRecovery(
+        firstResponse,
         QuestionSchema,
         questionCount,
-        () => callAI(1.0, fallbackPrompt),
+        () => callAI(0.7),
+        () => callAI(0.95),
       );
-      questionsArray = emergencyResult.questions;
-    } catch {
-      const details =
-        err instanceof Error ? err.message : "Unknown parse/recovery error";
-      return {
-        error: TUTOR_ERRORS.AI_GENERATION_FAILED,
-        details,
-        status: 500,
-      };
+      questionsArray = recoveryResult.questions;
+    } catch (err) {
+      try {
+        const fallbackPrompt = `Generate ${questionCount} multiple choice questions about ${targetDomainNames.join(", ")} for ${profile.exam_name} exam preparation. Each question must have: question_text (string), options (object with keys A, B, C, D mapping to answer strings), correct_option (the letter key of the correct answer), and explanation (string). Return valid JSON: {"questions": [...]}`;
+        const emergencyRaw = await callAI(1.0, fallbackPrompt);
+        const emergencyResult = await parseWithRecovery(
+          emergencyRaw,
+          QuestionSchema,
+          questionCount,
+          () => callAI(1.0, fallbackPrompt),
+        );
+        questionsArray = emergencyResult.questions;
+      } catch {
+        const details = err instanceof Error ? err.message : "Unknown parse/recovery error";
+        return {
+          error: TUTOR_ERRORS.AI_GENERATION_FAILED,
+          details,
+          status: 500,
+        };
+      }
     }
+  } else {
+    // Multi-batch parallel generation for 20, 25, 30, 50 questions
+    const batchSizes: number[] = [];
+    let remaining = questionCount;
+    while (remaining > 0) {
+      const size = Math.min(remaining, BATCH_SIZE);
+      batchSizes.push(size);
+      remaining -= size;
+    }
+
+    let domainOffset = 0;
+    const batchPromises = batchSizes.map(async (batchCount, batchIdx) => {
+      const batchDomains = targetDomains.length > 0
+        ? Array.from({ length: batchCount }, (_, idx) => {
+            const domainIndex = (domainOffset + idx) % targetDomains.length;
+            return targetDomains[domainIndex];
+          })
+        : targetDomains;
+      domainOffset += batchCount;
+
+      const difficultyDistribution = computeDifficultyDistribution(batchCount, timeMode);
+      const batchUserMessage = buildTutorUserMessage({
+        examName: profile.exam_name,
+        examYear,
+        timeMode,
+        daysRemaining,
+        targetDomains: batchDomains,
+        questionCount: batchCount,
+        difficultyDistribution,
+      });
+
+      const maxTokens = batchCount * 600 + 1000;
+
+      async function callBatchAI(temp: number, promptOverride?: string): Promise<string> {
+        const completion = await openai.chat.completions.create({
+          model: MODEL,
+          messages: [
+            { role: "system" as const, content: systemPrompt },
+            { role: "user" as const, content: promptOverride ?? batchUserMessage },
+          ],
+          temperature: temp,
+          max_tokens: maxTokens,
+          response_format: { type: "json_object" as const },
+        });
+        return completion.choices[0]?.message?.content || "";
+      }
+
+      try {
+        const firstResponse = await callBatchAI(0.7);
+        const recoveryResult = await parseWithRecovery(
+          firstResponse,
+          QuestionSchema,
+          batchCount,
+          () => callBatchAI(0.7),
+          () => callBatchAI(0.95),
+        );
+        return recoveryResult.questions;
+      } catch (err) {
+        console.warn(`[SessionStart] Batch ${batchIdx + 1} fallback triggered:`, err);
+        const batchDomainNames = batchDomains.map((d) => d.skillDomain);
+        const fallbackPrompt = `Generate ${batchCount} multiple choice questions about ${batchDomainNames.join(", ")} for ${profile.exam_name} exam preparation. Each question must have: question_text (string), options (object with keys A, B, C, D mapping to answer strings), correct_option (the letter key of the correct answer), and explanation (string). Return valid JSON: {"questions": [...]}`;
+        try {
+          const emergencyRaw = await callBatchAI(1.0, fallbackPrompt);
+          const emergencyResult = await parseWithRecovery(
+            emergencyRaw,
+            QuestionSchema,
+            batchCount,
+            () => callBatchAI(1.0, fallbackPrompt),
+          );
+          return emergencyResult.questions;
+        } catch (e) {
+          console.error(`[SessionStart] Batch ${batchIdx + 1} failed:`, e);
+          return [];
+        }
+      }
+    });
+
+    const results = await Promise.all(batchPromises);
+    questionsArray = results.flat();
   }
 
   if (questionsArray.length === 0) {

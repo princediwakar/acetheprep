@@ -41,11 +41,8 @@ export default function SiteFooter({ className }: React.HTMLAttributes<HTMLEleme
       ],
     },
     {
-      title: "Machine Feeds & Legal",
+      title: "Legal & Support",
       items: [
-        { title: "LLM Knowledge Feed", href: "/llms.txt" },
-        { title: "Full Machine Curriculum", href: "/llms-full.txt" },
-        { title: "XML Sitemap Index", href: "/sitemap.xml" },
         { title: "Privacy Policy", href: "/privacy" },
         { title: "Terms of Service", href: "/terms" },
         { title: "Feedback & Bug Report", href: "/feedback" },
