@@ -12,27 +12,27 @@ import StructuredData, { websiteSchema, organizationSchema, educationalOrgSchema
 import "./globals.css";
 import "katex/dist/katex.min.css";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://gibbi.vercel.app";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com";
 
 export const metadata: Metadata = {
     title: {
-        default: "GibbiAI — Free AI-Powered Exam Prep for JEE, NEET, UPSC & More",
-        template: "%s | GibbiAI",
+        default: "AceThePrep — Free AI-Powered Exam Prep for JEE, NEET, UPSC & More",
+        template: "%s | AceThePrep",
     },
     description: "Free AI-powered exam preparation for JEE Main, NEET, UPSC, GMAT, CAT, and more. Adaptive spaced repetition, personalized assessments, and detailed distractor analysis.",
     keywords: ["exam prep", "JEE Main", "NEET", "UPSC", "AI tutor", "spaced repetition", "practice questions", "free test prep", "competitive exams", "practice test"],
     openGraph: {
-        title: "GibbiAI — Free AI-Powered Exam Prep for JEE, NEET, UPSC & More",
+        title: "AceThePrep — Free AI-Powered Exam Prep for JEE, NEET, UPSC & More",
         description: "Free AI-powered exam preparation with adaptive spaced repetition. Personalized assessments, distractor analysis, and 10 exam tracks.",
         url: baseUrl,
-        siteName: "GibbiAI",
+        siteName: "AceThePrep",
         images: [{ url: `${baseUrl}/api/og?type=home`, width: 1200, height: 630 }],
         locale: "en_US",
         type: "website",
     },
     twitter: {
         card: "summary_large_image",
-        title: "GibbiAI — Free AI-Powered Exam Prep",
+        title: "AceThePrep — Free AI-Powered Exam Prep",
         description: "Free AI-powered exam preparation for JEE, NEET, UPSC, GMAT, CAT. Adaptive spaced repetition with personalized assessments.",
         images: [`${baseUrl}/api/og?type=home`],
     },

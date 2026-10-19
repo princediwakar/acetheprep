@@ -18,7 +18,7 @@ for (const exam of EXAM_NAMES) {
 }
 
 export const metadata: Metadata = {
-  title: "Exam Profile Setup | GibbiAI",
+  title: "Exam Profile Setup | AceThePrep",
   description: "Set up your personalized exam prep profile for AI-powered practice.",
 };
 
@@ -59,7 +59,7 @@ async function SetupPageContent() {
       <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col items-center justify-center px-4 py-16 text-center">
         <Card className="w-full">
           <CardHeader>
-            <CardTitle className="text-xl">Welcome to GibbiAI</CardTitle>
+            <CardTitle className="text-xl">Welcome to AceThePrep</CardTitle>
             <CardDescription>
               Sign in to set up your personalized exam prep and start practicing.
             </CardDescription>

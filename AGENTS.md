@@ -1,7 +1,7 @@
 
 ---
 
-# GIBBI AI: FIRST PRINCIPLES ENGINEERING & PRODUCT ALGORITHM
+# ACETHEPREP: FIRST PRINCIPLES ENGINEERING & PRODUCT ALGORITHM
 
 **MANDATE:** The laws of physics govern this software. Bandwidth, latency, and compute are the constraints. Everything else is a recommendation. Our objective is an impossibly fast, zero-friction, server-first Next.js application. We do not write code to satisfy frameworks; we write code to move bits from the database to the user's retina as close to the speed of light as possible.
 

@@ -10,7 +10,7 @@ import taxonomy from "@/lib/taxonomies.json";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Analytics | GibbiAI",
+  title: "Analytics | AceThePrep",
   description: "Track your mastery, readiness, and progress over time",
 };
 

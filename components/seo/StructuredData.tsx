@@ -1,80 +1,79 @@
 // File: components/seo/StructuredData.tsx
 import { WithContext, WebSite, Organization } from "schema-dts";
+import { siteConfig } from "@/config/site";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://gibbi.vercel.app";
+const baseUrl = siteConfig.url;
 
 export const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "GibbiAI - Test Your Knowledge",
-  "url": baseUrl,
-  "description": "Create, share, and take quizzes on any topic. Join GibbiAI to challenge yourself and others!",
-  "potentialAction": {
+  name: `${siteConfig.name} - Cognitive Science Exam Prep`,
+  url: baseUrl,
+  description: siteConfig.description,
+  potentialAction: {
     "@type": "SearchAction",
-    "target": `${baseUrl}/quizzes?search={search_term_string}`,
-    "query-input": "required name=search_term_string"
-  }
+    target: `${baseUrl}/quizzes?search={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
 } as WithContext<WebSite>;
 
 export const organizationSchema: WithContext<Organization> = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "GibbiAI",
-  "url": baseUrl,
-  "logo": `${baseUrl}/logo.png`,
-  "sameAs": [
-    "https://github.com/gibbi-ai"
-  ]
+  name: siteConfig.name,
+  url: baseUrl,
+  logo: `${baseUrl}/icon.ico`,
+  sameAs: [siteConfig.links.github],
 };
 
 export const educationalAppSchema: WithContext<any> = {
   "@context": "https://schema.org",
   "@type": "EducationalApplication",
-  "name": "GibbiAI",
-  "url": baseUrl,
-  "description": "AI-powered exam preparation platform using cognitive science and spaced repetition for JEE Main, NEET, UPSC CSE, and more.",
-  "applicationCategory": "EducationalApplication",
-  "operatingSystem": "Web",
-  "educationalLevel": "High School, Undergraduate, Graduate",
-  "teaches": "Physics, Chemistry, Mathematics, Biology, Logical Reasoning, Quantitative Aptitude",
-  "educationalUse": "Personalized adaptive practice, knowledge assessment, spaced repetition review",
-  "offers": {
+  name: siteConfig.name,
+  url: baseUrl,
+  description: siteConfig.description,
+  applicationCategory: "EducationalApplication",
+  operatingSystem: "Web",
+  educationalLevel: "High School, Undergraduate, Graduate",
+  teaches: "Physics, Chemistry, Mathematics, Biology, Logical Reasoning, Quantitative Aptitude",
+  educationalUse: "Personalized adaptive practice, knowledge assessment, spaced repetition review",
+  offers: {
     "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  }
+    price: "0",
+    priceCurrency: "USD",
+  },
 };
 
 export const breadcrumbSchema = (items: { name: string; url: string }[]) => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  "itemListElement": items.map((item, index) => ({
+  itemListElement: items.map((item, index) => ({
     "@type": "ListItem",
-    "position": index + 1,
-    "name": item.name,
-    "item": item.url
-  }))
+    position: index + 1,
+    name: item.name,
+    item: item.url,
+  })),
 });
 
 export const educationalOrgSchema: WithContext<any> = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
-  "name": "GibbiAI",
-  "url": baseUrl,
-  "logo": `${baseUrl}/logo.png`,
-  "description": "Free AI-powered exam preparation platform for JEE Main, NEET, UPSC, GMAT, SAT, GRE, CAT, GATE, CLAT, and CA Foundation. Practice with adaptive spaced repetition.",
-  "sameAs": ["https://github.com/gibbi-ai"],
-  "audience": {
+  name: siteConfig.name,
+  url: baseUrl,
+  logo: `${baseUrl}/icon.ico`,
+  description: siteConfig.description,
+  sameAs: [siteConfig.links.github],
+  audience: {
     "@type": "EducationalAudience",
-    "educationalRole": "student",
-    "audienceType": "exam aspirants"
+    educationalRole: "student",
+    audienceType: "exam aspirants",
   },
-  "offers": {
+  offers: {
     "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD",
-    "description": "Free AI-powered exam practice with no credit card required"
-  }
+    price: "0",
+    priceCurrency: "USD",
+    description: "Free AI-powered exam practice with no credit card required",
+  },
 };
 
 export const practiceQuizSchema = (params: {
@@ -92,21 +91,34 @@ export const practiceQuizSchema = (params: {
 }) => ({
   "@context": "https://schema.org",
   "@type": "Quiz",
-  "name": `${params.domain} Practice Questions - ${params.examName}`,
-  "description": params.description,
-  "url": params.url,
-  "educationalLevel": params.examName,
-  "about": { "@type": "Thing", "name": params.domain },
-  "hasPart": params.questions.map((q) => ({
+  name: `${params.domain} Practice Questions - ${params.examName}`,
+  description: params.description,
+  url: params.url,
+  educationalLevel: params.examName,
+  about: { "@type": "Thing", name: params.domain },
+  hasPart: params.questions.map((q) => ({
     "@type": "Question",
-    "name": q.questionText.length > 110 ? q.questionText.slice(0, 107) + "..." : q.questionText,
-    "suggestedAnswer": q.options.map((opt) => ({
+    name: q.questionText.length > 110 ? q.questionText.slice(0, 107) + "..." : q.questionText,
+    suggestedAnswer: q.options.map((opt) => ({
       "@type": "Answer",
-      "text": `${opt.label}) ${opt.text}`,
+      text: `${opt.label}) ${opt.text}`,
     })),
-    "acceptedAnswer": {
+    acceptedAnswer: {
       "@type": "Answer",
-      "text": `${q.correctOption}) ${q.correctText}`,
+      text: `${q.correctOption}) ${q.correctText}`,
+    },
+  })),
+});
+
+export const faqPageSchema = (faqs: Array<{ question: string; answer: string }>) => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
     },
   })),
 });
@@ -120,12 +132,12 @@ export const insightsDatasetSchema = (params: {
 }) => ({
   "@context": "https://schema.org",
   "@type": "Dataset",
-  "name": `${params.examName} ${params.reportType} — GibbiAI`,
-  "description": params.description,
-  "url": params.url,
-  "creator": { "@type": "Organization", "name": "GibbiAI", "url": baseUrl },
-  "datePublished": params.datePublished,
-  "educationalLevel": params.examName,
+  name: `${params.examName} ${params.reportType} — ${siteConfig.name}`,
+  description: params.description,
+  url: params.url,
+  creator: { "@type": "Organization", name: siteConfig.name, url: baseUrl },
+  datePublished: params.datePublished,
+  educationalLevel: params.examName,
 });
 
 export const learningResourceSchema = (params: {
@@ -136,12 +148,12 @@ export const learningResourceSchema = (params: {
 }) => ({
   "@context": "https://schema.org",
   "@type": "LearningResource",
-  "name": `${params.examName} Practice Session — ${params.scorePct}%`,
-  "url": params.url,
-  "educationalLevel": params.examName,
-  "teaches": params.domains,
-  "educationalUse": "Practice Session",
-  "provider": { "@type": "Organization", "name": "GibbiAI", "url": baseUrl },
+  name: `${params.examName} Practice Session — ${params.scorePct}%`,
+  url: params.url,
+  educationalLevel: params.examName,
+  teaches: params.domains,
+  educationalUse: "Practice Session",
+  provider: { "@type": "Organization", name: siteConfig.name, url: baseUrl },
 });
 
 interface StructuredDataProps {

@@ -62,7 +62,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
   const [isLinearMode, setIsLinearMode] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("gibbi_linear_mode");
+    const saved = localStorage.getItem("acetheprep_linear_mode") ?? localStorage.getItem("gibbi_linear_mode");
     if (saved) {
       setIsLinearMode(saved === "true");
     }
@@ -70,7 +70,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
 
   const handleToggleLinear = useCallback((checked: boolean) => {
     setIsLinearMode(checked);
-    localStorage.setItem("gibbi_linear_mode", String(checked));
+    localStorage.setItem("acetheprep_linear_mode", String(checked));
   }, []);
 
   async function startSession(intent: string, focusDomains?: string[]) {

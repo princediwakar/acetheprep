@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - GibbiAI",
-  description: "Learn how GibbiAI collects, uses, and protects your data.",
+  title: "Privacy Policy - AceThePrep",
+  description: "Learn how AceThePrep collects, uses, and protects your data.",
 };
 
 export default function PrivacyPolicy() {
@@ -16,8 +16,8 @@ export default function PrivacyPolicy() {
       <section>
         <h2 className="text-2xl font-semibold">1. Introduction</h2>
         <p>
-          Welcome to GibbiAI! This Privacy Policy explains how we collect, use, and protect your
-          personal information when you use our app. By using GibbiAI, you agree to the terms
+          Welcome to AceThePrep! This Privacy Policy explains how we collect, use, and protect your
+          personal information when you use our app. By using AceThePrep, you agree to the terms
           outlined in this policy.
         </p>
       </section>

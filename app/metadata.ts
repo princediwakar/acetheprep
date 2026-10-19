@@ -2,8 +2,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
 	title: {
-		default: "GibbiAI — Free AI-Powered Exam Prep for JEE, NEET, UPSC & More",
-		template: "%s | GibbiAI",
+		default: "AceThePrep — Free AI-Powered Exam Prep for JEE, NEET, UPSC & More",
+		template: "%s | AceThePrep",
 	},
 	description:
 		"Free AI-powered exam preparation for JEE Main, NEET, UPSC, GMAT, CAT, and more. Adaptive spaced repetition, personalized assessments, and detailed distractor analysis. Start your free assessment in 5 minutes.",
@@ -20,11 +20,11 @@ export const metadata: Metadata = {
 		"competitive exams",
 	],
 	openGraph: {
-		title: "GibbiAI — Free AI-Powered Exam Prep for JEE, NEET, UPSC & More",
+		title: "AceThePrep — Free AI-Powered Exam Prep for JEE, NEET, UPSC & More",
 		description:
 			"Free AI-powered exam preparation with adaptive spaced repetition. Personalized assessments, distractor analysis, and 10 exam tracks including JEE, NEET, UPSC, and GMAT.",
 		url: process.env.NEXT_PUBLIC_BASE_URL,
-		siteName: "GibbiAI",
+		siteName: "AceThePrep",
 		images: [
 			{
 				url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/og?type=home`,
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "GibbiAI — Free AI-Powered Exam Prep",
+		title: "AceThePrep — Free AI-Powered Exam Prep",
 		description:
 			"Free AI-powered exam preparation for JEE, NEET, UPSC, GMAT, CAT. Adaptive spaced repetition with personalized assessments.",
 		images: [

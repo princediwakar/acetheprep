@@ -14,7 +14,7 @@ export default function SocialProofSection() {
         <HeaderSection
           label="Trusted By Students"
           title="50,000+ Students Already Fixed Their Retention. They're Not Going Back."
-          subtitle="Don't take our word for it. Here's what real students say after switching to GibbiAI."
+          subtitle="Don't take our word for it. Here's what real students say after switching to AceThePrep."
         />
         <div className="mt-16 space-y-16">
           <SocialProofClient testimonials={testimonials} />

@@ -37,7 +37,7 @@ export const Header = memo(() => {
       <header className="flex justify-between items-center max-w-6xl px-4 py-4 mx-auto">
         <nav className="flex items-center space-x-8">
           <Link href="/" className="flex gap-2 hover:opacity-80 transition-opacity">
-            <h1 className="text-xl font-bold">Gibbi AI</h1>
+            <h1 className="text-xl font-bold">AceThePrep</h1>
           </Link>
           {!isQuizPage && (
             <Link href="/quizzes" className="hover:opacity-80 transition-opacity">

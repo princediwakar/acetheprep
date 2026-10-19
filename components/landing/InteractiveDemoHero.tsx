@@ -281,7 +281,7 @@ export default function InteractiveDemoHero() {
               Stop re-reading. Start retaining.
               <br />
               <span className="text-primary">
-                See how GibbiAI spots your mistakes before you make them.
+                See how AceThePrep spots your mistakes before you make them.
               </span>
             </motion.h1>
 

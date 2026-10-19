@@ -1,8 +1,8 @@
-# GibbiAI - AI-Powered Quiz Platform
+# AceThePrep - AI-Powered Exam Preparation & Quiz Platform
 
-GibbiAI is an end-to-end AI-based quiz creation, evaluation, and progress tracking platform. Create engaging quizzes effortlessly using AI assistance, evaluate performance in real-time, and track learning progress.
+AceThePrep is an end-to-end AI-based exam preparation, evaluation, and progress tracking platform. Practice with adaptive spaced repetition, evaluate performance in real-time, and track learning progress with deep distractor analysis.
 
-![GibbiAI Platform](/_static/og.png)
+![AceThePrep Platform](/_static/og.png)
 
 ## 🚀 Features
 
@@ -27,7 +27,7 @@ GibbiAI is an end-to-end AI-based quiz creation, evaluation, and progress tracki
 ## 🏗 Project Structure
 
 ```
-gibbi/
+acetheprep/
 ├── app/                # Next.js app directory
 ├── components/         # React components
 ├── config/            # Configuration files
@@ -40,8 +40,8 @@ gibbi/
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/gibbi.git
-cd gibbi
+git clone https://github.com/yourusername/acetheprep.git
+cd acetheprep
 ```
 
 2. Install dependencies:
@@ -84,7 +84,7 @@ Required environment variables:
 
 ## 🚀 Deployment
 
-The easiest way to deploy GibbiAI is using the [Vercel Platform](https://vercel.com):
+The easiest way to deploy AceThePrep is using the [Vercel Platform](https://vercel.com):
 
 1. Push your code to a GitHub repository
 2. Import your project into Vercel

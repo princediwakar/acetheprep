@@ -34,12 +34,13 @@ function getCalibrationBadge(source: string) {
   }
 }
 
-const STORAGE_KEY = "gibbi_projection_hidden";
+const STORAGE_KEY = "acetheprep_projection_hidden";
+const LEGACY_STORAGE_KEY = "gibbi_projection_hidden";
 
 export function ProjectionHero({ prediction }: ProjectionHeroProps) {
   const [hidden, setHidden] = useState(() => {
     if (typeof window === "undefined") return false;
-    return localStorage.getItem(STORAGE_KEY) === "true";
+    return (localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY)) === "true";
   });
 
   const toggleHidden = useCallback(() => {

@@ -6,7 +6,7 @@ import { BarChart3, Brain } from "lucide-react";
 import { getInsightsExams } from "@/lib/insights-queries";
 
 export const metadata: Metadata = {
-  title: "Free Exam Insights & Statistics | GibbiAI",
+  title: "Free Exam Insights & Statistics | AceThePrep",
   description:
     "Data-driven exam prep insights. Discover the most failed concepts and hardest topics across major exams like JEE Main, NEET, UPSC, and more — powered by real practice data.",
 };
@@ -70,7 +70,7 @@ export default async function InsightsPage() {
           </h1>
           <p className="text-sm text-slate-400 max-w-lg mx-auto">
             Discover which topics students find most challenging across major
-            exams. Data is aggregated from real practice sessions on GibbiAI.
+            exams. Data is aggregated from real practice sessions on AceThePrep.
           </p>
         </div>
 
@@ -105,7 +105,7 @@ export default async function InsightsPage() {
         </div>
 
         <p className="text-xs text-slate-600 text-center mt-10">
-          Data refreshes as more students practice on GibbiAI. Only domains with
+          Data refreshes as more students practice on AceThePrep. Only domains with
           at least 10 attempts are included.
         </p>
       </div>

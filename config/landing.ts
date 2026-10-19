@@ -4,7 +4,7 @@ export const infos: InfoLdg[] = [
   {
     title: "Stop Studying What You Already Know",
     description:
-      "GibbiAI finds the gaps in your knowledge—so you walk in confident, not confused.",
+      "AceThePrep finds the gaps in your knowledge—so you walk in confident, not confused.",
     image: "/_static/illustrations/feature.png",
     list: [
       {
@@ -158,7 +158,7 @@ export const studentTestimonials: TestimonialType[] = [
     job: "College Freshman",
     image: "https://randomuser.me/api/portraits/men/15.jpg",
     review:
-      "Exams used to stress me out so bad, but GibbiAI lets me tweak the quizzes to match my pace. The timed tests? Total game-changer for my prep.",
+      "Exams used to stress me out so bad, but AceThePrep lets me tweak the quizzes to match my pace. The timed tests? Total game-changer for my prep.",
     location: "North Carolina, USA",
   },
   {
@@ -174,7 +174,7 @@ export const studentTestimonials: TestimonialType[] = [
     job: "Coding Bootcamp Student",
     image: "https://randomuser.me/api/portraits/men/28.jpg",
     review:
-      "Learning code was brutal until I started quizzing myself with GibbiAI. The questions push me just right, and I'm finally getting the hang of it.",
+      "Learning code was brutal until I started quizzing myself with AceThePrep. The questions push me just right, and I'm finally getting the hang of it.",
     location: "San Diego, US",
   },
   {
@@ -182,7 +182,7 @@ export const studentTestimonials: TestimonialType[] = [
     job: "University Senior",
     image: "https://randomuser.me/api/portraits/women/30.jpg",
     review:
-      "Cramming wasn't working, so I tried GibbiAI's timed quizzes. Now I'm way less panicked for exams—feels like I've got this under control.",
+      "Cramming wasn't working, so I tried AceThePrep's timed quizzes. Now I'm way less panicked for exams—feels like I've got this under control.",
     location: "Paris, France",
   },
   {
@@ -190,7 +190,7 @@ export const studentTestimonials: TestimonialType[] = [
     job: "High School Sophomore",
     image: "https://randomuser.me/api/portraits/men/33.jpg",
     review:
-      "I was drowning in bio homework, but GibbiAI made it chill. I quiz myself on the bus with the offline exports—super easy and I'm actually learning!",
+      "I was drowning in bio homework, but AceThePrep made it chill. I quiz myself on the bus with the offline exports—super easy and I'm actually learning!",
     location: "São Paulo, Brazil",
   },
   {
@@ -198,7 +198,7 @@ export const studentTestimonials: TestimonialType[] = [
     job: "High School Senior",
     image: "https://randomuser.me/api/portraits/women/35.jpg",
     review:
-      "GibbiAI has been a lifesaver for my AP classes. I can create quizzes from my notes in minutes and track my progress effortlessly.",
+      "AceThePrep has been a lifesaver for my AP classes. I can create quizzes from my notes in minutes and track my progress effortlessly.",
     location: "Chicago, USA",
   },
   {
@@ -206,7 +206,7 @@ export const studentTestimonials: TestimonialType[] = [
     job: "High School Junior",
     image: "https://randomuser.me/api/portraits/women/12.jpg",
     review:
-      "I was freaking out about finals, but GibbiAI saved me! I turned my messy notes into quizzes in like two seconds, and now I actually feel ready.",
+      "I was freaking out about finals, but AceThePrep saved me! I turned my messy notes into quizzes in like two seconds, and now I actually feel ready.",
     location: "Mumbai, India",
   },
   {
@@ -214,7 +214,7 @@ export const studentTestimonials: TestimonialType[] = [
     job: "University Junior",
     image: "https://randomuser.me/api/portraits/women/37.jpg",
     review:
-      "I love how GibbiAI helps me focus on my weak areas. The detailed results are incredibly helpful for improving my grades.",
+      "I love how AceThePrep helps me focus on my weak areas. The detailed results are incredibly helpful for improving my grades.",
     location: "Berlin, Germany",
   },
   {
@@ -222,7 +222,7 @@ export const studentTestimonials: TestimonialType[] = [
     job: "High School Junior",
     image: "https://randomuser.me/api/portraits/men/38.jpg",
     review:
-      "GibbiAI makes studying fun and efficient. I can create quizzes on any topic and share them with my friends for group study sessions.",
+      "AceThePrep makes studying fun and efficient. I can create quizzes on any topic and share them with my friends for group study sessions.",
     location: "London, UK",
   },
 ];

@@ -7,7 +7,7 @@ import type { ExamProfile } from "@/types/tutor";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Practice | GibbiAI",
+  title: "Practice | AceThePrep",
   description: "Starting your personalized AI-powered practice session",
 };
 

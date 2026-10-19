@@ -46,7 +46,7 @@ export default function CognitiveFlowSection() {
         <HeaderSection
           label="How It Works"
           title="Three steps. No all-nighters. No wasted effort."
-          subtitle="Traditional prep means solving 50 questions on a topic you already know. GibbiAI finds the gaps you don't see and fixes them permanently."
+          subtitle="Traditional prep means solving 50 questions on a topic you already know. AceThePrep finds the gaps you don't see and fixes them permanently."
         />
 
         <div className="relative mt-16">

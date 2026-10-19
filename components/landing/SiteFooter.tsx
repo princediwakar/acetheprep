@@ -9,9 +9,10 @@ export default function SiteFooter({ className }: React.HTMLAttributes<HTMLEleme
       title: "Platform",
       items: [
         { title: "Home", href: "/" },
-        { title: "Practice Tests", href: "/quizzes" },
+        { title: "Practice Questions", href: "/practice" },
+        { title: "Exam Insights", href: "/insights" },
+        { title: "Blog & Research", href: "/blog" },
         { title: "Feedback", href: "/feedback" },
-        { title: "Features", href: "#features" },
       ],
     },
     {
@@ -45,7 +46,7 @@ export default function SiteFooter({ className }: React.HTMLAttributes<HTMLEleme
           </div>
         ))}
           <div className="col-span-full md:col-span-2">
-            <h4 className="text-sm font-semibold text-foreground">GibbiAI</h4>
+            <h4 className="text-sm font-semibold text-foreground">AceThePrep</h4>
 <p className="mt-2 text-sm text-muted-foreground">
               The smart way to study. Turn any material into practice tests, master the material, ace your exams.
             </p>
@@ -54,7 +55,7 @@ export default function SiteFooter({ className }: React.HTMLAttributes<HTMLEleme
 
         <div className="flex flex-col items-center justify-between gap-4 border-t border-border py-6 sm:flex-row">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} GibbiAI. All rights reserved.
+            © {new Date().getFullYear()} AceThePrep. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             <ThemeToggle />

@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "History | GibbiAI",
+  title: "History | AceThePrep",
   description: "Review your past quiz results and track your progress over time",
 };
 

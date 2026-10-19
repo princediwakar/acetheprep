@@ -128,12 +128,12 @@ export default async function HardestTopicsPage({ params }: PageProps) {
   const datasetSchema = {
     "@context": "https://schema.org",
     "@type": "Dataset",
-    name: `${examName} Hardest Topics — GibbiAI`,
+    name: `${examName} Hardest Topics — AceThePrep`,
     description: `Ranked list of concept domains by student incorrect rate and average time spent for ${examName} exam preparation, based on real practice data.`,
-    creator: { "@type": "Organization", name: "GibbiAI" },
+    creator: { "@type": "Organization", name: "AceThePrep" },
   };
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://gibbi.vercel.app";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com";
 
   return (
     <div className="min-h-[calc(100vh-4rem)] px-4 py-8 sm:py-12">
@@ -264,7 +264,7 @@ export default async function HardestTopicsPage({ params }: PageProps) {
         </div>
 
         <p className="text-xs text-slate-600 text-center mt-8">
-          Data refreshes as more students practice on GibbiAI. Minimum threshold:
+          Data refreshes as more students practice on AceThePrep. Minimum threshold:
           10 attempts per domain.
         </p>
       </div>

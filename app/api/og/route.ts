@@ -33,7 +33,7 @@ const typeStyles: Record<
 			"linear-gradient(to bottom right, #0f172a, #1e293b)",
 		titleColor:
 			"linear-gradient(to right, #22c55e, #3b82f6)",
-		subtitle: "Practice with GibbiAI",
+		subtitle: "Practice with AceThePrep",
 	},
 	practice: {
 		backgroundImage:
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
 	const { searchParams } = new URL(request.url);
 
 	// Get parameters with fallbacks
-	const title = searchParams.get("title") || "GibbiAI";
+	const title = searchParams.get("title") || "AceThePrep";
 	const topic =
 		searchParams.get("topic") || "General Knowledge";
 	const type =
@@ -137,9 +137,9 @@ export async function GET(request: Request) {
 				type === "home"
 					? "Test Your Knowledge, Challenge Your Friends"
 					: type === "session"
-						? "Practice with GibbiAI"
+						? "Practice with AceThePrep"
 						: type === "practice"
-							? "GibbiAI"
+							? "AceThePrep"
 							: type === "insights"
 								? "Real Student Performance Data"
 								: "Test your knowledge now!"

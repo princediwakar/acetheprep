@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service - GibbiAI",
-  description: "Learn the rules and guidelines for using GibbiAI.",
+  title: "Terms of Service - AceThePrep",
+  description: "Learn the rules and guidelines for using AceThePrep.",
 };
 
 export default function TermsOfService() {
@@ -16,7 +16,7 @@ export default function TermsOfService() {
       <section>
         <h2 className="text-2xl font-semibold">1. Acceptance of Terms</h2>
         <p>
-          By accessing or using GibbiAI (`&quot;`the App`&quot;`), you agree to be bound by these Terms of Service
+          By accessing or using AceThePrep (`&quot;`the App`&quot;`), you agree to be bound by these Terms of Service
           (`&quot;`Terms`&quot;`). If you do not agree to these Terms, you may not use the App.
         </p>
       </section>
@@ -36,7 +36,7 @@ export default function TermsOfService() {
         <h2 className="text-2xl font-semibold">3. Intellectual Property</h2>
         <p>
           All content, features, and functionality of the App, including but not limited to text,
-          graphics, logos, and software, are the property of GibbiAI or its licensors and are
+          graphics, logos, and software, are the property of AceThePrep or its licensors and are
           protected by intellectual property laws.
         </p>
         <p>
@@ -49,7 +49,7 @@ export default function TermsOfService() {
         <h2 className="text-2xl font-semibold">4. User Content</h2>
         <p>
           You retain ownership of any content you create or upload to the App (`&quot;`User Content`&quot;`).
-          However, by submitting User Content, you grant GibbiAI a worldwide, non-exclusive,
+          However, by submitting User Content, you grant AceThePrep a worldwide, non-exclusive,
           royalty-free license to use, reproduce, and display your content for the purpose of
           operating and improving the App.
         </p>
@@ -73,7 +73,7 @@ export default function TermsOfService() {
       <section>
         <h2 className="text-2xl font-semibold">6. Limitation of Liability</h2>
         <p>
-          GibbiAI and its affiliates shall not be liable for any indirect, incidental, or
+          AceThePrep and its affiliates shall not be liable for any indirect, incidental, or
           consequential damages arising out of your use of the App. In no event shall our total
           liability exceed the amount you paid to use the App.
         </p>

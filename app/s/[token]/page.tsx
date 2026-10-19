@@ -54,7 +54,7 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { token } = await params;
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://gibbi.vercel.app";
+    process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com";
 
   try {
     const { data: card, error } = await supabaseAdmin
@@ -65,7 +65,7 @@ export async function generateMetadata({
 
     if (error || !card) {
       return {
-        title: "Card not found - GibbiAI",
+        title: "Card not found - AceThePrep",
         description: "This share link is invalid or has expired.",
       };
     }
@@ -85,11 +85,11 @@ export async function generateMetadata({
 
     let description: string;
     if (improvedCount > 0) {
-      description = `Improved in ${improvedCount} topics. Start your free prep on GibbiAI.`;
+      description = `Improved in ${improvedCount} topics. Start your free prep on AceThePrep.`;
     } else if (hardestDomain) {
-      description = `Scored ${score}/${total} on ${examName}. Practiced ${hardestDomain}. Start your free prep on GibbiAI.`;
+      description = `Scored ${score}/${total} on ${examName}. Practiced ${hardestDomain}. Start your free prep on AceThePrep.`;
     } else {
-      description = `Scored ${score}/${total}. Start your free prep on GibbiAI.`;
+      description = `Scored ${score}/${total}. Start your free prep on AceThePrep.`;
     }
 
     return {
@@ -101,7 +101,7 @@ export async function generateMetadata({
         url: `${baseUrl}/s/${token}`,
         images: [{ url: ogImageUrl, width: 1200, height: 630 }],
         type: "website",
-        siteName: "GibbiAI",
+        siteName: "AceThePrep",
       },
       twitter: {
         card: "summary_large_image",
@@ -112,8 +112,8 @@ export async function generateMetadata({
     };
   } catch {
     return {
-      title: "Share Card - GibbiAI",
-      description: "View practice session results on GibbiAI.",
+      title: "Share Card - AceThePrep",
+      description: "View practice session results on AceThePrep.",
     };
   }
 }
@@ -219,7 +219,7 @@ export default async function ShareCardPage({ params }: PageProps) {
   const masteredDomains = cd.mastered_domains ?? null;
 
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://gibbi.vercel.app";
+    process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com";
 
   const allDomains: string[] = [
     ...new Set([
@@ -439,7 +439,7 @@ export default async function ShareCardPage({ params }: PageProps) {
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <p className="text-xs text-slate-500 text-center">
-                Master your exam topics with AI-powered practice on GibbiAI
+                Master your exam topics with AI-powered practice on AceThePrep
               </p>
             </div>
           </div>
@@ -451,7 +451,7 @@ export default async function ShareCardPage({ params }: PageProps) {
             className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-400 transition-colors"
           >
             <Award className="w-4 h-4" />
-            <span>Powered by GibbiAI</span>
+            <span>Powered by AceThePrep</span>
           </Link>
         </div>
       </div>

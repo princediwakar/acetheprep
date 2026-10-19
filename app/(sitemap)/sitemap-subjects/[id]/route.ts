@@ -1,7 +1,7 @@
 // app/sitemap-subjects/[id]/route.ts
 import { createStaticClient } from '@/lib/supabase/static';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://gibbi.vercel.app';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://acetheprep.com';
 const subjectsPerSitemap = 50000;
 
 // Define the params type

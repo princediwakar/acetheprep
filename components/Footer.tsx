@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="border-t border-border mt-16 py-6">
       <div className="max-w-5xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="text-sm text-muted-foreground">
-          © {currentYear} GibbiAI. All rights reserved.
+          © {currentYear} AceThePrep. All rights reserved.
         </div>
         <nav className="flex flex-wrap gap-6 text-sm text-muted-foreground">
           <Link href="/" className="hover:text-primary transition-colors">
@@ -15,6 +15,12 @@ export default function Footer() {
           </Link>
           <Link href="/quizzes" className="hover:text-primary transition-colors">
             Public Quizzes
+          </Link>
+          <Link href="/practice" className="hover:text-primary transition-colors">
+            Practice
+          </Link>
+          <Link href="/blog" className="hover:text-primary transition-colors">
+            Blog & Research
           </Link>
           <Link href="/feedback" className="hover:text-primary transition-colors">
             Feedback

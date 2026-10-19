@@ -16,7 +16,7 @@ Do not hide your app behind a generic "Get Started" button, and do not use gener
 * *Upgraded:* **"You are studying 8 hours a day, but forgetting 70% of it by Sunday. Let’s fix your retention."**
 
 
-* **The Sub-headline:** "GibbiAI uses cognitive science and spaced repetition to perfectly time your reviews. No wasted effort. Just smart, focused preparation."
+* **The Sub-headline:** "AceThePrep uses cognitive science and spaced repetition to perfectly time your reviews. No wasted effort. Just smart, focused preparation."
 * **The Interactive Hero:** Place your `SetupForm` directly in the center of the screen.
 * *Dropdown:* Select Exam (JEE Main, NEET, etc.)
 * *Date Picker:* Target Date.
@@ -48,7 +48,7 @@ This positions your app not as a generic quiz bank, but as an elite, empathetic 
 
 Students are highly logical. Respect their intelligence by showing them exactly how your system balances their coaching center syllabus with their long-term memory needs. Break down the Dual-Engine architecture.
 
-| Traditional Practice | The GibbiAI Method |
+| Traditional Practice | The AceThePrep Method |
 | --- | --- |
 | **Linear Progression:** You solve 50 questions on one topic, move on, and slowly forget it over three weeks. | **Algorithmic Review:** We track your memory decay and schedule reviews the exact day you need them. |
 | **One-Size-Fits-All:** Everyone gets the same mock test, regardless of their unique weak spots. | **Personalized Baseline:** Your diagnostic seeds a custom Readiness Index, targeting exactly where you need to grow. |
@@ -81,6 +81,6 @@ To ensure Google and LLMs index this page perfectly, and to keep the student's c
 * **Schema Markup:** Inject `EducationalApp` and `SoftwareApplication` JSON-LD directly into the `<head>` so Google understands exactly what this page is.
 * **The Final CTA:** At the absolute bottom of the page, repeat the interactive exam selector. Do not make them scroll back up.
 
-By removing the aggressive phrasing and focusing on precision, memory retention, and intelligent design, you position GibbiAI as the ultimate, indispensable tool for a serious student. It becomes a calm harbor in the chaotic storm of their exam preparation.
+By removing the aggressive phrasing and focusing on precision, memory retention, and intelligent design, you position AceThePrep as the ultimate, indispensable tool for a serious student. It becomes a calm harbor in the chaotic storm of their exam preparation.
 
 Does this tone and structure align better with the brand identity you want to build for these students?

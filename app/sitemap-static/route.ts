@@ -1,5 +1,8 @@
-// File: app/sitemap-static/route.ts
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://gibbi.vercel.app';
+// Path: app/sitemap-static/route.ts
+
+import { siteConfig } from "@/config/site";
+
+const baseUrl = siteConfig.url;
 
 interface StaticRoute {
   url: string;
@@ -8,15 +11,14 @@ interface StaticRoute {
 }
 
 export async function GET() {
-  console.log('[sitemap-static] Generating static pages sitemap...');
-
   const routes: StaticRoute[] = [
-    { url: '' },           // Homepage
-    { url: '/quizzes' },
-    { url: '/feedback' },
-    { url: '/privacy' },
-    { url: '/terms' },
-    { url: '/insights', changeFrequency: 'weekly', priority: 0.8 },
+    { url: "", changeFrequency: "daily", priority: 1.0 }, // Homepage
+    { url: "/blog", changeFrequency: "daily", priority: 0.9 }, // Blog Index
+    { url: "/practice", changeFrequency: "daily", priority: 0.9 }, // Practice Portal
+    { url: "/insights", changeFrequency: "weekly", priority: 0.8 }, // Insights
+    { url: "/feedback", changeFrequency: "monthly", priority: 0.5 },
+    { url: "/privacy", changeFrequency: "yearly", priority: 0.3 },
+    { url: "/terms", changeFrequency: "yearly", priority: 0.3 },
   ];
 
   const lastModified = new Date().toISOString();
@@ -27,22 +29,19 @@ export async function GET() {
     .map((route) => {
       const changefreq = route.changeFrequency
         ? `<changefreq>${route.changeFrequency}</changefreq>`
-        : '';
-      const priority = route.priority !== undefined
-        ? `<priority>${route.priority}</priority>`
-        : '';
+        : "";
+      const priority =
+        route.priority !== undefined ? `<priority>${route.priority}</priority>` : "";
       return `<url><loc>${baseUrl}${route.url}</loc><lastmod>${lastModified}</lastmod>${changefreq}${priority}</url>`;
     })
-    .join('')}
+    .join("")}
 </urlset>`;
-
-  console.log(`[sitemap-static] Generated ${routes.length} static pages`);
 
   return new Response(xml, {
     status: 200,
     headers: {
-      'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600, s-maxage=3600",
     },
   });
 }

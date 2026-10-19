@@ -5,7 +5,7 @@ import { flattenQuizQuestions } from "@/lib/quiz-utils";
 import { Quiz } from "@/types/quiz";
 
 export const metadata = {
-  title: "Quiz Results | GibbiAI",
+  title: "Quiz Results | AceThePrep",
   description: "View your quiz results and performance",
 };
 

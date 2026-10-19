@@ -1,7 +1,8 @@
-// File: app/(sitemap)/sitemap-insights/[id]/route.ts
+// Path: app/(sitemap)/sitemap-insights/[id]/route.ts
 import taxonomyData from "@/lib/taxonomies.json";
+import { siteConfig } from "@/config/site";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://gibbi.vercel.app";
+const baseUrl = siteConfig.url;
 const entriesPerSitemap = 50000;
 
 type TaxonomyMap = Record<string, Record<string, string[]>>;
@@ -51,11 +52,8 @@ export async function GET(
   { params }: { params: Promise<RouteParams> },
 ) {
   const resolvedParams = await params;
-  console.log("[sitemap-insights] Request received for ID:", resolvedParams.id);
-
   const page = parseInt(resolvedParams.id) - 1;
   if (isNaN(page) || page < 0) {
-    console.error("[sitemap-insights] Invalid ID format:", resolvedParams.id);
     return new Response(
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>',
       {
@@ -64,8 +62,6 @@ export async function GET(
       },
     );
   }
-
-  console.log(`[sitemap-insights] Generating sitemap for insights page: ${page + 1}`);
 
   const allEntries = getAllInsightsEntries();
   const paginatedEntries = allEntries.slice(
@@ -83,7 +79,6 @@ export async function GET(
     .join("\n")}
 </urlset>`;
 
-  console.log(`[sitemap-insights] Generated ${paginatedEntries.length} entries`);
   return new Response(xml, {
     status: 200,
     headers: {

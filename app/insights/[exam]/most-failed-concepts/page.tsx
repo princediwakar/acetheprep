@@ -53,7 +53,7 @@ export async function generateMetadata({
   const top3 = concepts.slice(0, 3).map((c) => c.skill_domain).join(", ");
   return {
     title: `${examName} Most Failed Concepts`,
-    description: `Top failed concepts for ${examName}: ${top3}. Based on real practice data from GibbiAI students.`,
+    description: `Top failed concepts for ${examName}: ${top3}. Based on real practice data from AceThePrep students.`,
   };
 }
 
@@ -118,12 +118,12 @@ export default async function MostFailedConceptsPage({ params }: PageProps) {
   const datasetSchema = {
     "@context": "https://schema.org",
     "@type": "Dataset",
-    name: `${examName} Most Failed Concepts — GibbiAI`,
+    name: `${examName} Most Failed Concepts — AceThePrep`,
     description: `Ranked list of concept domains by student failure rate for ${examName} exam preparation, based on real practice data.`,
-    creator: { "@type": "Organization", name: "GibbiAI" },
+    creator: { "@type": "Organization", name: "AceThePrep" },
   } as const;
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://gibbi.vercel.app";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com";
 
   return (
     <div className="min-h-[calc(100vh-4rem)] px-4 py-8 sm:py-12">
@@ -240,7 +240,7 @@ export default async function MostFailedConceptsPage({ params }: PageProps) {
         </div>
 
         <p className="text-xs text-slate-600 text-center mt-8">
-          Data refreshes as more students practice on GibbiAI. Minimum threshold:
+          Data refreshes as more students practice on AceThePrep. Minimum threshold:
           10 attempts per domain.
         </p>
       </div>

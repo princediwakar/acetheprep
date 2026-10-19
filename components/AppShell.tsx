@@ -99,7 +99,7 @@ export function AppShell({ children, sidebarData }: { children: React.ReactNode;
         <div className="p-4 h-full flex flex-col">
           <div className="mb-6">
             <Link href="/" className="text-xl font-bold text-primary">
-              GibbiAI
+              AceThePrep
             </Link>
             {sidebarData && (
               <div className="mt-2">

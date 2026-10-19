@@ -184,7 +184,7 @@ export function getColdStartDisclaimer(sessionsCompleted: number, quietSessionsC
     : "";
 
   if (sessionsCompleted === 0) {
-    return "Your first prediction uses public NTA normalization data — it gets sharper the more you practice with Gibbi." + quietNote;
+    return "Your first prediction uses public NTA normalization data — it gets sharper the more you practice with AceThePrep." + quietNote;
   }
   if (sessionsCompleted < 5) {
     return `Prediction blends public NTA data with your ${sessionsCompleted} tracked session${sessionsCompleted > 1 ? "s" : ""}. Band sharpens with each session.` + quietNote;

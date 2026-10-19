@@ -1,10 +1,10 @@
 ---
 alwaysApply: true
 ---
-# GibbiAI - Quiz Creation Tool
+# AceThePrep - Quiz Creation Tool
 
 ## Overview
-GibbiAI is an AI-powered platform for effortless quiz creation, designed for educators, students, professionals, and marketers. The platform generates engaging, customizable quizzes tailored to specific needs and use cases.
+AceThePrep is an AI-powered platform for effortless quiz creation, designed for educators, students, professionals, and marketers. The platform generates engaging, customizable quizzes tailored to specific needs and use cases.
 
 ## Core Features
 - 🤖 **AI-Powered Generation**: Instant quiz creation from topics or prompts
@@ -208,7 +208,7 @@ Required variables:
 # Quiz Creation Tool
 
 ## Overview
-GibbiAI is a powerful, AI-driven platform designed for anyone looking to create quizzes effortlessly. Whether you're a student, teacher, business professional, or marketer, this tool helps you generate engaging quizzes tailored to your needs.
+AceThePrep is a powerful, AI-driven platform designed for anyone looking to create quizzes effortlessly. Whether you're a student, teacher, business professional, or marketer, this tool helps you generate engaging quizzes tailored to your needs.
 
 ## Key Features
 - **AI-Powered Quiz Generation**: Simply provide a topic or prompt, and the AI will generate a quiz instantly.
@@ -239,7 +239,7 @@ GibbiAI is a powerful, AI-driven platform designed for anyone looking to create 
 - Brands can boost audience engagement through interactive content.
 
 ## Get Started
-1. Visit GibbiAI (http://localhost:3000).
+1. Visit AceThePrep (http://localhost:3000).
 2. Sign up or log in.
 3. Start creating and sharing quizzes effortlessly!
 

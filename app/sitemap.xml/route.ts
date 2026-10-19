@@ -1,114 +1,38 @@
-// File: app/sitemap.xml/route.ts
-import { createStaticClient } from '@/lib/supabase/static';
+// Path: app/sitemap.xml/route.ts
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://gibbi.vercel.app';
-const quizzesPerSitemap = 50000;
-const subjectsPerSitemap = 50000;
+import { siteConfig } from "@/config/site";
 
-async function getQuizCount() {
-  try {
-    const supabase = createStaticClient();
-    const { error, count } = await supabase
-      .from('quiz_with_counts')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'ready');
-    if (error) throw error;
-    console.log(`[sitemap-index] Quiz count: ${count}`);
-    return count || 0;
-  } catch (error) {
-    console.error('[sitemap-index] Error fetching quiz count:', error instanceof Error ? error.message : 'Unknown error');
-    return 0;
-  }
-}
-
-async function getSubjectCount() {
-  try {
-    const supabase = createStaticClient();
-    const { data, error } = await supabase
-      .from('quiz_with_counts')
-      .select('subject')
-      .eq('status', 'ready');
-    if (error) throw error;
-    const uniqueSubjects = [...new Set(data.map((quiz) => quiz.subject))];
-    console.log(`[sitemap-index] Subject count: ${uniqueSubjects.length}`);
-    return uniqueSubjects.length;
-  } catch (error) {
-    console.error('[sitemap-index] Error fetching subjects:', error instanceof Error ? error.message : 'Unknown error');
-    return 0;
-  }
-}
+const baseUrl = siteConfig.url;
 
 export async function GET() {
-  console.log('[sitemap-index] Generating sitemap index...');
+  const lastModified = new Date().toISOString();
 
-  const totalQuizzes = await getQuizCount();
-  const totalSubjects = await getSubjectCount();
-  const totalQuizSitemaps = Math.ceil(totalQuizzes / quizzesPerSitemap);
-  const totalSubjectSitemaps = Math.ceil(totalSubjects / subjectsPerSitemap);
-
-  // Practice sitemaps: one sitemap for all domains from taxonomies.json
-  const practiceSitemaps = [{ id: 1 }];
-
-  // Insights sitemaps: one sitemap for all insights pages
-  const insightsSitemaps = [{ id: 1 }];
-
-  // Create sitemap index XML
+  // Create clean modular sitemap index XML
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
-
-  // UPDATED: Points to /sitemap-static (no .xml extension)
-  xml += `
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>${baseUrl}/sitemap-static</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
-  </sitemap>`;
-
-  // Add quiz sitemaps
-  for (let i = 1; i <= totalQuizSitemaps; i++) {
-    xml += `
+    <lastmod>${lastModified}</lastmod>
+  </sitemap>
   <sitemap>
-    <loc>${baseUrl}/sitemap-quizzes/${i}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
-  </sitemap>`;
-  }
-
-  // Add subject sitemaps
-  for (let i = 1; i <= totalSubjectSitemaps; i++) {
-    xml += `
+    <loc>${baseUrl}/sitemap-blog</loc>
+    <lastmod>${lastModified}</lastmod>
+  </sitemap>
   <sitemap>
-    <loc>${baseUrl}/sitemap-subjects/${i}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
-  </sitemap>`;
-  }
-
-  // Add practice sitemaps
-  for (const sitemap of practiceSitemaps) {
-    xml += `
+    <loc>${baseUrl}/sitemap-practice/1</loc>
+    <lastmod>${lastModified}</lastmod>
+  </sitemap>
   <sitemap>
-    <loc>${baseUrl}/sitemap-practice/${sitemap.id}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
-  </sitemap>`;
-  }
-
-  // Add insights sitemaps
-  for (const sitemap of insightsSitemaps) {
-    xml += `
-  <sitemap>
-    <loc>${baseUrl}/sitemap-insights/${sitemap.id}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
-  </sitemap>`;
-  }
-
-  xml += `
+    <loc>${baseUrl}/sitemap-insights/1</loc>
+    <lastmod>${lastModified}</lastmod>
+  </sitemap>
 </sitemapindex>`;
-
-  console.log(`[sitemap-index] Generated index with ${1 + totalQuizSitemaps + totalSubjectSitemaps + practiceSitemaps.length + insightsSitemaps.length} sitemaps`);
 
   return new Response(xml, {
     status: 200,
     headers: {
-      'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600, s-maxage=3600",
     },
   });
 }

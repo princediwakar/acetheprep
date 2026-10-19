@@ -139,7 +139,7 @@ export function SessionStartView({
               <p className="text-xs text-slate-500 text-center">
                 {sessionIntent === "tracked"
                   ? "Your projected percentile band will update after this session."
-                  : "This drill won't move your visible projection today, but it still helps Gibbi understand your baseline."}
+                  : "This drill won't move your visible projection today, but it still helps AceThePrep understand your baseline."}
               </p>
             </div>
           )}
