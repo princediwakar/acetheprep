@@ -191,6 +191,7 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
   }, [sessionId, examProfileId]);
 
   const handleBackToDashboard = useCallback(() => {
+    router.refresh();
     router.push(TUTOR_ROUTES.DASHBOARD);
   }, [router]);
 

@@ -223,14 +223,18 @@ export async function seedDiagnosticPriors(
     const finalScore = applyJitter(baseScore);
     finalScores[domain] = finalScore;
 
+    const domainQRs = questionResults.filter((qr) => qr.skill_domain === domain);
+    const domainAttempted = domainQRs.length;
+    const domainCorrect = domainQRs.filter((qr) => qr.is_correct).length;
+
     masteryRows.push({
       user_id: userId,
       exam_profile_id: examProfileId,
       skill_domain: domain,
       mastery_score: finalScore,
-      total_attempted: 0,
-      total_correct: 0,
-      streak: 0,
+      total_attempted: domainAttempted,
+      total_correct: domainCorrect,
+      streak: domainCorrect > 0 ? domainCorrect : 0,
       review_interval_days: TUTOR_CONFIG.SM2_DEFAULTS.initial_interval_days,
       review_ease_factor: TUTOR_CONFIG.SM2_DEFAULTS.initial_ease_factor,
       next_review_at: now,

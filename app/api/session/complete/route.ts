@@ -1,5 +1,6 @@
 // Path: app/api/session/complete/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { SessionCompleteSchema } from "@/lib/validations/tutor";
@@ -189,6 +190,9 @@ export async function POST(request: NextRequest) {
         .update({ status: "completed", completed_at: nowIso })
         .eq("id", session_id);
 
+      revalidatePath("/dashboard");
+      revalidatePath("/analytics");
+
       return NextResponse.json({
         mastery_updates: [],
         readiness_index: Math.round(readinessIndex),
@@ -235,6 +239,8 @@ export async function POST(request: NextRequest) {
       review_interval_days: number;
       review_ease_factor: number;
       streak: number;
+      total_attempted: number;
+      total_correct: number;
       last_seen_at: string;
       next_review_at: string;
     }> = [];
@@ -311,6 +317,12 @@ export async function POST(request: NextRequest) {
         recorded_at: nowIso,
       });
 
+      const domainQuestions = (questionResults || []).filter((qr) => qr.skill_domain === domain);
+      const sessionAttempted = domainQuestions.length;
+      const sessionCorrect = domainQuestions.filter((qr) => qr.is_correct).length;
+      const currentAttempted = existing?.total_attempted ?? 0;
+      const currentCorrect = existing?.total_correct ?? 0;
+
       conceptMasteryUpserts.push({
         user_id: user.id,
         exam_profile_id: session.exam_profile_id,
@@ -319,6 +331,8 @@ export async function POST(request: NextRequest) {
         review_interval_days: intervalDays,
         review_ease_factor: currentState.easeFactor,
         streak: currentState.streak,
+        total_attempted: currentAttempted + sessionAttempted,
+        total_correct: currentCorrect + sessionCorrect,
         last_seen_at: nowIso,
         next_review_at: nextReviewAt.toISOString(),
       });
@@ -334,12 +348,32 @@ export async function POST(request: NextRequest) {
       if (!domainResults.has(domain)) {
         const existing = masteryMap.get(domain);
         const score = existing?.mastery_score ?? 0.5;
+        const domainQuestions = (questionResults || []).filter((qr) => qr.skill_domain === domain);
+        const sessionAttempted = domainQuestions.length;
+        const sessionCorrect = domainQuestions.filter((qr) => qr.is_correct).length;
+        const currentAttempted = existing?.total_attempted ?? 0;
+        const currentCorrect = existing?.total_correct ?? 0;
+
         masteryHistoryRows.push({
           user_id: user.id,
           exam_profile_id: session.exam_profile_id,
           skill_domain: domain,
           mastery_score: score,
           recorded_at: nowIso,
+        });
+
+        conceptMasteryUpserts.push({
+          user_id: user.id,
+          exam_profile_id: session.exam_profile_id,
+          skill_domain: domain,
+          mastery_score: score,
+          review_interval_days: existing?.review_interval_days ?? SM2_DEFAULTS.initial_interval_days,
+          review_ease_factor: existing?.review_ease_factor ?? SM2_DEFAULTS.initial_ease_factor,
+          streak: existing?.streak ?? 0,
+          total_attempted: currentAttempted + sessionAttempted,
+          total_correct: currentCorrect + sessionCorrect,
+          last_seen_at: nowIso,
+          next_review_at: existing?.next_review_at ?? nowIso,
         });
       }
     }
@@ -539,6 +573,9 @@ export async function POST(request: NextRequest) {
     }
 
     const isQuiet = sessionIntent === "quiet";
+
+    revalidatePath("/dashboard");
+    revalidatePath("/analytics");
 
     return NextResponse.json({
       mastery_updates: masteryUpdates.map((u) => ({
