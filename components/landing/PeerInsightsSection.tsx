@@ -19,19 +19,19 @@ interface GaugeData {
 
 const gaugeData: GaugeData[] = [
   {
-    topic: "Rotational Mechanics",
-    value: 28,
+    topic: "Rotational Mechanics (Most Tricky)",
+    value: 22,
     colorClass: "text-destructive",
     strokeColor: "hsl(var(--destructive))",
   },
   {
-    topic: "Thermodynamics",
+    topic: "Thermodynamics (Traps Common)",
     value: 54,
     colorClass: "text-amber-500",
     strokeColor: "#f59e0b",
   },
   {
-    topic: "Reading Comprehension",
+    topic: "Modern Physics (Most Mastered)",
     value: 89,
     colorClass: "text-emerald-500",
     strokeColor: "#10b981",

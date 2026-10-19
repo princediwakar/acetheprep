@@ -278,10 +278,10 @@ export default function InteractiveDemoHero() {
               className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl"
               variants={fadeSlideUp}
             >
-              Stop re-reading. Start retaining.
+              You are studying 8 hours a day, but forgetting 70% of it by Sunday.
               <br />
               <span className="text-primary">
-                See how AceThePrep spots your mistakes before you make them.
+                Let&apos;s fix your retention.
               </span>
             </motion.h1>
 
@@ -289,8 +289,7 @@ export default function InteractiveDemoHero() {
               className="text-base text-muted-foreground sm:text-lg leading-relaxed"
               variants={fadeSlideUp}
             >
-              Pick your exam. Answer one question. We&apos;ll show you exactly which
-              misconception trips you up — and how to fix it for good.
+              AceThePrep uses cognitive science and spaced repetition to perfectly time your reviews. No wasted effort. Just smart, focused preparation.
             </motion.p>
           </motion.div>
 
@@ -505,7 +504,7 @@ export default function InteractiveDemoHero() {
                               </span>
                             ) : (
                               <>
-                                Start Your 5-Question {exam} Assessment
+                                Take Your 5-Question {exam} Diagnostic
                                 <ChevronRight className="ml-1 h-4 w-4" />
                               </>
                             )}

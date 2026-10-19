@@ -10,15 +10,15 @@ import { useMobile } from "@/hooks/useMobile";
 import { XCircle, CheckCircle2 } from "lucide-react";
 
 const oldWayBullets = [
-  "Blindly solving 100 questions hoping something sticks.",
-  "Re-reading highlighted notes, unsure what actually matters.",
-  "Forgetting last month's chapters when you need them most.",
+  "Linear Progression: Solve 50 questions on one topic, move on, and slowly forget 70% over three weeks.",
+  "One-Size-Fits-All: Everyone gets the same mock test, regardless of their unique hidden weak spots.",
+  "Rigid Schedules: Impossible to adapt your review to match what your teacher taught in class today.",
 ];
 
 const aceWayBullets = [
-  "Solving 15 hyper-targeted questions that close your exact gaps.",
-  "Learning from precise mistake analysis — every wrong answer teaches you why.",
-  "Automated spaced-repetition reviews at the perfect moment.",
+  "Algorithmic Review: We track your memory decay curve and schedule reviews the exact day you need them.",
+  "Personalized Baseline: Your 5-question diagnostic seeds a custom Readiness Index, targeting exactly where you need to grow.",
+  "Active Targets: Pin the exact topic you learned in class today and instantly generate a focused practice session.",
 ];
 
 export default function ReliefComparisonSection() {

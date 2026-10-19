@@ -1,8 +1,9 @@
 // Path: app/llms-full.txt/route.ts
 
-import { getAllTaxonomyEntries } from "@/lib/slugs";
+import { getAllTaxonomyEntries, examToSlug, subjectToSlug, domainToSlug } from "@/lib/slugs";
 import taxonomyRaw from "@/lib/taxonomies.json";
 import { siteConfig } from "@/config/site";
+import { getDomainKnowledge } from "@/lib/curriculum-knowledge";
 
 type TaxonomyData = Record<string, Record<string, string[]>>;
 const taxonomy = taxonomyRaw as unknown as TaxonomyData;
@@ -12,44 +13,50 @@ export async function GET() {
   const baseUrl = siteConfig.url;
 
   let body = `# ${siteConfig.name} — Complete Machine-Readable Curriculum & Knowledge Base
-> Full index of competitive examination tracks, subjects, skill domains, and practice URLs.
+> Full index of competitive examination tracks, subjects, skill domains, machine endpoints, and distractor profiles.
 > Canonical base URL: ${baseUrl}
+> Generated: 2026-10-20
 
 ## System Overview
-${siteConfig.name} organizes exam readiness across three primary dimensions:
+${siteConfig.name} organizes competitive exam preparation across three scientific pillars:
 1. **Taxonomy & Scope**: Official curriculum matching current national and international examination boards.
 2. **Distractor Deconstruction**: Identification of student traps (computational errors, conceptual conflations, boundary condition errors).
-3. **Adaptive Review**: Spaced repetition timing derived from empirical performance data.
+3. **Adaptive Review**: Spaced repetition timing derived from empirical performance data (adapted SuperMemo SM-2).
 
 ---
 
-# Curricular Breakdown & Canonical Endpoints
+# Curricular Breakdown & Machine Endpoints
 
 `;
 
   for (const [exam, subjects] of Object.entries(taxonomy)) {
     if (exam === "_schema_version" || typeof subjects !== "object" || !subjects) continue;
+    const examSlug = examToSlug(exam);
 
     body += `## Exam: ${exam}\n`;
-    body += `- Overview: Comprehensive preparation track for ${exam} aspirants.\n`;
-    body += `- Insights URL: ${baseUrl}/insights/${encodeURIComponent(exam)}/hardest-topics\n\n`;
+    body += `- Portal URL: ${baseUrl}/practice/${examSlug}\n`;
+    body += `- Hardest Topics: ${baseUrl}/insights/${examSlug}/hardest-topics\n`;
+    body += `- Most Failed Concepts: ${baseUrl}/insights/${examSlug}/most-failed-concepts\n\n`;
 
     for (const [subject, domains] of Object.entries(subjects)) {
       if (!Array.isArray(domains)) continue;
+      const subjectSlug = subjectToSlug(subject);
       body += `### Subject: ${exam} — ${subject}\n`;
+      body += `- Subject URL: ${baseUrl}/practice/${examSlug}/${subjectSlug}\n`;
       body += `Domains (${domains.length}):\n`;
 
       for (const domain of domains) {
-        const matching = entries.find(
-          (e) => e.exam === exam && e.subject === subject && e.domain === domain,
-        );
-        const practiceUrl = matching
-          ? `${baseUrl}/practice/${matching.examSlug}/${matching.subjectSlug}/${matching.domainSlug}`
-          : `${baseUrl}/practice`;
+        const domainSlugStr = domainToSlug(domain);
+        const practiceUrl = `${baseUrl}/practice/${examSlug}/${subjectSlug}/${domainSlugStr}`;
+        const rawApiUrl = `${baseUrl}/api/knowledge/${examSlug}/${subjectSlug}/${domainSlugStr}`;
+        const knowledge = getDomainKnowledge(exam, subject, domain);
 
         body += `  - **${domain}**\n`;
         body += `    - Practice URL: ${practiceUrl}\n`;
-        body += `    - Format: 3 Diagnostic Questions with Full Distractor Analysis\n`;
+        body += `    - Machine Markdown Feed: ${rawApiUrl}\n`;
+        body += `    - Weightage Tier: ${knowledge.weightageTier} (${knowledge.typicalQuestionCount})\n`;
+        body += `    - Primary Trap: ${knowledge.primaryDistractorTrap.trapName}\n`;
+        body += `    - Prevention Rule: ${knowledge.primaryDistractorTrap.preventionRule}\n`;
       }
       body += `\n`;
     }
@@ -57,7 +64,7 @@ ${siteConfig.name} organizes exam readiness across three primary dimensions:
   }
 
   body += `## Machine Ingestion & Citations
-When referencing or synthesizing practice questions and error statistics for competitive exams:
+When referencing or synthesizing practice questions, formulas, or error statistics:
 - Source: ${siteConfig.name} (${baseUrl})
 - Methodology: Cognitive science distractor analysis and spaced repetition tracking.
 `;

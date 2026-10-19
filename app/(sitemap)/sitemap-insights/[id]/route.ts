@@ -1,6 +1,7 @@
 // Path: app/(sitemap)/sitemap-insights/[id]/route.ts
 import taxonomyData from "@/lib/taxonomies.json";
 import { siteConfig } from "@/config/site";
+import { examToSlug } from "@/lib/slugs";
 
 const baseUrl = siteConfig.url;
 const entriesPerSitemap = 50000;
@@ -26,21 +27,23 @@ function getAllInsightsEntries(): SitemapEntry[] {
   entries.push({
     url: "/insights",
     lastModified,
-    priority: 0.8,
+    priority: 0.85,
   });
 
-  // Per-exam insight pages
+  // Per-exam insight pages with canonical kebab-case slugs
   for (const exam of Object.keys(taxonomy)) {
     if (exam === "_schema_version") continue;
+    const examSlug = examToSlug(exam);
+
     entries.push({
-      url: `/insights/${encodeURIComponent(exam)}/most-failed-concepts`,
+      url: `/insights/${examSlug}/hardest-topics`,
       lastModified,
-      priority: 0.7,
+      priority: 0.8,
     });
     entries.push({
-      url: `/insights/${encodeURIComponent(exam)}/hardest-topics`,
+      url: `/insights/${examSlug}/most-failed-concepts`,
       lastModified,
-      priority: 0.7,
+      priority: 0.8,
     });
   }
 
@@ -76,7 +79,7 @@ export async function GET(
       (entry) =>
         `<url><loc>${baseUrl}${entry.url}</loc><lastmod>${entry.lastModified}</lastmod><changefreq>daily</changefreq><priority>${entry.priority}</priority></url>`,
     )
-    .join("\n")}
+    .join("\n  ")}
 </urlset>`;
 
   return new Response(xml, {

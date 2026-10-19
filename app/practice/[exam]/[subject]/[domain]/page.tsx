@@ -22,6 +22,16 @@ import {
 import { siteConfig } from "@/config/site";
 import taxonomyRaw from "@/lib/taxonomies.json";
 import demoQuestionsRaw from "@/lib/demo-questions.json";
+import { getDomainKnowledge } from "@/lib/curriculum-knowledge";
+import {
+  BookOpen,
+  AlertTriangle,
+  Lightbulb,
+  CheckCircle2,
+  TrendingUp,
+  ArrowRight,
+  ShieldAlert,
+} from "lucide-react";
 
 // ---- Types ----
 
@@ -47,7 +57,9 @@ export async function generateStaticParams() {
 
 // ---- generateMetadata ----
 
-export async function generateMetadata({ params }: PracticePageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PracticePageProps): Promise<Metadata> {
   const { exam, subject, domain } = await params;
   const resolution = resolvePracticeParams(exam, subject, domain);
 
@@ -56,14 +68,18 @@ export async function generateMetadata({ params }: PracticePageProps): Promise<M
   const domainName = resolution.canonicalDomain;
 
   const title = `${domainName} Practice Questions for ${examName} | ${siteConfig.name}`;
-  const description = `Free ${domainName} practice questions for ${examName} ${subjectName}. AI-generated questions with detailed explanations and distractor analysis. Test your knowledge now.`;
+  const description = `Free ${domainName} practice questions for ${examName} ${subjectName}. AI-generated diagnostic questions with cognitive-science distractor analysis. Test your retention now.`;
   const canonicalUrl = `${baseUrl}${resolution.canonicalPath}`;
+  const markdownUrl = `${baseUrl}/api/knowledge/${examToSlug(examName)}/${subjectToSlug(subjectName)}/${domainToSlug(domainName)}`;
 
   return {
     title,
     description,
     alternates: {
       canonical: canonicalUrl,
+      types: {
+        "text/markdown": markdownUrl,
+      },
     },
     openGraph: {
       title,
@@ -86,6 +102,8 @@ export async function generateMetadata({ params }: PracticePageProps): Promise<M
       "distractor analysis",
       "AI-generated questions",
       `${examName} preparation`,
+      `${domainName} notes`,
+      `${domainName} formulas`,
     ],
   };
 }
@@ -106,7 +124,6 @@ export default async function PracticePage({ params }: PracticePageProps) {
   const domainName = resolution.canonicalDomain;
 
   let row: PracticeRow | null = null;
-  let fetchError: string | null = null;
 
   try {
     const { data, error } = await supabaseAdmin
@@ -117,27 +134,28 @@ export default async function PracticePage({ params }: PracticePageProps) {
       .eq("domain", domainName)
       .single();
 
-    if (error) {
-      fetchError = error.message;
-    } else if (data) {
+    if (!error && data) {
       row = data as unknown as PracticeRow;
     }
-  } catch (err) {
-    fetchError = err instanceof Error ? err.message : "Failed to load practice questions";
+  } catch {
+    // Graceful fallback to verified curriculum below
+  }
+
+  const taxonomyMap = taxonomyRaw as unknown as Record<
+    string,
+    Record<string, string[]>
+  >;
+  const isCurriculumDomain =
+    taxonomyMap[examName]?.[subjectName]?.includes(domainName);
+
+  if (!isCurriculumDomain) {
+    notFound();
   }
 
   let questions: Question[] = [];
   if (row && Array.isArray(row.questions_json) && row.questions_json.length > 0) {
     questions = row.questions_json;
   } else {
-    // Check if this domain is a valid member of the official curriculum
-    const taxonomyMap = taxonomyRaw as unknown as Record<string, Record<string, string[]>>;
-    const isCurriculumDomain = taxonomyMap[examName]?.[subjectName]?.includes(domainName);
-
-    if (!isCurriculumDomain) {
-      notFound();
-    }
-
     // Gracefully seed from verified demo questions so search engines & students never hit a dead-end
     const demoMap = demoQuestionsRaw as unknown as {
       exams: Record<string, { question: Question }>;
@@ -149,7 +167,7 @@ export default async function PracticePage({ params }: PracticePageProps) {
         {
           ...sampleQuestion,
           skill_domain: domainName,
-          topics: [domainName],
+          topics: [domainName, subjectName],
         },
       ];
     } else {
@@ -161,13 +179,27 @@ export default async function PracticePage({ params }: PracticePageProps) {
   const subjectSlug = subjectToSlug(subjectName);
   const domainSlug = domainToSlug(domainName);
 
+  // Get rich curriculum domain knowledge & FAQs
+  const knowledge = getDomainKnowledge(examName, subjectName, domainName);
+
+  // Get other sibling domains in this subject for topological internal linking
+  const siblingDomains = (taxonomyMap[examName]?.[subjectName] || []).filter(
+    (d) => d !== domainName,
+  );
+
   // Build breadcrumb items with clean canonical URLs
   const breadcrumbItems = [
     { name: "Home", url: baseUrl },
     { name: "Practice", url: `${baseUrl}/practice` },
     { name: examName, url: `${baseUrl}/practice/${examSlug}` },
-    { name: subjectName, url: `${baseUrl}/practice/${examSlug}/${subjectSlug}` },
-    { name: domainName, url: `${baseUrl}/practice/${examSlug}/${subjectSlug}/${domainSlug}` },
+    {
+      name: subjectName,
+      url: `${baseUrl}/practice/${examSlug}/${subjectSlug}`,
+    },
+    {
+      name: domainName,
+      url: `${baseUrl}/practice/${examSlug}/${subjectSlug}/${domainSlug}`,
+    },
   ];
 
   // Build structured data schemas
@@ -175,12 +207,15 @@ export default async function PracticePage({ params }: PracticePageProps) {
     "@context": "https://schema.org",
     "@type": "Quiz",
     name: `${domainName} Practice Questions - ${examName}`,
-    description: `Free ${domainName} practice questions for ${examName} ${subjectName}. AI-generated with detailed explanations and distractor deconstruction.`,
+    description: `Free ${domainName} practice questions for ${examName} ${subjectName}. Cognitive-science distractor analysis explains why specific wrong answers are chosen.`,
     educationalLevel: examName,
     about: { "@type": "Thing", name: domainName },
     hasPart: questions.map((q) => ({
       "@type": "Question",
-      name: q.question_text.length > 110 ? q.question_text.slice(0, 107) + "..." : q.question_text,
+      name:
+        q.question_text.length > 110
+          ? q.question_text.slice(0, 107) + "..."
+          : q.question_text,
       suggestedAnswer: Object.entries(q.options).map(([label, text]) => ({
         "@type": "Answer",
         text: `${label}) ${text}`,
@@ -192,39 +227,49 @@ export default async function PracticePage({ params }: PracticePageProps) {
     })),
   } as WithContext<any>;
 
-  const faqs = [
-    {
-      question: `What are the most common mistakes in ${domainName} for ${examName}?`,
-      answer: `Students commonly struggle with subtle distractor traps such as algebraic sign inversions, unit mismatches, and boundary condition misinterpretations. ${siteConfig.name}'s distractor analysis engine breaks down each trap option.`,
+  const courseSchema = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: `${examName} ${subjectName}: ${domainName}`,
+    description: `Curriculum-verified diagnostic module and spaced repetition drills for ${domainName} in ${examName}.`,
+    provider: {
+      "@type": "Organization",
+      name: siteConfig.name,
+      sameAs: siteConfig.url,
     },
-    {
-      question: `Are these ${domainName} practice questions free?`,
-      answer: `Yes, all ${domainName} practice questions and detailed distractor explanations on ${siteConfig.name} are 100% free with no sign-up or credit card required.`,
-    },
-  ];
+    educationalLevel: examName,
+  };
 
   return (
     <>
-      <StructuredData schema={breadcrumbSchema(breadcrumbItems) as WithContext<any>} />
+      <StructuredData
+        schema={breadcrumbSchema(breadcrumbItems) as WithContext<any>}
+      />
       <StructuredData schema={quizSchema} />
-      <StructuredData schema={faqPageSchema(faqs) as WithContext<any>} />
+      <StructuredData schema={courseSchema as WithContext<any>} />
+      <StructuredData
+        schema={faqPageSchema(knowledge.faqs) as WithContext<any>}
+      />
 
-      <div className="mx-auto max-w-3xl px-4 py-8">
+      <div className="mx-auto max-w-4xl px-4 py-8">
         {/* Breadcrumb navigation */}
         <nav aria-label="Breadcrumb" className="mb-6">
-          <ol className="flex flex-wrap items-center gap-1 text-sm text-slate-500 dark:text-slate-400">
+          <ol className="flex flex-wrap items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
             <li>
               <Link href="/" className="hover:text-primary transition-colors">
                 Home
               </Link>
             </li>
-            <li className="select-none">/</li>
+            <li className="select-none text-slate-400">/</li>
             <li>
-              <Link href="/practice" className="hover:text-primary transition-colors">
+              <Link
+                href="/practice"
+                className="hover:text-primary transition-colors"
+              >
                 Practice
               </Link>
             </li>
-            <li className="select-none">/</li>
+            <li className="select-none text-slate-400">/</li>
             <li>
               <Link
                 href={`/practice/${examSlug}`}
@@ -233,7 +278,7 @@ export default async function PracticePage({ params }: PracticePageProps) {
                 {examName}
               </Link>
             </li>
-            <li className="select-none">/</li>
+            <li className="select-none text-slate-400">/</li>
             <li>
               <Link
                 href={`/practice/${examSlug}/${subjectSlug}`}
@@ -242,8 +287,8 @@ export default async function PracticePage({ params }: PracticePageProps) {
                 {subjectName}
               </Link>
             </li>
-            <li className="select-none">/</li>
-            <li className="font-medium text-primary">
+            <li className="select-none text-slate-400">/</li>
+            <li className="font-semibold text-primary truncate max-w-[200px] sm:max-w-none">
               {domainName}
             </li>
           </ol>
@@ -251,34 +296,159 @@ export default async function PracticePage({ params }: PracticePageProps) {
 
         {/* Page heading */}
         <div className="mb-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary mb-3">
-            <span>Verified Curriculum</span>
-            <span>•</span>
-            <span>{examName}</span>
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-0.5 text-xs font-semibold text-primary">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              Verified Syllabus
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-0.5 text-xs font-semibold text-amber-500">
+              <TrendingUp className="h-3.5 w-3.5" />
+              {knowledge.weightageTier}
+            </span>
+            <span className="text-xs text-muted-foreground font-medium">
+              {knowledge.typicalQuestionCount}
+            </span>
           </div>
-          <h1 className="mb-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
-            {domainName} Practice Questions
+
+          <h1 className="mb-3 text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
+            {domainName} Practice Questions & Distractor Traps
           </h1>
-          <p className="text-base text-slate-500 dark:text-slate-400 leading-relaxed">
-            Authentic {examName} ({subjectName}) practice problems. Each question includes real-time distractor analysis identifying the exact student misconception behind every wrong choice.
+          <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl">
+            Authentic {examName} ({subjectName}) practice problems. Each
+            question includes real-time distractor analysis identifying the
+            exact student misconception behind every wrong choice.
           </p>
         </div>
 
-        {/* Questions */}
-        <div className="space-y-6">
-          {questions.map((q, idx) => (
-            <PracticeQuestion key={idx} question={q} index={idx} />
-          ))}
+        {/* Core Principles & Formula Card (High Informational Entropy) */}
+        <div className="mb-8 rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
+          <div className="flex items-center gap-2.5 mb-4 text-foreground font-semibold text-base">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <BookOpen className="h-4 w-4" />
+            </div>
+            <span>Core Principles & High-Yield Heuristics</span>
+          </div>
+          <ul className="space-y-2.5 text-sm text-muted-foreground leading-relaxed">
+            {knowledge.corePrinciples.map((principle, idx) => (
+              <li key={idx} className="flex items-start gap-2.5">
+                <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground mt-0.5">
+                  {idx + 1}
+                </span>
+                <span>{principle}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Primary Distractor Trap Card */}
+        <div className="mb-8 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-6">
+          <div className="flex items-center gap-2.5 mb-3 text-amber-600 dark:text-amber-400 font-semibold text-base">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400">
+              <AlertTriangle className="h-4 w-4" />
+            </div>
+            <span>#1 Distractor Trap: {knowledge.primaryDistractorTrap.trapName}</span>
+          </div>
+          <p className="text-sm text-foreground/90 leading-relaxed mb-3">
+            {knowledge.primaryDistractorTrap.description}
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2 pt-2 border-t border-amber-500/20 text-xs">
+            <div>
+              <span className="font-semibold text-amber-600 dark:text-amber-400">Why Students Fail:</span>
+              <p className="mt-0.5 text-muted-foreground leading-normal">
+                {knowledge.primaryDistractorTrap.whyStudentsFail}
+              </p>
+            </div>
+            <div>
+              <span className="font-semibold text-emerald-600 dark:text-emerald-400">Prevention Rule:</span>
+              <p className="mt-0.5 text-muted-foreground leading-normal">
+                {knowledge.primaryDistractorTrap.preventionRule}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Interactive Questions Section */}
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-foreground">
+              Diagnostic Question & Distractor Deconstruction
+            </h2>
+            <span className="text-xs text-muted-foreground font-medium">
+              Interactive Mode
+            </span>
+          </div>
+          <div className="space-y-6">
+            {questions.map((q, idx) => (
+              <PracticeQuestion key={idx} question={q} index={idx} />
+            ))}
+          </div>
+        </div>
+
+        {/* Topological Cross-Links: Related Domains in Subject */}
+        {siblingDomains.length > 0 && (
+          <div className="mb-10 rounded-2xl border border-border bg-card/60 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-foreground">
+                More {subjectName} Topics for {examName}
+              </h3>
+              <Link
+                href={`/practice/${examSlug}/${subjectSlug}`}
+                className="text-xs font-medium text-primary hover:underline flex items-center gap-1"
+              >
+                View all {siblingDomains.length + 1} topics
+                <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {siblingDomains.slice(0, 8).map((sibling) => (
+                <Link
+                  key={sibling}
+                  href={`/practice/${examSlug}/${subjectSlug}/${domainToSlug(sibling)}`}
+                  className="rounded-lg border border-border/70 bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-primary/40 hover:text-foreground transition-all"
+                >
+                  {sibling}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Deep Link to Telemetry & Hardest Topics */}
+        <div className="mb-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-primary/20 bg-primary/5 p-5">
+          <div>
+            <h4 className="text-sm font-semibold text-foreground">
+              See Where {examName} Aspirants Struggle Most
+            </h4>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Review live failure percentiles, time-spent telemetry, and mistake frequency across all {examName} domains.
+            </p>
+          </div>
+          <Link
+            href={`/insights/${examSlug}/hardest-topics`}
+            className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-all"
+          >
+            View {examName} Insights
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
 
         {/* FAQ Section for SEO / GEO Rich Snippets */}
-        <div className="mt-12 rounded-2xl border border-border bg-card p-6">
-          <h3 className="text-lg font-bold text-foreground mb-4">Frequently Asked Questions</h3>
+        <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+          <h3 className="text-lg font-bold text-foreground mb-4">
+            Frequently Asked Questions about {domainName} ({examName})
+          </h3>
           <div className="space-y-4">
-            {faqs.map((faq, i) => (
-              <div key={i} className="border-t border-border/50 pt-3 first:border-none first:pt-0">
-                <h4 className="font-medium text-sm text-foreground">{faq.question}</h4>
-                <p className="mt-1 text-sm text-muted-foreground">{faq.answer}</p>
+            {knowledge.faqs.map((faq, i) => (
+              <div
+                key={i}
+                className="border-t border-border/50 pt-4 first:border-none first:pt-0"
+              >
+                <h4 className="font-semibold text-sm text-foreground">
+                  {faq.question}
+                </h4>
+                <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                  {faq.answer}
+                </p>
               </div>
             ))}
           </div>

@@ -1,13 +1,20 @@
 // Path: app/(sitemap)/sitemap-practice/[id]/route.ts
 
-import { getAllTaxonomyEntries } from "@/lib/slugs";
+import { getAllTaxonomyEntries, examToSlug, subjectToSlug } from "@/lib/slugs";
 import { siteConfig } from "@/config/site";
+import taxonomyRaw from "@/lib/taxonomies.json";
 
 const baseUrl = siteConfig.url;
 const entriesPerSitemap = 50000;
 
 interface RouteParams {
   id: string;
+}
+
+interface PracticeSitemapUrl {
+  loc: string;
+  priority: number;
+  changefreq: string;
 }
 
 export async function GET(
@@ -27,8 +34,57 @@ export async function GET(
     );
   }
 
-  const allEntries = getAllTaxonomyEntries();
-  const paginatedEntries = allEntries.slice(
+  const allUrls: PracticeSitemapUrl[] = [];
+
+  // 1. Root Practice Portal
+  allUrls.push({
+    loc: `${baseUrl}/practice`,
+    priority: 0.9,
+    changefreq: "daily",
+  });
+
+  const taxonomy = taxonomyRaw as unknown as Record<
+    string,
+    Record<string, string[]>
+  >;
+
+  // 2. Exam Hubs and Subject Directories
+  for (const [exam, subjects] of Object.entries(taxonomy)) {
+    if (exam === "_schema_version" || typeof subjects !== "object" || !subjects)
+      continue;
+    const examSlug = examToSlug(exam);
+
+    // Exam Portal
+    allUrls.push({
+      loc: `${baseUrl}/practice/${examSlug}`,
+      priority: 0.85,
+      changefreq: "daily",
+    });
+
+    for (const [subject, domains] of Object.entries(subjects)) {
+      if (!Array.isArray(domains)) continue;
+      const subjectSlug = subjectToSlug(subject);
+
+      // Subject Directory
+      allUrls.push({
+        loc: `${baseUrl}/practice/${examSlug}/${subjectSlug}`,
+        priority: 0.8,
+        changefreq: "weekly",
+      });
+    }
+  }
+
+  // 3. Domain Leaf Pages
+  const entries = getAllTaxonomyEntries();
+  for (const entry of entries) {
+    allUrls.push({
+      loc: `${baseUrl}/practice/${entry.examSlug}/${entry.subjectSlug}/${entry.domainSlug}`,
+      priority: 0.8,
+      changefreq: "weekly",
+    });
+  }
+
+  const paginatedUrls = allUrls.slice(
     page * entriesPerSitemap,
     (page + 1) * entriesPerSitemap,
   );
@@ -37,12 +93,12 @@ export async function GET(
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${paginatedEntries
+  ${paginatedUrls
     .map(
-      (entry) =>
-        `<url><loc>${baseUrl}/practice/${entry.examSlug}/${entry.subjectSlug}/${entry.domainSlug}</loc><lastmod>${lastModified}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
+      (item) =>
+        `<url><loc>${item.loc}</loc><lastmod>${lastModified}</lastmod><changefreq>${item.changefreq}</changefreq><priority>${item.priority}</priority></url>`,
     )
-    .join("\n")}
+    .join("\n  ")}
 </urlset>`;
 
   return new Response(xml, {

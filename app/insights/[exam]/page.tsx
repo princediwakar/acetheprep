@@ -1,6 +1,7 @@
 // Path: app/insights/[exam]/page.tsx
 
-import { redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
+import { examToSlug, slugToExam } from "@/lib/slugs";
 
 interface PageProps {
   params: Promise<{ exam: string }>;
@@ -8,5 +9,8 @@ interface PageProps {
 
 export default async function ExamInsightsRedirectPage({ params }: PageProps) {
   const { exam } = await params;
-  redirect(`/insights/${encodeURIComponent(exam)}/hardest-topics`);
+  const decoded = decodeURIComponent(exam).trim();
+  const canonicalExam = slugToExam(decoded) || decoded;
+  const slug = examToSlug(canonicalExam);
+  permanentRedirect(`/insights/${slug}/hardest-topics`);
 }

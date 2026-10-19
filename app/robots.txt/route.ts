@@ -18,6 +18,9 @@ Allow: /feedback
 Allow: /privacy
 Allow: /terms
 Allow: /api/og
+Allow: /api/knowledge/
+Allow: /llms.txt
+Allow: /llms-full.txt
 Disallow: /dashboard/
 Disallow: /session/
 Disallow: /setup
@@ -31,6 +34,7 @@ Allow: /
 Allow: /practice/
 Allow: /insights/
 Allow: /blog/
+Allow: /api/knowledge/
 Allow: /llms.txt
 Allow: /llms-full.txt
 Disallow: /dashboard/
@@ -42,6 +46,7 @@ Allow: /
 Allow: /practice/
 Allow: /insights/
 Allow: /blog/
+Allow: /api/knowledge/
 Allow: /llms.txt
 Allow: /llms-full.txt
 Disallow: /dashboard/
@@ -53,6 +58,7 @@ Allow: /
 Allow: /practice/
 Allow: /insights/
 Allow: /blog/
+Allow: /api/knowledge/
 Allow: /llms.txt
 Allow: /llms-full.txt
 Disallow: /dashboard/
@@ -64,12 +70,18 @@ Allow: /
 Allow: /practice/
 Allow: /insights/
 Allow: /blog/
+Allow: /api/knowledge/
+Allow: /llms.txt
+Allow: /llms-full.txt
 
 User-agent: Applebot-Extended
 Allow: /
 Allow: /practice/
 Allow: /insights/
 Allow: /blog/
+Allow: /api/knowledge/
+Allow: /llms.txt
+Allow: /llms-full.txt
 
 Sitemap: ${baseUrl}/sitemap.xml
 `;

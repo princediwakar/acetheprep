@@ -12,7 +12,11 @@ import StructuredData, { websiteSchema, organizationSchema, educationalOrgSchema
 import "./globals.css";
 import "katex/dist/katex.min.css";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com";
+const rawBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+const baseUrl =
+  rawBaseUrl && (rawBaseUrl.startsWith("http://") || rawBaseUrl.startsWith("https://"))
+    ? rawBaseUrl
+    : "https://acetheprep.com";
 
 export const metadata: Metadata = {
     title: {

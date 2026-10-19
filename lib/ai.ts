@@ -10,7 +10,7 @@ import {
   generateSessionFingerprint,
 } from "./prompts/quiz";
 import type { GeneratedQuiz } from "./schemas/quiz";
-import { searchCurrentAffairs, formatSearchContext } from "./tavily";
+import { searchDeepSeek, formatSearchContext } from "./deepseek-search";
 
 type AIProvider = "openai" | "deepseek";
 
@@ -25,13 +25,13 @@ const PROVIDER: AIProvider = (process.env.AI_PROVIDER as AIProvider) || "deepsee
 const PROVIDER_CONFIGS: Record<AIProvider, ProviderConfig> = {
   openai: {
     apiKey: process.env.OPENAI_API_KEY!,
-    baseURL: process.env.AI_BASE_URL || "https://api.openai.com/v1",
+    baseURL: process.env.AI_BASE_URL || "https://api.openai.com",
     model: process.env.OPENAI_MODEL || "gpt-4o",
   },
   deepseek: {
     apiKey: process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY!,
-    baseURL: process.env.AI_BASE_URL || "https://api.deepseek.com/v1",
-    model: process.env.OPENAI_MODEL || "deepseek-chat",
+    baseURL: process.env.AI_BASE_URL || "https://api.deepseek.com",
+    model: process.env.OPENAI_MODEL || "deepseek-flash",
   },
 };
 
@@ -49,55 +49,45 @@ export const openai = new OpenAI({
   baseURL: config.baseURL,
 });
 
-const CURRENT_AFFAIRS_KEYWORDS = [
-  "latest", "recent", "new", "current", "2024", "2025", "2026",
-  "today", "this week", "this month", "this year",
-  "news", "breaking", "update", "trending",
-  "election", "president", "prime minister", "government",
-  "stock market", "economy", "inflation", "recession",
-  "tech", "ai", "artificial intelligence", "startup",
-  "climate", "weather", "disaster", "conflict", "war",
-  "sports", "olympics", "championship", "tournament",
-  "award", "grammy", "oscar", "emmy", "academy",
-  "product launch", "iphone", "android", "tesla",
-  "covid", "pandemic", "vaccine", "health",
-  "space", "nasa", "spacex", "moon", "mars",
+const CURRENT_AFFAIRS_PATTERNS = [
+  /\b(202[4-9]|203\d)\b/i, // Years 2024-2039
+  /\b(latest|recently|breaking news|trending)\b/i,
+  /\b(today|this week|this month|this year)\b/i,
+  /\b(election[s]?|president|prime minister|cabinet minister)\b/i,
+  /\b(stock market|inflation rate|recession|union budget)\b/i,
+  /\b(olympics|world cup|championship winner|tournament winner)\b/i,
+  /\b(nobel prize|oscar[s]?|grammy[s]?|academy award[s]?)\b/i,
+  /\b(spacex launch|nasa mission|artemis|chandrayaan)\b/i,
+  /\b(product launch|iphone 1[5-9]|ios 1[8-9]|deepseek-v[3-9]|gpt-5)\b/i,
+  /what('s| is) new in\b/i,
+  /what happened (recently|lately|this year)\b/i,
+  /latest (news|developments|trends|syllabus|guidelines|dates|notification)\b/i,
+  /current (events|affairs|situation|state of)\b/i,
+  /who (won|is the (current|new))\b/i,
 ];
 
 function needsCurrentAffairsSearch(content: string): boolean {
-  const lowerContent = content.toLowerCase();
-  const hasTimeKeyword = CURRENT_AFFAIRS_KEYWORDS.some(keyword =>
-    lowerContent.includes(keyword.toLowerCase())
-  );
-  const questionPatterns = [
-    /what('s| is) new in/i,
-    /what happened (recently|lately|this year)/i,
-    /latest (news|developments|trends)/i,
-    /current (events|situation|state)/i,
-    /who won (recently|latest)/i,
-    /who is the (current|new)/i,
-  ];
-  const hasQuestionPattern = questionPatterns.some(pattern => pattern.test(content));
-  return hasTimeKeyword || hasQuestionPattern;
+  return CURRENT_AFFAIRS_PATTERNS.some(pattern => pattern.test(content));
 }
 
 async function getSearchContext(content: string, signal?: AbortSignal): Promise<string | null> {
-  if (!process.env.TAVILY_API_KEY) {
-    console.log('[Tavily] API key not configured, skipping search');
+  const apiKey = process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    console.log('[DeepSeek Search] API key not configured, skipping search');
     return null;
   }
   if (!needsCurrentAffairsSearch(content)) {
-    console.log('[Tavily] Content does not require current affairs search');
+    console.log('[DeepSeek Search] Content does not require current affairs search');
     return null;
   }
-  console.log('[Tavily] Detected current affairs topic, searching...');
-  const searchResults = await searchCurrentAffairs(content, 5, signal);
-  if (!searchResults) {
-    console.log('[Tavily] Search failed, continuing without current info');
+  console.log('[DeepSeek Search] Detected current affairs topic, searching...');
+  const searchResults = await searchDeepSeek(content, { count: 5 }, signal);
+  if (!searchResults || !searchResults.results?.length) {
+    console.log('[DeepSeek Search] Search returned no results or failed, continuing without web info');
     return null;
   }
-  console.log(`[Tavily] Found ${searchResults.results.length} results in ${searchResults.responseTime}ms`);
-  return formatSearchContext(searchResults);
+  console.log(`[DeepSeek Search] Found ${searchResults.results.length} results`);
+  return formatSearchContext(searchResults.results);
 }
 
 const CHUNK_SIZE = 15;

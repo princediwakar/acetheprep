@@ -2,6 +2,7 @@
 import { NextRequest } from "next/server";
 import { createClient } from '@/lib/supabase/server';
 import { createQuizChunked } from '@/lib/ai';
+import { fetchDeepSeekPage } from '@/lib/deepseek-search';
 import { insertQuestions, insertQuestionGroup } from '@/lib/services/quiz-service';
 import { checkGenerationLimit, recordGeneration } from '@/lib/services/usage-service';
 
@@ -70,7 +71,7 @@ export async function POST(req: NextRequest) {
           return;
         }
 
-        const content = body.content;
+        let content = body.content?.trim();
         const questionCount = body.question_count || 10;
         const difficulty = body.difficulty || "Medium";
         const language = body.language || "Auto";
@@ -93,13 +94,28 @@ export async function POST(req: NextRequest) {
           return;
         }
 
+        let topicName = content.slice(0, 100);
+
+        // If content is an HTTP(S) URL, fetch webpage content via DeepSeek Fetch API
+        if (/^https?:\/\/[^\s]+$/i.test(content)) {
+          try {
+            const page = await fetchDeepSeekPage(content, req.signal);
+            if (page?.content) {
+              topicName = (page.title || content).slice(0, 100);
+              content = `SOURCE WEBPAGE: ${content}\nTITLE: ${page.title || "Untitled"}\n\n${page.content}`;
+            }
+          } catch (err) {
+            console.warn("[QuizCreate] Failed to fetch URL content via DeepSeek, falling back to raw input:", err);
+          }
+        }
+
         // Create quiz record in DB
         const { data: quiz, error: createError } = await supabase
           .from('quizzes')
           .insert({
             title: 'Generating Quiz...',
             description: 'Quiz is being generated...',
-            topic: content.slice(0, 100),
+            topic: topicName,
             subject: 'General',
             difficulty,
             language,

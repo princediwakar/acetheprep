@@ -1,153 +1,200 @@
 // File: app/api/og/route.ts
 import React from "react";
 import { ImageResponse } from "next/og";
+import { siteConfig } from "@/config/site";
 
 export const runtime = "edge";
 
-type ImageType = "home" | "quiz" | "session" | "practice" | "insights";
-
-const typeStyles: Record<
-	ImageType,
-	{
-		backgroundImage: string;
-		titleColor: string;
-		subtitle?: string;
-	}
-> = {
-	home: {
-		backgroundImage:
-			"linear-gradient(to bottom right, #1a1a1a, #2d2d2d)",
-		titleColor:
-			"linear-gradient(90deg, #6366f1, #ec4899)",
-		subtitle:
-			"Test Your Knowledge, Challenge Your Friends",
-	},
-	quiz: {
-		backgroundImage:
-			"linear-gradient(to bottom right, #ffffff, #f3f4f6)",
-		titleColor:
-			"linear-gradient(to right, #2563eb, #4f46e5)",
-	},
-	session: {
-		backgroundImage:
-			"linear-gradient(to bottom right, #0f172a, #1e293b)",
-		titleColor:
-			"linear-gradient(to right, #22c55e, #3b82f6)",
-		subtitle: "Practice with AceThePrep",
-	},
-	practice: {
-		backgroundImage:
-			"linear-gradient(to bottom right, #0f172a, #1e1b4b)",
-		titleColor:
-			"linear-gradient(to right, #a855f7, #6366f1)",
-		subtitle: "Practice Questions",
-	},
-	insights: {
-		backgroundImage:
-			"linear-gradient(to bottom right, #f8fafc, #e2e8f0)",
-		titleColor:
-			"linear-gradient(to right, #6366f1, #8b5cf6)",
-		subtitle: "Real Student Performance Data",
-	},
-};
+type ImageType = "home" | "quiz" | "session" | "practice" | "insights" | "blog";
 
 export async function GET(request: Request) {
-	const { searchParams } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
 
-	// Get parameters with fallbacks
-	const title = searchParams.get("title") || "AceThePrep";
-	const topic =
-		searchParams.get("topic") || "General Knowledge";
-	const type =
-		(searchParams.get("type") as ImageType) || "quiz";
+  const title = searchParams.get("title") || siteConfig.name;
+  const topic = searchParams.get("topic") || "Competitive Exams";
+  const type = (searchParams.get("type") as ImageType) || "home";
 
-	// Base styles
-	const baseStyles: Record<string, string | number> = {
-		height: "100%",
-		width: "100%",
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-		justifyContent: "center",
-		backgroundColor:
-			type === "session" || type === "practice" ? "#0f172a" :
-			type === "home" ? "#1a1a1a" :
-			type === "insights" ? "#f8fafc" : "#ffffff",
-	};
+  return new ImageResponse(
+    React.createElement(
+      "div",
+      {
+        style: {
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          backgroundColor: "#090d16",
+          backgroundImage:
+            "radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.15) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.12) 0%, transparent 50%)",
+          padding: "60px 80px",
+          fontFamily: "system-ui, -apple-system, sans-serif",
+        },
+      },
+      // Top brand badge
+      React.createElement(
+        "div",
+        {
+          style: {
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+          },
+        },
+        React.createElement(
+          "div",
+          {
+            style: {
+              width: "36px",
+              height: "36px",
+              borderRadius: "10px",
+              background: "linear-gradient(135deg, #6366f1, #a855f7)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#ffffff",
+              fontSize: "20px",
+              fontWeight: 800,
+            },
+          },
+          "A"
+        ),
+        React.createElement(
+          "span",
+          {
+            style: {
+              color: "#ffffff",
+              fontSize: "24px",
+              fontWeight: 700,
+              letterSpacing: "-0.5px",
+            },
+          },
+          siteConfig.name
+        ),
+        React.createElement(
+          "div",
+          {
+            style: {
+              marginLeft: "12px",
+              padding: "4px 12px",
+              borderRadius: "999px",
+              backgroundColor: "rgba(99, 102, 241, 0.15)",
+              border: "1px solid rgba(99, 102, 241, 0.3)",
+              color: "#818cf8",
+              fontSize: "14px",
+              fontWeight: 600,
+            },
+          },
+          type === "practice"
+            ? "Verified Practice"
+            : type === "insights"
+              ? "Telemetry Data"
+              : type === "blog"
+                ? "Cognitive Science"
+                : "Adaptive Exam Engine"
+        )
+      ),
 
-	return new ImageResponse(
-		React.createElement(
-			"div",
-			{ style: baseStyles },
-			React.createElement(
-				"div",
-				{
-					style: {
-						fontSize: 64,
-						fontWeight: 700,
-						background:
-							typeStyles[type].titleColor,
-						backgroundClip: "text",
-						color: "transparent",
-						marginBottom: 24,
-					},
-				},
-				title
-			),
-			(type === "quiz" || type === "session" || type === "practice" || type === "insights") &&
-				React.createElement(
-					"div",
-					{
-						style: {
-							fontSize: 32,
-							color:
-								type === "session"
-									? "#94a3b8"
-									: type === "practice"
-										? "#c4b5fd"
-										: type === "insights"
-											? "#475569"
-											: type === "quiz"
-												? "#374151"
-												: "#ffffff",
-							marginBottom: 12,
-						},
-					},
-					type === "session" ? topic :
-					type === "practice" ? `Free ${topic} Practice Questions` :
-					type === "insights" ? `Exam: ${topic}` :
-					`Topic: ${topic}`
-				),
-			React.createElement(
-				"div",
-				{
-					style: {
-						fontSize: 24,
-						color:
-							type === "home"
-								? "#d1d5db"
-								: type === "practice"
-									? "#a5b4fc"
-									: "#6b7280",
-						maxWidth: "80%",
-						textAlign: "center",
-						marginBottom: type === "practice" ? 16 : 0,
-					},
-				},
-				type === "home"
-					? "Test Your Knowledge, Challenge Your Friends"
-					: type === "session"
-						? "Practice with AceThePrep"
-						: type === "practice"
-							? "AceThePrep"
-							: type === "insights"
-								? "Real Student Performance Data"
-								: "Test your knowledge now!"
-			)
-		),
-		{
-			width: 1200,
-			height: 630,
-		}
-	);
+      // Middle content block
+      React.createElement(
+        "div",
+        {
+          style: {
+            display: "flex",
+            flexDirection: "column",
+            gap: "16px",
+            maxWidth: "960px",
+          },
+        },
+        topic &&
+          topic !== "Competitive Exams" &&
+          React.createElement(
+            "div",
+            {
+              style: {
+                fontSize: "22px",
+                fontWeight: 600,
+                color: "#a5b4fc",
+                textTransform: "uppercase",
+                letterSpacing: "1.5px",
+              },
+            },
+            topic
+          ),
+        React.createElement(
+          "div",
+          {
+            style: {
+              fontSize: title.length > 40 ? "52px" : "64px",
+              fontWeight: 800,
+              color: "#f8fafc",
+              lineHeight: 1.15,
+              letterSpacing: "-1.5px",
+            },
+          },
+          title
+        ),
+        React.createElement(
+          "div",
+          {
+            style: {
+              fontSize: "22px",
+              color: "#94a3b8",
+              lineHeight: 1.4,
+              maxWidth: "800px",
+            },
+          },
+          type === "home"
+            ? "Stop cramming 8 hours to forget by Sunday. Cognitive-science retrieval practice and real-time distractor analysis."
+            : type === "practice"
+              ? `Interactive diagnostic questions and misconception analysis for ${title}.`
+              : type === "insights"
+                ? `Real candidate performance data: topic error rates and solving time analytics.`
+                : "Research-backed preparation methodologies for competitive examinations."
+        )
+      ),
+
+      // Bottom footer bar
+      React.createElement(
+        "div",
+        {
+          style: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+            borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+            paddingTop: "24px",
+          },
+        },
+        React.createElement(
+          "span",
+          {
+            style: {
+              color: "#64748b",
+              fontSize: "16px",
+              fontWeight: 500,
+            },
+          },
+          "acetheprep.com"
+        ),
+        React.createElement(
+          "span",
+          {
+            style: {
+              color: "#64748b",
+              fontSize: "16px",
+              fontWeight: 500,
+            },
+          },
+          "100% Free • No Credit Card Required"
+        )
+      )
+    ),
+    {
+      width: 1200,
+      height: 630,
+    }
+  );
 }
