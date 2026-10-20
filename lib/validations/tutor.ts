@@ -45,6 +45,11 @@ export const SessionCompleteSchema = z.object({
 });
 export type SessionCompleteInput = z.infer<typeof SessionCompleteSchema>;
 
+export const SessionDiscardSchema = z.object({
+  session_id: z.string().uuid("Enter a valid session ID"),
+});
+export type SessionDiscardInput = z.infer<typeof SessionDiscardSchema>;
+
 export const ExamProfileSchema = z
   .object({
     exam_name: z.enum(EXAM_NAMES as [string, ...string[]], {

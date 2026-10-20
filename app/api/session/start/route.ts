@@ -17,7 +17,7 @@ import {
 import { getTimeMode } from "@/lib/sm2";
 import { TUTOR_CONFIG, TUTOR_ERRORS } from "@/lib/constants/tutor";
 import { normalizeSkillDomain } from "@/lib/services/skill-normalizer";
-import { openai, MODEL } from "@/lib/ai";
+import { openai, MODEL, IS_DEEPSEEK } from "@/lib/ai";
 import { QuestionSchema } from "@/lib/schemas/quiz";
 import { parseWithRecovery } from "@/lib/parse/quiz";
 import { getDiagnosticStrata } from "@/lib/diagnostic-seed";
@@ -72,6 +72,26 @@ async function generateAndCreateSession(
   sessionIntent: string,
   profile: { exam_name: string; target_date: string; time_mode: string },
 ): Promise<{ result?: SessionGenerationResult; error?: string; details?: string; status?: number }> {
+  // ----- Housekeeping: Clean up any empty/ghost active sessions with 0 answers -----
+  const { data: userActiveSessions } = await supabase
+    .from("sessions")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("status", "active");
+
+  if (userActiveSessions && userActiveSessions.length > 0) {
+    const actIds = userActiveSessions.map((s) => s.id);
+    const { data: answeredRows } = await supabase
+      .from("session_answers")
+      .select("session_id")
+      .in("session_id", actIds);
+    const answeredSet = new Set((answeredRows || []).map((a) => a.session_id));
+    const emptyGhostIds = actIds.filter((id) => !answeredSet.has(id));
+    if (emptyGhostIds.length > 0) {
+      await supabase.from("sessions").delete().in("id", emptyGhostIds).eq("user_id", userId);
+    }
+  }
+
   // ----- Daily Session Rate Limiting -----
   const { count: dailyCount } = await supabase
     .from("sessions")
@@ -364,7 +384,7 @@ async function generateAndCreateSession(
           entropySeed,
         });
 
-    const maxTokens = neededFromAI * 600 + 1000;
+    const maxTokens = Math.max(neededFromAI * 1200 + 2000, 4096);
 
     async function callAI(temp: number, promptOverride?: string): Promise<string> {
       const completion = await openai.chat.completions.create({
@@ -376,7 +396,8 @@ async function generateAndCreateSession(
         temperature: temp,
         max_tokens: maxTokens,
         response_format: { type: "json_object" as const },
-      });
+        ...(IS_DEEPSEEK || MODEL.includes("deepseek") ? { thinking: { type: "disabled" } } : {}),
+      } as any);
       return completion.choices[0]?.message?.content || "";
     }
 
@@ -448,7 +469,7 @@ async function generateAndCreateSession(
         entropySeed: `${entropySeed}_b${batchIdx}`,
       });
 
-      const maxTokens = batchCount * 600 + 1000;
+      const maxTokens = Math.max(batchCount * 1200 + 2000, 4096);
 
       async function callBatchAI(temp: number, promptOverride?: string): Promise<string> {
         const completion = await openai.chat.completions.create({
@@ -460,7 +481,8 @@ async function generateAndCreateSession(
           temperature: temp,
           max_tokens: maxTokens,
           response_format: { type: "json_object" as const },
-        });
+          ...(IS_DEEPSEEK || MODEL.includes("deepseek") ? { thinking: { type: "disabled" } } : {}),
+        } as any);
         return completion.choices[0]?.message?.content || "";
       }
 

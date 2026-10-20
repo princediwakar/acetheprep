@@ -7,8 +7,10 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Zap, AlertCircle, Calendar, Award, ChevronRight, Eye } from "lucide-react";
+import { CheckCircle2, Zap, AlertCircle, Calendar, Award, ChevronRight, Eye, Trash2 } from "lucide-react";
 import { QuizHistory } from "@/components/quiz-results/QuizHistory";
+import { discardSessionAction } from "@/lib/actions/tutor";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { SessionRow } from "@/app/analytics/page";
 
@@ -19,6 +21,19 @@ interface HistoryTabsViewProps {
 
 export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps) {
   const [activeTab, setActiveTab] = useState<string>("sessions");
+  const [sessions, setSessions] = useState<SessionRow[]>(examSessions);
+
+  const handleDiscard = async (sessionId: string) => {
+    setSessions((prev) => prev.filter((s) => s.id !== sessionId));
+    try {
+      const res = await discardSessionAction({ session_id: sessionId });
+      if (!res.success) throw new Error(res.error || "Failed to discard session");
+      toast.info("Session discarded.");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to discard session");
+      setSessions(examSessions);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -37,7 +52,7 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
             value="sessions"
             className="rounded-lg px-4 py-2 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm font-semibold text-xs sm:text-sm text-muted-foreground transition-all"
           >
-            Exam & Practice Sessions ({examSessions.length})
+            Exam & Practice Sessions ({sessions.length})
           </TabsTrigger>
           <TabsTrigger
             value="quizzes"
@@ -48,7 +63,7 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
         </TabsList>
 
         <TabsContent value="sessions" className="p-0 mt-0">
-          {examSessions.length === 0 ? (
+          {sessions.length === 0 ? (
             <div className="text-center p-12 bg-card rounded-2xl border border-border shadow-sm space-y-4">
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
                 <Award className="w-6 h-6 text-primary" />
@@ -63,7 +78,7 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {examSessions.map((session) => {
+              {sessions.map((session) => {
                 const date = new Date(session.created_at).toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
@@ -172,17 +187,27 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
                           </Link>
                         </Button>
                       ) : (
-                        <Button
-                          asChild
-                          className="w-full font-bold flex items-center justify-center gap-1.5 shadow-sm"
-                          size="lg"
-                        >
-                          <Link href={`/session/${session.id}`}>
-                            <Zap className="w-4 h-4 mr-1 fill-current" />
-                            Resume Test
-                            <ChevronRight className="w-4 h-4" />
-                          </Link>
-                        </Button>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button
+                            asChild
+                            className="w-full font-bold flex items-center justify-center gap-1.5 shadow-sm"
+                            size="default"
+                          >
+                            <Link href={`/session/${session.id}`}>
+                              <Zap className="w-4 h-4 mr-1 fill-current" />
+                              Resume
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="default"
+                            onClick={() => handleDiscard(session.id)}
+                            className="w-full font-medium text-destructive hover:bg-destructive/10 border-destructive/30"
+                          >
+                            <Trash2 className="w-4 h-4 mr-1.5" />
+                            Discard
+                          </Button>
+                        </div>
                       )}
                     </CardContent>
                   </Card>

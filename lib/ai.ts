@@ -39,7 +39,8 @@ const rawModel = process.env.OPENAI_MODEL || (PROVIDER === "openai" ? "gpt-4o" :
 const model = rawModel === "deepseek-flash" ? "deepseek-flash" : rawModel;
 
 export const MODEL = model;
-const IS_OPENAI = PROVIDER === "openai";
+export const IS_OPENAI = PROVIDER === "openai";
+export const IS_DEEPSEEK = PROVIDER === "deepseek";
 
 export const openai = new OpenAI({
   apiKey,
@@ -153,7 +154,7 @@ async function generateWithProgress(
     { role: "user" as const, content: buildUserMessage(content, questionCount, crypto.randomUUID(), searchContext) },
   ];
 
-  const stream = await openai.chat.completions.create(
+  const stream = (await openai.chat.completions.create(
     {
       model: MODEL,
       messages,
@@ -161,14 +162,15 @@ async function generateWithProgress(
       max_tokens: maxTokens,
       response_format: buildResponseFormat(),
       stream: true,
-    },
+      ...(IS_DEEPSEEK ? { thinking: { type: "disabled" } } : {}),
+    } as any,
     { signal: AbortSignal.timeout(CHUNK_TIMEOUT_MS) }
-  );
+  )) as unknown as AsyncIterable<any>;
 
   let raw = "";
   let lastReported = 0;
   for await (const chunk of stream) {
-    const delta = chunk.choices[0]?.delta?.content;
+    const delta = (chunk as any).choices[0]?.delta?.content;
     if (delta) {
       raw += delta;
       const matchCount = (raw.match(PROGRESS_PATTERN) || []).length;
@@ -215,7 +217,8 @@ async function generateSingleChunk(
       temperature: 0.95,
       max_tokens: maxTokens,
       response_format: buildResponseFormat(),
-    },
+      ...(IS_DEEPSEEK ? { thinking: { type: "disabled" } } : {}),
+    } as any,
     { signal: AbortSignal.timeout(CHUNK_TIMEOUT_MS) }
   );
 

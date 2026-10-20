@@ -1,9 +1,13 @@
 // Path: components/tutor/AnalyticsView.tsx
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, Target, TrendingUp, Zap, Clock, CheckCircle2, AlertCircle, BarChart3, ChevronRight } from "lucide-react";
+import { BookOpen, Target, TrendingUp, Zap, Clock, CheckCircle2, AlertCircle, BarChart3, ChevronRight, Trash2 } from "lucide-react";
+import { discardSessionAction } from "@/lib/actions/tutor";
+import { toast } from "sonner";
 import type { AnalyticsPageData } from "@/app/analytics/page";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -206,6 +210,34 @@ function StatCard({
 }
 
 export function AnalyticsView({ data }: { data: AnalyticsPageData }) {
+  const [activeSessions, setActiveSessions] = useState(data.activeSessions || []);
+
+  const handleDiscard = async (sessionId: string) => {
+    setActiveSessions((prev) => prev.filter((s) => s.id !== sessionId));
+    try {
+      const res = await discardSessionAction({ session_id: sessionId });
+      if (!res.success) throw new Error(res.error || "Failed to discard");
+      toast.info("Session discarded.");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to discard");
+      setActiveSessions(data.activeSessions || []);
+    }
+  };
+
+  const handleDiscardAll = async () => {
+    const toDiscard = [...activeSessions];
+    setActiveSessions([]);
+    try {
+      for (const s of toDiscard) {
+        await discardSessionAction({ session_id: s.id });
+      }
+      toast.info(`Discarded ${toDiscard.length} incomplete sessions.`);
+    } catch {
+      toast.error("Failed to discard all sessions.");
+      setActiveSessions(toDiscard);
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto space-y-8 px-4 py-6">
       {/* Section 1: Status Strip */}
@@ -278,32 +310,106 @@ export function AnalyticsView({ data }: { data: AnalyticsPageData }) {
           </CardContent>
         </Card>
 
-        <Card className="border shadow-sm h-fit">
-          <CardHeader className="border-b bg-muted/20 py-4 px-5">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Clock className="w-4 h-4 text-primary" />
-              Recent Sessions
-            </CardTitle>
-            <CardDescription className="text-xs">
-              {data.recentSessions.length > 0
-                ? `Last ${data.recentSessions.length} session${data.recentSessions.length !== 1 ? "s" : ""}`
-                : "No sessions yet"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-2">
-            {data.recentSessions.length > 0 ? (
-              <div className="max-h-[600px] overflow-y-auto p-2 space-y-1">
-                {data.recentSessions.map((session) => (
-                  <SessionRow key={session.id} session={session} />
+        <div className="space-y-6">
+          {activeSessions.length > 0 && (
+            <Card className="border border-amber-500/30 bg-amber-500/5 shadow-sm">
+              <CardHeader className="py-3 px-4 border-b border-amber-500/20 flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="text-sm font-bold flex items-center gap-2 text-foreground">
+                    <Zap className="w-4 h-4 text-amber-500" />
+                    In Progress ({activeSessions.length})
+                  </CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground">
+                    Unfinished sessions waiting for you
+                  </CardDescription>
+                </div>
+                {activeSessions.length > 1 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleDiscardAll}
+                    className="h-7 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 mr-1" />
+                    Discard All
+                  </Button>
+                )}
+              </CardHeader>
+              <CardContent className="p-2 space-y-1.5">
+                {activeSessions.map((session) => (
+                  <div
+                    key={session.id}
+                    className="p-3 rounded-lg border border-border/70 bg-card flex items-center justify-between gap-3 shadow-sm hover:border-amber-500/30 transition-all"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-sm font-bold truncate">
+                          {session.session_intent === "custom_mock"
+                            ? "Mock Exam"
+                            : session.session_intent === "tracked"
+                              ? "Exam Simulation"
+                              : session.session_intent === "diagnostic"
+                                ? "Diagnostic Test"
+                                : "Tutor Drill"}
+                        </span>
+                        <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                          Active
+                        </span>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {session.target_domains?.[0] || "General Practice"} &middot; {session.answeredCount}/{session.totalQuestions} answered
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <Button asChild size="sm" className="h-8 text-xs font-bold shadow-sm">
+                        <Link href={`/session/${session.id}`}>
+                          Resume
+                          <ChevronRight className="w-3.5 h-3.5 ml-1" />
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDiscard(session.id)}
+                        className="h-8 px-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        title="Discard session"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                  </div>
                 ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground text-center py-10">
-                Start your first session to begin tracking your progress.
-              </p>
-            )}
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          )}
+
+          <Card className="border shadow-sm h-fit">
+            <CardHeader className="border-b bg-muted/20 py-4 px-5">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Clock className="w-4 h-4 text-primary" />
+                Recent Sessions
+              </CardTitle>
+              <CardDescription className="text-xs">
+                {data.recentSessions.length > 0
+                  ? `Last ${data.recentSessions.length} completed session${data.recentSessions.length !== 1 ? "s" : ""}`
+                  : "No completed sessions yet"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-2">
+              {data.recentSessions.length > 0 ? (
+                <div className="max-h-[600px] overflow-y-auto p-2 space-y-1">
+                  {data.recentSessions.map((session) => (
+                    <SessionRow key={session.id} session={session} />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-10">
+                  Complete your first session to begin tracking your progress.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

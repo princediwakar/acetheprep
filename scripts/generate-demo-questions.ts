@@ -93,7 +93,8 @@ async function generateForExam(examName: string, subject: string, domain: string
         temperature: 0.95,
         max_tokens: 4000,
         response_format: { type: "json_object" },
-      });
+        ...(MODEL.includes("deepseek") ? { thinking: { type: "disabled" } } : {}),
+      } as any);
 
       const raw = response.choices[0]?.message?.content || "";
       const questions = parseResponse(raw);

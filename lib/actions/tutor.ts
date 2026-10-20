@@ -2,7 +2,12 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { ExamProfileSchema, type ExamProfileInput } from "@/lib/validations/tutor";
+import {
+  ExamProfileSchema,
+  type ExamProfileInput,
+  SessionDiscardSchema,
+  type SessionDiscardInput,
+} from "@/lib/validations/tutor";
 import { getTimeMode } from "@/lib/sm2";
 import { TUTOR_CONFIG } from "@/lib/constants/tutor";
 import { revalidatePath } from "next/cache";
@@ -136,4 +141,113 @@ export async function createExamProfile(
   revalidatePath("/setup");
 
   return { profile_id: profileId };
+}
+
+export async function discardSessionAction(
+  input: SessionDiscardInput
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return { success: false, error: "Sign in to manage your sessions." };
+  }
+
+  const parsed = SessionDiscardSchema.safeParse(input);
+  if (!parsed.success) {
+    const firstErr = Object.values(parsed.error.flatten().fieldErrors).flat()[0] ?? "Invalid session ID.";
+    return { success: false, error: firstErr };
+  }
+
+  const { session_id } = parsed.data;
+
+  // Verify ownership
+  const { data: session, error: sessionErr } = await supabase
+    .from("sessions")
+    .select("id, user_id, status")
+    .eq("id", session_id)
+    .single();
+
+  if (sessionErr || !session || session.user_id !== user.id) {
+    return { success: false, error: "Session not found." };
+  }
+
+  // Delete answers first, then session (guarantees clean cascade even without DB cascade rule)
+  await supabase
+    .from("session_answers")
+    .delete()
+    .eq("session_id", session_id)
+    .eq("user_id", user.id);
+
+  const { error: deleteErr } = await supabase
+    .from("sessions")
+    .delete()
+    .eq("id", session_id)
+    .eq("user_id", user.id);
+
+  if (deleteErr) {
+    console.error("[discardSessionAction] Delete error:", deleteErr);
+    return { success: false, error: "Failed to discard session." };
+  }
+
+  revalidatePath("/analytics");
+  revalidatePath("/history");
+  revalidatePath("/home");
+  revalidatePath("/dashboard");
+
+  return { success: true };
+}
+
+export async function cleanupGhostSessionsAction(): Promise<{ success: boolean; deletedCount: number; error?: string }> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return { success: false, deletedCount: 0, error: "Unauthorized" };
+  }
+
+  // Fetch all active sessions for the user
+  const { data: activeSessions, error: fetchErr } = await supabase
+    .from("sessions")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("status", "active");
+
+  if (fetchErr || !activeSessions || activeSessions.length === 0) {
+    return { success: true, deletedCount: 0 };
+  }
+
+  const sessionIds = activeSessions.map((s) => s.id);
+
+  // Check which sessions have answers
+  const { data: answers } = await supabase
+    .from("session_answers")
+    .select("session_id")
+    .in("session_id", sessionIds);
+
+  const answeredIds = new Set((answers || []).map((a) => a.session_id));
+  const ghostIds = sessionIds.filter((id) => !answeredIds.has(id));
+
+  if (ghostIds.length > 0) {
+    await supabase
+      .from("sessions")
+      .delete()
+      .in("id", ghostIds)
+      .eq("user_id", user.id);
+
+    revalidatePath("/analytics");
+    revalidatePath("/history");
+    revalidatePath("/home");
+    revalidatePath("/dashboard");
+  }
+
+  return { success: true, deletedCount: ghostIds.length };
 }

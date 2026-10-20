@@ -272,8 +272,9 @@ async function generateForExam(targetExam?: string, questionsPerDomain: number =
             ],
             response_format: { type: "json_object" },
             temperature: 0.7,
-            max_tokens: questionsPerDomain * 600 + 500,
-          });
+            max_tokens: Math.max(questionsPerDomain * 1000 + 2000, 4096),
+            ...(ai!.model.includes("deepseek") ? { thinking: { type: "disabled" } } : {}),
+          } as any);
 
 
           const raw = completion.choices[0]?.message?.content || "";

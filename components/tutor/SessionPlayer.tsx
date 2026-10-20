@@ -25,7 +25,18 @@ import {
   Play,
   BookOpen,
   Zap,
+  LogOut,
+  Trash2,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { discardSessionAction } from "@/lib/actions/tutor";
 import { Badge } from "@/components/ui/badge";
 import type { SessionQuestion, SelectedOption } from "@/types/tutor";
 
@@ -99,8 +110,31 @@ export function SessionPlayer({
   const [userAttempts, setUserAttempts] = useState<Record<string, QuestionAttemptRecord>>(
     initialUserAttempts || {}
   );
+  const [showExitDialog, setShowExitDialog] = useState(false);
+  const [isDiscarding, setIsDiscarding] = useState(false);
   const [reviewFilter, setReviewFilter] = useState<"all" | "incorrect" | "traps" | "correct">("all");
   const [expandedQuestions, setExpandedQuestions] = useState<Record<string, boolean>>({});
+
+  const answeredCount = useMemo(() => Object.keys(userAttempts).length, [userAttempts]);
+
+  const handleDiscardSession = useCallback(async () => {
+    setIsDiscarding(true);
+    try {
+      const res = await discardSessionAction({ session_id: sessionId });
+      if (!res.success) throw new Error(res.error || "Failed to discard session");
+      toast.info("Session discarded.");
+      router.push(TUTOR_ROUTES.DASHBOARD);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to discard session";
+      toast.error(msg);
+      setIsDiscarding(false);
+    }
+  }, [sessionId, router]);
+
+  const handleFinishEarly = useCallback(() => {
+    setShowExitDialog(false);
+    setSessionComplete(true);
+  }, []);
 
   const timerStartRef = useRef<number>(Date.now());
   const questionStartRef = useRef<number>(Date.now());
@@ -495,10 +529,11 @@ export function SessionPlayer({
               <span>·</span>
               <button
                 type="button"
-                onClick={handleBackToDashboard}
-                className="hover:text-foreground underline underline-offset-4 transition-colors"
+                onClick={isReviewMode ? handleBackToDashboard : handleDiscardSession}
+                disabled={isDiscarding}
+                className="hover:text-destructive underline underline-offset-4 transition-colors disabled:opacity-50"
               >
-                Exit
+                {isDiscarding ? "Discarding..." : isReviewMode ? "Exit" : "Discard & Exit"}
               </button>
             </div>
           </div>
@@ -509,8 +544,11 @@ export function SessionPlayer({
 
   // --- Session Complete (Post-Exam Review Screen) ---
   if (sessionComplete) {
-    const pct = total > 0 ? Math.round((score / total) * 100) : 0;
-    const incorrectCount = total - score;
+    const attemptedCount = Object.keys(userAttempts).length;
+    const isEarlySubmission = attemptedCount > 0 && attemptedCount < total;
+    const effectiveTotal = isEarlySubmission ? attemptedCount : total;
+    const pct = effectiveTotal > 0 ? Math.round((score / effectiveTotal) * 100) : 0;
+    const incorrectCount = effectiveTotal - score;
 
     return (
       <div className="max-w-3xl mx-auto p-4 sm:p-6 space-y-8 animate-in fade-in duration-300">
@@ -526,15 +564,19 @@ export function SessionPlayer({
           <p className="text-sm text-muted-foreground">
             {isReviewMode
               ? "Review your questions, cognitive traps, and detailed solution derivations."
-              : `${mode === "exam" ? "Exam Simulation submitted." : "Tutor Drill finished."} Review your cognitive performance below.`}
+              : isEarlySubmission
+                ? `Test submitted early (${attemptedCount} of ${total} answered). Review your cognitive performance below.`
+                : `${mode === "exam" ? "Exam Simulation submitted." : "Tutor Drill finished."} Review your cognitive performance below.`}
           </p>
         </div>
 
         {/* Metric Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
           <div className="bg-card border rounded-xl p-4 shadow-sm">
-            <div className="text-2xl font-bold">{score}/{total}</div>
-            <div className="text-xs text-muted-foreground mt-1">Score</div>
+            <div className="text-2xl font-bold">{score}/{effectiveTotal}</div>
+            <div className="text-xs text-muted-foreground mt-1">
+              {isEarlySubmission ? `Score (${attemptedCount} attempted)` : "Score"}
+            </div>
           </div>
           <div className="bg-card border rounded-xl p-4 shadow-sm">
             <div className="text-2xl font-bold">{pct}%</div>
@@ -910,6 +952,18 @@ export function SessionPlayer({
                 ? `${totalTimeElapsed}s`
                 : `${Math.floor(totalTimeElapsed / 60)}m ${totalTimeElapsed % 60}s`}
             </div>
+
+            {/* End / Leave Session Button */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowExitDialog(true)}
+              className="h-7 px-2 text-xs font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+            >
+              <LogOut className="w-3.5 h-3.5 mr-1" />
+              End
+            </Button>
           </div>
         </div>
 
@@ -1143,6 +1197,55 @@ export function SessionPlayer({
           </div>
         );
       })()}
+
+      {/* End / Leave Session Dialog */}
+      <Dialog open={showExitDialog} onOpenChange={setShowExitDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {answeredCount > 0 ? "Finish or Discard Session?" : "Leave Session?"}
+            </DialogTitle>
+            <DialogDescription>
+              {answeredCount > 0
+                ? `You've answered ${answeredCount} of ${total} questions. You can submit now to calibrate your mastery score, or discard this session entirely.`
+                : "You haven't answered any questions yet. Exiting now will discard this empty session."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="flex-col sm:flex-col gap-2 pt-2">
+            {answeredCount > 0 && (
+              <Button
+                type="button"
+                className="w-full font-bold"
+                onClick={handleFinishEarly}
+              >
+                <CheckCircle className="w-4 h-4 mr-1.5" />
+                Submit & Review ({answeredCount} answered)
+              </Button>
+            )}
+
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isDiscarding}
+              className="w-full text-destructive hover:bg-destructive/10 border-destructive/30"
+              onClick={handleDiscardSession}
+            >
+              <Trash2 className="w-4 h-4 mr-1.5" />
+              {isDiscarding ? "Discarding..." : "Discard Session"}
+            </Button>
+
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full text-muted-foreground"
+              onClick={() => setShowExitDialog(false)}
+            >
+              Keep Practicing
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
