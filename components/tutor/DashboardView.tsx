@@ -3,125 +3,25 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import type { DashboardPageData, SyllabusSubject, SyllabusDomain } from "@/app/home/page";
-import { TUTOR_ROUTES, TUTOR_CONFIG } from "@/lib/constants/tutor";
+import type { DashboardPageData, SyllabusDomain } from "@/app/home/page";
+import { TUTOR_ROUTES } from "@/lib/constants/tutor";
 import { UpgradeModal } from "@/components/billing/UpgradeModal";
 import { HeaderPortal } from "@/components/shared/HeaderPortal";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import {
-  Zap,
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
-  Play,
-  ArrowRight,
-  Clock,
-  Lock,
-  BookOpen,
-  Timer,
-  GraduationCap,
-  Sparkles,
-} from "lucide-react";
+import { Zap } from "lucide-react";
+import { DashboardViewLoading, DashboardViewError } from "@/components/tutor/dashboard/DashboardLoading";
+import { SmartStartStrip } from "@/components/tutor/dashboard/SmartStartStrip";
+import { SyllabusMap } from "@/components/tutor/dashboard/SyllabusMap";
+import { LaunchSessionDialog, type SessionConfig } from "@/components/tutor/dashboard/LaunchSessionDialog";
 
-export function DashboardViewLoading() {
-  return (
-    <div className="max-w-5xl mx-auto space-y-6 px-4 py-4 sm:py-6">
-      {/* Smart Start Strip Skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="rounded-2xl border border-primary/20 bg-card p-5 space-y-4">
-          <div className="space-y-2">
-            <Skeleton className="h-5 w-24 rounded-md" />
-            <Skeleton className="h-4 w-4/5 rounded-md" />
-          </div>
-          <Skeleton className="h-11 w-full rounded-xl" />
-        </div>
-        <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
-          <div className="space-y-2">
-            <Skeleton className="h-5 w-32 rounded-md" />
-            <Skeleton className="h-4 w-4/5 rounded-md" />
-          </div>
-          <Skeleton className="h-11 w-full rounded-xl" />
-        </div>
-      </div>
-
-      {/* Projection / Readiness Hero Skeleton */}
-      <div className="rounded-2xl border border-border/70 bg-card p-6 sm:p-8 space-y-6">
-        <div className="space-y-2">
-          <Skeleton className="h-6 w-48 rounded-md" />
-          <Skeleton className="h-4 w-72 rounded-md" />
-        </div>
-        <Skeleton className="h-28 w-full rounded-xl" />
-      </div>
-
-      {/* Syllabus Topics Section Skeleton */}
-      <div className="space-y-4">
-        <Skeleton className="h-5 w-40 rounded-md" />
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="rounded-xl border border-border/70 bg-card p-4 flex items-center justify-between">
-              <div className="space-y-1.5">
-                <Skeleton className="h-4 w-36 rounded-md" />
-                <Skeleton className="h-3 w-24 rounded-md" />
-              </div>
-              <Skeleton className="h-8 w-24 rounded-lg" />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function DashboardViewError({ message }: { message: string }) {
-  return (
-    <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-      <AlertCircle className="w-10 h-10 text-destructive mx-auto mb-3" />
-      <p className="text-destructive font-medium">{message}</p>
-      <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
-        Retry
-      </Button>
-    </div>
-  );
-}
-
-interface SessionConfig {
-  title: string;
-  subtitle: string;
-  intent: "spaced_review" | "custom_mock";
-  domain?: string;
-  subjectName?: string;
-}
-
-const QUESTION_COUNT_OPTIONS = [
-  { count: 10, label: "10 Quick", proOnly: false },
-  { count: 25, label: "25 Practice", proOnly: true },
-  { count: 50, label: "50 Mock", proOnly: true },
-] as const;
+export { DashboardViewLoading, DashboardViewError };
 
 export function DashboardView({ data }: { data: DashboardPageData }) {
   const router = useRouter();
 
   const [activeConfig, setActiveConfig] = useState<SessionConfig | null>(null);
-  const [modalMode, setModalMode] = useState<"exam" | "tutor">("exam"); // Default to Exam Mode
+  const [modalMode, setModalMode] = useState<"exam" | "tutor">("exam");
   const [modalQuestionCount, setModalQuestionCount] = useState<number>(10);
   const [isLaunching, setIsLaunching] = useState(false);
   const [launchStep, setLaunchStep] = useState(0);
@@ -204,7 +104,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
   let nextLinearDomain: SyllabusDomain | null = null;
   for (const subject of data.syllabus) {
     for (const domain of subject.domains) {
-      if (domain.masteryScore < 0.7) { // Define "not mastered" as < 70%
+      if (domain.masteryScore < 0.7) {
         nextLinearDomain = domain;
         break;
       }
@@ -234,7 +134,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
       const sessionId = await startSession(
         activeConfig.intent,
         activeConfig.domain ? [activeConfig.domain] : undefined,
-        modalQuestionCount
+        modalQuestionCount,
       );
       router.push(`${TUTOR_ROUTES.SESSION(sessionId)}?mode=${modalMode}&autostart=true`);
     } catch (err: any) {
@@ -243,14 +143,11 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
     }
   }
 
-  const now = new Date();
-
   return (
     <div className="max-w-5xl mx-auto space-y-6 px-4 py-4 sm:py-6">
       {/* Header Slot: Status Strip Collapsed into Top Header */}
       <HeaderPortal>
         <div className="flex items-center gap-2">
-          {/* Upgrade to Pro Button (Free users) */}
           {!data.isPro && (
             <Button
               type="button"
@@ -260,7 +157,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
                 setUpgradeReason("Upgrade to AceThePrep Pro for unlimited daily sessions, full 50Q mock simulations, and detailed step-by-step solutions.");
                 setShowUpgradeModal(true);
               }}
-              className="h-8 px-2.5 text-xs font-bold border-primary/30 text-primary hover:bg-primary/10 gap-1 rounded-lg shadow-2xs"
+              className="h-8 px-2.5 text-xs font-bold border-primary/30 text-primary hover:bg-primary/10 gap-1 rounded-lg shadow-2xs cursor-pointer"
             >
               <Zap className="w-3.5 h-3.5 fill-primary" />
               <span className="hidden sm:inline">Upgrade to Pro</span>
@@ -268,7 +165,6 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
             </Button>
           )}
 
-          {/* Readiness Index Pill */}
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-card border border-border/80 shadow-2xs">
             <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
               Readiness
@@ -282,382 +178,38 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
       </HeaderPortal>
 
       {/* Section 2: Smart Start Strip */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5 hover:border-primary/40 transition-colors">
-          <CardContent className="p-5 flex flex-col h-full justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <Zap className="w-5 h-5 text-yellow-500" />
-                <h3 className="font-semibold text-lg">AI Pick</h3>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Spaced repetition algorithm. Targets your weakest and overdue topics across all subjects.
-              </p>
-            </div>
-            <Button
-              size="lg"
-              className="w-full"
-              onClick={handleAlgorithmicReview}
-            >
-              <Play className="mr-2 h-4 w-4" /> Start Spaced Review
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border bg-card hover:border-border/80 transition-colors">
-          <CardContent className="p-5 flex flex-col h-full justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <ArrowRight className="w-5 h-5 text-blue-500" />
-                <h3 className="font-semibold text-lg">Linear: Next Topic</h3>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {nextLinearDomain 
-                  ? `Next up in curriculum sequence: ${nextLinearDomain.name}.`
-                  : "You've mastered all topics! Keep up the spaced reviews."}
-              </p>
-            </div>
-            <Button
-              size="lg"
-              variant="secondary"
-              className="w-full"
-              onClick={handleLinearNext}
-              disabled={!nextLinearDomain}
-            >
-              <Play className="mr-2 h-4 w-4" /> Practice {nextLinearDomain?.name || "Next"}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+      <SmartStartStrip
+        nextLinearDomain={nextLinearDomain}
+        onAlgorithmicReview={handleAlgorithmicReview}
+        onLinearNext={handleLinearNext}
+      />
 
       {/* Section 3: Syllabus Grid */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">Syllabus Map</h2>
-            <p className="text-muted-foreground text-sm">Practice topics individually based on mastery.</p>
-          </div>
-          <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-lg">
-            <Label htmlFor="linear-mode" className="text-sm font-medium cursor-pointer">
-              Linear Mode
-            </Label>
-            <input
-              type="checkbox"
-              id="linear-mode"
-              checked={isLinearMode}
-              onChange={(e) => handleToggleLinear(e.target.checked)}
-              className="h-4 w-4 rounded border-primary text-primary focus:ring-primary accent-primary cursor-pointer"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {data.syllabus.map((subject) => {
-            let hasWeakPrerequisite = false;
-
-            return (
-              <Card key={subject.name} className="flex flex-col border shadow-sm h-fit">
-                <CardHeader className="py-4 px-5 border-b bg-muted/20">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-primary" />
-                    {subject.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="divide-y">
-                    {subject.domains.map((domain) => {
-                      const pct = Math.round(domain.masteryScore * 100);
-                      const notStarted = domain.totalAttempted === 0;
-                      const isOverdue = !notStarted && domain.nextReviewAt ? new Date(domain.nextReviewAt) < now : false;
-                      const isWeak = domain.masteryScore < 0.3 && !notStarted;
-                      const isStrong = domain.masteryScore >= 0.7 && !notStarted;
-
-                      // Linear Mode Logic
-                      let isFutureTopic = false;
-                      if (isLinearMode) {
-                        if (hasWeakPrerequisite) {
-                          isFutureTopic = true;
-                        }
-                        if (isWeak || notStarted) {
-                          hasWeakPrerequisite = true;
-                        }
-                      }
-
-                      const barColor = isWeak ? "bg-red-500" : isStrong ? "bg-green-500" : "bg-yellow-500";
-
-                      return (
-                        <div key={domain.name} className={`p-4 hover:bg-muted/30 transition-all flex flex-col gap-3 group ${isFutureTopic ? "opacity-50 hover:opacity-100 grayscale hover:grayscale-0" : ""}`}>
-                          <div className="flex justify-between items-start gap-4">
-                            <div className="min-w-0 flex-1">
-                              <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
-                                <span className="font-medium text-sm leading-snug mr-1">{domain.name}</span>
-                                {isOverdue && (
-                                  <Badge variant="outline" className="text-[10px] whitespace-nowrap uppercase px-1.5 h-4 border-orange-500/30 text-orange-600 bg-orange-500/10 shrink-0">
-                                    <Clock className="w-3 h-3 mr-1" /> Due
-                                  </Badge>
-                                )}
-                                {isStrong && !isOverdue && (
-                                  <Badge variant="outline" className="text-[10px] whitespace-nowrap uppercase px-1.5 h-4 border-green-500/30 text-green-600 bg-green-500/10 shrink-0">
-                                    <CheckCircle2 className="w-3 h-3 mr-1" /> Strong
-                                  </Badge>
-                                )}
-                              </div>
-                              <TooltipProvider delayDuration={200}>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <div className="flex items-center gap-2.5 cursor-help group/metric">
-                                      <div className="h-1.5 bg-muted rounded-full overflow-hidden w-24 shrink-0">
-                                        <div
-                                          className={`h-full rounded-full transition-all duration-500 ${notStarted ? "bg-transparent" : barColor}`}
-                                          style={{ width: `${notStarted ? 0 : Math.max(pct, 4)}%` }}
-                                        />
-                                      </div>
-                                      <span className="text-xs tabular-nums text-muted-foreground whitespace-nowrap group-hover/metric:text-foreground transition-colors">
-                                        {notStarted ? "Not started · 0 Qs" : `${pct}% Mastery · ${domain.totalAttempted} Q${domain.totalAttempted !== 1 ? "s" : ""}`}
-                                      </span>
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="top" className="bg-popover text-popover-foreground border border-border shadow-lg max-w-xs text-xs space-y-1 p-2.5">
-                                    <p className="font-bold text-foreground">
-                                      {domain.name}: {notStarted ? "Not Started" : `${pct}% Mastery`}
-                                    </p>
-                                    <p className="text-muted-foreground text-[11px] leading-relaxed">
-                                      {notStarted
-                                        ? "No questions attempted yet. Practice to establish your baseline calibration and spaced repetition curve."
-                                        : `Calibrated via SM-2 spaced repetition based on accuracy and solving speed across ${domain.totalAttempted} questions.`}
-                                    </p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            </div>
-                            
-                            <Button 
-                              size="sm" 
-                              variant={isOverdue ? "default" : "outline"}
-                              className="shrink-0 transition-opacity opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100"
-                              onClick={() => handleDomainPractice(domain.name, subject.name)}
-                            >
-                              Practice
-                            </Button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      </div>
+      <SyllabusMap
+        syllabus={data.syllabus}
+        isLinearMode={isLinearMode}
+        onToggleLinear={handleToggleLinear}
+        onDomainPractice={handleDomainPractice}
+      />
 
       {/* Quiz / Test Overview Dialog */}
-      <Dialog open={Boolean(activeConfig)} onOpenChange={(open) => !isLaunching && !open && setActiveConfig(null)}>
-        <DialogContent className="sm:max-w-xl p-0 overflow-hidden gap-0 border-border bg-card shadow-2xl">
-          {/* Header */}
-          <div className="p-6 pb-4 border-b bg-muted/20 space-y-2">
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="text-xs uppercase tracking-wider font-semibold text-primary border-primary/30 bg-primary/10">
-                {data.examName}
-              </Badge>
-              {activeConfig?.subjectName && (
-                <Badge variant="secondary" className="text-xs font-medium">
-                  {activeConfig.subjectName}
-                </Badge>
-              )}
-            </div>
-            <DialogTitle className="text-2xl font-bold tracking-tight">
-              {activeConfig?.title}
-            </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
-              {activeConfig?.subtitle}
-            </DialogDescription>
-          </div>
-
-          {isLaunching ? (
-            <div className="p-8 py-12 flex flex-col items-center text-center space-y-6 animate-in fade-in-50 duration-300">
-              <div className="relative">
-                <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-primary animate-pulse" />
-                </div>
-              </div>
-              <div className="space-y-2 max-w-md">
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <Badge variant="outline" className="text-xs uppercase tracking-wider font-semibold text-primary border-primary/30 bg-primary/10">
-                    {data.examName}
-                  </Badge>
-                  <Badge variant="secondary" className="text-xs">
-                    {modalMode === "exam" ? "Exam Simulation" : "Tutor Drill"}
-                  </Badge>
-                </div>
-                <h3 className="font-extrabold text-xl text-foreground">
-                  Synthesizing {activeConfig?.title}
-                </h3>
-                <p className="text-sm text-muted-foreground min-h-[44px] flex items-center justify-center transition-all leading-relaxed">
-                  {launchStep === 0 && "🧠 Analyzing recent performance & syllabus mastery curve..."}
-                  {launchStep === 1 && `🎯 Generating ${modalQuestionCount} high-distractor questions for ${data.examName}...`}
-                  {launchStep === 2 && "🔬 Verifying questions and detailed trap explanations..."}
-                  {launchStep >= 3 && "⚡ Finalizing test payload and pre-flight cockpit..."}
-                </p>
-              </div>
-              <div className="w-full max-w-xs bg-muted/60 h-2 rounded-full overflow-hidden">
-                <div
-                  className="bg-primary h-2 rounded-full transition-all duration-700"
-                  style={{ width: `${Math.min(96, (launchStep + 1) * 25 + 5)}%` }}
-                />
-              </div>
-              <p className="text-xs text-muted-foreground/80 font-mono">
-                {modalQuestionCount} Questions · Preparing briefing screen
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="p-6 space-y-6">
-                {/* Section 1: Number of Questions */}
-                <div className="space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Number of Questions
-                    </span>
-                    <span className="text-xs text-muted-foreground font-mono">
-                      ~{modalQuestionCount === 10 ? "15" : modalQuestionCount === 25 ? "35" : "75"} mins
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2.5">
-                    {QUESTION_COUNT_OPTIONS.map((preset) => {
-                      const isSelected = modalQuestionCount === preset.count;
-                      const isLocked = Boolean(preset.proOnly && !data.isPro);
-                      return (
-                        <button
-                          key={preset.count}
-                          type="button"
-                          disabled={isLaunching}
-                          onClick={() => {
-                            if (isLocked) {
-                              setUpgradeReason(`Extended ${preset.label} sessions are exclusive to AceThePrep Pro.`);
-                              setShowUpgradeModal(true);
-                              return;
-                            }
-                            setModalQuestionCount(preset.count);
-                          }}
-                          className={cn(
-                            "p-3 rounded-xl border text-center transition-all flex flex-col items-center gap-1 relative",
-                            isSelected
-                              ? "border-primary bg-primary/10 ring-2 ring-primary/20 text-foreground font-semibold shadow-sm"
-                              : "border-border hover:border-border/80 bg-background/50 text-muted-foreground",
-                            isLocked && "opacity-85 hover:border-primary/50"
-                          )}
-                        >
-                          {isLocked && (
-                            <Badge className="absolute -top-2 right-2 text-[9px] uppercase font-bold px-1.5 h-4 bg-primary text-primary-foreground">
-                              Pro
-                            </Badge>
-                          )}
-                          <span className="text-sm flex items-center gap-1">
-                            {isLocked && <Lock className="w-3 h-3 text-muted-foreground" />}
-                            {preset.label}
-                          </span>
-                          <span className="text-[11px] text-muted-foreground font-normal">
-                            {preset.count === 10 ? "Quick Drill" : preset.count === 25 ? "Standard" : "Full Simulation"}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Section 2: Feedback Mode Selection */}
-                <div className="space-y-2.5">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Feedback Mode
-                  </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {/* Exam Mode (Default) */}
-                    <button
-                      type="button"
-                      disabled={isLaunching}
-                      onClick={() => setModalMode("exam")}
-                      className={cn(
-                        "p-4 rounded-xl border text-left transition-all flex flex-col justify-between relative",
-                        modalMode === "exam"
-                          ? "border-primary bg-primary/10 ring-2 ring-primary/20 text-foreground shadow-sm"
-                          : "border-border hover:border-border/80 bg-background/50 text-muted-foreground"
-                      )}
-                    >
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <Timer className={cn("w-4 h-4", modalMode === "exam" ? "text-primary" : "text-muted-foreground")} />
-                            <span className="font-bold text-sm text-foreground">Exam Mode</span>
-                          </div>
-                          <Badge variant="outline" className="text-[10px] uppercase font-bold text-primary border-primary/30 bg-primary/10 h-4 px-1.5">
-                            Default
-                          </Badge>
-                        </div>
-                        <p className="text-xs leading-relaxed text-muted-foreground">
-                          Real exam conditions. Zero spoilers during the test with timed question flow. Complete question breakdown, step-by-step solutions, and trap analysis revealed upon completion.
-                        </p>
-                      </div>
-                    </button>
-
-                    {/* Tutor Mode */}
-                    <button
-                      type="button"
-                      disabled={isLaunching}
-                      onClick={() => setModalMode("tutor")}
-                      className={cn(
-                        "p-4 rounded-xl border text-left transition-all flex flex-col justify-between relative",
-                        modalMode === "tutor"
-                          ? "border-primary bg-primary/10 ring-2 ring-primary/20 text-foreground shadow-sm"
-                          : "border-border hover:border-border/80 bg-background/50 text-muted-foreground"
-                      )}
-                    >
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <GraduationCap className={cn("w-4 h-4", modalMode === "tutor" ? "text-primary" : "text-muted-foreground")} />
-                            <span className="font-bold text-sm text-foreground">Tutor Drill</span>
-                          </div>
-                          <Badge variant="outline" className="text-[10px] uppercase font-medium text-muted-foreground border-border h-4 px-1.5">
-                            Learning
-                          </Badge>
-                        </div>
-                        <p className="text-xs leading-relaxed text-muted-foreground">
-                          Immediate feedback after every question. Explains why distractors are traps, pinpoints misconceptions, and repairs mental models on the spot.
-                        </p>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Footer CTA */}
-              <div className="p-6 pt-3 bg-muted/20 border-t flex items-center justify-between gap-3">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  disabled={isLaunching}
-                  onClick={() => setActiveConfig(null)}
-                  className="text-muted-foreground"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="button"
-                  size="lg"
-                  disabled={isLaunching}
-                  onClick={handleConfirmLaunch}
-                  className="font-semibold px-6 min-w-[210px]"
-                >
-                  <Play className="w-4 h-4 mr-2" />
-                  Start {modalMode === "exam" ? "Exam Simulation" : "Tutor Drill"} ({modalQuestionCount}Q)
-                </Button>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+      <LaunchSessionDialog
+        activeConfig={activeConfig}
+        examName={data.examName}
+        isPro={Boolean(data.isPro)}
+        isLaunching={isLaunching}
+        launchStep={launchStep}
+        modalMode={modalMode}
+        modalQuestionCount={modalQuestionCount}
+        onSetModalMode={setModalMode}
+        onSetModalQuestionCount={setModalQuestionCount}
+        onClose={() => setActiveConfig(null)}
+        onConfirmLaunch={handleConfirmLaunch}
+        onPromptUpgrade={(reason) => {
+          setUpgradeReason(reason);
+          setShowUpgradeModal(true);
+        }}
+      />
 
       {/* Dodo Payments Pro Upgrade Modal */}
       <UpgradeModal

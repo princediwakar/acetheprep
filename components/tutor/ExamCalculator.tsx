@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Calculator, X, Delete } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { evaluateExpression } from "@/lib/math/calculator-evaluator";
+import { useCalculatorState } from "@/components/tutor/useCalculatorState";
 
 interface ExamCalculatorProps {
   isOpen: boolean;
@@ -13,11 +13,27 @@ interface ExamCalculatorProps {
 }
 
 export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalculatorProps) {
-  const [display, setDisplay] = useState("0");
-  const [equation, setEquation] = useState("");
-  const [memory, setMemory] = useState<number>(0);
-  const [hasMemory, setHasMemory] = useState<boolean>(false);
-  const [isNewNumber, setIsNewNumber] = useState<boolean>(true);
+  const {
+    display,
+    equation,
+    hasMemory,
+    inputDigit,
+    inputDecimal,
+    inputOperator,
+    handleEqual,
+    handleClearAll,
+    handleClearEntry,
+    handleBackspace,
+    handleNegate,
+    handlePercent,
+    handleSqrt,
+    handleSquare,
+    handleReciprocal,
+    handleMemoryClear,
+    handleMemoryRecall,
+    handleMemoryAdd,
+    handleMemorySub,
+  } = useCalculatorState();
 
   // Draggable floating window state
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
@@ -34,7 +50,6 @@ export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalcu
     }
   }, [isOpen, position]);
 
-  // Handle Dragging
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest("button")) return;
     if (!position) return;
@@ -65,125 +80,7 @@ export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalcu
     };
   }, []);
 
-  // Calculator Logic Handlers
-  const inputDigit = useCallback((digit: string) => {
-    setDisplay((prev) => {
-      if (isNewNumber || prev === "0" || prev === "Error" || prev === "Cannot divide by 0") {
-        setIsNewNumber(false);
-        return digit;
-      }
-      if (prev.length >= 14) return prev;
-      return prev + digit;
-    });
-  }, [isNewNumber]);
-
-  const inputDecimal = useCallback(() => {
-    setDisplay((prev) => {
-      if (isNewNumber || prev === "Error" || prev === "Cannot divide by 0") {
-        setIsNewNumber(false);
-        return "0.";
-      }
-      if (prev.includes(".")) return prev;
-      return prev + ".";
-    });
-  }, [isNewNumber]);
-
-  const inputOperator = useCallback((op: string) => {
-    setDisplay((prev) => {
-      setEquation((prevEq) => {
-        if (isNewNumber && prevEq.length > 0 && "+-×÷".includes(prevEq.slice(-1))) {
-          return prevEq.slice(0, -1) + op;
-        }
-        return `${prevEq} ${prev} ${op}`.trim();
-      });
-      setIsNewNumber(true);
-      return prev;
-    });
-  }, [isNewNumber]);
-
-  const handleEqual = useCallback(() => {
-    const fullExpr = `${equation} ${display}`.trim();
-    if (!fullExpr) return;
-
-    const res = evaluateExpression(fullExpr);
-    if (res.success && res.result !== undefined) {
-      setEquation(`${fullExpr} =`);
-      setDisplay(String(res.result));
-    } else {
-      setEquation("");
-      setDisplay(res.error || "Error");
-    }
-    setIsNewNumber(true);
-  }, [equation, display]);
-
-  const handleClearAll = useCallback(() => {
-    setDisplay("0");
-    setEquation("");
-    setIsNewNumber(true);
-  }, []);
-
-  const handleClearEntry = useCallback(() => {
-    setDisplay("0");
-    setIsNewNumber(true);
-  }, []);
-
-  const handleBackspace = useCallback(() => {
-    setDisplay((prev) => {
-      if (isNewNumber || prev === "0" || prev === "Error" || prev.length <= 1) {
-        return "0";
-      }
-      return prev.slice(0, -1);
-    });
-  }, [isNewNumber]);
-
-  const handleNegate = useCallback(() => {
-    setDisplay((prev) => {
-      if (prev === "0" || prev === "Error") return prev;
-      if (prev.startsWith("-")) return prev.slice(1);
-      return `-${prev}`;
-    });
-  }, []);
-
-  const handlePercent = useCallback(() => {
-    setDisplay((prev) => {
-      const val = parseFloat(prev);
-      if (isNaN(val)) return prev;
-      return String(val / 100);
-    });
-    setIsNewNumber(true);
-  }, []);
-
-  const handleSqrt = useCallback(() => {
-    setDisplay((prev) => {
-      const val = parseFloat(prev);
-      if (isNaN(val) || val < 0) return "Invalid input";
-      setEquation(`√(${prev}) =`);
-      setIsNewNumber(true);
-      return String(Math.round(Math.sqrt(val) * 1e10) / 1e10);
-    });
-  }, []);
-
-  const handleSquare = useCallback(() => {
-    setDisplay((prev) => {
-      const val = parseFloat(prev);
-      if (isNaN(val)) return prev;
-      setEquation(`sqr(${prev}) =`);
-      setIsNewNumber(true);
-      return String(Math.round(val * val * 1e10) / 1e10);
-    });
-  }, []);
-
-  const handleReciprocal = useCallback(() => {
-    setDisplay((prev) => {
-      const val = parseFloat(prev);
-      if (isNaN(val) || val === 0) return "Cannot divide by 0";
-      setEquation(`1/(${prev}) =`);
-      setIsNewNumber(true);
-      return String(Math.round((1 / val) * 1e10) / 1e10);
-    });
-  }, []);
-
-  // Physical Keyboard Input Listener
+  // Keyboard input listener
   useEffect(() => {
     if (!isOpen) return;
 
@@ -239,10 +136,10 @@ export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalcu
       }}
       className={cn(
         "fixed z-50 w-[340px] sm:w-[360px] rounded-2xl border border-border bg-card shadow-2xl transition-shadow select-none overflow-hidden animate-in fade-in zoom-in-95 duration-150",
-        !position && "top-20 right-6"
+        !position && "top-20 right-6",
       )}
     >
-      {/* 1. Draggable Proctor Header */}
+      {/* Draggable Proctor Header */}
       <div
         onMouseDown={handleMouseDown}
         className="h-11 px-4 border-b border-border bg-secondary/50 flex items-center justify-between cursor-grab active:cursor-grabbing"
@@ -267,7 +164,7 @@ export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalcu
         </button>
       </div>
 
-      {/* 2. Precision LCD Display */}
+      {/* Precision LCD Display */}
       <div className="p-3.5 space-y-2 bg-card">
         <div className="rounded-xl border border-border/80 bg-secondary/40 p-3 space-y-1 text-right">
           <div className="flex items-center justify-between h-4 text-xs font-mono text-muted-foreground">
@@ -281,11 +178,11 @@ export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalcu
           </div>
         </div>
 
-        {/* 3. Memory Bar (Official GMAT / GRE standard) */}
+        {/* Memory Bar */}
         <div className="grid grid-cols-4 gap-1.5 font-mono text-xs">
           <button
             type="button"
-            onClick={() => { setMemory(0); setHasMemory(false); }}
+            onClick={handleMemoryClear}
             disabled={!hasMemory}
             className="h-7 rounded-md border border-border/60 bg-secondary/30 text-muted-foreground hover:text-foreground hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
           >
@@ -293,7 +190,7 @@ export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalcu
           </button>
           <button
             type="button"
-            onClick={() => { if (hasMemory) { setDisplay(String(memory)); setIsNewNumber(true); } }}
+            onClick={handleMemoryRecall}
             disabled={!hasMemory}
             className="h-7 rounded-md border border-border/60 bg-secondary/30 text-muted-foreground hover:text-foreground hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
           >
@@ -301,27 +198,21 @@ export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalcu
           </button>
           <button
             type="button"
-            onClick={() => {
-              const val = parseFloat(display);
-              if (!isNaN(val)) { setMemory((prev) => prev + val); setHasMemory(true); setIsNewNumber(true); }
-            }}
+            onClick={handleMemoryAdd}
             className="h-7 rounded-md border border-border/60 bg-secondary/30 text-muted-foreground hover:text-foreground hover:bg-secondary cursor-pointer transition-colors"
           >
             M+
           </button>
           <button
             type="button"
-            onClick={() => {
-              const val = parseFloat(display);
-              if (!isNaN(val)) { setMemory((prev) => prev - val); setHasMemory(true); setIsNewNumber(true); }
-            }}
+            onClick={handleMemorySub}
             className="h-7 rounded-md border border-border/60 bg-secondary/30 text-muted-foreground hover:text-foreground hover:bg-secondary cursor-pointer transition-colors"
           >
             M−
           </button>
         </div>
 
-        {/* 4. Calculator Keypad */}
+        {/* Keypad */}
         <div className="grid grid-cols-4 gap-1.5 pt-1 font-mono">
           <button type="button" onClick={handleClearAll} className="h-10 rounded-lg border border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/50 font-bold text-xs cursor-pointer transition-colors">
             C
@@ -390,7 +281,6 @@ export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalcu
           </button>
         </div>
 
-        {/* Footer info: keyboard shortcuts hint */}
         <div className="pt-2 border-t border-border/60 flex items-center justify-between text-[10px] text-muted-foreground font-mono">
           <span>Esc to Close</span>
           <span>C to Reset</span>

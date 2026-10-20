@@ -24,8 +24,6 @@ import taxonomyRaw from "@/lib/taxonomies.json";
 import demoQuestionsRaw from "@/lib/demo-questions.json";
 import { getDomainKnowledge } from "@/lib/curriculum-knowledge";
 import {
-  BookOpen,
-  AlertTriangle,
   Lightbulb,
   CheckCircle2,
   TrendingUp,
@@ -33,6 +31,8 @@ import {
   ShieldAlert,
   Sparkles,
 } from "lucide-react";
+import { DomainCorePrinciples } from "@/components/practice/DomainCorePrinciples";
+import { DomainFaqSection } from "@/components/practice/DomainFaqSection";
 
 
 // ---- Types ----
@@ -321,52 +321,11 @@ export default async function PracticePage({ params }: PracticePageProps) {
           </p>
         </div>
 
-        {/* Core Principles & Key Formulas */}
-        <div className="mb-8 rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
-          <div className="flex items-center gap-2.5 mb-4 text-foreground font-semibold text-base">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <BookOpen className="h-4 w-4" />
-            </div>
-            <span>Core Principles & Key Formulas</span>
-          </div>
-          <ul className="space-y-2.5 text-sm text-muted-foreground leading-relaxed">
-            {knowledge.corePrinciples.map((principle, idx) => (
-              <li key={idx} className="flex items-start gap-2.5">
-                <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground mt-0.5">
-                  {idx + 1}
-                </span>
-                <span>{principle}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Primary Exam Trap Card */}
-        <div className="mb-8 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-6">
-          <div className="flex items-center gap-2.5 mb-3 text-amber-600 dark:text-amber-400 font-semibold text-base">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400">
-              <AlertTriangle className="h-4 w-4" />
-            </div>
-            <span>Most Common Trap: {knowledge.primaryDistractorTrap.trapName}</span>
-          </div>
-          <p className="text-sm text-foreground/90 leading-relaxed mb-3">
-            {knowledge.primaryDistractorTrap.description}
-          </p>
-          <div className="grid gap-3 sm:grid-cols-2 pt-2 border-t border-amber-500/20 text-xs">
-            <div>
-              <span className="font-semibold text-amber-600 dark:text-amber-400">Why Students Fail:</span>
-              <p className="mt-0.5 text-muted-foreground leading-normal">
-                {knowledge.primaryDistractorTrap.whyStudentsFail}
-              </p>
-            </div>
-            <div>
-              <span className="font-semibold text-emerald-600 dark:text-emerald-400">Prevention Rule:</span>
-              <p className="mt-0.5 text-muted-foreground leading-normal">
-                {knowledge.primaryDistractorTrap.preventionRule}
-              </p>
-            </div>
-          </div>
-        </div>
+        {/* Core Principles & Key Formulas & Primary Exam Trap */}
+        <DomainCorePrinciples
+          principles={knowledge.corePrinciples}
+          primaryDistractorTrap={knowledge.primaryDistractorTrap}
+        />
 
         {/* Interactive Questions Section */}
         <div className="mb-10">
@@ -440,26 +399,11 @@ export default async function PracticePage({ params }: PracticePageProps) {
 
 
         {/* FAQ Section for SEO / GEO Rich Snippets */}
-        <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
-          <h3 className="text-lg font-bold text-foreground mb-4">
-            Frequently Asked Questions about {domainName} ({examName})
-          </h3>
-          <div className="space-y-4">
-            {knowledge.faqs.map((faq, i) => (
-              <div
-                key={i}
-                className="border-t border-border/50 pt-4 first:border-none first:pt-0"
-              >
-                <h4 className="font-semibold text-sm text-foreground">
-                  {faq.question}
-                </h4>
-                <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
-                  {faq.answer}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <DomainFaqSection
+          domainName={domainName}
+          examName={examName}
+          faqs={knowledge.faqs}
+        />
 
         {/* CTA Banner */}
         <div className="mt-10">
