@@ -2,138 +2,14 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Calculator, X, RotateCcw, Delete } from "lucide-react";
+import { Calculator, X, Delete } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { evaluateExpression } from "@/lib/math/calculator-evaluator";
 
 interface ExamCalculatorProps {
   isOpen: boolean;
   onClose: () => void;
   examName?: string;
-}
-
-// ---------------------------------------------------------------------------
-// Safe Shunting-Yard Expression Evaluator (Zero eval(), Zero Security Risk)
-// ---------------------------------------------------------------------------
-
-function evaluateExpression(expr: string): { success: boolean; result?: number; error?: string } {
-  try {
-    const sanitized = expr
-      .replace(/×/g, "*")
-      .replace(/÷/g, "/")
-      .replace(/−/g, "-")
-      .replace(/π/g, `${Math.PI}`);
-
-    const tokens: string[] = [];
-    let i = 0;
-
-    while (i < sanitized.length) {
-      const ch = sanitized[i];
-      if (ch === " ") {
-        i++;
-        continue;
-      }
-
-      if ("+-*/()".includes(ch)) {
-        // Handle unary negative
-        if (ch === "-" && (tokens.length === 0 || "+-*/(".includes(tokens[tokens.length - 1]))) {
-          let numStr = "-";
-          i++;
-          while (i < sanitized.length && /[0-9.]/.test(sanitized[i])) {
-            numStr += sanitized[i];
-            i++;
-          }
-          if (numStr === "-") {
-            tokens.push("-1");
-            tokens.push("*");
-          } else {
-            tokens.push(numStr);
-          }
-          continue;
-        }
-        tokens.push(ch);
-        i++;
-      } else if (/[0-9.]/.test(ch)) {
-        let numStr = "";
-        while (i < sanitized.length && /[0-9.]/.test(sanitized[i])) {
-          numStr += sanitized[i];
-          i++;
-        }
-        tokens.push(numStr);
-      } else {
-        i++;
-      }
-    }
-
-    if (tokens.length === 0) return { success: true, result: 0 };
-
-    const outputQueue: string[] = [];
-    const operatorStack: string[] = [];
-    const precedence: Record<string, number> = { "+": 1, "-": 1, "*": 2, "/": 2 };
-
-    for (const token of tokens) {
-      if (!isNaN(Number(token))) {
-        outputQueue.push(token);
-      } else if ("+-*/".includes(token)) {
-        while (
-          operatorStack.length > 0 &&
-          operatorStack[operatorStack.length - 1] !== "(" &&
-          precedence[operatorStack[operatorStack.length - 1]] >= precedence[token]
-        ) {
-          outputQueue.push(operatorStack.pop()!);
-        }
-        operatorStack.push(token);
-      } else if (token === "(") {
-        operatorStack.push(token);
-      } else if (token === ")") {
-        while (operatorStack.length > 0 && operatorStack[operatorStack.length - 1] !== "(") {
-          outputQueue.push(operatorStack.pop()!);
-        }
-        if (operatorStack.length > 0 && operatorStack[operatorStack.length - 1] === "(") {
-          operatorStack.pop();
-        }
-      }
-    }
-
-    while (operatorStack.length > 0) {
-      outputQueue.push(operatorStack.pop()!);
-    }
-
-    const evalStack: number[] = [];
-    for (const token of outputQueue) {
-      if (!isNaN(Number(token))) {
-        evalStack.push(Number(token));
-      } else {
-        const b = evalStack.pop();
-        const a = evalStack.pop();
-        if (a === undefined || b === undefined) return { success: false, error: "Syntax Error" };
-        switch (token) {
-          case "+":
-            evalStack.push(a + b);
-            break;
-          case "-":
-            evalStack.push(a - b);
-            break;
-          case "*":
-            evalStack.push(a * b);
-            break;
-          case "/":
-            if (b === 0) return { success: false, error: "Cannot divide by 0" };
-            evalStack.push(a / b);
-            break;
-        }
-      }
-    }
-
-    if (evalStack.length !== 1) return { success: false, error: "Syntax Error" };
-    const res = evalStack[0];
-    if (!isFinite(res) || isNaN(res)) return { success: false, error: "Math Error" };
-
-    // Format clean floating point (e.g. 0.1 + 0.2 = 0.3)
-    const rounded = Math.round(res * 1e10) / 1e10;
-    return { success: true, result: rounded };
-  } catch {
-    return { success: false, error: "Error" };
-  }
 }
 
 export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalculatorProps) {
@@ -307,42 +183,11 @@ export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalcu
     });
   }, []);
 
-  // Memory Handlers
-  const handleMemoryClear = useCallback(() => {
-    setMemory(0);
-    setHasMemory(false);
-  }, []);
-
-  const handleMemoryRecall = useCallback(() => {
-    if (!hasMemory) return;
-    setDisplay(String(memory));
-    setIsNewNumber(true);
-  }, [hasMemory, memory]);
-
-  const handleMemoryAdd = useCallback(() => {
-    const val = parseFloat(display);
-    if (!isNaN(val)) {
-      setMemory((prev) => prev + val);
-      setHasMemory(true);
-      setIsNewNumber(true);
-    }
-  }, [display]);
-
-  const handleMemorySub = useCallback(() => {
-    const val = parseFloat(display);
-    if (!isNaN(val)) {
-      setMemory((prev) => prev - val);
-      setHasMemory(true);
-      setIsNewNumber(true);
-    }
-  }, [display]);
-
   // Physical Keyboard Input Listener
   useEffect(() => {
     if (!isOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't intercept if user is typing in an input or textarea
       if (["INPUT", "TEXTAREA"].includes((e.target as HTMLElement)?.tagName)) return;
 
       if (e.key >= "0" && e.key <= "9") {
@@ -440,7 +285,7 @@ export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalcu
         <div className="grid grid-cols-4 gap-1.5 font-mono text-xs">
           <button
             type="button"
-            onClick={handleMemoryClear}
+            onClick={() => { setMemory(0); setHasMemory(false); }}
             disabled={!hasMemory}
             className="h-7 rounded-md border border-border/60 bg-secondary/30 text-muted-foreground hover:text-foreground hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
           >
@@ -448,7 +293,7 @@ export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalcu
           </button>
           <button
             type="button"
-            onClick={handleMemoryRecall}
+            onClick={() => { if (hasMemory) { setDisplay(String(memory)); setIsNewNumber(true); } }}
             disabled={!hasMemory}
             className="h-7 rounded-md border border-border/60 bg-secondary/30 text-muted-foreground hover:text-foreground hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
           >
@@ -456,14 +301,20 @@ export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalcu
           </button>
           <button
             type="button"
-            onClick={handleMemoryAdd}
+            onClick={() => {
+              const val = parseFloat(display);
+              if (!isNaN(val)) { setMemory((prev) => prev + val); setHasMemory(true); setIsNewNumber(true); }
+            }}
             className="h-7 rounded-md border border-border/60 bg-secondary/30 text-muted-foreground hover:text-foreground hover:bg-secondary cursor-pointer transition-colors"
           >
             M+
           </button>
           <button
             type="button"
-            onClick={handleMemorySub}
+            onClick={() => {
+              const val = parseFloat(display);
+              if (!isNaN(val)) { setMemory((prev) => prev - val); setHasMemory(true); setIsNewNumber(true); }
+            }}
             className="h-7 rounded-md border border-border/60 bg-secondary/30 text-muted-foreground hover:text-foreground hover:bg-secondary cursor-pointer transition-colors"
           >
             M−
@@ -472,184 +323,69 @@ export function ExamCalculator({ isOpen, onClose, examName = "Exam" }: ExamCalcu
 
         {/* 4. Calculator Keypad */}
         <div className="grid grid-cols-4 gap-1.5 pt-1 font-mono">
-          {/* Row 1: Special Math Functions */}
-          <button
-            type="button"
-            onClick={handleClearAll}
-            className="h-10 rounded-lg border border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/50 font-bold text-xs cursor-pointer transition-colors"
-          >
+          <button type="button" onClick={handleClearAll} className="h-10 rounded-lg border border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/50 font-bold text-xs cursor-pointer transition-colors">
             C
           </button>
-          <button
-            type="button"
-            onClick={handleClearEntry}
-            className="h-10 rounded-lg border border-border/80 bg-secondary/50 text-foreground hover:bg-secondary text-xs font-semibold cursor-pointer transition-colors"
-          >
+          <button type="button" onClick={handleClearEntry} className="h-10 rounded-lg border border-border/80 bg-secondary/50 text-foreground hover:bg-secondary text-xs font-semibold cursor-pointer transition-colors">
             CE
           </button>
-          <button
-            type="button"
-            onClick={handleBackspace}
-            className="h-10 rounded-lg border border-border/80 bg-secondary/50 text-foreground hover:bg-secondary flex items-center justify-center cursor-pointer transition-colors"
-            title="Backspace"
-          >
+          <button type="button" onClick={handleBackspace} className="h-10 rounded-lg border border-border/80 bg-secondary/50 text-foreground hover:bg-secondary flex items-center justify-center cursor-pointer transition-colors" title="Backspace">
             <Delete className="h-4 w-4" />
           </button>
-          <button
-            type="button"
-            onClick={() => inputOperator("÷")}
-            className="h-10 rounded-lg border border-border/80 bg-secondary text-primary font-bold text-base hover:bg-secondary/80 cursor-pointer transition-colors"
-          >
+          <button type="button" onClick={() => inputOperator("÷")} className="h-10 rounded-lg border border-border/80 bg-secondary text-primary font-bold text-base hover:bg-secondary/80 cursor-pointer transition-colors">
             ÷
           </button>
 
-          {/* Row 2 */}
-          <button
-            type="button"
-            onClick={handleSqrt}
-            className="h-10 rounded-lg border border-border/80 bg-secondary/50 text-foreground hover:bg-secondary text-xs font-semibold cursor-pointer transition-colors"
-          >
+          <button type="button" onClick={handleSqrt} className="h-10 rounded-lg border border-border/80 bg-secondary/50 text-foreground hover:bg-secondary text-xs font-semibold cursor-pointer transition-colors">
             √
           </button>
-          <button
-            type="button"
-            onClick={handleSquare}
-            className="h-10 rounded-lg border border-border/80 bg-secondary/50 text-foreground hover:bg-secondary text-xs font-semibold cursor-pointer transition-colors"
-          >
+          <button type="button" onClick={handleSquare} className="h-10 rounded-lg border border-border/80 bg-secondary/50 text-foreground hover:bg-secondary text-xs font-semibold cursor-pointer transition-colors">
             x²
           </button>
-          <button
-            type="button"
-            onClick={handleReciprocal}
-            className="h-10 rounded-lg border border-border/80 bg-secondary/50 text-foreground hover:bg-secondary text-xs font-semibold cursor-pointer transition-colors"
-          >
+          <button type="button" onClick={handleReciprocal} className="h-10 rounded-lg border border-border/80 bg-secondary/50 text-foreground hover:bg-secondary text-xs font-semibold cursor-pointer transition-colors">
             1/x
           </button>
-          <button
-            type="button"
-            onClick={() => inputOperator("×")}
-            className="h-10 rounded-lg border border-border/80 bg-secondary text-primary font-bold text-base hover:bg-secondary/80 cursor-pointer transition-colors"
-          >
+          <button type="button" onClick={() => inputOperator("×")} className="h-10 rounded-lg border border-border/80 bg-secondary text-primary font-bold text-base hover:bg-secondary/80 cursor-pointer transition-colors">
             ×
           </button>
 
-          {/* Row 3: 7 8 9 - */}
-          <button
-            type="button"
-            onClick={() => inputDigit("7")}
-            className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors"
-          >
-            7
-          </button>
-          <button
-            type="button"
-            onClick={() => inputDigit("8")}
-            className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors"
-          >
-            8
-          </button>
-          <button
-            type="button"
-            onClick={() => inputDigit("9")}
-            className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors"
-          >
-            9
-          </button>
-          <button
-            type="button"
-            onClick={() => inputOperator("−")}
-            className="h-10 rounded-lg border border-border/80 bg-secondary text-primary font-bold text-base hover:bg-secondary/80 cursor-pointer transition-colors"
-          >
+          {(["7", "8", "9"] as const).map((num) => (
+            <button key={num} type="button" onClick={() => inputDigit(num)} className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors">
+              {num}
+            </button>
+          ))}
+          <button type="button" onClick={() => inputOperator("−")} className="h-10 rounded-lg border border-border/80 bg-secondary text-primary font-bold text-base hover:bg-secondary/80 cursor-pointer transition-colors">
             −
           </button>
 
-          {/* Row 4: 4 5 6 + */}
-          <button
-            type="button"
-            onClick={() => inputDigit("4")}
-            className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors"
-          >
-            4
-          </button>
-          <button
-            type="button"
-            onClick={() => inputDigit("5")}
-            className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors"
-          >
-            5
-          </button>
-          <button
-            type="button"
-            onClick={() => inputDigit("6")}
-            className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors"
-          >
-            6
-          </button>
-          <button
-            type="button"
-            onClick={() => inputOperator("+")}
-            className="h-10 rounded-lg border border-border/80 bg-secondary text-primary font-bold text-base hover:bg-secondary/80 cursor-pointer transition-colors"
-          >
+          {(["4", "5", "6"] as const).map((num) => (
+            <button key={num} type="button" onClick={() => inputDigit(num)} className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors">
+              {num}
+            </button>
+          ))}
+          <button type="button" onClick={() => inputOperator("+")} className="h-10 rounded-lg border border-border/80 bg-secondary text-primary font-bold text-base hover:bg-secondary/80 cursor-pointer transition-colors">
             +
           </button>
 
-          {/* Row 5: 1 2 3 % */}
-          <button
-            type="button"
-            onClick={() => inputDigit("1")}
-            className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors"
-          >
-            1
-          </button>
-          <button
-            type="button"
-            onClick={() => inputDigit("2")}
-            className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors"
-          >
-            2
-          </button>
-          <button
-            type="button"
-            onClick={() => inputDigit("3")}
-            className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors"
-          >
-            3
-          </button>
-          <button
-            type="button"
-            onClick={handlePercent}
-            className="h-10 rounded-lg border border-border/80 bg-secondary/50 text-foreground hover:bg-secondary text-xs font-semibold cursor-pointer transition-colors"
-          >
+          {(["1", "2", "3"] as const).map((num) => (
+            <button key={num} type="button" onClick={() => inputDigit(num)} className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors">
+              {num}
+            </button>
+          ))}
+          <button type="button" onClick={handlePercent} className="h-10 rounded-lg border border-border/80 bg-secondary/50 text-foreground hover:bg-secondary text-xs font-semibold cursor-pointer transition-colors">
             %
           </button>
 
-          {/* Row 6: ± 0 . = */}
-          <button
-            type="button"
-            onClick={handleNegate}
-            className="h-10 rounded-lg border border-border/80 bg-secondary/50 text-foreground hover:bg-secondary text-xs font-semibold cursor-pointer transition-colors"
-          >
+          <button type="button" onClick={handleNegate} className="h-10 rounded-lg border border-border/80 bg-secondary/50 text-foreground hover:bg-secondary text-xs font-semibold cursor-pointer transition-colors">
             ±
           </button>
-          <button
-            type="button"
-            onClick={() => inputDigit("0")}
-            className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors"
-          >
+          <button type="button" onClick={() => inputDigit("0")} className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors">
             0
           </button>
-          <button
-            type="button"
-            onClick={inputDecimal}
-            className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors"
-          >
+          <button type="button" onClick={inputDecimal} className="h-10 rounded-lg border border-border/80 bg-card hover:bg-secondary/70 text-foreground font-semibold text-sm cursor-pointer transition-colors">
             .
           </button>
-          <button
-            type="button"
-            onClick={handleEqual}
-            className="h-10 rounded-lg border border-primary bg-primary text-primary-foreground font-bold text-base hover:opacity-90 active:scale-95 cursor-pointer transition-all shadow-xs"
-          >
+          <button type="button" onClick={handleEqual} className="h-10 rounded-lg border border-primary bg-primary text-primary-foreground font-bold text-base hover:opacity-90 active:scale-95 cursor-pointer transition-all shadow-xs">
             =
           </button>
         </div>
