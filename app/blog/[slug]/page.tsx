@@ -310,7 +310,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       "@type": "Organization",
       name: siteConfig.name,
       url: baseUrl,
-      logo: `${baseUrl}/icon.ico`,
+      logo: `${baseUrl}/apple-touch-icon.png`,
     },
     datePublished: post.date,
     dateModified: post.date,

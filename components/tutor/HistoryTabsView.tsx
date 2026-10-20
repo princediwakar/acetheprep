@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,18 +21,21 @@ interface HistoryTabsViewProps {
 }
 
 export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>("sessions");
   const [sessions, setSessions] = useState<SessionRow[]>(examSessions);
 
   const handleDiscard = async (sessionId: string) => {
+    const prevSessions = [...sessions];
     setSessions((prev) => prev.filter((s) => s.id !== sessionId));
     try {
       const res = await discardSessionAction({ session_id: sessionId });
       if (!res.success) throw new Error(res.error || "Failed to discard session");
       toast.info("Session discarded.");
+      router.refresh();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Failed to discard session");
-      setSessions(examSessions);
+      setSessions(prevSessions);
     }
   };
 

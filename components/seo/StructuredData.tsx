@@ -22,7 +22,7 @@ export const organizationSchema: WithContext<Organization> = {
   "@type": "Organization",
   name: siteConfig.name,
   url: baseUrl,
-  logo: `${baseUrl}/icon.ico`,
+  logo: `${baseUrl}/apple-touch-icon.png`,
   sameAs: [siteConfig.links.github],
 };
 
@@ -60,7 +60,7 @@ export const educationalOrgSchema: WithContext<any> = {
   "@type": "EducationalOrganization",
   name: siteConfig.name,
   url: baseUrl,
-  logo: `${baseUrl}/icon.ico`,
+  logo: `${baseUrl}/apple-touch-icon.png`,
   description: siteConfig.description,
   sameAs: [siteConfig.links.github],
   audience: {

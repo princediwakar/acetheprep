@@ -2,11 +2,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BookOpen, Target, TrendingUp, Zap, Clock, CheckCircle2, AlertCircle, BarChart3, ChevronRight, Trash2 } from "lucide-react";
-import { discardSessionAction } from "@/lib/actions/tutor";
+import { discardSessionAction, discardAllActiveSessionsAction } from "@/lib/actions/tutor";
 import { toast } from "sonner";
 import type { AnalyticsPageData } from "@/app/analytics/page";
 import Link from "next/link";
@@ -210,17 +211,20 @@ function StatCard({
 }
 
 export function AnalyticsView({ data }: { data: AnalyticsPageData }) {
+  const router = useRouter();
   const [activeSessions, setActiveSessions] = useState(data.activeSessions || []);
 
   const handleDiscard = async (sessionId: string) => {
+    const prevSessions = [...activeSessions];
     setActiveSessions((prev) => prev.filter((s) => s.id !== sessionId));
     try {
       const res = await discardSessionAction({ session_id: sessionId });
       if (!res.success) throw new Error(res.error || "Failed to discard");
       toast.info("Session discarded.");
+      router.refresh();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Failed to discard");
-      setActiveSessions(data.activeSessions || []);
+      setActiveSessions(prevSessions);
     }
   };
 
@@ -228,12 +232,12 @@ export function AnalyticsView({ data }: { data: AnalyticsPageData }) {
     const toDiscard = [...activeSessions];
     setActiveSessions([]);
     try {
-      for (const s of toDiscard) {
-        await discardSessionAction({ session_id: s.id });
-      }
-      toast.info(`Discarded ${toDiscard.length} incomplete sessions.`);
-    } catch {
-      toast.error("Failed to discard all sessions.");
+      const res = await discardAllActiveSessionsAction();
+      if (!res.success) throw new Error(res.error || "Failed to discard all sessions.");
+      toast.info(`Discarded ${res.discardedCount || toDiscard.length} incomplete session${(res.discardedCount || toDiscard.length) !== 1 ? "s" : ""}.`);
+      router.refresh();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to discard all sessions.");
       setActiveSessions(toDiscard);
     }
   };

@@ -40,7 +40,18 @@ export const metadata: Metadata = {
         description: "Adaptive exam preparation for Digital SAT, GRE, GMAT Focus, CFA Level 1, IELTS, and TOEFL. Spaced repetition with instant mistake analysis.",
         images: [`${baseUrl}/api/og?type=home`],
     },
-    icons: { icon: "/icon.ico" },
+    icons: {
+        icon: [
+            { url: "/favicon.ico", sizes: "any" },
+            { url: "/icon.svg", type: "image/svg+xml" },
+            { url: "/_static/favicons/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+            { url: "/_static/favicons/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+        ],
+        apple: [
+            { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+        ],
+    },
+    manifest: "/site.webmanifest",
     metadataBase: new URL(baseUrl),
 };
 

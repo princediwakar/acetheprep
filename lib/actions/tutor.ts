@@ -2,6 +2,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/admin";
 import {
   ExamProfileSchema,
   type ExamProfileInput,
@@ -176,14 +177,29 @@ export async function discardSessionAction(
     return { success: false, error: "Session not found." };
   }
 
-  // Delete answers first, then session (guarantees clean cascade even without DB cascade rule)
-  await supabase
-    .from("session_answers")
-    .delete()
-    .eq("session_id", session_id)
-    .eq("user_id", user.id);
+  // Use privileged client for cascading deletions if configured, falling back to authenticated client
+  const db = isSupabaseConfigured ? supabaseAdmin : supabase;
 
-  const { error: deleteErr } = await supabase
+  // Clean up dependent child records to ensure no foreign key lockups or dangling data
+  await Promise.allSettled([
+    db
+      .from("comeback_queue_items")
+      .delete()
+      .eq("original_session_id", session_id)
+      .eq("user_id", user.id),
+    db
+      .from("completion_time_logs")
+      .delete()
+      .eq("session_id", session_id)
+      .eq("user_id", user.id),
+    db
+      .from("session_answers")
+      .delete()
+      .eq("session_id", session_id)
+      .eq("user_id", user.id),
+  ]);
+
+  const { error: deleteErr } = await db
     .from("sessions")
     .delete()
     .eq("id", session_id)
@@ -202,6 +218,75 @@ export async function discardSessionAction(
   return { success: true };
 }
 
+export async function discardAllActiveSessionsAction(): Promise<{
+  success: boolean;
+  discardedCount: number;
+  error?: string;
+}> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return { success: false, discardedCount: 0, error: "Unauthorized" };
+  }
+
+  const db = isSupabaseConfigured ? supabaseAdmin : supabase;
+
+  // Find all active sessions for this user
+  const { data: activeSessions, error: fetchErr } = await db
+    .from("sessions")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("status", "active");
+
+  if (fetchErr || !activeSessions || activeSessions.length === 0) {
+    return { success: true, discardedCount: 0 };
+  }
+
+  const sessionIds = activeSessions.map((s) => s.id);
+
+  // Clean up all related child records
+  await Promise.allSettled([
+    db
+      .from("comeback_queue_items")
+      .delete()
+      .in("original_session_id", sessionIds)
+      .eq("user_id", user.id),
+    db
+      .from("completion_time_logs")
+      .delete()
+      .in("session_id", sessionIds)
+      .eq("user_id", user.id),
+    db
+      .from("session_answers")
+      .delete()
+      .in("session_id", sessionIds)
+      .eq("user_id", user.id),
+  ]);
+
+  const { error: deleteErr } = await db
+    .from("sessions")
+    .delete()
+    .in("id", sessionIds)
+    .eq("user_id", user.id);
+
+  if (deleteErr) {
+    console.error("[discardAllActiveSessionsAction] Delete error:", deleteErr);
+    return { success: false, discardedCount: 0, error: "Failed to discard all sessions." };
+  }
+
+  revalidatePath("/analytics");
+  revalidatePath("/history");
+  revalidatePath("/home");
+  revalidatePath("/dashboard");
+
+  return { success: true, discardedCount: sessionIds.length };
+}
+
 export async function cleanupGhostSessionsAction(): Promise<{ success: boolean; deletedCount: number; error?: string }> {
   const supabase = await createClient();
 
@@ -214,8 +299,10 @@ export async function cleanupGhostSessionsAction(): Promise<{ success: boolean; 
     return { success: false, deletedCount: 0, error: "Unauthorized" };
   }
 
+  const db = isSupabaseConfigured ? supabaseAdmin : supabase;
+
   // Fetch all active sessions for the user
-  const { data: activeSessions, error: fetchErr } = await supabase
+  const { data: activeSessions, error: fetchErr } = await db
     .from("sessions")
     .select("id")
     .eq("user_id", user.id)
@@ -228,7 +315,7 @@ export async function cleanupGhostSessionsAction(): Promise<{ success: boolean; 
   const sessionIds = activeSessions.map((s) => s.id);
 
   // Check which sessions have answers
-  const { data: answers } = await supabase
+  const { data: answers } = await db
     .from("session_answers")
     .select("session_id")
     .in("session_id", sessionIds);
@@ -237,7 +324,7 @@ export async function cleanupGhostSessionsAction(): Promise<{ success: boolean; 
   const ghostIds = sessionIds.filter((id) => !answeredIds.has(id));
 
   if (ghostIds.length > 0) {
-    await supabase
+    await db
       .from("sessions")
       .delete()
       .in("id", ghostIds)
@@ -251,3 +338,4 @@ export async function cleanupGhostSessionsAction(): Promise<{ success: boolean; 
 
   return { success: true, deletedCount: ghostIds.length };
 }
+

@@ -1,6 +1,7 @@
 // Path: app/api/session/start/route.ts
 import { NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/admin";
 
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
@@ -88,7 +89,8 @@ async function generateAndCreateSession(
     const answeredSet = new Set((answeredRows || []).map((a) => a.session_id));
     const emptyGhostIds = actIds.filter((id) => !answeredSet.has(id));
     if (emptyGhostIds.length > 0) {
-      await supabase.from("sessions").delete().in("id", emptyGhostIds).eq("user_id", userId);
+      const db = isSupabaseConfigured ? supabaseAdmin : supabase;
+      await db.from("sessions").delete().in("id", emptyGhostIds).eq("user_id", userId);
     }
   }
 
