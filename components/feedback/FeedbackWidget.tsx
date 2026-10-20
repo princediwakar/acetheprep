@@ -27,13 +27,17 @@ import { cn } from "@/lib/utils";
 
 export function FeedbackWidget() {
 	const pathname = usePathname();
-	const isSessionPage = pathname?.startsWith("/session/");
+	const isSessionPage = pathname?.startsWith("/session/") || pathname?.startsWith("/quiz/") || pathname?.startsWith("/play/");
 	const [isOpen, setIsOpen] = useState(false);
 	const [feedback, setFeedback] = useState("");
 	const [category, setCategory] = useState("feedback");
 	const [rating, setRating] = useState(0);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const {user} = useUser();
+
+	if (isSessionPage) {
+		return null;
+	}
 
 	const handleSubmit = async () => {
 		if (!feedback.trim() || !category) {

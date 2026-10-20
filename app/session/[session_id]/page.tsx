@@ -91,8 +91,8 @@ export default async function SessionPage({ params, searchParams }: PageProps) {
     supabase
       .from("exam_profiles")
       .select("exam_name")
-      .eq("id", sessionData.exam_profile_id)
-      .single(),
+      .eq("profile_id", sessionData.exam_profile_id)
+      .maybeSingle(),
     supabase
       .from("session_answers")
       .select("question_id, selected_option, is_correct, was_revealed, time_to_answer_ms")
@@ -103,7 +103,19 @@ export default async function SessionPage({ params, searchParams }: PageProps) {
       .eq("user_id", user.id),
   ]);
 
-  const profile = profileRes.data;
+  let profile = profileRes.data;
+
+  // Fallback: if exam_profile_id lookup missed, get the user's active exam profile
+  if (!profile) {
+    const activeProfileRes = await supabase
+      .from("exam_profiles")
+      .select("exam_name")
+      .eq("user_id", user.id)
+      .eq("is_active", true)
+      .maybeSingle();
+    profile = activeProfileRes.data;
+  }
+
   const rawAnswers = answersRes.data || [];
   const concepts = conceptsRes.data || [];
 

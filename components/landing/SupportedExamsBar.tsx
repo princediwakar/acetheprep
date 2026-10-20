@@ -323,7 +323,7 @@ export default function SupportedExamsBar({
                 className={cn(
                   "whitespace-nowrap rounded-lg px-2.5 py-1 text-[11px] font-medium transition-all cursor-pointer",
                   isSelected
-                    ? "bg-blue-600 text-white dark:bg-blue-600 font-semibold shadow-xs"
+                    ? "bg-primary text-primary-foreground font-semibold shadow-xs"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary/70",
                 )}
               >
@@ -348,8 +348,8 @@ export default function SupportedExamsBar({
                 "group relative flex flex-col justify-between rounded-xl border p-3 transition-all cursor-pointer select-none text-left",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 isActive
-                  ? "border-blue-600 bg-blue-50/70 dark:bg-blue-950/40 dark:border-blue-500 shadow-sm ring-1 ring-blue-600/30"
-                  : "border-border/80 bg-card hover:border-blue-500/40 hover:bg-secondary/40 hover:shadow-xs",
+                  ? "border-primary bg-primary/5 dark:bg-primary/10 shadow-sm ring-1 ring-primary/30"
+                  : "border-border/80 bg-card hover:border-primary/40 hover:bg-secondary/40 hover:shadow-xs",
               )}
             >
               <div>
@@ -359,16 +359,16 @@ export default function SupportedExamsBar({
                     className={cn(
                       "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors",
                       isActive
-                        ? "bg-blue-600 text-white dark:bg-blue-500"
-                        : "bg-secondary text-muted-foreground group-hover:text-blue-600 group-hover:bg-blue-50 dark:group-hover:bg-blue-950/60 dark:group-hover:text-blue-300",
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary text-muted-foreground group-hover:text-primary group-hover:bg-primary/10",
                     )}
                   >
                     <ExamMark id={exam.id} className="h-4 w-4" />
                   </div>
 
                   {isActive ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-blue-600/15 px-1.5 py-0.5 text-[9px] font-mono font-semibold text-blue-700 dark:text-blue-300">
-                      <span className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse" />
+                    <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-1.5 py-0.5 text-[9px] font-mono font-semibold text-primary">
+                      <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                       ACTIVE
                     </span>
                   ) : (

@@ -5,15 +5,26 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Zap, AlertCircle, Calendar, Award, ChevronRight, Eye, Trash2 } from "lucide-react";
+import {
+  CheckCircle2,
+  Zap,
+  AlertCircle,
+  Calendar,
+  Award,
+  ChevronRight,
+  Eye,
+  Trash2,
+  RotateCcw,
+  Sparkles,
+} from "lucide-react";
 import { QuizHistory } from "@/components/quiz-results/QuizHistory";
 import { discardSessionAction } from "@/lib/actions/tutor";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { SessionRow } from "@/app/analytics/page";
+import { HeaderPortal } from "@/components/shared/HeaderPortal";
 
 interface HistoryTabsViewProps {
   examName: string | null;
@@ -25,7 +36,17 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
   const [activeTab, setActiveTab] = useState<string>("sessions");
   const [sessions, setSessions] = useState<SessionRow[]>(examSessions);
 
-  const handleDiscard = async (sessionId: string) => {
+  const completedSessions = sessions.filter((s) => s.status === "completed");
+  const avgAccuracy =
+    completedSessions.length > 0
+      ? Math.round(
+          completedSessions.reduce((acc, s) => acc + s.accuracy, 0) / completedSessions.length
+        )
+      : 0;
+
+  const handleDiscard = async (e: React.MouseEvent, sessionId: string) => {
+    e.stopPropagation();
+    e.preventDefault();
     const prevSessions = [...sessions];
     setSessions((prev) => prev.filter((s) => s.id !== sessionId));
     try {
@@ -40,27 +61,58 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
   };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-1.5">
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
-          Your Practice & Quiz History
+    <div className="space-y-4">
+      {/* Header Slot: Collapsed History Stats into Top Header */}
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
+          {sessions.length > 0 && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-card border border-border/80 shadow-2xs text-xs font-mono">
+              <span className="text-[10px] text-muted-foreground font-semibold uppercase">Sessions</span>
+              <span className="font-bold text-foreground tabular-nums">{sessions.length}</span>
+            </div>
+          )}
+
+          {completedSessions.length > 0 && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-card border border-border/80 shadow-2xs text-xs font-mono">
+              <span className="text-[10px] text-muted-foreground font-semibold uppercase">Accuracy</span>
+              <span
+                className={cn(
+                  "font-bold tabular-nums",
+                  avgAccuracy >= 80
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : avgAccuracy >= 50
+                      ? "text-blue-600 dark:text-blue-400"
+                      : "text-amber-600 dark:text-amber-400"
+                )}
+              >
+                {avgAccuracy}%
+              </span>
+            </div>
+          )}
+        </div>
+      </HeaderPortal>
+
+      {/* Page Title Row */}
+      <div className="pb-1 border-b border-border/40">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+          Practice & Quiz History
         </h1>
-        <p className="text-sm text-muted-foreground">
-          Review your past exam simulations, mistake breakdowns, and step-by-step explanations.
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Review past simulations, answer records, and mistake breakdowns.
         </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6 inline-flex flex-wrap h-auto w-full sm:w-auto justify-start gap-1 bg-muted/60 p-1 rounded-xl border border-border">
+        <TabsList className="mb-4 inline-flex flex-wrap h-auto w-full sm:w-auto justify-start gap-1 bg-muted/50 p-1 rounded-xl border border-border/70">
           <TabsTrigger
             value="sessions"
-            className="rounded-lg px-4 py-2 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm font-semibold text-xs sm:text-sm text-muted-foreground transition-all"
+            className="rounded-lg px-4 py-1.5 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm font-semibold text-xs sm:text-sm text-muted-foreground transition-all"
           >
             Exam & Practice Sessions ({sessions.length})
           </TabsTrigger>
           <TabsTrigger
             value="quizzes"
-            className="rounded-lg px-4 py-2 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm font-semibold text-xs sm:text-sm text-muted-foreground transition-all"
+            className="rounded-lg px-4 py-1.5 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm font-semibold text-xs sm:text-sm text-muted-foreground transition-all"
           >
             Community Quizzes
           </TabsTrigger>
@@ -68,7 +120,7 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
 
         <TabsContent value="sessions" className="p-0 mt-0">
           {sessions.length === 0 ? (
-            <div className="text-center p-12 bg-card rounded-2xl border border-border shadow-sm space-y-4">
+            <div className="text-center p-12 bg-card rounded-2xl border border-border shadow-xs space-y-4">
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
                 <Award className="w-6 h-6 text-primary" />
               </div>
@@ -81,46 +133,80 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
               </Button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {sessions.map((session) => {
-                const date = new Date(session.created_at).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                });
+            <div className="rounded-xl border border-border/80 bg-card overflow-hidden shadow-xs">
+              {/* Desktop Table Header */}
+              <div className="hidden md:grid grid-cols-12 px-5 py-2.5 bg-muted/40 text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold border-b border-border/60">
+                <div className="col-span-5">Session & Focus</div>
+                <div className="col-span-2">Date</div>
+                <div className="col-span-3">Performance</div>
+                <div className="col-span-2 text-right">Action</div>
+              </div>
 
-                const isCompleted = session.status === "completed";
-                const isActive = session.status === "active";
+              {/* Rows */}
+              <div className="divide-y divide-border/50">
+                {sessions.map((session) => {
+                  const date = new Date(session.created_at).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  });
 
-                const intentLabel =
-                  session.session_intent === "custom_mock"
-                    ? "Mock Exam"
-                    : session.session_intent === "tracked"
-                      ? "Exam Simulation"
-                      : session.session_intent === "diagnostic"
-                        ? "Diagnostic Test"
-                        : "Tutor Drill";
+                  const isCompleted = session.status === "completed";
+                  const isActive = session.status === "active";
 
-                const domainCount = session.target_domains?.length ?? 0;
-                const domainText =
-                  domainCount === 0
-                    ? "General Practice"
-                    : domainCount === 1
-                      ? session.target_domains[0]
-                      : `${domainCount} domains`;
+                  const intentLabel =
+                    session.session_intent === "custom_mock"
+                      ? "Mock Exam"
+                      : session.session_intent === "tracked"
+                        ? "Exam Simulation"
+                        : session.session_intent === "diagnostic"
+                          ? "Diagnostic Test"
+                          : "Tutor Drill";
 
-                const totalQuestions =
-                  session.totalQuestions > 0 ? session.totalQuestions : session.answeredCount;
+                  const domainCount = session.target_domains?.length ?? 0;
+                  const domainText =
+                    domainCount === 0
+                      ? "General Practice"
+                      : domainCount === 1
+                        ? session.target_domains[0]
+                        : `${domainCount} domains`;
 
-                return (
-                  <Card
-                    key={session.id}
-                    className="overflow-hidden border border-border/80 bg-card hover:border-primary/40 hover:shadow-md transition-all flex flex-col justify-between"
-                  >
-                    <CardHeader className="p-5 pb-3">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-lg bg-muted/60 border border-border/50 flex items-center justify-center shrink-0 text-muted-foreground">
+                  const totalQuestions =
+                    session.totalQuestions > 0 ? session.totalQuestions : session.answeredCount;
+
+                  const accuracyColor =
+                    session.accuracy >= 80
+                      ? "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/25"
+                      : session.accuracy >= 50
+                        ? "text-blue-600 dark:text-blue-400 bg-blue-500/10 border-blue-500/25"
+                        : "text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/25";
+
+                  const barBg =
+                    session.accuracy >= 80
+                      ? "bg-emerald-500"
+                      : session.accuracy >= 50
+                        ? "bg-blue-500"
+                        : "bg-amber-500";
+
+                  return (
+                    <div
+                      key={session.id}
+                      className="group transition-colors hover:bg-muted/30"
+                    >
+                      {/* Desktop Row */}
+                      <div className="hidden md:grid grid-cols-12 px-5 py-3.5 items-center gap-4">
+                        {/* Col 1-5: Session & Focus */}
+                        <div className="col-span-5 flex items-center gap-3 min-w-0">
+                          <div
+                            className={cn(
+                              "w-8 h-8 rounded-lg border flex items-center justify-center shrink-0",
+                              isCompleted
+                                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                                : isActive
+                                  ? "bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400"
+                                  : "bg-muted border-border/60 text-muted-foreground"
+                            )}
+                          >
                             {isCompleted ? (
                               <CheckCircle2 className="w-4 h-4" />
                             ) : isActive ? (
@@ -129,94 +215,204 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
                               <AlertCircle className="w-4 h-4" />
                             )}
                           </div>
-                          <div>
-                            <CardTitle className="text-base font-bold text-foreground">
-                              {intentLabel}
-                            </CardTitle>
-                            {examName && (
-                              <div className="text-xs text-muted-foreground font-medium">
-                                {examName}
-                              </div>
-                            )}
+
+                          <div className="min-w-0 space-y-0.5">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
+                                {intentLabel}
+                              </span>
+                              <span
+                                className={cn(
+                                  "text-[10px] uppercase font-mono font-medium px-1.5 py-0.2 rounded border",
+                                  isCompleted
+                                    ? "bg-muted/50 text-muted-foreground border-border/60"
+                                    : isActive
+                                      ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
+                                      : "bg-muted/30 text-muted-foreground/80 border-border/40"
+                                )}
+                              >
+                                {session.status}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground truncate">
+                              {examName && <span className="font-medium text-foreground/80">{examName}</span>}
+                              {examName && <span>•</span>}
+                              <span className="truncate">{domainText}</span>
+                            </div>
                           </div>
                         </div>
 
-                        <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-md border border-border/60 bg-muted/40 text-muted-foreground shrink-0">
-                          {session.status}
-                        </span>
-                      </div>
-                    </CardHeader>
-
-                    <CardContent className="p-5 pt-0 space-y-4">
-                      <div className="flex items-center justify-between text-xs text-muted-foreground border-y py-2.5 border-border/50">
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5" />
+                        {/* Col 6-7: Date */}
+                        <div className="col-span-2 flex items-center gap-1.5 text-xs font-mono text-muted-foreground">
+                          <Calendar className="w-3.5 h-3.5 shrink-0 opacity-70" />
                           <span>{date}</span>
                         </div>
-                        <Badge variant="outline" className="text-[11px] font-normal truncate max-w-[200px]">
-                          {domainText}
-                        </Badge>
-                      </div>
 
-                      <div className="flex items-center justify-between">
-                        {isCompleted ? (
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-2xl font-black text-foreground tabular-nums">
-                              {session.correctCount}/{totalQuestions}
-                            </span>
-                            <span className="text-xs font-medium text-muted-foreground">
-                              {session.accuracy}% accuracy
-                            </span>
-                          </div>
-                        ) : isActive ? (
-                          <div className="text-sm font-medium text-muted-foreground">
-                            {session.answeredCount} of {totalQuestions} answered
-                          </div>
-                        ) : (
-                          <div className="text-sm text-muted-foreground">Session Abandoned</div>
-                        )}
-                      </div>
-
-                      {isCompleted ? (
-                        <Button
-                          asChild
-                          variant="outline"
-                          className="w-full font-semibold flex items-center justify-center gap-1.5 border-border hover:bg-accent hover:text-foreground"
-                          size="lg"
-                        >
-                          <Link href={`/session/${session.id}`}>
-                            <Eye className="w-4 h-4 mr-1 text-muted-foreground" />
-                            Review Solutions
-                            <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                          </Link>
-                        </Button>
-                      ) : (
-                        <div className="grid grid-cols-2 gap-2">
-                          <Button
-                            asChild
-                            className="w-full font-bold flex items-center justify-center gap-1.5 shadow-sm"
-                            size="default"
-                          >
-                            <Link href={`/session/${session.id}`}>
-                              <Zap className="w-4 h-4 mr-1 fill-current" />
-                              Resume
-                            </Link>
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="default"
-                            onClick={() => handleDiscard(session.id)}
-                            className="w-full font-medium text-destructive hover:bg-destructive/10 border-destructive/30"
-                          >
-                            <Trash2 className="w-4 h-4 mr-1.5" />
-                            Discard
-                          </Button>
+                        {/* Col 8-10: Performance */}
+                        <div className="col-span-3">
+                          {isCompleted ? (
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-bold font-mono text-foreground tabular-nums">
+                                {session.correctCount}/{totalQuestions}
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <div className="h-1.5 w-16 rounded-full bg-muted overflow-hidden">
+                                  <div
+                                    className={cn("h-full rounded-full transition-all", barBg)}
+                                    style={{ width: `${Math.min(100, session.accuracy)}%` }}
+                                  />
+                                </div>
+                                <span
+                                  className={cn(
+                                    "text-xs font-mono font-semibold px-1.5 py-0.5 rounded border",
+                                    accuracyColor
+                                  )}
+                                >
+                                  {session.accuracy}%
+                                </span>
+                              </div>
+                            </div>
+                          ) : isActive ? (
+                            <div className="text-xs text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1.5">
+                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                              <span>{session.answeredCount} of {totalQuestions} answered</span>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted-foreground italic">Incomplete</span>
+                          )}
                         </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                );
-              })}
+
+                        {/* Col 11-12: Action */}
+                        <div className="col-span-2 flex items-center justify-end gap-1.5">
+                          {isCompleted ? (
+                            <Link
+                              href={`/session/${session.id}`}
+                              className="inline-flex items-center gap-1 rounded-lg border border-border/80 bg-background/80 hover:bg-primary hover:text-primary-foreground hover:border-primary px-3 py-1.5 text-xs font-semibold text-foreground shadow-xs transition-all active:scale-[0.98]"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>Review</span>
+                              <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                            </Link>
+                          ) : (
+                            <div className="flex items-center gap-1.5">
+                              <Link
+                                href={`/session/${session.id}`}
+                                className="inline-flex items-center gap-1 rounded-lg bg-primary hover:opacity-95 px-3 py-1.5 text-xs font-semibold text-primary-foreground shadow-xs transition-all"
+                              >
+                                <Zap className="w-3 h-3 fill-current" />
+                                <span>Resume</span>
+                              </Link>
+                              <button
+                                onClick={(e) => handleDiscard(e, session.id)}
+                                title="Discard session"
+                                className="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-transparent hover:border-destructive/30 hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Mobile Row */}
+                      <div className="md:hidden p-4 space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div
+                              className={cn(
+                                "w-7 h-7 rounded-lg border flex items-center justify-center shrink-0",
+                                isCompleted
+                                  ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                                  : isActive
+                                    ? "bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400"
+                                    : "bg-muted border-border/60 text-muted-foreground"
+                              )}
+                            >
+                              {isCompleted ? (
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                              ) : isActive ? (
+                                <Zap className="w-3.5 h-3.5" />
+                              ) : (
+                                <AlertCircle className="w-3.5 h-3.5" />
+                              )}
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="font-semibold text-sm text-foreground truncate">
+                                {intentLabel}
+                              </h4>
+                              {examName && (
+                                <p className="text-[11px] text-muted-foreground truncate">{examName}</p>
+                              )}
+                            </div>
+                          </div>
+
+                          <span className="text-[10px] uppercase font-mono font-medium px-2 py-0.5 rounded border border-border/60 bg-muted/40 text-muted-foreground shrink-0">
+                            {session.status}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between text-xs text-muted-foreground font-mono">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3 opacity-70" />
+                            <span>{date}</span>
+                          </div>
+                          <Badge variant="outline" className="text-[10px] font-normal truncate max-w-[160px]">
+                            {domainText}
+                          </Badge>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-1">
+                          {isCompleted ? (
+                            <div className="flex items-center gap-2">
+                              <span className="text-base font-bold font-mono text-foreground tabular-nums">
+                                {session.correctCount}/{totalQuestions}
+                              </span>
+                              <span
+                                className={cn(
+                                  "text-[11px] font-mono font-semibold px-1.5 py-0.5 rounded border",
+                                  accuracyColor
+                                )}
+                              >
+                                {session.accuracy}%
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">
+                              {session.answeredCount} of {totalQuestions} answered
+                            </span>
+                          )}
+
+                          {isCompleted ? (
+                            <Link
+                              href={`/session/${session.id}`}
+                              className="inline-flex items-center gap-1 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-accent"
+                            >
+                              <span>Review</span>
+                              <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                            </Link>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <Link
+                                href={`/session/${session.id}`}
+                                className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground"
+                              >
+                                <Zap className="w-3 h-3 fill-current" />
+                                <span>Resume</span>
+                              </Link>
+                              <button
+                                onClick={(e) => handleDiscard(e, session.id)}
+                                className="p-1.5 text-destructive hover:bg-destructive/10 rounded-md"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </TabsContent>
@@ -228,3 +424,4 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
     </div>
   );
 }
+

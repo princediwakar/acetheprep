@@ -93,7 +93,7 @@ export default async function HistoryPage() {
   });
 
   return (
-    <div className="w-full max-w-6xl py-6 px-4">
+    <div className="w-full max-w-6xl mx-auto">
       <HistoryTabsView
         examName={profile?.exam_name || null}
         examSessions={examSessions}

@@ -49,7 +49,7 @@ function MistakeAnalysisVisual() {
   return (
     <div className="mt-5 rounded-xl border border-border/80 bg-background/90 p-3.5 text-xs font-mono space-y-2.5 shadow-xs">
       <div className="flex items-center justify-between text-[11px] text-muted-foreground pb-1.5 border-b border-border/50">
-        <span className="font-semibold text-foreground">Diagnostic Mistake Autopsy</span>
+        <span className="font-semibold text-foreground">Diagnostic Mistake Breakdown</span>
         <span className="text-rose-500 font-medium">Algebraic Trap</span>
       </div>
       <div className="text-foreground/90 font-medium">

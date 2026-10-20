@@ -66,7 +66,12 @@ export function AppShell({ children, sidebarData }: { children: React.ReactNode;
   const shouldShowSidebar = showOnRoutes.includes(pathname) && !!user;
   const isQuizPage = pathname.startsWith("/quiz/") || pathname.startsWith("/play/") || pathname.startsWith("/session/");
 
-  if (!mounted || !shouldShowSidebar || isQuizPage) {
+  // On active exam/quiz sessions, grant 100% full-screen without website navbar or user menu
+  if (isQuizPage) {
+    return <>{children}</>;
+  }
+
+  if (!mounted || !shouldShowSidebar) {
     return (
       <div className="min-h-screen">
         <Header />
@@ -156,44 +161,55 @@ export function AppShell({ children, sidebarData }: { children: React.ReactNode;
             )}
           </nav>
 
-          {user && sidebarData && sidebarData.streak > 0 && (
-            <div className="border-t pt-4 mt-4 flex flex-col gap-1">
-              <div className="flex items-center gap-1.5 px-2 py-1 text-xs">
-                <Flame className="w-4 h-4 text-orange-500" />
-                <span className="text-muted-foreground">
-                  {sidebarData.streak} day streak
-                </span>
+          {/* Bottom user & streak section */}
+          <div className="border-t pt-3 mt-auto space-y-2">
+            {user && sidebarData && sidebarData.streak > 0 && (
+              <div className="flex items-center gap-2 px-2.5 py-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 rounded-lg">
+                <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0" />
+                <span>{sidebarData.streak} day streak</span>
               </div>
-            </div>
-          )}
-        </div>
-      </aside>
-
-      <div className={`flex-1 transition-[margin-left] duration-200 ${sidebarOpen ? 'lg:ml-64' : 'ml-0'}`}>
-        <header className="h-14 border-b flex items-center px-4 sticky top-0 bg-background z-40">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-accent rounded-md mr-4"
-          >
-            {sidebarOpen ? <PanelLeftClose className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-          <span className="font-medium">
-            {headerTitle}
-          </span>
-          <div className="ml-auto flex items-center gap-2">
-            <ThemeToggle />
+            )}
             {user && (
               <UserMenu
                 user={user}
                 isOpen={isDropdownOpen}
                 onOpenChange={setIsDropdownOpen}
                 onSignOut={handleSignOut}
+                variant="sidebar"
               />
             )}
           </div>
+        </div>
+      </aside>
+
+      <div className={`flex-1 transition-[margin-left] duration-200 ${sidebarOpen ? 'lg:ml-64' : 'ml-0'}`}>
+        <header className="h-14 border-b flex items-center px-4 sticky top-0 bg-background/95 backdrop-blur-xs z-40">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 hover:bg-accent rounded-md mr-3 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Toggle Sidebar"
+          >
+            {sidebarOpen ? <PanelLeftClose className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+          
+          <div className="flex items-center gap-2 min-w-0" id="header-title-slot">
+            <span className="font-bold text-sm sm:text-base text-foreground tracking-tight truncate">
+              {sidebarData?.examName || headerTitle}
+            </span>
+            {sidebarData?.daysRemaining !== undefined && sidebarData.daysRemaining > 0 && (
+              <span className="hidden sm:inline-flex items-center text-xs text-muted-foreground font-medium">
+                &middot; {sidebarData.daysRemaining}d left
+              </span>
+            )}
+          </div>
+
+          <div className="ml-auto flex items-center gap-2.5">
+            <div id="header-actions-portal" className="flex items-center gap-2" />
+            <ThemeToggle />
+          </div>
         </header>
 
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {children}
         </div>
       </div>

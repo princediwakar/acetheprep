@@ -4,12 +4,12 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { QuizResult } from "@/types/quiz";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatTime } from "@/lib/quiz-utils";
 import { Clock, Calendar, Award, Eye } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 
 interface QuizHistoryProps {
   activeExamName?: string | null;
@@ -79,36 +79,26 @@ export const QuizHistory = ({ activeExamName }: QuizHistoryProps) => {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-          Your Quiz History
-        </h1>
-        {/* Shimmer for Category Tabs to prevent CLS layout shift */}
+      <div className="space-y-4">
+        {/* Shimmer for Category Tabs */}
         <div className="flex flex-wrap gap-2 pb-1">
-          <Skeleton className="h-9 w-24 rounded-full" />
-          <Skeleton className="h-9 w-28 rounded-full" />
-          <Skeleton className="h-9 w-36 rounded-full" />
-          <Skeleton className="h-9 w-24 rounded-full" />
-          <Skeleton className="h-9 w-44 rounded-full" />
-          <Skeleton className="h-9 w-32 rounded-full" />
+          <Skeleton className="h-8 w-24 rounded-lg" />
+          <Skeleton className="h-8 w-28 rounded-lg" />
+          <Skeleton className="h-8 w-36 rounded-lg" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Card key={i} className="overflow-hidden border border-border/70 bg-card">
-              <CardHeader className="pb-3">
-                <Skeleton className="h-5 w-4/5 rounded-md" />
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3.5">
-                  <div className="flex justify-between items-center">
-                    <Skeleton className="h-4 w-32 rounded-md" />
-                    <Skeleton className="h-4 w-16 rounded-md" />
-                  </div>
-                  <Skeleton className="h-4 w-24 rounded-md" />
-                  <Skeleton className="h-10 w-full rounded-xl mt-3" />
-                </div>
-              </CardContent>
-            </Card>
+        <div className="rounded-xl border border-border/70 bg-card overflow-hidden shadow-xs divide-y divide-border/50">
+          <div className="px-5 py-3 bg-muted/30">
+            <Skeleton className="h-4 w-48" />
+          </div>
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="px-5 py-3.5 flex items-center justify-between gap-4">
+              <div className="space-y-1.5 flex-1">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-3 w-1/5" />
+              </div>
+              <Skeleton className="h-6 w-20 rounded" />
+              <Skeleton className="h-8 w-24 rounded-lg" />
+            </div>
           ))}
         </div>
       </div>
@@ -117,9 +107,9 @@ export const QuizHistory = ({ activeExamName }: QuizHistoryProps) => {
 
   if (error) {
     return (
-      <div className="text-center p-8">
-        <p className="text-destructive">{error}</p>
-        <Button variant="outline" onClick={() => window.location.reload()} className="mt-4">
+      <div className="text-center p-8 bg-card rounded-xl border border-border">
+        <p className="text-destructive text-sm font-medium">{error}</p>
+        <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="mt-4">
           Try Again
         </Button>
       </div>
@@ -128,12 +118,15 @@ export const QuizHistory = ({ activeExamName }: QuizHistoryProps) => {
 
   if (results.length === 0) {
     return (
-      <div className="text-center p-8 bg-muted/20 rounded-lg border border-border">
-        <h2 className="text-xl font-medium mb-2">No Quiz History</h2>
-        <p className="text-muted-foreground mb-4">
-          You haven&apos;t completed any quizzes yet. Take a quiz to see your results here!
+      <div className="text-center p-12 bg-card rounded-xl border border-border shadow-xs space-y-4">
+        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+          <Award className="w-6 h-6 text-primary" />
+        </div>
+        <h2 className="text-xl font-bold">No Quiz History</h2>
+        <p className="text-sm text-muted-foreground max-w-md mx-auto">
+          You haven&apos;t completed any quizzes yet. Take a quiz to test your knowledge and see results here!
         </p>
-        <Button onClick={() => router.push("/")}>Find a Quiz</Button>
+        <Button onClick={() => router.push("/")} className="font-bold">Find a Quiz</Button>
       </div>
     );
   }
@@ -142,72 +135,142 @@ export const QuizHistory = ({ activeExamName }: QuizHistoryProps) => {
     ? results 
     : results.filter(r => r.quizzes?.subject === activeTab);
 
-  const renderResultCard = (result: QuizResult, index: number) => {
+  const renderResultRow = (result: QuizResult, index: number) => {
     const completedAt = result.completed_at ? new Date(result.completed_at) : null;
     const percentage = result.total_questions > 0 
-      ? ((result.score / result.total_questions) * 100).toFixed(1) 
-      : "0.0";
+      ? Math.round((result.score / result.total_questions) * 100)
+      : 0;
     
     const uniqueKey = result.result_id || `result-${index}`;
     const quizSlug = result.quizzes?.slug || `${result.quiz_id}`;
+
+    const scoreColor =
+      percentage >= 80
+        ? "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/25"
+        : percentage >= 50
+          ? "text-blue-600 dark:text-blue-400 bg-blue-500/10 border-blue-500/25"
+          : "text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/25";
     
     return (
-      <Card key={uniqueKey} className="overflow-hidden hover:shadow-md transition-shadow">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg line-clamp-1">
-            {result.quizzes?.title || "Untitled Quiz"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Award className="w-4 h-4" />
-                <span>
-                  Score: {result.score}/{result.total_questions} ({percentage}%)
+      <div
+        key={uniqueKey}
+        className="group transition-colors hover:bg-muted/30"
+      >
+        {/* Desktop Row */}
+        <div className="hidden md:grid grid-cols-12 px-5 py-3.5 items-center gap-4">
+          {/* Col 1-5: Quiz & Category */}
+          <div className="col-span-5 flex items-center gap-3 min-w-0">
+            <div className="w-8 h-8 rounded-lg border border-border/60 bg-muted/60 flex items-center justify-center shrink-0 text-muted-foreground group-hover:text-primary group-hover:border-primary/40 transition-colors">
+              <Award className="w-4 h-4" />
+            </div>
+            <div className="min-w-0 space-y-0.5">
+              <h4 className="font-semibold text-sm text-foreground truncate group-hover:text-primary transition-colors">
+                {result.quizzes?.title || "Untitled Quiz"}
+              </h4>
+              {result.quizzes?.subject && (
+                <span className="inline-block text-[11px] font-mono text-muted-foreground">
+                  {result.quizzes.subject}
                 </span>
-              </div>
-              
-              {typeof result.time_taken === 'number' && result.time_taken > 0 && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Clock className="w-4 h-4" />
-                  <span>{formatTime(result.time_taken)}</span>
-                </div>
               )}
             </div>
-            
-            {completedAt && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Calendar className="w-4 h-4" />
-                <span>{formatDistanceToNow(completedAt, { addSuffix: true })}</span>
-              </div>
+          </div>
+
+          {/* Col 6-7: Date */}
+          <div className="col-span-2 flex items-center gap-1.5 text-xs font-mono text-muted-foreground">
+            <Calendar className="w-3.5 h-3.5 shrink-0 opacity-70" />
+            <span>
+              {completedAt ? formatDistanceToNow(completedAt, { addSuffix: true }) : "Recent"}
+            </span>
+          </div>
+
+          {/* Col 8-10: Score & Time */}
+          <div className="col-span-3 flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold font-mono text-foreground tabular-nums">
+                {result.score}/{result.total_questions}
+              </span>
+              <span className={cn("text-xs font-mono font-semibold px-1.5 py-0.5 rounded border", scoreColor)}>
+                {percentage}%
+              </span>
+            </div>
+            {typeof result.time_taken === "number" && result.time_taken > 0 && (
+              <span className="text-xs font-mono text-muted-foreground flex items-center gap-1">
+                <Clock className="w-3 h-3 opacity-60" />
+                {formatTime(result.time_taken)}
+              </span>
             )}
-            
-            <Button 
-              className="w-full mt-2 flex items-center gap-2"
+          </div>
+
+          {/* Col 11-12: Action */}
+          <div className="col-span-2 flex items-center justify-end">
+            <Button
+              size="sm"
+              variant="outline"
               onClick={() => handleViewResults(result.quiz_id, quizSlug)}
+              className="h-8 px-3 text-xs font-semibold rounded-lg border-border/80 bg-background hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all"
             >
-              <Eye className="w-4 h-4" />
+              <Eye className="w-3.5 h-3.5 mr-1" />
               View Results
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Mobile Row */}
+        <div className="md:hidden p-4 space-y-2.5">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <h4 className="font-semibold text-sm text-foreground truncate">
+                {result.quizzes?.title || "Untitled Quiz"}
+              </h4>
+              {result.quizzes?.subject && (
+                <span className="text-xs text-muted-foreground">{result.quizzes.subject}</span>
+              )}
+            </div>
+            <span className={cn("text-xs font-mono font-semibold px-1.5 py-0.5 rounded border shrink-0", scoreColor)}>
+              {percentage}%
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between text-xs text-muted-foreground font-mono">
+            <div className="flex items-center gap-1.5">
+              <Calendar className="w-3 h-3 opacity-70" />
+              <span>{completedAt ? formatDistanceToNow(completedAt, { addSuffix: true }) : "Recent"}</span>
+            </div>
+            {typeof result.time_taken === "number" && result.time_taken > 0 && (
+              <div className="flex items-center gap-1">
+                <Clock className="w-3 h-3 opacity-60" />
+                <span>{formatTime(result.time_taken)}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="pt-1 flex items-center justify-between">
+            <span className="text-xs font-mono text-muted-foreground">
+              Score: <strong className="text-foreground">{result.score}/{result.total_questions}</strong>
+            </span>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => handleViewResults(result.quiz_id, quizSlug)}
+              className="h-7 px-2.5 text-xs font-semibold"
+            >
+              <Eye className="w-3 h-3 mr-1" />
+              View
+            </Button>
+          </div>
+        </div>
+      </div>
     );
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-        Your Quiz History
-      </h1>
-      
-      {subjects.length > 0 ? (
+    <div className="space-y-4">
+      {subjects.length > 0 && (
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-6 flex flex-wrap h-auto w-full justify-start gap-2 bg-transparent p-0">
+          <TabsList className="mb-4 flex flex-wrap h-auto w-full justify-start gap-1.5 bg-transparent p-0">
             <TabsTrigger 
               value="all"
-              className="flex-none rounded-full px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border bg-muted/50"
+              className="flex-none rounded-lg px-3 py-1.5 text-xs font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border bg-muted/40"
             >
               All Quizzes
             </TabsTrigger>
@@ -217,34 +280,39 @@ export const QuizHistory = ({ activeExamName }: QuizHistoryProps) => {
                 <TabsTrigger 
                   key={sub} 
                   value={sub}
-                  className="flex-none rounded-full px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border bg-muted/50"
+                  className="flex-none rounded-lg px-3 py-1.5 text-xs font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border bg-muted/40"
                 >
                   {sub}
                   {isActiveExam && (
-                    <span className="ml-2 text-[10px] uppercase bg-background/20 px-1.5 py-0.5 rounded">Active</span>
+                    <span className="ml-1.5 text-[9px] uppercase font-mono bg-background/20 px-1 py-0.2 rounded">Active</span>
                   )}
                 </TabsTrigger>
               );
             })}
           </TabsList>
-          
-          <TabsContent value={activeTab} className="mt-0">
-            {filteredResults.length === 0 ? (
-              <div className="text-center p-8 bg-muted/20 rounded-lg border border-border mt-4">
-                <p className="text-muted-foreground">No quizzes found for this category.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredResults.map(renderResultCard)}
-              </div>
-            )}
-          </TabsContent>
         </Tabs>
+      )}
+
+      {filteredResults.length === 0 ? (
+        <div className="text-center p-8 bg-card rounded-xl border border-border">
+          <p className="text-muted-foreground text-sm">No quizzes found for this category.</p>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {results.map(renderResultCard)}
+        <div className="rounded-xl border border-border/80 bg-card overflow-hidden shadow-xs">
+          {/* Desktop Table Header */}
+          <div className="hidden md:grid grid-cols-12 px-5 py-2.5 bg-muted/40 text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold border-b border-border/60">
+            <div className="col-span-5">Quiz & Category</div>
+            <div className="col-span-2">Date</div>
+            <div className="col-span-3">Score & Duration</div>
+            <div className="col-span-2 text-right">Action</div>
+          </div>
+
+          <div className="divide-y divide-border/50">
+            {filteredResults.map(renderResultRow)}
+          </div>
         </div>
       )}
     </div>
   );
-}; 
+};
+ 

@@ -69,7 +69,7 @@ export default function ReliefComparisonSection() {
         <div className="mt-14 text-center space-y-3">
           <Link
             href="/setup"
-            className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 px-8 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-950/20 hover:shadow-blue-900/30 active:scale-[0.99] transition-all cursor-pointer"
+            className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-primary hover:opacity-95 px-8 py-3.5 text-sm font-semibold text-primary-foreground shadow-xl active:scale-[0.99] transition-all cursor-pointer"
           >
             <span>Start Free Prep</span>
             <ArrowRight className="h-4 w-4" />
@@ -307,7 +307,7 @@ function ComparisonFlowDiagram() {
               <span>10Q Timed Retrieval Drill (Unassisted)</span>
             </div>
             <div className="flex items-center justify-center text-blue-500/60 text-[10px]">
-              ▼ (Instant mistake autopsy isolation)
+              ▼ (Instant error deconstruction & isolation)
             </div>
             <div className="flex items-center gap-2.5 rounded-lg bg-background/80 p-2.5 border border-border/40">
               <span className="text-blue-500 font-bold shrink-0">02</span>

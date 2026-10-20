@@ -24,6 +24,7 @@ import {
 import type { DashboardPageData, SyllabusSubject, SyllabusDomain } from "@/app/home/page";
 import { TUTOR_ROUTES, TUTOR_CONFIG } from "@/lib/constants/tutor";
 import { UpgradeModal } from "@/components/billing/UpgradeModal";
+import { HeaderPortal } from "@/components/shared/HeaderPortal";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import {
@@ -31,13 +32,11 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  CalendarDays,
   Play,
   ArrowRight,
   Clock,
   Lock,
   BookOpen,
-  SlidersHorizontal,
   Timer,
   GraduationCap,
   Sparkles,
@@ -45,32 +44,7 @@ import {
 
 export function DashboardViewLoading() {
   return (
-    <div className="max-w-5xl mx-auto space-y-8 px-4 py-6">
-      {/* Status Strip Skeleton */}
-      <div className="flex items-center justify-between bg-card p-4 rounded-xl border border-border/70 shadow-sm">
-        <div className="flex items-center gap-3">
-          <Skeleton className="w-9 h-9 rounded-lg" />
-          <div className="space-y-1.5">
-            <Skeleton className="h-4 w-32 rounded-md" />
-            <Skeleton className="h-3 w-20 rounded-md" />
-          </div>
-        </div>
-        <div className="flex flex-col items-end space-y-1.5">
-          <Skeleton className="h-3 w-16 rounded-md" />
-          <Skeleton className="h-6 w-20 rounded-md" />
-        </div>
-      </div>
-
-      {/* Session Size Selector Strip Skeleton */}
-      <div className="flex items-center justify-between bg-card p-3 px-4 rounded-xl border border-border/70 shadow-sm">
-        <Skeleton className="h-4 w-28 rounded-md" />
-        <div className="flex items-center gap-1.5">
-          <Skeleton className="h-7 w-12 rounded-md" />
-          <Skeleton className="h-7 w-12 rounded-md" />
-          <Skeleton className="h-7 w-12 rounded-md" />
-        </div>
-      </div>
-
+    <div className="max-w-5xl mx-auto space-y-6 px-4 py-4 sm:py-6">
       {/* Smart Start Strip Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="rounded-2xl border border-primary/20 bg-card p-5 space-y-4">
@@ -137,6 +111,12 @@ interface SessionConfig {
   subjectName?: string;
 }
 
+const QUESTION_COUNT_OPTIONS = [
+  { count: 10, label: "10 Quick", proOnly: false },
+  { count: 25, label: "25 Practice", proOnly: true },
+  { count: 50, label: "50 Mock", proOnly: true },
+] as const;
+
 export function DashboardView({ data }: { data: DashboardPageData }) {
   const router = useRouter();
 
@@ -158,52 +138,20 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
   }, [isLaunching]);
 
   const [isLinearMode, setIsLinearMode] = useState(false);
-  const [sessionQuestionCount, setSessionQuestionCount] = useState<number>(10);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradeReason, setUpgradeReason] = useState<string | undefined>(undefined);
-
-  const SESSION_SIZE_PRESETS = [
-    { count: 10, label: "10 Quick", proOnly: false },
-    { count: 25, label: "25 Practice", proOnly: true },
-    { count: 50, label: "50 Mock", proOnly: true },
-  ] as const;
 
   useEffect(() => {
     const savedLinear = localStorage.getItem("acetheprep_linear_mode") ?? localStorage.getItem("gibbi_linear_mode");
     if (savedLinear) {
       setIsLinearMode(savedLinear === "true");
     }
-    const savedCount = localStorage.getItem("acetheprep_session_count");
-    if (savedCount) {
-      const parsed = parseInt(savedCount, 10);
-      if ([10, 25, 50].includes(parsed)) {
-        // If saved size was > 10 but user is not Pro, fallback to 10
-        if (parsed > 10 && !data.isPro) {
-          setSessionQuestionCount(10);
-          setModalQuestionCount(10);
-        } else {
-          setSessionQuestionCount(parsed);
-          setModalQuestionCount(parsed);
-        }
-      }
-    }
-  }, [data.isPro]);
+  }, []);
 
   const handleToggleLinear = useCallback((checked: boolean) => {
     setIsLinearMode(checked);
     localStorage.setItem("acetheprep_linear_mode", String(checked));
   }, []);
-
-  const handleSelectSessionSize = useCallback((count: number) => {
-    if (count > 10 && !data.isPro) {
-      setUpgradeReason(`Extended ${count}-question session sets are exclusive to AceThePrep Pro.`);
-      setShowUpgradeModal(true);
-      return;
-    }
-    setSessionQuestionCount(count);
-    setModalQuestionCount(count);
-    localStorage.setItem("acetheprep_session_count", String(count));
-  }, [data.isPro]);
 
   async function startSession(intent: string, focusDomains?: string[], count: number = modalQuestionCount) {
     const body: Record<string, unknown> = {
@@ -236,7 +184,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
       subtitle: "Targeting your weakest and overdue topics across all subjects",
       intent: "spaced_review",
     });
-    setModalQuestionCount(sessionQuestionCount);
+    setModalQuestionCount(10);
     setModalMode("exam");
   }
 
@@ -248,7 +196,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
       domain,
       subjectName,
     });
-    setModalQuestionCount(sessionQuestionCount);
+    setModalQuestionCount(10);
     setModalMode("exam");
   }
 
@@ -275,7 +223,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
       intent: "custom_mock",
       domain: nextLinearDomain.name,
     });
-    setModalQuestionCount(sessionQuestionCount);
+    setModalQuestionCount(10);
     setModalMode("exam");
   }
 
@@ -298,29 +246,11 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
   const now = new Date();
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 px-4 py-6">
-      {/* Section 1: Status Strip */}
-      <div className="flex items-center justify-between text-sm bg-card p-4 rounded-xl border shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <CalendarDays className="w-5 h-5 text-primary" />
-          </div>
-          <div>
-            <div className="font-bold text-base flex items-center gap-2">
-              {data.examName}
-              {data.isPro && (
-                <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] uppercase font-bold tracking-wider px-2 py-0.5">
-                  <Sparkles className="w-3 h-3 mr-1 inline" />
-                  Pro
-                </Badge>
-              )}
-            </div>
-            <div className="text-muted-foreground text-xs">
-              {data.daysRemaining} day{data.daysRemaining !== 1 ? "s" : ""} left
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
+    <div className="max-w-5xl mx-auto space-y-6 px-4 py-4 sm:py-6">
+      {/* Header Slot: Status Strip Collapsed into Top Header */}
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
+          {/* Upgrade to Pro Button (Free users) */}
           {!data.isPro && (
             <Button
               type="button"
@@ -330,49 +260,26 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
                 setUpgradeReason("Upgrade to AceThePrep Pro for unlimited daily sessions, full 50Q mock simulations, and detailed step-by-step solutions.");
                 setShowUpgradeModal(true);
               }}
-              className="hidden sm:flex text-xs font-bold border-primary/30 text-primary hover:bg-primary/10 gap-1.5 h-8 px-3 rounded-lg"
+              className="h-8 px-2.5 text-xs font-bold border-primary/30 text-primary hover:bg-primary/10 gap-1 rounded-lg shadow-2xs"
             >
               <Zap className="w-3.5 h-3.5 fill-primary" />
-              Upgrade to Pro
+              <span className="hidden sm:inline">Upgrade to Pro</span>
+              <span className="sm:hidden">Pro</span>
             </Button>
           )}
-          <div className="text-right">
-            <div className="text-muted-foreground text-xs uppercase tracking-wider font-semibold mb-0.5">Readiness</div>
-            <div className="font-black text-2xl tabular-nums leading-none">
-              {data.readinessIndex}<span className="text-muted-foreground text-base font-medium">/100</span>
-            </div>
+
+          {/* Readiness Index Pill */}
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-card border border-border/80 shadow-2xs">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+              Readiness
+            </span>
+            <span className="font-extrabold text-foreground tabular-nums text-xs sm:text-sm">
+              {data.readinessIndex}
+              <span className="text-muted-foreground text-[10px] font-normal">/100</span>
+            </span>
           </div>
         </div>
-      </div>
-
-      {/* Session Size Selector Strip */}
-      <div className="flex items-center justify-between bg-card p-3 px-4 rounded-xl border shadow-sm">
-        <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-muted-foreground" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Session Size</span>
-        </div>
-        <div className="flex items-center gap-1.5 bg-muted/60 p-1 rounded-lg">
-          {SESSION_SIZE_PRESETS.map((preset) => {
-            const isActive = sessionQuestionCount === preset.count;
-            const isLocked = Boolean(preset.proOnly && !data.isPro);
-            return (
-              <button
-                key={preset.count}
-                type="button"
-                onClick={() => handleSelectSessionSize(preset.count)}
-                className={`px-3 py-1 text-xs font-semibold rounded-md transition-all flex items-center gap-1 ${
-                  isActive
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                }`}
-              >
-                {isLocked && <Lock className="w-2.5 h-2.5 opacity-70" />}
-                {preset.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      </HeaderPortal>
 
       {/* Section 2: Smart Start Strip */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -392,7 +299,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
               className="w-full"
               onClick={handleAlgorithmicReview}
             >
-              <Play className="mr-2 h-4 w-4" /> Start Spaced Review ({sessionQuestionCount}Q)
+              <Play className="mr-2 h-4 w-4" /> Start Spaced Review
             </Button>
           </CardContent>
         </Card>
@@ -417,7 +324,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
               onClick={handleLinearNext}
               disabled={!nextLinearDomain}
             >
-              <Play className="mr-2 h-4 w-4" /> Practice {nextLinearDomain?.name || "Next"} ({sessionQuestionCount}Q)
+              <Play className="mr-2 h-4 w-4" /> Practice {nextLinearDomain?.name || "Next"}
             </Button>
           </CardContent>
         </Card>
@@ -618,7 +525,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-2.5">
-                    {SESSION_SIZE_PRESETS.map((preset) => {
+                    {QUESTION_COUNT_OPTIONS.map((preset) => {
                       const isSelected = modalQuestionCount === preset.count;
                       const isLocked = Boolean(preset.proOnly && !data.isPro);
                       return (
@@ -633,7 +540,6 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
                               return;
                             }
                             setModalQuestionCount(preset.count);
-                            handleSelectSessionSize(preset.count);
                           }}
                           className={cn(
                             "p-3 rounded-xl border text-center transition-all flex flex-col items-center gap-1 relative",

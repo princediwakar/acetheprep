@@ -89,7 +89,7 @@ const FAQS = [
   },
   {
     q: "What makes AceThePrep different from traditional question banks?",
-    a: "Traditional question banks give you static answer keys. AceThePrep uses dynamic cognitive autopsies that analyze why you picked a specific distractor option, exposing the exact misconception or calculation trap before you make it on test day.",
+    a: "Traditional question banks give you static answer keys. AceThePrep uses step-by-step cognitive breakdowns that analyze why you picked a specific distractor option, exposing the exact misconception or calculation trap before you make it on test day.",
   },
 ];
 

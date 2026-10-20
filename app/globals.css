@@ -16,40 +16,45 @@ body {
 
 @layer base {
   :root {
-    /* McKinsey Institutional Editorial System (Light Mode) */
-    --background: 210 20% 99%; /* #FBFBFC - Crisp Editorial Porcelain */
-    --foreground: 214 70% 10%; /* #051C2C - Deep McKinsey Midnight Navy */
+    /* Ivy & Oxbridge Editorial System (Light Mode) */
+    --background: 40 25% 98.5%; /* #FAF8F5 - Warm Archival Porcelain */
+    --foreground: 215 35% 12%; /* #131B24 - Deep Carbon Ink */
     --card: 0 0% 100%; /* #FFFFFF - Pure Card Surface */
-    --card-foreground: 214 70% 10%;
+    --card-foreground: 215 35% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 214 70% 10%;
-    --primary: 221 83% 53%; /* #2563EB - AceThePrep Electric Brand Blue Button */
-    --primary-foreground: 0 0% 100%; /* Crisp White Text */
-    --secondary: 214 25% 95%; /* #EFF3F8 - Subtle Ice Slate */
-    --secondary-foreground: 214 70% 10%;
-    --muted: 214 20% 95%; /* #EEF2F6 */
-    --muted-foreground: 215 18% 46%; /* #61738A - Clean Slate */
-    --accent: 214 25% 95%;
-    --accent-foreground: 214 70% 10%;
+    --popover-foreground: 215 35% 12%;
+    --primary: 213 100% 16%; /* #002B49 - Official Bluebook & Oxford Navy */
+    --primary-foreground: 0 0% 100%; /* Crisp Alabaster White */
+    --secondary: 40 20% 95%; /* #F5F2EB - Subtle Archival Vellum */
+    --secondary-foreground: 215 35% 12%;
+    --muted: 40 18% 94%; /* #F2EFE8 */
+    --muted-foreground: 215 15% 42%; /* #5A6675 - Editorial Slate */
+    --accent: 40 20% 95%;
+    --accent-foreground: 215 35% 12%;
     --destructive: 0 84% 60%; /* #EF4444 */
     --destructive-foreground: 0 0% 98%;
-    --border: 214 20% 89%; /* #DEE4EC - Precision Hairline Border */
-    --input: 214 20% 89%;
-    --ring: 221 83% 53%; /* #2563EB - Precision Brand Blue Ring */
-    --radius: 0.75rem;
+    --border: 35 15% 88%; /* #E6E2D8 - Precision Hairline Rule */
+    --input: 35 15% 88%;
+    --ring: 213 100% 20%; /* #00365D - Oxford Ring */
+    --radius: 0.625rem;
+
+    /* Bluebook & Official Exam Specific Tokens */
+    --bluebook-navy: #002B49;
+    --bluebook-cobalt: #0066CC;
+    --strikethrough-red: #DC2626;
 
     /* Sidebar tokens */
-    --sidebar-background: 210 25% 98%; /* #F7F9FB */
-    --sidebar-foreground: 214 70% 10%;
-    --sidebar-primary: 221 83% 53%;
+    --sidebar-background: 40 25% 97.5%; /* #F7F5F0 */
+    --sidebar-foreground: 215 35% 12%;
+    --sidebar-primary: 213 100% 16%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 214 22% 93%;
-    --sidebar-accent-foreground: 214 70% 10%;
-    --sidebar-border: 214 20% 89%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-accent: 40 18% 93%;
+    --sidebar-accent-foreground: 215 35% 12%;
+    --sidebar-border: 35 15% 88%;
+    --sidebar-ring: 213 100% 16%;
 
     /* Semantic Charts / Accents */
-    --chart-1: 221 83% 53%; /* AceThePrep Brand Blue */
+    --chart-1: 213 100% 20%; /* Oxford Navy */
     --chart-2: 217 100% 50%; /* Precision Cobalt */
     --chart-3: 160 84% 39%; /* Emerald */
     --chart-4: 38 92% 50%; /* Amber */
@@ -57,35 +62,40 @@ body {
   }
 
   .dark {
-    /* Executive Charcoal / Graphite Neutral (Dark Mode - No Blue Tint, Not Pitch Black) */
-    --background: 240 5% 10%; /* #18181B - Restful Executive Charcoal Matte */
-    --foreground: 0 0% 98%; /* #FAFAFA - Crisp Clean Alabaster */
-    --card: 240 4% 14%; /* #232327 - Elevated Neutral Charcoal Card Surface */
-    --card-foreground: 0 0% 98%;
-    --popover: 240 4% 14%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 217 100% 58%; /* #2B7FFF - Electric Cobalt Button */
+    /* Executive Charcoal / Graphite Neutral (Dark Mode) */
+    --background: 220 8% 10%; /* #16181B - Restful Executive Charcoal Matte */
+    --foreground: 40 15% 96%; /* #F4F2EC - Warm Alabaster */
+    --card: 220 7% 13%; /* #1F2227 - Elevated Card Surface */
+    --card-foreground: 40 15% 96%;
+    --popover: 220 7% 13%;
+    --popover-foreground: 40 15% 96%;
+    --primary: 217 100% 58%; /* #2B7FFF - Bluebook Electric Cobalt */
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 4% 18%; /* #2C2C32 - Elevated Secondary */
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 4% 16%; /* #27272C */
-    --muted-foreground: 240 5% 65%; /* #A1A1AA - Clean Muted Slate */
-    --accent: 240 4% 18%;
-    --accent-foreground: 0 0% 98%;
+    --secondary: 220 7% 17%; /* #272B32 */
+    --secondary-foreground: 40 15% 96%;
+    --muted: 220 7% 16%; /* #25282F */
+    --muted-foreground: 220 6% 62%; /* #979CA6 - Clean Muted Slate */
+    --accent: 220 7% 17%;
+    --accent-foreground: 40 15% 96%;
     --destructive: 0 75% 65%; /* #F87171 */
     --destructive-foreground: 0 0% 96%;
-    --border: 240 4% 20%; /* #323238 - Precision Hairline Border */
-    --input: 240 4% 20%;
+    --border: 220 7% 20%; /* #2E3238 - Hairline Rule */
+    --input: 220 7% 20%;
     --ring: 217 100% 58%;
 
+    /* Bluebook & Official Exam Specific Tokens */
+    --bluebook-navy: #0F2D59;
+    --bluebook-cobalt: #2B7FFF;
+    --strikethrough-red: #EF4444;
+
     /* Sidebar tokens */
-    --sidebar-background: 240 5% 9%; /* #161619 - Anchored Neutral Dock */
-    --sidebar-foreground: 0 0% 98%;
+    --sidebar-background: 220 8% 9%; /* #141618 */
+    --sidebar-foreground: 40 15% 96%;
     --sidebar-primary: 217 100% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 4% 16%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 4% 18%;
+    --sidebar-accent: 220 7% 15%;
+    --sidebar-accent-foreground: 40 15% 96%;
+    --sidebar-border: 220 7% 18%;
     --sidebar-ring: 217 100% 58%;
 
     /* Semantic Charts / Accents */
@@ -109,6 +119,27 @@ body {
 .font-heading {
   font-family: var(--font-serif, "Newsreader", "Charter", "Bitstream Charter", "Sitka Text", Cambria, serif);
   letter-spacing: -0.02em;
+}
+
+/* Bluebook & Official Exam Strikethrough Effect */
+.strikethrough-line {
+  position: relative;
+}
+.strikethrough-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background-color: var(--strikethrough-red);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Editorial Archival Rules */
+.parchment-border {
+  border-color: hsl(var(--border));
 }
 
 .dark .katex {

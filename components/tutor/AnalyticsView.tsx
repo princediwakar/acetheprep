@@ -12,25 +12,11 @@ import { toast } from "sonner";
 import type { AnalyticsPageData } from "@/app/analytics/page";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { HeaderPortal } from "@/components/shared/HeaderPortal";
 
 export function AnalyticsViewLoading() {
   return (
-    <div className="max-w-5xl mx-auto space-y-8 px-4 py-6">
-      {/* Status Strip Skeleton */}
-      <div className="flex items-center justify-between bg-card p-4 rounded-xl border border-border/70 shadow-sm">
-        <div className="flex items-center gap-3">
-          <Skeleton className="w-9 h-9 rounded-lg" />
-          <div className="space-y-1.5">
-            <Skeleton className="h-4 w-36 rounded-md" />
-            <Skeleton className="h-3 w-48 rounded-md" />
-          </div>
-        </div>
-        <div className="flex flex-col items-end space-y-1.5">
-          <Skeleton className="h-3 w-24 rounded-md" />
-          <Skeleton className="h-6 w-16 rounded-md" />
-        </div>
-      </div>
-
+    <div className="max-w-5xl mx-auto space-y-6 px-4 py-4 sm:py-6">
       {/* Quick Stats Grid Skeleton */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {[1, 2, 3].map((i) => (
@@ -243,32 +229,28 @@ export function AnalyticsView({ data }: { data: AnalyticsPageData }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 px-4 py-6">
-      {/* Section 1: Status Strip */}
-      <div className="flex items-center justify-between text-sm bg-card p-4 rounded-xl border shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <BarChart3 className="w-5 h-5 text-primary" />
-          </div>
-          <div>
-            <div className="font-bold text-base">Analytics Overview</div>
-            <div className="text-muted-foreground text-xs">
-              Your mastery across {data.domainBreakdown.length} domains in {data.examName}
-            </div>
-          </div>
-        </div>
-        <div className="text-right">
-          <div className="text-muted-foreground text-xs uppercase tracking-wider font-semibold mb-0.5">Overall Readiness</div>
-          <div className="font-black text-2xl tabular-nums leading-none flex items-baseline justify-end gap-1">
-            <span className={
-              data.readinessIndex < 40 ? "text-red-500" :
-              data.readinessIndex < 70 ? "text-yellow-500" :
-              "text-green-500"
-            }>{data.readinessIndex}</span>
-            <span className="text-muted-foreground text-base font-medium">/100</span>
+    <div className="max-w-5xl mx-auto space-y-6 px-4 py-4 sm:py-6">
+      {/* Header Slot: Collapsed Analytics Status into Top Header */}
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
+          {/* Readiness Index Pill */}
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-card border border-border/80 shadow-2xs">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+              Readiness
+            </span>
+            <span className="font-extrabold text-foreground tabular-nums text-xs sm:text-sm">
+              <span className={
+                data.readinessIndex < 40 ? "text-red-500" :
+                data.readinessIndex < 70 ? "text-yellow-500" :
+                "text-green-500"
+              }>
+                {data.readinessIndex}
+              </span>
+              <span className="text-muted-foreground text-[10px] font-normal">/100</span>
+            </span>
           </div>
         </div>
-      </div>
+      </HeaderPortal>
 
       {/* Section 2: Quick Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">

@@ -14,9 +14,9 @@ export default function CTA() {
       />
 
       <MaxWidthWrapper className="relative z-10 text-center space-y-6 max-w-3xl mx-auto">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-600/25 bg-blue-50/80 dark:bg-blue-950/40 dark:border-blue-500/30 px-3.5 py-1 text-xs font-semibold tracking-wider text-blue-700 dark:text-blue-300 uppercase shadow-xs">
-          <Sparkles className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-          Zero Guesswork • 100% Free
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-secondary/80 px-3.5 py-1 text-xs font-semibold tracking-wider text-foreground uppercase shadow-xs">
+          <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+          Zero Guesswork • 100% Free Adaptive System
         </span>
 
         <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-foreground leading-[1.12] text-balance">
@@ -24,7 +24,7 @@ export default function CTA() {
         </h2>
 
         <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-          Set up your target exam, track your daily progress, and build permanent recall with adaptive practice. 100% free with zero paywalls.
+          Set up your target exam, track your daily progress, and build permanent recall under authentic testing conditions. 100% free with zero paywalls.
         </p>
 
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -32,17 +32,17 @@ export default function CTA() {
             buttonText="Get Started Free with Google"
             returnUrl="/setup"
             size="lg"
-            className="px-8 py-6 text-base bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white shadow-xl shadow-blue-950/20 hover:shadow-blue-900/30 cursor-pointer"
+            className="px-8 py-6 text-base bg-primary hover:opacity-95 text-primary-foreground shadow-xl cursor-pointer rounded-xl"
           />
         </div>
 
         <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs font-mono text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <ShieldCheck className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-            100% Free Educational Engine
+            <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+            Official Testing Standards
           </span>
           <span className="flex items-center gap-1.5">
-            <Zap className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+            <Zap className="h-3.5 w-3.5 text-primary" />
             Instant Google Sign-In
           </span>
         </div>

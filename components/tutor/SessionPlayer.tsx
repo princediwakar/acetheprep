@@ -14,6 +14,7 @@ import {
   XCircle,
   Eye,
   ChevronRight,
+  ChevronLeft,
   ArrowLeft,
   GraduationCap,
   Timer,
@@ -27,6 +28,12 @@ import {
   Zap,
   LogOut,
   Trash2,
+  Calculator,
+  Flag,
+  Grid,
+  X,
+  RotateCcw,
+  Check,
 } from "lucide-react";
 import {
   Dialog,
@@ -38,6 +45,8 @@ import {
 } from "@/components/ui/dialog";
 import { discardSessionAction } from "@/lib/actions/tutor";
 import { Badge } from "@/components/ui/badge";
+import { ExamCalculator } from "@/components/tutor/ExamCalculator";
+import { ThemeToggle } from "@/components/ThemeToggleButton";
 import type { SessionQuestion, SelectedOption } from "@/types/tutor";
 
 export interface QuestionAttemptRecord {
@@ -65,12 +74,9 @@ export interface SessionPlayerProps {
 
 const OPTION_LETTERS = ["A", "B", "C", "D"] as const;
 
-const optionBadgeStyles: Record<string, string> = {
-  A: "bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800",
-  B: "bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800",
-  C: "bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800",
-  D: "bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800",
-};
+// ---------------------------------------------------------------------------
+// Main SessionPlayer Component
+// ---------------------------------------------------------------------------
 
 export function SessionPlayer({
   sessionId,
@@ -112,8 +118,15 @@ export function SessionPlayer({
   );
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [isDiscarding, setIsDiscarding] = useState(false);
-  const [reviewFilter, setReviewFilter] = useState<"all" | "incorrect" | "traps" | "correct">("all");
+  const [reviewFilter, setReviewFilter] = useState<"all" | "flagged" | "incorrect" | "traps" | "correct">("all");
   const [expandedQuestions, setExpandedQuestions] = useState<Record<string, boolean>>({});
+  const [showSectionReview, setShowSectionReview] = useState(false);
+
+  // Official Test-Day Tools State
+  const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(new Set());
+  const [showTimer, setShowTimer] = useState(true);
+  const [showCalculator, setShowCalculator] = useState(false);
+  const [showPalette, setShowPalette] = useState(false);
 
   const answeredCount = useMemo(() => Object.keys(userAttempts).length, [userAttempts]);
 
@@ -133,7 +146,7 @@ export function SessionPlayer({
 
   const handleFinishEarly = useCallback(() => {
     setShowExitDialog(false);
-    setSessionComplete(true);
+    setShowSectionReview(true);
   }, []);
 
   const timerStartRef = useRef<number>(Date.now());
@@ -185,10 +198,17 @@ export function SessionPlayer({
     };
   }, [hasStarted, sessionComplete]);
 
+  // Keyboard shortcut listener: Esc to close modals
   useEffect(() => {
-    return () => {
-      if (nextTimerRef.current) clearTimeout(nextTimerRef.current);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowCalculator(false);
+        setShowPalette(false);
+        setShowSectionReview(false);
+      }
     };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   const recordAnswer = useCallback(
@@ -208,7 +228,7 @@ export function SessionPlayer({
           }),
         });
       } catch {
-        // Non-blocking: telemetry failure does not interrupt the UX
+        // Non-blocking telemetry
       } finally {
         submittingRef.current = false;
       }
@@ -247,6 +267,7 @@ export function SessionPlayer({
         setNextEnabled(true);
         return;
       }
+
       if (answerState === "answered") return;
       const correct = option === current.correct_option;
       setSelectedOption(option);
@@ -255,51 +276,116 @@ export function SessionPlayer({
     [mode, answerState, current, lockInAnswer]
   );
 
-  const handleReveal = useCallback(() => {
-    if (answerState === "answered") return;
-    setSelectedOption(null);
-    lockInAnswer(null, false, true);
-  }, [answerState, lockInAnswer]);
+  const handleSkipQuestion = useCallback(() => {
+    const next = currentIndex + 1;
+    if (next < total) {
+      setCurrentIndex(next);
+      const nextAttempt = userAttempts[questions[next].question_id];
+      if (nextAttempt) {
+        setSelectedOption(nextAttempt.selected);
+        setAnswerState("answered");
+        setIsCorrect(nextAttempt.isCorrect);
+        setIsRevealed(nextAttempt.wasRevealed);
+        setNextEnabled(true);
+      } else {
+        setSelectedOption(null);
+        setAnswerState("pending");
+        setIsCorrect(null);
+        setIsRevealed(false);
+        setNextEnabled(false);
+      }
+      questionStartRef.current = Date.now();
+    } else {
+      setShowSectionReview(true);
+    }
+  }, [currentIndex, total, userAttempts, questions]);
 
   const handleNext = useCallback(() => {
-    if (mode === "exam") {
-      if (!selectedOption) return;
+    if (mode === "exam" && selectedOption) {
       const correct = selectedOption === current.correct_option;
       lockInAnswer(selectedOption, correct, false);
-    } else {
-      if (!nextEnabled) return;
     }
 
     const next = currentIndex + 1;
     if (next < total) {
       setCurrentIndex(next);
-      setSelectedOption(null);
-      setAnswerState("pending");
-      setIsCorrect(null);
-      setIsRevealed(false);
-      setNextEnabled(false);
+      const nextAttempt = userAttempts[questions[next].question_id];
+      if (nextAttempt) {
+        setSelectedOption(nextAttempt.selected);
+        setAnswerState("answered");
+        setIsCorrect(nextAttempt.isCorrect);
+        setIsRevealed(nextAttempt.wasRevealed);
+        setNextEnabled(true);
+      } else {
+        setSelectedOption(null);
+        setAnswerState("pending");
+        setIsCorrect(null);
+        setIsRevealed(false);
+        setNextEnabled(false);
+      }
       questionStartRef.current = Date.now();
     } else {
-      setSessionComplete(true);
+      setShowSectionReview(true);
     }
-  }, [mode, selectedOption, nextEnabled, currentIndex, total, current, lockInAnswer]);
+  }, [mode, selectedOption, current, lockInAnswer, currentIndex, total, userAttempts, questions]);
 
-  const handleSkipQuestion = useCallback(() => {
-    if (mode !== "exam") return;
-    lockInAnswer(null, false, false);
-    const next = currentIndex + 1;
-    if (next < total) {
-      setCurrentIndex(next);
+  const handlePrev = useCallback(() => {
+    if (currentIndex <= 0) return;
+    const prev = currentIndex - 1;
+    setCurrentIndex(prev);
+    const prevAttempt = userAttempts[questions[prev].question_id];
+    if (prevAttempt) {
+      setSelectedOption(prevAttempt.selected);
+      setAnswerState("answered");
+      setIsCorrect(prevAttempt.isCorrect);
+      setIsRevealed(prevAttempt.wasRevealed);
+      setNextEnabled(true);
+    } else {
       setSelectedOption(null);
       setAnswerState("pending");
       setIsCorrect(null);
       setIsRevealed(false);
       setNextEnabled(false);
-      questionStartRef.current = Date.now();
-    } else {
-      setSessionComplete(true);
     }
-  }, [mode, currentIndex, total, lockInAnswer]);
+    questionStartRef.current = Date.now();
+  }, [currentIndex, userAttempts, questions]);
+
+  const handleJumpToQuestion = useCallback(
+    (index: number) => {
+      if (index < 0 || index >= total) return;
+      setCurrentIndex(index);
+      setShowPalette(false);
+      setShowSectionReview(false);
+      const attempt = userAttempts[questions[index].question_id];
+      if (attempt) {
+        setSelectedOption(attempt.selected);
+        setAnswerState("answered");
+        setIsCorrect(attempt.isCorrect);
+        setIsRevealed(attempt.wasRevealed);
+        setNextEnabled(true);
+      } else {
+        setSelectedOption(null);
+        setAnswerState("pending");
+        setIsCorrect(null);
+        setIsRevealed(false);
+        setNextEnabled(false);
+      }
+      questionStartRef.current = Date.now();
+    },
+    [total, userAttempts, questions]
+  );
+
+  const handleToggleFlag = useCallback(() => {
+    setFlaggedQuestions((prev) => {
+      const next = new Set(prev);
+      if (next.has(currentIndex)) {
+        next.delete(currentIndex);
+      } else {
+        next.add(currentIndex);
+      }
+      return next;
+    });
+  }, [currentIndex]);
 
   const handleComplete = useCallback(async () => {
     if (completing || completeResult) return;
@@ -324,7 +410,6 @@ export function SessionPlayer({
     }
   }, [sessionId, examProfileId, completing, completeResult]);
 
-  // Automated persistence: save session mastery immediately when test completes
   useEffect(() => {
     if (sessionComplete && !isReviewMode && !completeResult && !completing) {
       handleComplete();
@@ -349,436 +434,471 @@ export function SessionPlayer({
           focus_domains: [nextDomain],
         }),
       });
-
       if (!res.ok) {
-        const errBody = await res.json().catch(() => ({ error: "Failed to start session" }));
-        throw new Error(errBody.error || "Failed to start session");
+        const body = await res.json().catch(() => ({}));
+        throw new Error((body as { error?: string }).error || "Failed to start next session");
       }
-
-      const json = await res.json();
-      router.push(TUTOR_ROUTES.SESSION(json.session_id));
-    } catch (err: any) {
-      toast.error(err.message || "Failed to start next topic");
+      const data = await res.json();
+      router.push(`/session/${data.session_id}`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to launch next drill");
       setStartingNext(false);
     }
   }, [nextDomain, examProfileId, router]);
 
-  const toggleQuestionExpand = useCallback((qId: string) => {
-    setExpandedQuestions((prev) => ({
-      ...prev,
-      [qId]: !prev[qId],
-    }));
-  }, []);
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
 
-  const trapsCaughtCount = useMemo(() => {
-    let count = 0;
-    for (const q of questions) {
-      const attempt = userAttempts[q.question_id];
-      if (attempt?.selected && !attempt.isCorrect && q.distractor_analysis?.[attempt.selected]) {
-        count++;
-      }
-    }
-    return count;
-  }, [questions, userAttempts]);
+  const estimatedMinutes = Math.max(1, Math.round(questions.length * 1.5));
 
-  const filteredQuestions = useMemo(() => {
-    return questions.filter((q) => {
-      const attempt = userAttempts[q.question_id];
-      if (reviewFilter === "all") return true;
-      if (reviewFilter === "correct") return attempt?.isCorrect;
-      if (reviewFilter === "incorrect") return attempt ? !attempt.isCorrect : true;
-      if (reviewFilter === "traps") {
-        return attempt?.selected && !attempt.isCorrect && Boolean(q.distractor_analysis?.[attempt.selected]);
-      }
-      return true;
-    });
-  }, [questions, userAttempts, reviewFilter]);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!hasStarted) {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          handleStartTest();
-        }
-        return;
-      }
-      if (mode === "tutor") {
-        if (answerState === "answered") {
-          if (e.key === "Enter" && nextEnabled) {
-            e.preventDefault();
-            handleNext();
-          }
-          return;
-        }
-        const key = e.key.toUpperCase();
-        if (OPTION_LETTERS.includes(key as SelectedOption)) {
-          e.preventDefault();
-          handleOptionClick(key as SelectedOption);
-        }
-      } else {
-        // Exam Mode
-        const key = e.key.toUpperCase();
-        if (OPTION_LETTERS.includes(key as SelectedOption)) {
-          e.preventDefault();
-          handleOptionClick(key as SelectedOption);
-        } else if (e.key === "Enter" && selectedOption) {
-          e.preventDefault();
-          handleNext();
-        }
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [hasStarted, mode, answerState, nextEnabled, selectedOption, handleNext, handleOptionClick, handleStartTest]);
-
-  if (!questions.length) {
-    return (
-      <div className="max-w-2xl mx-auto p-6 text-center">
-        <h2 className="text-xl font-semibold mb-2">No Questions Available</h2>
-        <p className="text-muted-foreground mb-4">
-          This session has no questions. It may not have been generated correctly.
-        </p>
-        <Button onClick={handleBackToDashboard}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Dashboard
-        </Button>
-      </div>
-    );
-  }
-
-  // Pre-Test Briefing Cockpit (Simplified, Interactive Mode Switcher)
+  // --- Start Screen ---
   if (!hasStarted) {
-    const primaryDomain = questions[0]?.skill_domain || "Practice Session";
-    const estimatedMinutes = Math.max(10, Math.round(questions.length * 1.5));
-
     return (
-      <div className="max-w-lg mx-auto px-4 py-16 sm:py-24 animate-in fade-in-50 duration-300">
-        <div className="border rounded-2xl bg-card p-6 sm:p-8 text-center space-y-6 shadow-sm">
-          {/* Metadata Badges */}
-          <div className="flex items-center justify-center gap-2 flex-wrap">
-            {examName && (
-              <Badge variant="outline" className="text-xs uppercase tracking-wider font-semibold text-primary border-primary/30 bg-primary/10">
-                {examName}
-              </Badge>
-            )}
-            <Badge variant="secondary" className="text-xs font-medium">
-              {primaryDomain}
-            </Badge>
+      <div className="h-screen w-screen flex items-center justify-center bg-background p-4 select-none">
+        <div className="max-w-md w-full rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-xl text-center space-y-6">
+          <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <GraduationCap className="h-6 w-6" />
           </div>
 
-          {/* Title */}
-          <div className="space-y-1">
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
-              {primaryDomain}
+          <div className="space-y-2">
+            <h1 className="font-heading text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+              {examName || "Standardized"} Practice Session
             </h1>
-          </div>
-
-          {/* Interactive Mode Switcher */}
-          <div className="space-y-3">
-            <div className="inline-flex items-center p-1 bg-muted/80 rounded-xl border border-border/60 mx-auto shadow-inner">
-              <button
-                type="button"
-                onClick={() => setMode("exam")}
-                className={cn(
-                  "px-4 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all",
-                  mode === "exam"
-                    ? "bg-card text-foreground shadow-sm ring-1 ring-border/50"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Timer className={cn("w-3.5 h-3.5", mode === "exam" ? "text-primary" : "text-muted-foreground")} />
-                Exam Mode
-              </button>
-              <button
-                type="button"
-                onClick={() => setMode("tutor")}
-                className={cn(
-                  "px-4 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all",
-                  mode === "tutor"
-                    ? "bg-card text-foreground shadow-sm ring-1 ring-border/50"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <GraduationCap className={cn("w-3.5 h-3.5", mode === "tutor" ? "text-primary" : "text-muted-foreground")} />
-                Tutor Drill
-              </button>
-            </div>
-
-            <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
-              {questions.length} Questions · ~{estimatedMinutes} mins ·{" "}
-              {mode === "exam"
-                ? "Timed simulation. Zero spoilers mid-test; full question breakdown & solutions at the end."
-                : "Learning drill. Immediate feedback and step-by-step explanations after each question."}
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              {questions.length} Questions &middot; ~{estimatedMinutes} mins target
             </p>
           </div>
 
-          {/* Action CTA */}
-          <div className="pt-1 space-y-3">
+          <div className="rounded-xl border border-border bg-secondary/40 p-4 text-left space-y-2 text-xs">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Primary Domain:</span>
+              <span className="font-semibold text-foreground">{current?.skill_domain || "General"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Simulation Standard:</span>
+              <span className="font-mono text-primary font-semibold">Official Bluebook & ETS Toolset</span>
+            </div>
+          </div>
+
+          <div className="pt-2 space-y-3">
             <Button
               size="lg"
               onClick={handleStartTest}
-              className="w-full h-12 text-base font-bold shadow-sm hover:shadow transition-all"
+              className="w-full h-12 text-sm font-semibold shadow-md active:scale-[0.99] cursor-pointer"
             >
               <Play className="mr-2 h-4 w-4 fill-current" />
               Begin {mode === "exam" ? "Exam Simulation" : "Tutor Drill"}
             </Button>
-            
-            <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
-              <span>Press <kbd className="px-1.5 py-0.5 rounded bg-muted border font-mono font-bold text-foreground">Enter ↵</kbd> to begin</span>
-              <span>·</span>
-              <button
-                type="button"
-                onClick={isReviewMode ? handleBackToDashboard : handleDiscardSession}
-                disabled={isDiscarding}
-                className="hover:text-destructive underline underline-offset-4 transition-colors disabled:opacity-50"
-              >
-                {isDiscarding ? "Discarding..." : isReviewMode ? "Exit" : "Discard & Exit"}
-              </button>
-            </div>
+
+            <button
+              type="button"
+              onClick={handleDiscardSession}
+              disabled={isDiscarding}
+              className="text-xs text-muted-foreground hover:text-destructive underline cursor-pointer"
+            >
+              {isDiscarding ? "Discarding..." : "Exit to Dashboard"}
+            </button>
           </div>
         </div>
       </div>
     );
   }
 
-  // --- Session Complete (Post-Exam Review Screen) ---
-  if (sessionComplete) {
-    const attemptedCount = Object.keys(userAttempts).length;
-    const isEarlySubmission = attemptedCount > 0 && attemptedCount < total;
-    const effectiveTotal = isEarlySubmission ? attemptedCount : total;
-    const pct = effectiveTotal > 0 ? Math.round((score / effectiveTotal) * 100) : 0;
-    const incorrectCount = effectiveTotal - score;
+  const toggleQuestionExpand = useCallback((qId: string) => {
+    setExpandedQuestions((prev) => ({
+      ...prev,
+      [qId]: !(prev[qId] ?? true),
+    }));
+  }, []);
+
+  // --- Official Section Review Screen (Pre-Submission Review) ---
+  if (showSectionReview && !sessionComplete) {
+    const unAnsweredCount = total - answeredCount;
+    const flaggedCount = flaggedQuestions.size;
 
     return (
-      <div className="max-w-3xl mx-auto p-4 sm:p-6 space-y-8 animate-in fade-in duration-300">
-        <div className="text-center space-y-3">
-          <div className="flex justify-center">
-            <div className="bg-primary/10 rounded-full p-4">
-              <Trophy className="h-12 w-12 text-primary" />
-            </div>
-          </div>
-          <h1 className="text-3xl font-extrabold tracking-tight">
-            {isReviewMode ? "Session Review" : "Session Complete"}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {isReviewMode
-              ? "Review your questions, cognitive traps, and detailed solution derivations."
-              : isEarlySubmission
-                ? `Test submitted early (${attemptedCount} of ${total} answered). Review your cognitive performance below.`
-                : `${mode === "exam" ? "Exam Simulation submitted." : "Tutor Drill finished."} Review your cognitive performance below.`}
-          </p>
-        </div>
-
-        {/* Metric Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-          <div className="bg-card border rounded-xl p-4 shadow-sm">
-            <div className="text-2xl font-bold">{score}/{effectiveTotal}</div>
-            <div className="text-xs text-muted-foreground mt-1">
-              {isEarlySubmission ? `Score (${attemptedCount} attempted)` : "Score"}
-            </div>
-          </div>
-          <div className="bg-card border rounded-xl p-4 shadow-sm">
-            <div className="text-2xl font-bold">{pct}%</div>
-            <div className="text-xs text-muted-foreground mt-1">Accuracy</div>
-          </div>
-          <div className="bg-card border rounded-xl p-4 shadow-sm">
-            <div className="text-2xl font-bold">
-              {totalTimeElapsed < 60
-                ? `${totalTimeElapsed}s`
-                : `${Math.floor(totalTimeElapsed / 60)}m ${totalTimeElapsed % 60}s`}
-            </div>
-            <div className="text-xs text-muted-foreground mt-1">Total Time</div>
-          </div>
-          <div className="bg-card border rounded-xl p-4 shadow-sm border-amber-500/20 bg-amber-500/5">
-            <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">{trapsCaughtCount}</div>
-            <div className="text-xs text-muted-foreground mt-1">Traps Caught</div>
-          </div>
-        </div>
-
-        {/* Top Completion & Action Bar */}
-        {completing && (
-          <div className="flex items-center justify-center gap-3 p-4 rounded-xl bg-primary/10 border border-primary/20 text-sm animate-pulse">
-            <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            <span className="font-semibold text-primary">Calibrating SuperMemo-2 mastery and updating readiness...</span>
-          </div>
-        )}
-
-        {!completing && !completeResult && !isReviewMode && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/25">
-            <span className="text-xs sm:text-sm font-medium text-amber-800 dark:text-amber-300">
-              Session completed. Finalizing calibration...
+      <div className="h-screen w-screen flex flex-col overflow-hidden bg-background select-none">
+        {/* Sticky Top Proctor Bar */}
+        <header className="h-14 shrink-0 bg-card border-b border-border px-4 sm:px-6 flex items-center justify-between z-30 transition-colors">
+          <div className="flex items-center gap-3">
+            <span className="font-semibold text-xs sm:text-sm tracking-wide text-foreground">
+              {examName || "Standardized Exam"} &middot; Section Review
             </span>
-            <Button size="sm" onClick={handleComplete} disabled={completing} className="font-bold">
-              Save & Calibrate Mastery
-            </Button>
+            <span className="font-mono text-[10px] uppercase tracking-wider text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded">
+              Pre-Submission
+            </span>
           </div>
-        )}
 
-        {/* Readiness updates */}
-        {completeResult && (
-          <div className="space-y-3 border rounded-xl p-4 bg-muted/20">
-            {typeof completeResult.readiness_index === "number" && (
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Overall Readiness Index</span>
-                <span className="font-bold text-primary">{completeResult.readiness_index}%</span>
+          <div className="flex items-center gap-2">
+            {showTimer && (
+              <div className="flex items-center gap-2 bg-secondary/60 px-3 py-1 rounded-md border border-border">
+                <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="font-mono text-xs font-semibold tracking-wider text-foreground">
+                  {formatTime(totalTimeElapsed)}
+                </span>
               </div>
             )}
-            {completeResult.mastery_updates && completeResult.mastery_updates.length > 0 && (
-              <div className="space-y-1.5 pt-2 border-t border-border/50">
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Mastery Updates</span>
-                {completeResult.mastery_updates.map((m) => (
-                  <div key={m.skill_domain} className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{m.skill_domain}</span>
-                    <span className="font-semibold">{Math.round(m.mastery_score * 100)}%</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Top Primary Actions */}
-        {(completeResult || isReviewMode) && (
-          <div className="grid gap-3 sm:grid-cols-2 pt-1">
-            {nextDomain ? (
-              <Button
-                className="w-full text-base py-5 font-bold shadow-sm"
-                size="lg"
-                onClick={handleStartNextTopic}
-                disabled={startingNext}
-              >
-                {startingNext ? "Starting..." : `Practice Next Topic: ${nextDomain}`}
-                <ChevronRight className="ml-2 h-5 w-5" />
-              </Button>
-            ) : isReviewMode ? (
-              <Button
-                className="w-full text-base py-5 font-bold shadow-sm"
-                size="lg"
-                onClick={() => router.push("/analytics")}
-              >
-                <ArrowLeft className="mr-2 h-5 w-5" />
-                Back to Analytics
-              </Button>
-            ) : null}
+            <ThemeToggle />
             <Button
-              className="w-full text-base py-5 font-semibold"
-              size="lg"
-              variant={nextDomain || isReviewMode ? "outline" : "default"}
-              onClick={handleBackToDashboard}
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowSectionReview(false)}
+              className="h-8 px-3 text-xs"
             >
-              <ArrowLeft className="mr-2 h-5 w-5" />
-              Back to Dashboard
+              Return to Item {currentIndex + 1}
             </Button>
           </div>
-        )}
+        </header>
 
-        {/* Interactive Post-Exam Deconstruction Matrix */}
-        <div className="space-y-4 pt-2">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3">
-            <div>
-              <h2 className="text-lg font-bold flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-primary" />
-                Question Breakdown & Solutions
-              </h2>
-              <p className="text-xs text-muted-foreground">Review your mistakes and step-by-step explanations.</p>
+        {/* Main Content */}
+        <main className="flex-1 overflow-y-auto px-4 py-8 sm:px-8 bg-background">
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="space-y-1.5 text-left border-b border-border/80 pb-4">
+              <h1 className="font-heading text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+                Section Review: Check Your Work
+              </h1>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                Review your responses before finalizing. Questions marked for review or left unanswered are highlighted below. Click any question card to jump directly to it and update your answer.
+              </p>
             </div>
 
-            {/* Filter Tabs */}
-            <div className="flex items-center gap-1 bg-muted/70 p-1 rounded-lg text-xs self-start">
+            {/* Metric Summary Strip */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="rounded-xl border border-border bg-card p-3.5 text-center shadow-xs">
+                <div className="font-mono text-2xl font-bold text-foreground">{total}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">Total Questions</div>
+              </div>
+
+              <div className="rounded-xl border border-border bg-card p-3.5 text-center shadow-xs">
+                <div className="font-mono text-2xl font-bold text-primary">{answeredCount}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">Answered</div>
+              </div>
+
+              <div className={cn(
+                "rounded-xl border p-3.5 text-center shadow-xs transition-colors",
+                unAnsweredCount > 0 ? "border-rose-300 bg-rose-50/50 dark:bg-rose-950/20 dark:border-rose-900/50" : "border-border bg-card"
+              )}>
+                <div className={cn("font-mono text-2xl font-bold", unAnsweredCount > 0 ? "text-rose-600 dark:text-rose-400" : "text-foreground")}>
+                  {unAnsweredCount}
+                </div>
+                <div className="text-xs text-muted-foreground mt-0.5">Unanswered</div>
+              </div>
+
+              <div className={cn(
+                "rounded-xl border p-3.5 text-center shadow-xs transition-colors",
+                flaggedCount > 0 ? "border-amber-300 bg-amber-50/50 dark:bg-amber-950/20 dark:border-amber-900/50" : "border-border bg-card"
+              )}>
+                <div className={cn("font-mono text-2xl font-bold flex items-center justify-center gap-1.5", flaggedCount > 0 ? "text-amber-600 dark:text-amber-400" : "text-foreground")}>
+                  <Flag className="h-5 w-5 fill-amber-500 text-amber-500" />
+                  <span>{flaggedCount}</span>
+                </div>
+                <div className="text-xs text-muted-foreground mt-0.5">Marked for Review</div>
+              </div>
+            </div>
+
+            {/* Quick Action Shortcuts */}
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              {flaggedCount > 0 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const firstFlagged = Array.from(flaggedQuestions).sort((a, b) => a - b)[0];
+                    if (firstFlagged !== undefined) {
+                      setShowSectionReview(false);
+                      handleJumpToQuestion(firstFlagged);
+                    }
+                  }}
+                  className="h-8 text-xs border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30 cursor-pointer"
+                >
+                  <Flag className="h-3.5 w-3.5 mr-1.5 fill-amber-500 text-amber-500" />
+                  Review First Flagged (Item {Array.from(flaggedQuestions).sort((a, b) => a - b)[0] + 1})
+                </Button>
+              )}
+
+              {unAnsweredCount > 0 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const firstUnanswered = questions.findIndex((q) => !userAttempts[q.question_id]);
+                    if (firstUnanswered !== -1) {
+                      setShowSectionReview(false);
+                      handleJumpToQuestion(firstUnanswered);
+                    }
+                  }}
+                  className="h-8 text-xs border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer"
+                >
+                  <AlertTriangle className="h-3.5 w-3.5 mr-1.5" />
+                  Complete First Unanswered (Item {questions.findIndex((q) => !userAttempts[q.question_id]) + 1})
+                </Button>
+              )}
+            </div>
+
+            {/* Question Review Grid */}
+            <div className="space-y-3">
+              <span className="font-heading text-sm font-semibold text-foreground block">
+                All Section Questions (Click any to inspect or change)
+              </span>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {questions.map((q, idx) => {
+                  const attempt = userAttempts[q.question_id];
+                  const isAnswered = Boolean(attempt);
+                  const isFlagged = flaggedQuestions.has(idx);
+
+                  return (
+                    <div
+                      key={q.question_id}
+                      onClick={() => {
+                        setShowSectionReview(false);
+                        handleJumpToQuestion(idx);
+                      }}
+                      className={cn(
+                        "group p-3.5 rounded-xl border bg-card hover:border-primary/60 transition-all cursor-pointer flex items-center justify-between shadow-xs",
+                        isFlagged && "ring-1 ring-amber-500/50 bg-amber-50/20 dark:bg-amber-950/10",
+                        !isAnswered && "border-dashed border-border/90"
+                      )}
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="h-7 w-7 rounded-lg border border-border bg-secondary/50 font-mono text-xs font-bold text-foreground flex items-center justify-center shrink-0 group-hover:border-primary/50 group-hover:bg-primary/10">
+                          {idx + 1}
+                        </span>
+                        <div className="min-w-0 text-left">
+                          <span className="text-xs font-semibold text-foreground block truncate">
+                            {q.skill_domain || "General"}
+                          </span>
+                          <span className="text-[11px] text-muted-foreground block truncate">
+                            {isAnswered ? `Answered: Option ${attempt?.selected || "None"}` : "Not Answered Yet"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        {isFlagged && (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-[10px] font-mono font-bold text-amber-600 dark:text-amber-400">
+                            <Flag className="h-3 w-3 fill-amber-500 text-amber-500" />
+                            Flagged
+                          </span>
+                        )}
+                        {isAnswered ? (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-mono font-semibold">
+                            <Check className="h-3 w-3" />
+                            Done
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center rounded-md bg-secondary text-muted-foreground px-2 py-0.5 text-[10px] font-mono">
+                            Pending
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </main>
+
+        {/* Sticky Bottom Dock */}
+        <footer className="h-16 shrink-0 border-t border-border bg-card/95 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between z-30">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setShowSectionReview(false)}
+            className="h-9 px-4 text-xs font-semibold cursor-pointer"
+          >
+            <ChevronLeft className="h-3.5 w-3.5 mr-1.5" />
+            Return to Questions
+          </Button>
+
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => {
+              setShowSectionReview(false);
+              setSessionComplete(true);
+            }}
+            className="h-9 px-6 text-xs font-semibold shadow-sm cursor-pointer"
+          >
+            <span>Submit & Finalize Session</span>
+            <ChevronRight className="h-3.5 w-3.5 ml-1.5" />
+          </Button>
+        </footer>
+      </div>
+    );
+  }
+
+  // --- Session Complete Screen (Post-Exam Diagnostic Review) ---
+  if (sessionComplete) {
+    const attemptedCount = Object.keys(userAttempts).length;
+    const effectiveTotal = attemptedCount > 0 ? attemptedCount : total;
+    const pct = effectiveTotal > 0 ? Math.round((score / effectiveTotal) * 100) : 0;
+    const incorrectCount = Object.values(userAttempts).filter((a) => !a.isCorrect).length;
+    const trapsCaughtCount = Object.values(userAttempts).filter((a) => !a.isCorrect && !a.wasRevealed).length;
+    const flaggedCount = flaggedQuestions.size;
+
+    const filteredQuestions = questions.filter((q, idx) => {
+      const attempt = userAttempts[q.question_id];
+      if (reviewFilter === "all") return true;
+      if (reviewFilter === "flagged") return flaggedQuestions.has(idx);
+      if (reviewFilter === "incorrect") return attempt ? !attempt.isCorrect : true;
+      if (reviewFilter === "traps") {
+        return attempt?.selected && !attempt.isCorrect && Boolean(q.distractor_analysis?.[attempt.selected]);
+      }
+      if (reviewFilter === "correct") return attempt?.isCorrect;
+      return true;
+    });
+
+    return (
+      <div className="h-screen w-screen flex flex-col overflow-hidden bg-background">
+        <header className="h-14 shrink-0 bg-card border-b border-border px-4 sm:px-6 flex items-center justify-between z-30 transition-colors">
+          <span className="font-semibold text-sm text-foreground">
+            {examName || "Standardized Exam"} &middot; Results & Diagnostic Review
+          </span>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={handleBackToDashboard}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Dashboard
+            </Button>
+          </div>
+        </header>
+
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 max-w-4xl mx-auto w-full space-y-6">
+          <div className="text-center space-y-2 pt-4">
+            <h1 className="font-heading text-3xl font-semibold tracking-tight text-foreground">
+              Session Performance Breakdown
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              SuperMemo-2 spaced recall calibrated. Review flagged items, examiner traps, and derivations below.
+            </p>
+          </div>
+
+          {/* Metric Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <div className="rounded-xl border border-border bg-card p-4 shadow-xs">
+              <div className="text-2xl font-bold font-mono text-foreground">{score}/{effectiveTotal}</div>
+              <div className="text-xs text-muted-foreground mt-1">Raw Score</div>
+            </div>
+            <div className="rounded-xl border border-border bg-card p-4 shadow-xs">
+              <div className="text-2xl font-bold font-mono text-foreground">{pct}%</div>
+              <div className="text-xs text-muted-foreground mt-1">Accuracy</div>
+            </div>
+            <div className="rounded-xl border border-border bg-card p-4 shadow-xs">
+              <div className="text-2xl font-bold font-mono text-foreground">{formatTime(totalTimeElapsed)}</div>
+              <div className="text-xs text-muted-foreground mt-1">Total Pacing</div>
+            </div>
+            <div className="rounded-xl border border-border bg-card p-4 shadow-xs">
+              <div className="text-2xl font-bold font-mono text-primary">
+                {trapsCaughtCount}
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">Distractor Traps</div>
+            </div>
+          </div>
+
+          {/* Post-Exam Filter Tabs */}
+          <div className="flex items-center justify-between flex-wrap gap-2 pt-4 border-t border-border/80">
+            <span className="font-heading text-sm font-semibold text-foreground">
+              Question Breakdown
+            </span>
+            <div className="flex items-center gap-1.5 bg-secondary/50 p-1 rounded-lg border border-border text-xs font-mono">
               <button
                 type="button"
                 onClick={() => setReviewFilter("all")}
-                className={cn("px-2.5 py-1 rounded-md font-semibold transition-all", reviewFilter === "all" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                className={cn(
+                  "px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer",
+                  reviewFilter === "all" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
+                )}
               >
                 All ({total})
               </button>
               <button
                 type="button"
+                onClick={() => setReviewFilter("flagged")}
+                className={cn(
+                  "px-2.5 py-1 rounded-md font-semibold transition-all flex items-center gap-1 cursor-pointer",
+                  reviewFilter === "flagged" ? "bg-card text-foreground shadow-xs font-bold text-amber-600 dark:text-amber-400" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <Flag className="h-3 w-3 fill-amber-500 text-amber-500" />
+                Flagged ({flaggedCount})
+              </button>
+              <button
+                type="button"
                 onClick={() => setReviewFilter("incorrect")}
-                className={cn("px-2.5 py-1 rounded-md font-semibold transition-all", reviewFilter === "incorrect" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                className={cn(
+                  "px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer",
+                  reviewFilter === "incorrect" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
+                )}
               >
                 Mistakes ({incorrectCount})
               </button>
               <button
                 type="button"
                 onClick={() => setReviewFilter("traps")}
-                className={cn("px-2.5 py-1 rounded-md font-semibold transition-all", reviewFilter === "traps" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                className={cn(
+                  "px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer",
+                  reviewFilter === "traps" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
+                )}
               >
                 Traps ({trapsCaughtCount})
               </button>
               <button
                 type="button"
                 onClick={() => setReviewFilter("correct")}
-                className={cn("px-2.5 py-1 rounded-md font-semibold transition-all", reviewFilter === "correct" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                className={cn(
+                  "px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer",
+                  reviewFilter === "correct" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
+                )}
               >
                 Correct ({score})
               </button>
             </div>
           </div>
 
-          {/* Quick Jump Question Matrix */}
-          <div className="p-3.5 rounded-xl bg-muted/40 border border-border/60 space-y-2">
-            <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              <span>Question Navigation Grid</span>
-              <span className="text-[11px] font-normal lowercase text-muted-foreground">Jump directly to question autopsy</span>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {questions.map((q, idx) => {
-                const attempt = userAttempts[q.question_id];
-                const isTrap = attempt?.selected && !attempt.isCorrect && Boolean(q.distractor_analysis?.[attempt.selected]);
-                const isCorrect = attempt?.isCorrect;
-                return (
-                  <button
-                    key={q.question_id}
-                    type="button"
-                    onClick={() => {
-                      setExpandedQuestions((prev) => ({ ...prev, [q.question_id]: true }));
-                      const el = document.getElementById(`question-card-${q.question_id}`);
-                      el?.scrollIntoView({ behavior: "smooth", block: "center" });
-                    }}
-                    className={cn(
-                      "w-7 h-7 rounded-lg text-xs font-bold transition-all flex items-center justify-center border",
-                      isCorrect
-                        ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20"
-                        : isTrap
-                        ? "bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-400 hover:bg-amber-500/25 ring-1 ring-amber-500/30"
-                        : attempt
-                        ? "bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-400 hover:bg-rose-500/20"
-                        : "bg-muted text-muted-foreground border-border hover:bg-muted/80"
-                    )}
-                    title={`Question ${idx + 1}: ${isCorrect ? "Correct" : isTrap ? "Trap Triggered" : "Incorrect"}`}
-                  >
-                    {idx + 1}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
+          {/* Question Breakdown List */}
           <div className="space-y-4">
             {filteredQuestions.map((q) => {
+              const originalIndex = questions.indexOf(q);
               const attempt = userAttempts[q.question_id];
               const isTrap = attempt?.selected && !attempt.isCorrect && Boolean(q.distractor_analysis?.[attempt.selected]);
+              const isFlagged = flaggedQuestions.has(originalIndex);
               const isExpanded = expandedQuestions[q.question_id] ?? true;
 
               return (
-                <div
-                  key={q.question_id}
-                  id={`question-card-${q.question_id}`}
-                  className="border rounded-xl bg-card p-4 sm:p-5 space-y-4 shadow-sm transition-all"
-                >
-                  <div className="flex items-center justify-between cursor-pointer" onClick={() => toggleQuestionExpand(q.question_id)}>
+                <div key={q.question_id} className="border border-border rounded-xl bg-card p-4 sm:p-5 space-y-4 shadow-xs transition-all">
+                  <div
+                    className="flex items-center justify-between cursor-pointer"
+                    onClick={() => toggleQuestionExpand(q.question_id)}
+                  >
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-sm text-foreground">Question {questions.indexOf(q) + 1}</span>
+                      <span className="font-bold text-sm text-foreground font-mono">Item {originalIndex + 1}</span>
                       <Badge variant="outline" className="text-xs">{q.skill_domain}</Badge>
+                      {isFlagged && (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-[10px] font-mono font-bold text-amber-600 dark:text-amber-400">
+                          <Flag className="h-3 w-3 fill-amber-500 text-amber-500" />
+                          Marked for Review
+                        </span>
+                      )}
                       {attempt?.isCorrect ? (
                         <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
                           <CheckCircle className="w-3.5 h-3.5" /> Correct
                         </span>
                       ) : isTrap ? (
                         <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">
-                          <AlertTriangle className="w-3.5 h-3.5" /> Trap Triggered
+                          <AlertTriangle className="w-3.5 h-3.5" /> Distractor Trap
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full">
@@ -786,62 +906,77 @@ export function SessionPlayer({
                         </span>
                       )}
                     </div>
-                    <button type="button" className="text-muted-foreground hover:text-foreground">
+                    <button type="button" className="text-muted-foreground hover:text-foreground cursor-pointer">
                       {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                     </button>
                   </div>
 
                   {isExpanded && (
-                    <div className="space-y-4 pt-2 border-t">
+                    <div className="space-y-4 pt-2 border-t border-border">
                       <div className="text-sm font-medium leading-relaxed text-foreground">
                         {renderMathContent(q.question_text)}
                       </div>
 
-                      {/* Options Grid */}
-                      <div className="grid gap-2">
-                        {OPTION_LETTERS.filter((k) => k in q.options).map((key) => {
-                          const isUserChoice = attempt?.selected === key;
-                          const isCorrectChoice = key === q.correct_option;
+                      <div className="space-y-2">
+                        {OPTION_LETTERS.filter((key) => key in q.options).map((key) => {
+                          const isSelected = attempt?.selected === key;
+                          const isCorrectOption = key === q.correct_option;
 
-                          let optionClass = "border-border bg-background/50 text-muted-foreground";
-                          if (isCorrectChoice) {
-                            optionClass = "border-emerald-500 bg-emerald-500/10 text-foreground font-medium";
-                          } else if (isUserChoice && !isCorrectChoice) {
-                            optionClass = "border-rose-500 bg-rose-500/10 text-foreground font-medium";
+                          let optBorder = "border-border/60 bg-secondary/30";
+                          if (isCorrectOption) {
+                            optBorder = "border-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/30 text-emerald-950 dark:text-emerald-100 font-medium";
+                          } else if (isSelected && !isCorrectOption) {
+                            optBorder = "border-rose-600 bg-rose-50/50 dark:bg-rose-950/30 text-rose-950 dark:text-rose-100";
                           }
 
                           return (
-                            <div key={key} className={cn("p-3 rounded-lg border text-sm flex items-start gap-3", optionClass)}>
-                              <span className={cn(
-                                "flex-shrink-0 w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold",
-                                isCorrectChoice ? "bg-emerald-500 text-white border-emerald-500" : isUserChoice ? "bg-rose-500 text-white border-rose-500" : optionBadgeStyles[key]
-                              )}>
-                                {key}
-                              </span>
-                              <div className="flex-1 break-words pt-0.5">{renderMathContent(q.options[key])}</div>
-                              {isCorrectChoice && <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 self-center">Correct Answer</span>}
-                              {isUserChoice && !isCorrectChoice && <span className="text-xs font-bold text-rose-600 dark:text-rose-400 self-center">Your Answer</span>}
+                            <div
+                              key={key}
+                              className={cn("flex items-center justify-between p-3 rounded-lg border text-xs text-foreground", optBorder)}
+                            >
+                              <div className="flex items-center gap-2.5">
+                                <span className={cn(
+                                  "h-5 w-5 rounded-full flex items-center justify-center font-mono text-[10px] font-bold border",
+                                  isCorrectOption ? "bg-emerald-600 text-white border-emerald-600" : isSelected ? "bg-rose-600 text-white border-rose-600" : "border-border text-muted-foreground"
+                                )}>
+                                  {key}
+                                </span>
+                                <span>{renderMathContent(q.options[key])}</span>
+                              </div>
+                              {isCorrectOption && <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />}
+                              {isSelected && !isCorrectOption && <XCircle className="h-4 w-4 text-rose-600 shrink-0" />}
                             </div>
                           );
                         })}
                       </div>
 
-                      {/* Deconstruction Box */}
-                      {attempt?.selected && !attempt.isCorrect && q.distractor_analysis?.[attempt.selected] && (
-                        <div className="rounded-lg p-3.5 bg-amber-500/10 border border-amber-500/25 space-y-1">
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
-                            <AlertTriangle className="w-3.5 h-3.5" /> Deconstruction of Your Choice (Option {attempt.selected})
-                          </h4>
-                          <p className="text-xs text-foreground/90 leading-relaxed">
-                            {renderMathContent(q.distractor_analysis[attempt.selected])}
-                          </p>
+                      {/* Distractor Trap Analysis */}
+                      {attempt?.selected && attempt.selected !== q.correct_option && q.distractor_analysis?.[attempt.selected] && (
+                        <div className="rounded-lg p-3.5 bg-rose-500/10 border border-rose-500/20 text-xs text-foreground leading-relaxed">
+                          <span className="font-semibold text-rose-700 dark:text-rose-400 block mb-1">
+                            Trap Breakdown (Option {attempt.selected}):
+                          </span>
+                          {renderMathContent(q.distractor_analysis[attempt.selected])}
                         </div>
                       )}
 
+                      {/* Solution Derivation */}
                       {q.explanation && (
-                        <div className="rounded-lg p-3.5 bg-muted/40 border space-y-1">
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Solution Derivation</h4>
-                          <div className="text-xs text-foreground/90 leading-relaxed">{renderMathContent(q.explanation)}</div>
+                        <div className="rounded-lg p-3.5 bg-secondary/40 border border-border/80 text-xs text-foreground leading-relaxed">
+                          <span className="font-semibold text-foreground block mb-1">
+                            Solution Derivation:
+                          </span>
+                          {renderMathContent(q.explanation)}
+                        </div>
+                      )}
+
+                      {/* Misconception */}
+                      {q.misconception && (
+                        <div className="text-xs text-muted-foreground border-t border-border pt-2.5">
+                          <span className="font-semibold text-amber-600 dark:text-amber-400 block mb-0.5">
+                            Exam-Setter Trap:
+                          </span>
+                          {q.misconception}
                         </div>
                       )}
                     </div>
@@ -850,397 +985,431 @@ export function SessionPlayer({
               );
             })}
           </div>
-        </div>
 
-        {/* Complete / Actions Bar */}
-        <div className="pt-4 border-t space-y-3">
-          {isReviewMode ? (
-            <div className="grid gap-3 sm:grid-cols-2">
+          {/* Action Row */}
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border">
+            {nextDomain && (
               <Button
-                className="w-full text-base py-5"
-                size="lg"
-                onClick={() => router.push("/analytics")}
+                className="flex-1 h-11 text-sm font-semibold cursor-pointer"
+                onClick={handleStartNextTopic}
+                disabled={startingNext}
               >
-                <ArrowLeft className="mr-2 h-5 w-5" />
-                Back to Analytics
+                Practice Next Topic: {nextDomain}
+                <ChevronRight className="ml-1.5 h-4 w-4" />
               </Button>
-              <Button
-                className="w-full text-base py-5"
-                size="lg"
-                variant="outline"
-                onClick={handleBackToDashboard}
-              >
-                Go to Dashboard
-              </Button>
-            </div>
-          ) : !completeResult ? (
-            <Button className="w-full text-base py-6 font-bold" size="lg" onClick={handleComplete} disabled={completing}>
-              {completing ? "Recording mastery..." : "Complete & Save Session"}
-              <ChevronRight className="ml-2 h-5 w-5" />
+            )}
+            <Button
+              variant="outline"
+              className="flex-1 h-11 text-sm font-semibold cursor-pointer"
+              onClick={handleBackToDashboard}
+            >
+              Back to Dashboard
             </Button>
-          ) : (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {nextDomain && (
-                <Button className="w-full text-base py-5" size="lg" onClick={handleStartNextTopic} disabled={startingNext}>
-                  {startingNext ? "Starting..." : `Practice Next Topic: ${nextDomain}`}
-                  <ChevronRight className="ml-2 h-5 w-5" />
-                </Button>
-              )}
-              <Button
-                className="w-full text-base py-5"
-                size="lg"
-                variant={nextDomain ? "outline" : "default"}
-                onClick={handleBackToDashboard}
-              >
-                <ArrowLeft className="mr-2 h-5 w-5" />
-                Back to Dashboard
-              </Button>
-            </div>
-          )}
-        </div>
+          </div>
+        </main>
       </div>
     );
   }
 
-  // --- Active Question Screen ---
+  // --- Active Test Runner Screen (100% Full Screen Viewport) ---
   const optionEntries = OPTION_LETTERS.filter((key) => key in current.options).map((key) => ({
     key,
     value: current.options[key],
   }));
 
-  const correctLetter = current.correct_option;
-
   return (
-    <div className="max-w-2xl mx-auto p-4 sm:p-6 pb-28 sm:pb-32 space-y-6">
-      {/* Top Header: Progress & Mode Switcher */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-foreground">
-              Question {currentIndex + 1} <span className="text-muted-foreground font-normal">of {total}</span>
-            </span>
-            <Badge variant="outline" className="text-xs">{current.skill_domain}</Badge>
-          </div>
+    <div className="h-screen w-screen flex flex-col overflow-hidden bg-background select-none">
+      {/* Official Modals */}
+      <ExamCalculator
+        isOpen={showCalculator}
+        onClose={() => setShowCalculator(false)}
+        examName={examName}
+      />
 
-          <div className="flex items-center gap-2.5">
-            {/* Ambient Mode Status Chip */}
-            <span
-              className={cn(
-                "px-2.5 py-1 rounded-md text-xs font-semibold border flex items-center gap-1.5 shadow-sm",
-                mode === "exam"
-                  ? "bg-primary/10 text-primary border-primary/20"
-                  : "bg-muted/80 text-foreground border-border"
-              )}
-            >
-              {mode === "exam" ? (
-                <>
-                  <Timer className="w-3.5 h-3.5 text-primary" />
-                  Exam Mode
-                </>
-              ) : (
-                <>
-                  <GraduationCap className="w-3.5 h-3.5 text-primary" />
-                  Tutor Drill
-                </>
-              )}
-            </span>
-
-            {/* Session Elapsed Stopwatch */}
-            <div className="flex items-center gap-1.5 text-xs font-mono text-muted-foreground tabular-nums bg-muted/40 px-2.5 py-1 rounded-md border border-border/50">
-              <Clock className="w-3.5 h-3.5" />
-              {totalTimeElapsed < 60
-                ? `${totalTimeElapsed}s`
-                : `${Math.floor(totalTimeElapsed / 60)}m ${totalTimeElapsed % 60}s`}
-            </div>
-
-            {/* End / Leave Session Button */}
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowExitDialog(true)}
-              className="h-7 px-2 text-xs font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-            >
-              <LogOut className="w-3.5 h-3.5 mr-1" />
-              End
-            </Button>
-          </div>
-        </div>
-
-        <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
-          <div
-            className="bg-primary h-1.5 rounded-full transition-all duration-300"
-            style={{ width: `${((currentIndex + 1) / total) * 100}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Question Text */}
-      <div className="text-lg font-medium leading-relaxed text-foreground">
-        {renderMathContent(current.question_text)}
-      </div>
-
-      {/* Options List */}
-      <div className="space-y-3">
-        {optionEntries.map(({ key, value }) => {
-          const isSelected = selectedOption === key;
-          const isCorrectOption = key === correctLetter;
-
-          let borderClass = "border-border";
-          let bgClass = "";
-
-          if (mode === "tutor") {
-            if (answerState === "answered") {
-              if (isCorrectOption) {
-                borderClass = "border-green-500";
-                bgClass = "bg-green-500/10";
-              } else if (isSelected && !isCorrectOption) {
-                borderClass = "border-red-500";
-                bgClass = "bg-red-500/10";
-              } else {
-                bgClass = "opacity-50";
-              }
-            }
-          } else {
-            // Exam Mode: Neutral clean highlight, ZERO green/red spoilers
-            if (isSelected) {
-              borderClass = "border-primary ring-2 ring-primary/20 bg-primary/10";
-            }
-          }
-
-          return (
-            <button
-              key={key}
-              onClick={() => handleOptionClick(key)}
-              disabled={mode === "tutor" && answerState === "answered"}
-              className={cn(
-                "w-full flex items-start gap-3 rounded-lg border p-4 text-left transition-all duration-150 text-foreground",
-                borderClass,
-                bgClass,
-                (mode === "exam" || answerState === "pending") &&
-                  "hover:border-primary/50 hover:bg-accent/50 active:scale-[0.99]",
-                mode === "tutor" && answerState === "answered" && "cursor-default"
-              )}
-            >
-              <span
-                className={cn(
-                  "flex-shrink-0 w-7 h-7 rounded-full border flex items-center justify-center text-sm font-semibold",
-                  optionBadgeStyles[key],
-                  mode === "tutor" && answerState === "answered" && isCorrectOption && "bg-green-500 text-white border-green-500",
-                  mode === "tutor" && answerState === "answered" && isSelected && !isCorrectOption && "bg-red-500 text-white border-red-500",
-                  mode === "exam" && isSelected && "bg-primary text-primary-foreground border-primary"
-                )}
-              >
-                {key}
-              </span>
-              <span className="break-words pt-0.5">{renderMathContent(value)}</span>
-              {mode === "tutor" && answerState === "answered" && isCorrectOption && (
-                <CheckCircle className="flex-shrink-0 ml-auto h-5 w-5 text-green-600 dark:text-green-400" />
-              )}
-              {mode === "tutor" && answerState === "answered" && isSelected && !isCorrectOption && (
-                <XCircle className="flex-shrink-0 ml-auto h-5 w-5 text-red-600 dark:text-red-400" />
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Tutor Answer Feedback Card */}
-      {mode === "tutor" && answerState === "answered" && (() => {
-        const correctExplanation =
-          current.distractor_analysis?.[current.correct_option] || current.explanation;
-        const selectedExplanation =
-          selectedOption && selectedOption !== current.correct_option
-            ? current.distractor_analysis?.[selectedOption]
-            : null;
-
-        return (
-          <div className="space-y-4 border rounded-xl p-5 bg-card shadow-sm animate-in fade-in duration-200">
-            {/* Status Header */}
-            <div>
-              {isRevealed ? (
-                <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold text-sm">
-                  <Eye className="h-4 w-4" />
-                  <span>Correct option is <strong>{current.correct_option}</strong></span>
-                </div>
-              ) : isCorrect ? (
-                <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold text-sm">
-                  <CheckCircle className="h-4 w-4" />
-                  <span>Correct</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-semibold text-sm">
-                  <XCircle className="h-4 w-4" />
-                  <span>Incorrect &middot; Correct option is <strong>{current.correct_option}</strong></span>
-                </div>
-              )}
-            </div>
-
-            {/* If user picked an incorrect distractor, explain why that choice was wrong */}
-            {selectedExplanation && (
-              <div className="rounded-lg p-3 bg-red-500/10 border border-red-500/20 space-y-1">
-                <h4 className="text-xs font-semibold uppercase tracking-wide text-red-600 dark:text-red-400">
-                  Why Option {selectedOption} is incorrect
-                </h4>
-                <div className="text-sm text-foreground/90 leading-relaxed">
-                  {renderMathContent(selectedExplanation)}
-                </div>
-              </div>
-            )}
-
-            {/* Correct Solution Derivation (shown for revealed, correct, or incorrect) */}
-            {correctExplanation && (
-              <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
-                  {isRevealed ? "Solution Derivation" : isCorrect ? "Explanation" : `Why Option ${current.correct_option} is correct`}
-                </h4>
-                <div className="text-sm text-foreground/90 leading-relaxed">
-                  {renderMathContent(correctExplanation)}
-                </div>
-              </div>
-            )}
-
-            {/* Common Trap Analysis */}
-            {current.misconception && (
-              <div className="border-t pt-3 mt-3">
-                <h4 className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400 mb-1">
-                  Common Trap
-                </h4>
-                <div className="text-sm text-foreground/90 leading-relaxed">
-                  {current.misconception}
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })()}
-
-      {/* Fixed Bottom Action Bar */}
-      {(() => {
-        const isNextReady = mode === "exam" ? Boolean(selectedOption) : answerState === "answered";
-        const nextCtaLabel =
-          mode === "exam"
-            ? currentIndex + 1 < total
-              ? "Next Question"
-              : "Submit Exam"
-            : currentIndex + 1 < total
-              ? "Next Question"
-              : "Submit & View Solutions";
-
-        return (
-          <div className="fixed bottom-0 inset-x-0 z-30 bg-background/95 backdrop-blur-md border-t border-border shadow-lg">
-            <div className="max-w-2xl mx-auto px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-3">
-              {/* Left Action / Feedback Indicator */}
-              <div className="flex items-center">
-                {mode === "exam" ? (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleSkipQuestion}
-                    className="text-muted-foreground hover:text-foreground text-xs sm:text-sm font-medium"
-                  >
-                    Skip Question
-                  </Button>
-                ) : answerState === "pending" ? (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleReveal}
-                    className="text-muted-foreground hover:text-foreground text-xs sm:text-sm font-medium"
-                  >
-                    <Eye className="mr-1.5 h-4 w-4" />
-                    Reveal Answer
-                  </Button>
-                ) : (
-                  <div className="flex items-center gap-1.5">
-                    {isRevealed ? (
-                      <span className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400">
-                        <Eye className="h-4 w-4" />
-                        Answer Revealed
-                      </span>
-                    ) : isCorrect ? (
-                      <span className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-green-600 dark:text-green-400">
-                        <CheckCircle className="h-4 w-4" />
-                        Correct
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-red-600 dark:text-red-400">
-                        <XCircle className="h-4 w-4" />
-                        Incorrect
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Right Action: Shortcut & Next/Submit CTA */}
-              <div className="flex items-center gap-2.5 sm:gap-3">
-                {isNextReady && (
-                  <span className="hidden sm:inline text-xs text-muted-foreground">
-                    Press <kbd className="px-1.5 py-0.5 rounded bg-muted border font-mono font-bold text-foreground">Enter ↵</kbd>
+      {/* Question Palette Drawer Modal */}
+      {showPalette && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 dark:bg-black/60 backdrop-blur-xs p-4">
+          <div className="relative w-full max-w-lg rounded-xl border border-border bg-card p-5 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <div className="flex items-center gap-2">
+                <span className="font-heading text-base font-semibold text-foreground">
+                  Question Navigator ({total} Questions)
+                </span>
+                {flaggedQuestions.size > 0 && (
+                  <span className="font-mono text-[10px] text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded">
+                    {flaggedQuestions.size} flagged
                   </span>
                 )}
-                <Button
-                  type="button"
-                  size="lg"
-                  disabled={!isNextReady}
-                  onClick={handleNext}
-                  className="font-semibold px-6 sm:px-8 h-11 sm:h-12 text-sm sm:text-base min-w-[140px] sm:min-w-[170px] shadow-sm transition-all"
-                >
-                  {nextCtaLabel}
-                  <ChevronRight className="ml-1 h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
               </div>
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* End / Leave Session Dialog */}
-      <Dialog open={showExitDialog} onOpenChange={setShowExitDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              {answeredCount > 0 ? "Finish or Discard Session?" : "Leave Session?"}
-            </DialogTitle>
-            <DialogDescription>
-              {answeredCount > 0
-                ? `You've answered ${answeredCount} of ${total} questions. You can submit now to calibrate your mastery score, or discard this session entirely.`
-                : "You haven't answered any questions yet. Exiting now will discard this empty session."}
-            </DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter className="flex-col sm:flex-col gap-2 pt-2">
-            {answeredCount > 0 && (
-              <Button
+              <button
                 type="button"
-                className="w-full font-bold"
-                onClick={handleFinishEarly}
+                onClick={() => setShowPalette(false)}
+                className="rounded-lg p-1 text-muted-foreground hover:bg-secondary cursor-pointer"
               >
-                <CheckCircle className="w-4 h-4 mr-1.5" />
-                Submit & Review ({answeredCount} answered)
-              </Button>
-            )}
+                <X className="h-4 w-4" />
+              </button>
+            </div>
 
             <Button
               type="button"
               variant="outline"
-              disabled={isDiscarding}
-              className="w-full text-destructive hover:bg-destructive/10 border-destructive/30"
-              onClick={handleDiscardSession}
+              size="sm"
+              onClick={() => {
+                setShowPalette(false);
+                setShowSectionReview(true);
+              }}
+              className="w-full text-xs font-semibold h-8 cursor-pointer"
             >
-              <Trash2 className="w-4 h-4 mr-1.5" />
-              {isDiscarding ? "Discarding..." : "Discard Session"}
+              Open Full Section Review Grid
             </Button>
 
+            <div className="grid grid-cols-5 sm:grid-cols-6 gap-2.5 max-h-[300px] overflow-y-auto p-1">
+              {questions.map((q, idx) => {
+                const isCurrent = idx === currentIndex;
+                const attempt = userAttempts[q.question_id];
+                const isAnswered = Boolean(attempt);
+                const isFlagged = flaggedQuestions.has(idx);
+
+                return (
+                  <button
+                    key={q.question_id}
+                    type="button"
+                    onClick={() => handleJumpToQuestion(idx)}
+                    className={cn(
+                      "relative h-11 rounded-lg border font-mono text-xs font-semibold flex items-center justify-center transition-all cursor-pointer",
+                      isCurrent && "border-primary ring-2 ring-primary/40 font-bold",
+                      isAnswered && !isCurrent && "bg-primary/10 border-primary/30 text-primary",
+                      !isAnswered && !isCurrent && "bg-secondary/40 border-border text-muted-foreground hover:border-primary/50",
+                    )}
+                  >
+                    <span>{idx + 1}</span>
+                    {isFlagged && (
+                      <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-amber-500" />
+                    )}
+                    {isAnswered && (
+                      <span className="absolute bottom-1 right-1 h-1.5 w-1.5 rounded-full bg-primary" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border pt-3 font-mono">
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-primary" /> Answered
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-amber-500" /> Marked for Review
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-muted-foreground/30" /> Unanswered
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ---------------------------------------------------------------- */}
+      {/* 1. Official Sticky Top Proctor Bar                               */}
+      {/* ---------------------------------------------------------------- */}
+      <header className="h-14 shrink-0 bg-card border-b border-border px-4 sm:px-6 flex items-center justify-between z-30 transition-colors">
+        {/* Left: Module Designation & Mode */}
+        <div className="flex items-center gap-3">
+          <span className="font-semibold text-xs sm:text-sm tracking-wide text-foreground">
+            {examName || "Exam Practice"} &middot; {current.skill_domain}
+          </span>
+          <span className="hidden sm:inline-flex items-center gap-1 rounded-md bg-secondary/80 px-2 py-0.5 text-[10px] font-mono text-muted-foreground border border-border">
+            {mode === "exam" ? "Exam Simulation" : "Tutor Drill"}
+          </span>
+        </div>
+
+        {/* Center: Official Countdown / Stopwatch */}
+        <div className="flex items-center gap-2 bg-secondary/60 px-3 py-1 rounded-md border border-border">
+          <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+          {showTimer ? (
+            <span className="font-mono text-xs sm:text-sm font-semibold tracking-wider text-foreground">
+              {formatTime(totalTimeElapsed)}
+            </span>
+          ) : (
+            <span className="font-mono text-xs text-muted-foreground">Time Hidden</span>
+          )}
+          <button
+            type="button"
+            onClick={() => setShowTimer((prev) => !prev)}
+            className="text-[11px] font-mono text-muted-foreground hover:text-foreground underline ml-1 cursor-pointer"
+          >
+            {showTimer ? "Hide" : "Show"}
+          </button>
+        </div>
+
+        {/* Right: Essential Tools & Exit */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowCalculator((prev) => !prev)}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
+              showCalculator
+                ? "bg-primary text-primary-foreground border-primary shadow-xs font-semibold"
+                : "border-border/80 bg-secondary/50 hover:bg-secondary text-foreground",
+            )}
+            title="Open Exam Calculator"
+          >
+            <Calculator className={cn("h-3.5 w-3.5", showCalculator ? "text-primary-foreground" : "text-primary")} />
+            <span className="hidden sm:inline">Calculator</span>
+          </button>
+
+          <div className="h-4 w-px bg-border/80 mx-0.5" />
+          <ThemeToggle />
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowExitDialog(true)}
+            className="h-8 px-2 text-xs font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer"
+          >
+            <LogOut className="h-3.5 w-3.5 mr-1" />
+            <span className="hidden sm:inline">End Test</span>
+          </Button>
+        </div>
+      </header>
+
+      {/* ---------------------------------------------------------------- */}
+      {/* 2. Main Question Workspace (Full Height Scrollable)             */}
+      {/* ---------------------------------------------------------------- */}
+      <main className="flex-1 overflow-y-auto px-4 py-8 sm:px-8 bg-background">
+        <div className="max-w-2xl mx-auto space-y-6">
+          {/* Question Stem Header: Domain & Difficulty */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-xs text-muted-foreground font-mono border-b border-border/80 pb-2.5">
+              <span className="font-semibold text-foreground/80 tracking-wide">
+                {current.skill_domain || "Problem Solving"}
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground bg-secondary/70 border border-border px-2 py-0.5 rounded">
+                Tier {current.difficulty_tier || 2}
+              </span>
+            </div>
+
+            <div className="font-heading text-lg sm:text-xl font-normal leading-relaxed text-foreground tracking-normal">
+              {renderMathContent(current.question_text)}
+            </div>
+          </div>
+
+          {/* Option Cards */}
+          <div className="space-y-3">
+            {optionEntries.map(({ key, value }) => {
+              const isSelected = selectedOption === key;
+              const isCorrectOption = key === current.correct_option;
+
+              let borderClasses = "border-border/80 bg-card hover:border-primary/50 hover:bg-secondary/20";
+
+              if (mode === "tutor") {
+                if (answerState === "answered") {
+                  if (isCorrectOption) {
+                    borderClasses = "border-emerald-600 bg-emerald-50/40 dark:bg-emerald-950/30 ring-1 ring-emerald-600";
+                  } else if (isSelected && !isCorrectOption) {
+                    borderClasses = "border-rose-600 bg-rose-50/40 dark:bg-rose-950/30 ring-1 ring-rose-600";
+                  }
+                } else if (isSelected) {
+                  borderClasses = "border-primary bg-primary/5 ring-1 ring-primary";
+                }
+              } else {
+                if (isSelected) {
+                  borderClasses = "border-primary bg-primary/10 ring-2 ring-primary/30";
+                }
+              }
+
+              return (
+                <div
+                  key={key}
+                  onClick={() => handleOptionClick(key as SelectedOption)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleOptionClick(key as SelectedOption);
+                    }
+                  }}
+                  className={cn(
+                    "w-full flex items-center justify-between gap-3.5 rounded-xl border p-4 text-left transition-all relative overflow-hidden select-none",
+                    borderClasses,
+                    !answerState || answerState === "pending" || mode === "exam" ? "cursor-pointer active:scale-[0.995]" : "cursor-default"
+                  )}
+                >
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <span
+                      className={cn(
+                        "h-7 w-7 shrink-0 rounded-full border flex items-center justify-center text-xs font-mono font-semibold transition-colors",
+                        mode === "tutor" && answerState === "answered" && isCorrectOption
+                          ? "bg-emerald-600 text-white border-emerald-600 font-bold"
+                          : mode === "tutor" && answerState === "answered" && isSelected && !isCorrectOption
+                            ? "bg-rose-600 text-white border-rose-600 font-bold"
+                            : isSelected
+                              ? "bg-primary text-primary-foreground border-primary font-bold"
+                              : "border-border text-foreground/80"
+                      )}
+                    >
+                      {key}
+                    </span>
+
+                    <span className="text-sm font-medium text-foreground leading-snug break-words">
+                      {renderMathContent(value)}
+                    </span>
+                  </div>
+
+                  {mode === "tutor" && answerState === "answered" && isCorrectOption && (
+                    <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0" />
+                  )}
+                  {mode === "tutor" && answerState === "answered" && isSelected && !isCorrectOption && (
+                    <XCircle className="h-5 w-5 text-rose-600 shrink-0" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Tutor Mode Examiner Diagnostic Breakdown (Post-Answer) */}
+          {mode === "tutor" && answerState === "answered" && (
+            <div className="mt-6 rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm animate-in fade-in duration-200">
+              <div className="flex items-center gap-2 text-sm font-heading font-semibold">
+                {isCorrect ? (
+                  <span className="text-emerald-600 flex items-center gap-1.5">
+                    <CheckCircle className="h-4 w-4" /> Correct Deduction
+                  </span>
+                ) : (
+                  <span className="text-rose-600 flex items-center gap-1.5">
+                    <AlertTriangle className="h-4 w-4" /> Cognitive Distractor Trap Triggered
+                  </span>
+                )}
+              </div>
+
+              {selectedOption && selectedOption !== current.correct_option && current.distractor_analysis?.[selectedOption] && (
+                <div className="rounded-lg p-3.5 bg-rose-500/10 border border-rose-500/20 text-xs text-foreground/90 leading-relaxed">
+                  <span className="font-semibold text-rose-700 dark:text-rose-400 block mb-1">
+                    Examiner Trap Breakdown (Option {selectedOption}):
+                  </span>
+                  {renderMathContent(current.distractor_analysis[selectedOption])}
+                </div>
+              )}
+
+              {current.explanation && (
+                <div className="rounded-lg p-3.5 bg-secondary/40 border border-border/80 text-xs text-foreground/90 leading-relaxed">
+                  <span className="font-semibold text-foreground block mb-1">
+                    Solution Derivation:
+                  </span>
+                  {renderMathContent(current.explanation)}
+                </div>
+              )}
+
+              {current.misconception && (
+                <div className="text-xs text-muted-foreground border-t border-border pt-3">
+                  <span className="font-semibold text-amber-600 dark:text-amber-400 block mb-0.5">
+                    Common Exam-Setter Trap:
+                  </span>
+                  {current.misconception}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* ---------------------------------------------------------------- */}
+      {/* 3. Official Sticky Bottom Action Dock                            */}
+      {/* ---------------------------------------------------------------- */}
+      <footer className="h-16 shrink-0 border-t border-border bg-card/95 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between z-30">
+        {/* Left: Question Palette Button */}
+        <button
+          type="button"
+          onClick={() => setShowPalette((prev) => !prev)}
+          className="inline-flex items-center gap-2 rounded-lg border border-border/80 bg-secondary/50 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-secondary cursor-pointer"
+        >
+          <Grid className="h-3.5 w-3.5" />
+          <span>Question {currentIndex + 1} of {total}</span>
+        </button>
+
+        {/* Center: Mark for Review Checkbox */}
+        <div className="flex items-center gap-3">
+          <label className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={flaggedQuestions.has(currentIndex)}
+              onChange={handleToggleFlag}
+              className="rounded border-border text-primary focus:ring-0 cursor-pointer h-3.5 w-3.5"
+            />
+            <Flag className={cn("h-3.5 w-3.5", flaggedQuestions.has(currentIndex) && "text-amber-500 fill-amber-500")} />
+            <span className="hidden sm:inline">Mark for Review</span>
+          </label>
+
+          {flaggedQuestions.size > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowSectionReview(true)}
+              className="hidden md:inline-flex items-center gap-1 text-[11px] font-mono text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded cursor-pointer hover:bg-amber-500/20 transition-colors"
+              title="Review Flagged Questions in Section Review"
+            >
+              <Flag className="h-2.5 w-2.5 fill-amber-500" />
+              <span>{flaggedQuestions.size} flagged</span>
+            </button>
+          )}
+        </div>
+
+        {/* Right: Previous & Next Actions */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handlePrev}
+            disabled={currentIndex === 0}
+            className="h-9 px-3 text-xs cursor-pointer"
+          >
+            <ChevronLeft className="h-3.5 w-3.5 mr-1" />
+            Previous
+          </Button>
+
+          <Button
+            type="button"
+            size="sm"
+            onClick={answerState === "answered" || (mode === "exam" && selectedOption) ? handleNext : handleSkipQuestion}
+            className="h-9 px-5 text-xs font-semibold cursor-pointer shadow-xs"
+          >
+            <span>{currentIndex + 1 < total ? "Next Question" : "Review Section"}</span>
+            <ChevronRight className="h-3.5 w-3.5 ml-1.5" />
+          </Button>
+        </div>
+      </footer>
+
+      {/* Leave Session Confirmation Dialog */}
+      <Dialog open={showExitDialog} onOpenChange={setShowExitDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Leave Practice Session?</DialogTitle>
+            <DialogDescription>
+              {answeredCount > 0
+                ? `You've answered ${answeredCount} of ${total} questions. You can submit now to record your mastery, or discard this session.`
+                : "You haven't answered any questions yet. Exiting will discard this session."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="flex-col gap-2 pt-2">
+            {answeredCount > 0 && (
+              <Button type="button" className="w-full" onClick={handleFinishEarly}>
+                Submit & Review ({answeredCount} answered)
+              </Button>
+            )}
             <Button
               type="button"
-              variant="ghost"
-              className="w-full text-muted-foreground"
-              onClick={() => setShowExitDialog(false)}
+              variant="outline"
+              disabled={isDiscarding}
+              className="w-full text-destructive hover:bg-destructive/10"
+              onClick={handleDiscardSession}
             >
+              {isDiscarding ? "Discarding..." : "Discard & Exit"}
+            </Button>
+            <Button type="button" variant="ghost" onClick={() => setShowExitDialog(false)}>
               Keep Practicing
             </Button>
           </DialogFooter>
