@@ -596,6 +596,57 @@ export type Database = {
           },
         ]
       }
+      question_bank: {
+        Row: {
+          correct_option: string
+          created_at: string | null
+          difficulty_tier: number
+          distractor_analysis: Json | null
+          exam_name: string
+          explanation: string
+          id: string
+          metadata_json: Json | null
+          misconception: string | null
+          options: Json
+          question_text: string
+          skill_domain: string
+          subject: string
+          time_estimate_seconds: number | null
+        }
+        Insert: {
+          correct_option: string
+          created_at?: string | null
+          difficulty_tier: number
+          distractor_analysis?: Json | null
+          exam_name: string
+          explanation: string
+          id?: string
+          metadata_json?: Json | null
+          misconception?: string | null
+          options: Json
+          question_text: string
+          skill_domain: string
+          subject: string
+          time_estimate_seconds?: number | null
+        }
+        Update: {
+          correct_option?: string
+          created_at?: string | null
+          difficulty_tier?: number
+          distractor_analysis?: Json | null
+          exam_name?: string
+          explanation?: string
+          id?: string
+          metadata_json?: Json | null
+          misconception?: string | null
+          options?: Json
+          question_text?: string
+          skill_domain?: string
+          subject?: string
+          time_estimate_seconds?: number | null
+        }
+        Relationships: []
+      }
       question_groups: {
         Row: {
           caption: string | null

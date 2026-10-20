@@ -63,6 +63,8 @@ export default function ReliefComparisonSection() {
           <DesktopComparison />
         )}
 
+        <ComparisonFlowDiagram />
+
         {/* Conversion Action Footer */}
         <div className="mt-14 text-center space-y-3">
           <Link
@@ -247,6 +249,79 @@ function MobileComparison({
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+function ComparisonFlowDiagram() {
+  return (
+    <div className="mt-12 rounded-2xl border border-border/80 bg-card/60 p-6 sm:p-8 backdrop-blur-xs shadow-xs">
+      <div className="text-center mb-6 max-w-xl mx-auto">
+        <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+          Cognitive Architecture Comparison
+        </span>
+        <h4 className="text-base sm:text-lg font-medium text-foreground mt-1">
+          The Two Learning Loops Under Memory Physics
+        </h4>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Passive Loop */}
+        <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-5 space-y-3">
+          <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-mono text-xs font-semibold">
+            <X className="h-4 w-4" />
+            <span>The Illusion of Competence (Passive Loop)</span>
+          </div>
+          <div className="flex flex-col gap-2 font-mono text-xs text-muted-foreground">
+            <div className="flex items-center gap-2.5 rounded-lg bg-background/80 p-2.5 border border-border/40">
+              <span className="text-rose-500 font-bold shrink-0">01</span>
+              <span>Reread 50 pages of textbook notes</span>
+            </div>
+            <div className="flex items-center justify-center text-muted-foreground/60 text-[10px]">
+              ▼ (Creates false familiarity bias)
+            </div>
+            <div className="flex items-center gap-2.5 rounded-lg bg-background/80 p-2.5 border border-border/40">
+              <span className="text-rose-500 font-bold shrink-0">02</span>
+              <span>Mistake visual recognition for true unassisted recall</span>
+            </div>
+            <div className="flex items-center justify-center text-muted-foreground/60 text-[10px]">
+              ▼ (Zero retrieval practice under timed stress)
+            </div>
+            <div className="flex items-center gap-2.5 rounded-lg bg-rose-500/10 p-2.5 border border-rose-500/25 text-rose-700 dark:text-rose-300 font-medium">
+              <span className="font-bold shrink-0">03</span>
+              <span>Exam day: Blanking on formulas & falling into sign traps</span>
+            </div>
+          </div>
+        </div>
+
+        {/* AceThePrep Closed Loop */}
+        <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-5 space-y-3">
+          <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-mono text-xs font-semibold">
+            <Check className="h-4 w-4" />
+            <span>The Calibrated Diagnostic (AceThePrep Loop)</span>
+          </div>
+          <div className="flex flex-col gap-2 font-mono text-xs text-muted-foreground">
+            <div className="flex items-center gap-2.5 rounded-lg bg-background/80 p-2.5 border border-border/40">
+              <span className="text-blue-500 font-bold shrink-0">01</span>
+              <span>10Q Timed Retrieval Drill (Unassisted)</span>
+            </div>
+            <div className="flex items-center justify-center text-blue-500/60 text-[10px]">
+              ▼ (Instant mistake autopsy isolation)
+            </div>
+            <div className="flex items-center gap-2.5 rounded-lg bg-background/80 p-2.5 border border-border/40">
+              <span className="text-blue-500 font-bold shrink-0">02</span>
+              <span>Deconstruct exact distractor traps & algebraic errors</span>
+            </div>
+            <div className="flex items-center justify-center text-blue-500/60 text-[10px]">
+              ▼ (SM-2 Spaced review at Day 3 & Day 7)
+            </div>
+            <div className="flex items-center gap-2.5 rounded-lg bg-emerald-500/10 p-2.5 border border-emerald-500/25 text-emerald-700 dark:text-emerald-300 font-medium">
+              <span className="font-bold shrink-0">03</span>
+              <span>Permanent synaptic lock-in for test day</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

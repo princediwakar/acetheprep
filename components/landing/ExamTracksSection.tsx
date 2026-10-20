@@ -4,8 +4,10 @@ import Link from "next/link";
 import MaxWidthWrapper from "@/components/shared/MaxWidthWrapper";
 import { HeaderSection } from "@/components/shared/HeaderSection";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
+import { ExamMark } from "@/components/landing/SupportedExamsBar";
 
 interface ExamTrack {
+  id: string;
   slug: string;
   name: string;
   badge: string;
@@ -15,6 +17,7 @@ interface ExamTrack {
 
 const EXAM_TRACKS: ExamTrack[] = [
   {
+    id: "SAT",
     slug: "sat",
     name: "Digital SAT",
     badge: "College Admissions",
@@ -22,6 +25,7 @@ const EXAM_TRACKS: ExamTrack[] = [
     focus: "Desmos Optimization, Quadratic Systems & Rhetorical Synthesis",
   },
   {
+    id: "GRE",
     slug: "gre",
     name: "GRE General",
     badge: "Graduate",
@@ -29,6 +33,7 @@ const EXAM_TRACKS: ExamTrack[] = [
     focus: "Coordinate Geometry, Vocabulary in Context & Argument Logic",
   },
   {
+    id: "GMAT Focus",
     slug: "gmat-focus",
     name: "GMAT Focus",
     badge: "Global MBA",
@@ -36,6 +41,7 @@ const EXAM_TRACKS: ExamTrack[] = [
     focus: "Data Sufficiency, Graphical Interpretations & Critical Reasoning",
   },
   {
+    id: "CFA Level 1",
     slug: "cfa-level-1",
     name: "CFA Level 1",
     badge: "Finance & Investment",
@@ -43,6 +49,7 @@ const EXAM_TRACKS: ExamTrack[] = [
     focus: "Reporting Standards, Duration Sensitivity & Corporate Governance",
   },
   {
+    id: "IELTS Academic",
     slug: "ielts-academic",
     name: "IELTS Academic",
     badge: "UK, EU & Global Study",
@@ -50,6 +57,7 @@ const EXAM_TRACKS: ExamTrack[] = [
     focus: "True-False-Not Given Traps, Main Idea Matching & Audio Cue Distractors",
   },
   {
+    id: "TOEFL iBT",
     slug: "toefl-ibt",
     name: "TOEFL iBT",
     badge: "US College English",
@@ -58,6 +66,7 @@ const EXAM_TRACKS: ExamTrack[] = [
   },
 
   {
+    id: "JEE Main",
     slug: "jee-main",
     name: "JEE Main",
     badge: "Engineering",
@@ -65,6 +74,7 @@ const EXAM_TRACKS: ExamTrack[] = [
     focus: "Ray Optics, Rotational Dynamics & Calculus Foundations",
   },
   {
+    id: "NEET",
     slug: "neet",
     name: "NEET",
     badge: "Medical",
@@ -72,6 +82,7 @@ const EXAM_TRACKS: ExamTrack[] = [
     focus: "Mendelian Genetics, Plant Physiology & NCERT Key Concepts",
   },
   {
+    id: "CAT",
     slug: "cat",
     name: "CAT",
     badge: "Management",
@@ -79,6 +90,7 @@ const EXAM_TRACKS: ExamTrack[] = [
     focus: "Time-Speed-Distance, Arrangements & Critical Reasoning",
   },
   {
+    id: "GATE",
     slug: "gate",
     name: "GATE",
     badge: "Technical",
@@ -86,6 +98,7 @@ const EXAM_TRACKS: ExamTrack[] = [
     focus: "Linear Algebra Eigenvectors, Cache Coherence & Complexity",
   },
   {
+    id: "UPSC CSE",
     slug: "upsc-cse",
     name: "UPSC CSE",
     badge: "Civil Services",
@@ -93,6 +106,7 @@ const EXAM_TRACKS: ExamTrack[] = [
     focus: "Syllogistic Deductions, Analytical Reasoning & Constitutional Law",
   },
   {
+    id: "CLAT",
     slug: "clat",
     name: "CLAT",
     badge: "Law",
@@ -100,6 +114,7 @@ const EXAM_TRACKS: ExamTrack[] = [
     focus: "Principle-Fact Deductions, Analogies & Legal Precedents",
   },
   {
+    id: "CA Foundation",
     slug: "ca-foundation",
     name: "CA Foundation",
     badge: "Accounting",
@@ -138,11 +153,16 @@ export default function ExamTracksSection() {
                   </Link>
                 </div>
 
-                <Link href={`/practice/${track.slug}`}>
-                  <h3 className="font-heading mt-4 text-xl font-medium tracking-tight text-foreground hover:text-primary transition-colors">
-                    {track.name}
-                  </h3>
-                </Link>
+                <div className="flex items-center gap-3 mt-4">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20">
+                    <ExamMark id={track.id} className="h-4.5 w-4.5" />
+                  </div>
+                  <Link href={`/practice/${track.slug}`}>
+                    <h3 className="font-heading text-xl font-medium tracking-tight text-foreground hover:text-primary transition-colors">
+                      {track.name}
+                    </h3>
+                  </Link>
+                </div>
 
                 <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
                   <strong className="text-foreground/80 font-medium">Focus:</strong>{" "}

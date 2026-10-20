@@ -22,8 +22,12 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase/client";
 import { useUser } from "@/hooks/useUser";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export function FeedbackWidget() {
+	const pathname = usePathname();
+	const isSessionPage = pathname?.startsWith("/session/");
 	const [isOpen, setIsOpen] = useState(false);
 	const [feedback, setFeedback] = useState("");
 	const [category, setCategory] = useState("feedback");
@@ -79,7 +83,12 @@ export function FeedbackWidget() {
 	};
 
 	return (
-		<div className="fixed bottom-4 right-4 z-50">
+		<div
+			className={cn(
+				"fixed right-4 z-50 transition-all",
+				isSessionPage ? "bottom-20 sm:bottom-4" : "bottom-4"
+			)}
+		>
 			{isOpen ? (
 				<div className="bg-card p-4 rounded-lg shadow-lg w-80 space-y-3 border">
 					<div className="flex justify-between items-center">

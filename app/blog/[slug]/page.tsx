@@ -1,12 +1,12 @@
-// Path: app/blog/[slug]/page.tsx
-
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
-import { getAllBlogPosts, getBlogPost } from "@/lib/mdx";
+import { getAllBlogPosts, getBlogPost, getRelatedBlogPosts } from "@/lib/mdx";
+import { slugify, examToSlug, GLOBAL_EXAM_PRIORITY } from "@/lib/slugs";
 import StructuredData, { breadcrumbSchema } from "@/components/seo/StructuredData";
-import { ArrowLeft, Calendar, Clock, User, Sparkles } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, User, Sparkles, ListTree, ArrowRight, BookOpen } from "lucide-react";
 import { siteConfig } from "@/config/site";
+import { BlogTechnicalDiagram } from "@/components/blog/BlogTechnicalDiagram";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -145,26 +145,32 @@ function MarkdownRenderer({ content }: { content: string }) {
       flushTable(i);
     }
 
-    // Headings
+    // Headings with scroll-margin and slug anchors
     if (line.startsWith("## ")) {
+      const text = line.replace("## ", "").trim();
+      const id = slugify(text);
       elements.push(
         <h2
           key={`h2-${i}`}
-          className="mt-10 mb-4 text-2xl font-bold tracking-tight text-foreground border-b border-border/50 pb-2"
+          id={id}
+          className="scroll-mt-24 mt-10 mb-4 text-2xl font-bold tracking-tight text-foreground border-b border-border/50 pb-2"
         >
-          {line.replace("## ", "").trim()}
+          {text}
         </h2>,
       );
       continue;
     }
 
     if (line.startsWith("### ")) {
+      const text = line.replace("### ", "").trim();
+      const id = slugify(text);
       elements.push(
         <h3
           key={`h3-${i}`}
-          className="mt-8 mb-3 text-xl font-semibold tracking-tight text-foreground"
+          id={id}
+          className="scroll-mt-24 mt-8 mb-3 text-xl font-semibold tracking-tight text-foreground"
         >
-          {line.replace("### ", "").trim()}
+          {text}
         </h3>,
       );
       continue;
@@ -257,13 +263,38 @@ function renderFormattedText(text: string): React.ReactNode {
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = await getBlogPost(slug);
+  const [post, relatedPosts] = await Promise.all([
+    getBlogPost(slug),
+    getRelatedBlogPosts(slug, 2),
+  ]);
 
   if (!post) {
     notFound();
   }
 
   const articleUrl = `${baseUrl}/blog/${post.slug}`;
+
+  // Extract headings for Table of Contents
+  const tocItems = post.content
+    .split("\n")
+    .filter((l) => l.startsWith("## "))
+    .map((l) => {
+      const title = l.replace("## ", "").trim();
+      return { title, id: slugify(title) };
+    });
+
+  // Resolve target exam for practice cross-linking
+  let targetExamName = "";
+  let practiceSlug = "";
+  if (post.examTag) {
+    const matchedPriority = GLOBAL_EXAM_PRIORITY.find(
+      (e) =>
+        post.examTag.toLowerCase().includes(e.toLowerCase()) ||
+        e.toLowerCase().includes(post.examTag.toLowerCase()),
+    );
+    targetExamName = matchedPriority || post.examTag;
+    practiceSlug = examToSlug(targetExamName);
+  }
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -346,10 +377,116 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </header>
 
+        {/* Article Figure Banner */}
+        <div className="mb-10">
+          <BlogTechnicalDiagram
+            examTag={post.examTag}
+            category={post.category}
+            className="h-44 sm:h-56 rounded-2xl shadow-sm"
+          />
+        </div>
+
+        {/* Table of Contents */}
+        {tocItems.length >= 2 && (
+          <nav
+            aria-label="Table of Contents"
+            className="my-8 rounded-2xl border border-border/80 bg-muted/30 p-5"
+          >
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+              <ListTree className="w-4 h-4 text-primary" />
+              <span>Table of Contents</span>
+            </div>
+            <ol className="space-y-2 text-sm">
+              {tocItems.map((item, idx) => (
+                <li key={item.id} className="flex items-start gap-2">
+                  <span className="font-mono text-xs text-primary font-semibold mt-0.5">
+                    {idx + 1}.
+                  </span>
+                  <a
+                    href={`#${item.id}`}
+                    className="text-muted-foreground hover:text-primary transition-colors hover:underline"
+                  >
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )}
+
         {/* Article Body */}
         <div className="prose dark:prose-invert max-w-none">
           <MarkdownRenderer content={post.content} />
         </div>
+
+        {/* Direct Practice Launchpad */}
+        {practiceSlug && (
+          <div className="mt-12 rounded-2xl border border-primary/30 bg-primary/5 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                Instant Interactive Calibration
+              </span>
+              <h4 className="text-base font-bold text-foreground mt-0.5">
+                Practice {targetExamName} Distractor Traps Free
+              </h4>
+              <p className="text-xs text-muted-foreground mt-1 max-w-md">
+                Experience adaptive test-taking under real exam timing with immediate mistake breakdowns.
+              </p>
+            </div>
+            <Link
+              href={`/practice/${practiceSlug}`}
+              className="inline-flex whitespace-nowrap items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow transition hover:opacity-90"
+            >
+              Start Diagnostic
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        )}
+
+        {/* Related Guides Section */}
+        {relatedPosts.length > 0 && (
+          <div className="mt-16 pt-8 border-t border-border">
+            <h3 className="text-xl font-bold text-foreground mb-6">
+              Recommended Cognitive Guides
+            </h3>
+            <div className="grid gap-6 sm:grid-cols-2">
+              {relatedPosts.map((related) => (
+                <article
+                  key={related.slug}
+                  className="group relative flex flex-col justify-between rounded-xl border border-border bg-card p-5 hover:border-primary/40 transition hover:shadow-md"
+                >
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="rounded bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                        {related.category}
+                      </span>
+                      {related.examTag && (
+                        <span className="rounded bg-secondary px-2 py-0.5 text-[10px] font-medium text-secondary-foreground">
+                          {related.examTag}
+                        </span>
+                      )}
+                    </div>
+                    <h4 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                      <Link href={`/blog/${related.slug}`}>
+                        <span className="absolute inset-0" />
+                        {related.title}
+                      </Link>
+                    </h4>
+                    <p className="text-xs text-muted-foreground mt-2 line-clamp-2 leading-relaxed">
+                      {related.description}
+                    </p>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
+                    <span>{related.readTime}</span>
+                    <span className="inline-flex items-center gap-1 font-semibold text-primary">
+                      Read guide <ArrowRight className="w-3 h-3" />
+                    </span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* In-article PLG Conversion Widget */}
         <div className="mt-16 rounded-2xl border border-primary/30 bg-gradient-to-br from-card via-card to-primary/5 p-8 shadow-sm">
@@ -383,3 +520,4 @@ export default async function BlogPostPage({ params }: PageProps) {
     </article>
   );
 }
+

@@ -869,7 +869,7 @@ export function SessionPlayer({
   const correctLetter = current.correct_option;
 
   return (
-    <div className="max-w-2xl mx-auto p-4 sm:p-6 space-y-6">
+    <div className="max-w-2xl mx-auto p-4 sm:p-6 pb-28 sm:pb-32 space-y-6">
       {/* Top Header: Progress & Mode Switcher */}
       <div className="space-y-3">
         <div className="flex items-center justify-between text-sm">
@@ -991,109 +991,158 @@ export function SessionPlayer({
         })}
       </div>
 
-      {/* Exam Mode Bottom Controls */}
-      {mode === "exam" && (
-        <div className="flex items-center justify-between gap-3 pt-4 border-t">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={handleSkipQuestion}
-            className="text-muted-foreground hover:text-foreground text-xs"
-          >
-            Skip Question
-          </Button>
-          <div className="flex items-center gap-3">
-            {selectedOption && (
-              <span className="hidden sm:inline text-xs text-muted-foreground">
-                Press <kbd className="px-1.5 py-0.5 rounded bg-muted border font-mono font-bold text-foreground">Enter ↵</kbd>
-              </span>
-            )}
-            <Button
-              type="button"
-              size="lg"
-              disabled={!selectedOption}
-              onClick={handleNext}
-              className="font-semibold px-6 h-11"
-            >
-              {currentIndex + 1 < total ? "Next Question" : "Submit Exam"}
-              <ChevronRight className="ml-1 h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Tutor Reveal Helper */}
-      {answerState === "pending" && mode === "tutor" && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleReveal}
-          className="text-muted-foreground"
-        >
-          <Eye className="mr-1.5 h-4 w-4" />
-          Reveal Answer
-        </Button>
-      )}
-
       {/* Tutor Answer Feedback Card */}
-      {mode === "tutor" && answerState === "answered" && (
-        <div className="space-y-4 border rounded-xl p-5 bg-card shadow-sm animate-in fade-in duration-200">
-          <div>
-            {isRevealed ? (
-              <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold text-sm">
-                <Eye className="h-4 w-4" />
-                Answer Revealed
+      {mode === "tutor" && answerState === "answered" && (() => {
+        const correctExplanation =
+          current.distractor_analysis?.[current.correct_option] || current.explanation;
+        const selectedExplanation =
+          selectedOption && selectedOption !== current.correct_option
+            ? current.distractor_analysis?.[selectedOption]
+            : null;
+
+        return (
+          <div className="space-y-4 border rounded-xl p-5 bg-card shadow-sm animate-in fade-in duration-200">
+            {/* Status Header */}
+            <div>
+              {isRevealed ? (
+                <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold text-sm">
+                  <Eye className="h-4 w-4" />
+                  <span>Correct option is <strong>{current.correct_option}</strong></span>
+                </div>
+              ) : isCorrect ? (
+                <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold text-sm">
+                  <CheckCircle className="h-4 w-4" />
+                  <span>Correct</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-semibold text-sm">
+                  <XCircle className="h-4 w-4" />
+                  <span>Incorrect &middot; Correct option is <strong>{current.correct_option}</strong></span>
+                </div>
+              )}
+            </div>
+
+            {/* If user picked an incorrect distractor, explain why that choice was wrong */}
+            {selectedExplanation && (
+              <div className="rounded-lg p-3 bg-red-500/10 border border-red-500/20 space-y-1">
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-red-600 dark:text-red-400">
+                  Why Option {selectedOption} is incorrect
+                </h4>
+                <div className="text-sm text-foreground/90 leading-relaxed">
+                  {renderMathContent(selectedExplanation)}
+                </div>
               </div>
-            ) : isCorrect ? (
-              <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold text-sm">
-                <CheckCircle className="h-4 w-4" />
-                Correct
+            )}
+
+            {/* Correct Solution Derivation (shown for revealed, correct, or incorrect) */}
+            {correctExplanation && (
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+                  {isRevealed ? "Solution Derivation" : isCorrect ? "Explanation" : `Why Option ${current.correct_option} is correct`}
+                </h4>
+                <div className="text-sm text-foreground/90 leading-relaxed">
+                  {renderMathContent(correctExplanation)}
+                </div>
               </div>
-            ) : (
-              <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-semibold text-sm">
-                <XCircle className="h-4 w-4" />
-                Incorrect
+            )}
+
+            {/* Common Trap Analysis */}
+            {current.misconception && (
+              <div className="border-t pt-3 mt-3">
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400 mb-1">
+                  Common Trap
+                </h4>
+                <div className="text-sm text-foreground/90 leading-relaxed">
+                  {current.misconception}
+                </div>
               </div>
             )}
           </div>
+        );
+      })()}
 
-          {selectedOption && current.distractor_analysis?.[selectedOption] && (
-            <div>
-              <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
-                Explanation
-              </h4>
-              <div className="text-sm text-foreground/90 leading-relaxed">
-                {renderMathContent(current.distractor_analysis[selectedOption])}
+      {/* Fixed Bottom Action Bar */}
+      {(() => {
+        const isNextReady = mode === "exam" ? Boolean(selectedOption) : answerState === "answered";
+        const nextCtaLabel =
+          mode === "exam"
+            ? currentIndex + 1 < total
+              ? "Next Question"
+              : "Submit Exam"
+            : currentIndex + 1 < total
+              ? "Next Question"
+              : "Submit & View Solutions";
+
+        return (
+          <div className="fixed bottom-0 inset-x-0 z-30 bg-background/95 backdrop-blur-md border-t border-border shadow-lg">
+            <div className="max-w-2xl mx-auto px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-3">
+              {/* Left Action / Feedback Indicator */}
+              <div className="flex items-center">
+                {mode === "exam" ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleSkipQuestion}
+                    className="text-muted-foreground hover:text-foreground text-xs sm:text-sm font-medium"
+                  >
+                    Skip Question
+                  </Button>
+                ) : answerState === "pending" ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleReveal}
+                    className="text-muted-foreground hover:text-foreground text-xs sm:text-sm font-medium"
+                  >
+                    <Eye className="mr-1.5 h-4 w-4" />
+                    Reveal Answer
+                  </Button>
+                ) : (
+                  <div className="flex items-center gap-1.5">
+                    {isRevealed ? (
+                      <span className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400">
+                        <Eye className="h-4 w-4" />
+                        Answer Revealed
+                      </span>
+                    ) : isCorrect ? (
+                      <span className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-green-600 dark:text-green-400">
+                        <CheckCircle className="h-4 w-4" />
+                        Correct
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-red-600 dark:text-red-400">
+                        <XCircle className="h-4 w-4" />
+                        Incorrect
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Right Action: Shortcut & Next/Submit CTA */}
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                {isNextReady && (
+                  <span className="hidden sm:inline text-xs text-muted-foreground">
+                    Press <kbd className="px-1.5 py-0.5 rounded bg-muted border font-mono font-bold text-foreground">Enter ↵</kbd>
+                  </span>
+                )}
+                <Button
+                  type="button"
+                  size="lg"
+                  disabled={!isNextReady}
+                  onClick={handleNext}
+                  className="font-semibold px-6 sm:px-8 h-11 sm:h-12 text-sm sm:text-base min-w-[140px] sm:min-w-[170px] shadow-sm transition-all"
+                >
+                  {nextCtaLabel}
+                  <ChevronRight className="ml-1 h-4 w-4 sm:h-5 sm:w-5" />
+                </Button>
               </div>
             </div>
-          )}
-
-          {isCorrect && !isRevealed && current.misconception && (
-            <div className="border-t pt-3 mt-3">
-              <h4 className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400 mb-1">
-                Common Trap
-              </h4>
-              <div className="text-sm text-foreground/90 leading-relaxed">
-                {current.misconception}
-              </div>
-            </div>
-          )}
-
-          <div className="pt-2">
-            <Button
-              className="w-full h-12 text-base font-semibold"
-              onClick={handleNext}
-              size="lg"
-            >
-              {currentIndex + 1 < total
-                ? "Next Question"
-                : "Submit & View Solutions"}
-              <ChevronRight className="ml-1 h-5 w-5" />
-            </Button>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }

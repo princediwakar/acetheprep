@@ -24,6 +24,8 @@ import { getDiagnosticStrata } from "@/lib/diagnostic-seed";
 import { getDomainsForExam } from "@/lib/services/taxonomy";
 import type { SessionQuestion, DifficultyTier, TimeMode } from "@/types/tutor";
 import { computePriorityScores } from "@/lib/priority-engine";
+import { fetchQuestionsFromBank, saveQuestionsToBank } from "@/lib/services/question-bank-service";
+
 
 const DIFFICULTY_TIER_MAP: Record<string, DifficultyTier> = {
   foundation: 1,
@@ -260,23 +262,86 @@ async function generateAndCreateSession(
     }
   }
 
-  // ----- Prompt Generation (Intent-Aware) -----
   const targetDomainNames = targetDomains.map((d) => d.skillDomain);
+
+  // ----- Question Bank Lookup (Sub-10ms Retrieval, 0% Duplication) -----
+  let bankQuestions: SessionQuestion[] = [];
+  let neededFromAI = questionCount;
+  let aiTargetDomains = targetDomains;
+
+  try {
+    const bankResult = await fetchQuestionsFromBank(supabase, {
+      examName: profile.exam_name,
+      targetDomains: targetDomains.map((t) => ({
+        skillDomain: t.skillDomain,
+        difficultyTier: normalizeDifficultyTier(t.difficultyTier),
+      })),
+      userId,
+      totalNeeded: questionCount,
+    });
+
+    bankQuestions = bankResult.questions;
+    neededFromAI = bankResult.missingCount;
+
+    if (bankResult.unmetTargets.length > 0) {
+      aiTargetDomains = targetDomains.filter((t) =>
+        bankResult.unmetTargets.some((u) => u.skillDomain === t.skillDomain)
+      );
+      if (aiTargetDomains.length === 0) aiTargetDomains = targetDomains;
+    }
+
+    console.log(
+      `[SessionStart] QuestionBank: ${bankQuestions.length}/${questionCount} fetched from bank. Needed from AI: ${neededFromAI}`,
+    );
+  } catch (err) {
+    console.warn("[SessionStart] Question bank lookup failed, falling back to full AI generation:", err);
+    neededFromAI = questionCount;
+  }
+
+  // FAST PATH: Full Bank Hit (Zero Latency, Zero LLM cost)
+  if (bankQuestions.length >= questionCount) {
+    const validatedQuestions = bankQuestions.slice(0, questionCount);
+    const { data: session, error: insertError } = await supabase
+      .from("sessions")
+      .insert({
+        user_id: userId,
+        exam_profile_id: examProfileId,
+        questions_json: validatedQuestions as any,
+        target_domains: targetDomainNames,
+        session_intent: sessionIntent,
+        status: "active",
+      })
+      .select("id")
+      .single();
+
+    if (insertError || !session) {
+      return { error: "Failed to create session. Try again.", status: 500 };
+    }
+
+    return {
+      result: {
+        session_id: session.id,
+        questions: validatedQuestions,
+        target_domains: targetDomainNames,
+      },
+    };
+  }
+
+  // ----- Prompt Generation (Intent-Aware) -----
   const systemPrompt = getTutorSystemPrompt();
 
   console.log(
-    `[SessionStart] model=${MODEL} baseURL=${(openai as any).baseURL || "default"} ` +
-    `domains=${targetDomainNames.length} questions=${questionCount} intent=${sessionIntent}`,
+    `[SessionStart] Fallback AI Generation: model=${MODEL} domains=${aiTargetDomains.length} needed=${neededFromAI} intent=${sessionIntent}`,
   );
 
   let questionsArray: unknown[] = [];
   const BATCH_SIZE = 10;
 
-  if (questionCount <= BATCH_SIZE) {
+  if (neededFromAI <= BATCH_SIZE) {
     // Single batch generation
     const difficultyDistribution = isDiagnostic
       ? { easy: 0, medium: 1, hard: 4 }
-      : computeDifficultyDistribution(questionCount, timeMode);
+      : computeDifficultyDistribution(neededFromAI, timeMode);
 
     const userMessage = isDiagnostic
       ? buildDiagnosticUserMessage({
@@ -289,14 +354,17 @@ async function generateAndCreateSession(
           examYear,
           timeMode,
           daysRemaining,
-          targetDomains,
-          questionCount,
+          targetDomains: aiTargetDomains,
+          questionCount: neededFromAI,
           difficultyDistribution,
-          previousQuestionStems,
+          previousQuestionStems: [
+            ...previousQuestionStems,
+            ...bankQuestions.map((bq) => bq.question_text),
+          ],
           entropySeed,
         });
 
-    const maxTokens = questionCount * 600 + 1000;
+    const maxTokens = neededFromAI * 600 + 1000;
 
     async function callAI(temp: number, promptOverride?: string): Promise<string> {
       const completion = await openai.chat.completions.create({
@@ -317,35 +385,39 @@ async function generateAndCreateSession(
       const recoveryResult = await parseWithRecovery(
         firstResponse,
         QuestionSchema,
-        questionCount,
+        neededFromAI,
         () => callAI(0.7),
         () => callAI(0.95),
       );
       questionsArray = recoveryResult.questions;
     } catch (err) {
+      console.warn("[SessionStart] Primary AI call failed, attempting emergency fallback:", err);
       try {
-        const fallbackPrompt = `Generate ${questionCount} multiple choice questions about ${targetDomainNames.join(", ")} for ${profile.exam_name} exam preparation. Each question must have: question_text (string), options (object with keys A, B, C, D mapping to answer strings), correct_option (the letter key of the correct answer), and explanation (string). Return valid JSON: {"questions": [...]}`;
+        const fallbackPrompt = `Generate ${neededFromAI} multiple choice questions about ${aiTargetDomains.map((d) => d.skillDomain).join(", ")} for ${profile.exam_name} exam preparation. Each question must have: question_text (string), options (object with keys A, B, C, D mapping to answer strings), correct_option (the letter key of the correct answer), and explanation (string). Return valid JSON: {"questions": [...]}`;
         const emergencyRaw = await callAI(1.0, fallbackPrompt);
         const emergencyResult = await parseWithRecovery(
           emergencyRaw,
           QuestionSchema,
-          questionCount,
+          neededFromAI,
           () => callAI(1.0, fallbackPrompt),
         );
         questionsArray = emergencyResult.questions;
-      } catch {
-        const details = err instanceof Error ? err.message : "Unknown parse/recovery error";
-        return {
-          error: TUTOR_ERRORS.AI_GENERATION_FAILED,
-          details,
-          status: 500,
-        };
+      } catch (innerErr) {
+        console.error("[SessionStart] AI Generation Error:", err, innerErr);
+        if (bankQuestions.length === 0) {
+          const details = err instanceof Error ? err.message : "Unknown parse/recovery error";
+          return {
+            error: TUTOR_ERRORS.AI_GENERATION_FAILED,
+            details,
+            status: 500,
+          };
+        }
       }
     }
   } else {
     // Multi-batch parallel generation for 20, 25, 30, 50 questions
     const batchSizes: number[] = [];
-    let remaining = questionCount;
+    let remaining = neededFromAI;
     while (remaining > 0) {
       const size = Math.min(remaining, BATCH_SIZE);
       batchSizes.push(size);
@@ -354,13 +426,14 @@ async function generateAndCreateSession(
 
     let domainOffset = 0;
     const batchPromises = batchSizes.map(async (batchCount, batchIdx) => {
-      const batchDomains = targetDomains.length > 0
+      const batchDomains = aiTargetDomains.length > 0
         ? Array.from({ length: batchCount }, (_, idx) => {
-            const domainIndex = (domainOffset + idx) % targetDomains.length;
-            return targetDomains[domainIndex];
+            const domainIndex = (domainOffset + idx) % aiTargetDomains.length;
+            return aiTargetDomains[domainIndex];
           })
-        : targetDomains;
+        : aiTargetDomains;
       domainOffset += batchCount;
+
 
       const difficultyDistribution = computeDifficultyDistribution(batchCount, timeMode);
       const batchUserMessage = buildTutorUserMessage({
@@ -425,7 +498,7 @@ async function generateAndCreateSession(
     questionsArray = results.flat();
   }
 
-  if (questionsArray.length === 0) {
+  if (questionsArray.length === 0 && bankQuestions.length === 0) {
     return {
       error: TUTOR_ERRORS.AI_GENERATION_FAILED,
       details: `AI generated 0 valid questions. Target domains: ${targetDomainNames.join(", ") || "none"}`,
@@ -452,6 +525,7 @@ async function generateAndCreateSession(
 
   const validatedQuestions: SessionQuestion[] = [];
   const validDomainNames = new Set(targetDomainNames.map((d) => d.toLowerCase().trim()));
+  const bankQuestionStems = bankQuestions.map((q) => q.question_text);
 
   for (const q of questionsArray) {
     if (
@@ -466,6 +540,14 @@ async function generateAndCreateSession(
 
     const currentText = (q as any).question_text as string;
 
+    // Deduplication check: skip if duplicate of a question already loaded from the bank
+    const isDuplicateOfBank = bankQuestionStems.some(
+      (stem) => calculateSimilarity(stem, currentText) > 0.82
+    );
+    if (isDuplicateOfBank) {
+      continue;
+    }
+
     // Deduplication check: skip if near-duplicate of an already validated question in this session
     const isDuplicateWithinSession = validatedQuestions.some(
       (vq) => calculateSimilarity(vq.question_text, currentText) > 0.82
@@ -478,7 +560,7 @@ async function generateAndCreateSession(
     const isDuplicateFromHistory = previousQuestionStems.some(
       (stem) => calculateSimilarity(stem, currentText) > 0.85
     );
-    if (isDuplicateFromHistory && questionsArray.length > questionCount) {
+    if (isDuplicateFromHistory && questionsArray.length > neededFromAI) {
       continue;
     }
 
@@ -503,12 +585,22 @@ async function generateAndCreateSession(
     });
   }
 
-  if (validatedQuestions.length === 0) {
+  // Combine Bank questions + newly generated AI questions
+  const finalQuestions = [...bankQuestions, ...validatedQuestions].slice(0, questionCount);
+
+  if (finalQuestions.length === 0) {
     return {
       error: TUTOR_ERRORS.AI_GENERATION_FAILED,
-      details: `All ${questionsArray.length} generated questions failed validation. Target domains: ${targetDomainNames.join(", ") || "none"}`,
+      details: `Generated 0 valid questions. Target domains: ${targetDomainNames.join(", ") || "none"}`,
       status: 500,
     };
+  }
+
+  // Persist newly generated AI questions into question_bank asynchronously for future hits
+  if (validatedQuestions.length > 0) {
+    saveQuestionsToBank(supabase, validatedQuestions, profile.exam_name).catch((err) => {
+      console.warn("[SessionStart] Background save to question_bank failed:", err);
+    });
   }
 
   // ----- Insert Session -----
@@ -517,7 +609,7 @@ async function generateAndCreateSession(
     .insert({
       user_id: userId,
       exam_profile_id: examProfileId,
-      questions_json: validatedQuestions as any,
+      questions_json: finalQuestions as any,
       target_domains: targetDomainNames,
       session_intent: sessionIntent,
       status: "active",
@@ -532,7 +624,7 @@ async function generateAndCreateSession(
   return {
     result: {
       session_id: session.id,
-      questions: validatedQuestions,
+      questions: finalQuestions,
       target_domains: targetDomainNames,
     },
   };

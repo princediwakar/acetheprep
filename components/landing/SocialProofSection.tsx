@@ -14,7 +14,7 @@ export default function SocialProofSection() {
         <HeaderSection
           label="Student Results"
           title="Over 50,000 students have transformed how they prepare."
-          subtitle="Real results from students across SAT, GRE, GMAT, JEE, NEET, and CAT who replaced passive reading with active recall."
+          subtitle="Real results from students across Digital SAT, GRE, GMAT Focus, CFA, IELTS, and TOEFL who replaced passive reading with active recall."
         />
         <div className="mt-16">
           <SocialProofClient testimonials={testimonials} />

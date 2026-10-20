@@ -8,3 +8,13 @@ export function getDomainsForExam(examName: string): string[] {
   if (!subjects) return [];
   return Object.values(subjects).flat();
 }
+
+export function getSubjectForDomain(examName: string, domain: string): string {
+  const subjects = taxonomyData[examName];
+  if (!subjects) return "General";
+  for (const [subject, domains] of Object.entries(subjects)) {
+    if (domains.includes(domain)) return subject;
+  }
+  return "General";
+}
+

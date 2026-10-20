@@ -149,7 +149,7 @@ export const ALL_SUPPORTED_EXAMS: ExamMeta[] = [
 // Precision SVG Monograms (Bespoke vector marks for all 13 exams)
 // ---------------------------------------------------------------------------
 
-function ExamMark({ id, className }: { id: string; className?: string }) {
+export function ExamMark({ id, className }: { id: string; className?: string }) {
   switch (id) {
     case "SAT":
       return (

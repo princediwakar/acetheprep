@@ -14,7 +14,7 @@ import { CountUp } from "@/components/shared/CountUp";
 const STATS = [
   { to: 50000, suffix: "+", label: "Aspirants Prepared", detail: "Across all 13 tracks" },
   { to: 2, suffix: "M+", label: "Retrieval Drills", detail: "Active recall completions" },
-  { to: 13, suffix: "", label: "High-Yield Tracks", detail: "SAT, CFA, JEE, NEET, CAT & more" },
+  { to: 13, suffix: "", label: "High-Yield Tracks", detail: "SAT, GRE, GMAT, CFA, IELTS & more" },
   { to: 94, suffix: "%", label: "Confidence Lift", detail: "Reduced exam-day anxiety" },
 ] as const;
 

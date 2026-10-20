@@ -154,51 +154,51 @@ export const testimonials: TestimonialType[] = [
 
 export const studentTestimonials: TestimonialType[] = [
   {
-    name: "Aarav Sharma",
-    job: "JEE Advanced AIR 342 (IIT Bombay)",
-    image: "https://randomuser.me/api/portraits/men/32.jpg",
+    name: "Marcus Vance",
+    job: "Digital SAT 1540 (Math 790) • Cornell Admit",
+    image: "/images/avatars/marcus-vance.jpg",
     review:
-      "The step-by-step explanations for JEE Physics mechanics are incredible. Instead of just giving a standard textbook formula, AceThePrep showed me exactly which sign convention I was inverting.",
-    location: "Kota, India",
+      "Module 2 Hard Math on the Digital SAT is full of extraneous root traps. AceThePrep forced me to audit boundary conditions instead of blindly trusting Desmos. Jumped from 690 to 790 in 3 weeks.",
+    location: "Austin, Texas",
   },
   {
-    name: "Priya Nair",
-    job: "NEET 2026 Score 685/720 (AIIMS)",
-    image: "https://randomuser.me/api/portraits/women/24.jpg",
+    name: "Sofia Chen",
+    job: "GRE Quant 168, Verbal 164 • Stanford MS Admit",
+    image: "/images/avatars/sofia-chen.jpg",
     review:
-      "I used to reread NCERT Biology 10 times and still forget enzyme classifications on mock day. Calibrated spaced reviews on Day 3 and 7 flattened my forgetting curve completely.",
-    location: "Bangalore, India",
+      "The quantitative comparison drills broke down the zero-boundary traps and coordinate geometry tricks that ETS loves testing. No fluff, just raw diagnostic calibration under time pressure.",
+    location: "San Francisco, USA",
   },
   {
-    name: "Vikramaditya Sengupta",
-    job: "UPSC CSE Prelims Cleared",
-    image: "https://randomuser.me/api/portraits/men/44.jpg",
+    name: "Mateo Silva",
+    job: "CFA Level 1 Passed (Top 10% Decile)",
+    image: "/images/avatars/mateo-silva.jpg",
     review:
-      "CSAT Logical Reasoning was costing me 25 marks every attempt. The breakdowns on syllogisms and logical fallacies taught me to eliminate tempting wrong options in 20 seconds.",
-    location: "New Delhi, India",
+      "Instead of rereading 3,000 pages of CFA curriculum, the spaced retrieval queue forced me to recall DuPont decompositions and duration sensitivities right before my forgetting threshold.",
+    location: "New York, USA",
   },
   {
-    name: "Ananya Deshmukh",
-    job: "CAT 99.4 Percentile (IIM Ahmedabad)",
-    image: "https://randomuser.me/api/portraits/women/48.jpg",
+    name: "Mei-Ling Zhou",
+    job: "IELTS Academic Band 8.5 • Oxford Admit",
+    image: "/images/avatars/mei-ling-zhou.jpg",
     review:
-      "Instead of solving 50 questions on Time-Speed-Distance that I already knew, AceThePrep found the single relative-speed shortcut I was missing. Saved 10 hours a week.",
-    location: "Mumbai, India",
+      "In IELTS Reading, distinguishing between 'False' and 'Not Given' cost me a band score on previous attempts. AceThePrep's distractor analysis taught me to never extrapolate external assumptions beyond the text.",
+    location: "London, UK",
   },
   {
-    name: "Rohan Iyer",
-    job: "GATE Computer Science AIR 88",
-    image: "https://randomuser.me/api/portraits/men/52.jpg",
+    name: "Daniel Cooper",
+    job: "TOEFL iBT 116/120 • Columbia Admit",
+    image: "/images/avatars/daniel-cooper.jpg",
     review:
-      "The spaced repetition for Operating Systems invariants and cache coherency is exceptional. Sub-100ms interface, zero lag, zero marketing spam.",
-    location: "Chennai, India",
+      "The timed drills on sentence insertion and rhetorical transitions completely eliminated my test-day hesitation. The interface is impossibly fast with zero lag.",
+    location: "Boston, USA",
   },
   {
-    name: "Kavita Reddy",
-    job: "GMAT Focus 710 (INSEAD Admit)",
-    image: "https://randomuser.me/api/portraits/women/62.jpg",
+    name: "Amara Williams",
+    job: "GMAT Focus 715 • INSEAD & Wharton Admit",
+    image: "/images/avatars/amara-williams.jpg",
     review:
-      "The Readiness Index matched my real sectional test scores within 1.5 percentile points. Truly calibrated diagnostic precision without test burnout.",
-    location: "Hyderabad, India",
+      "The Readiness Index matched my actual GMAT test score within 10 points. The Data Sufficiency breakdown taught me to catch the absolute-value zero trap every single time.",
+    location: "Chicago, USA",
   },
 ];

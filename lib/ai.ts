@@ -35,7 +35,8 @@ const rawApiKey = PROVIDER === "openai"
   : (process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY);
 const apiKey = rawApiKey && !rawApiKey.startsWith("[") ? rawApiKey : "placeholder-key";
 
-const model = process.env.OPENAI_MODEL || (PROVIDER === "openai" ? "gpt-4o" : "deepseek-flash");
+const rawModel = process.env.OPENAI_MODEL || (PROVIDER === "openai" ? "gpt-4o" : "deepseek-flash");
+const model = rawModel === "deepseek-flash" ? "deepseek-flash" : rawModel;
 
 export const MODEL = model;
 const IS_OPENAI = PROVIDER === "openai";
