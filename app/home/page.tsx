@@ -14,7 +14,7 @@ import { getUserSubscriptionStatus, syncCheckoutSession } from "@/lib/billing";
 import taxonomy from "@/lib/taxonomies.json";
 
 export const metadata: Metadata = {
-  title: "Home | AceThePrep",
+  title: "Home",
   robots: {
     index: false,
     follow: false,

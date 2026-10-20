@@ -3,14 +3,15 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { renderMathContent } from "@/lib/quiz-utils";
+import { renderMathContent, extractPassageContent } from "@/lib/quiz-utils";
 import { Badge } from "@/components/ui/badge";
 import { useUser } from "@/hooks/useUser";
 import { SignInButton } from "@/components/SignInButton";
-import { Sparkles, TrendingUp } from "lucide-react";
+import { Sparkles, TrendingUp, BookOpen } from "lucide-react";
 
 interface QuestionData {
   question_text: string;
+  passage?: string;
   options: Record<string, string>;
   correct_option: string;
   explanation: string;
@@ -68,11 +69,33 @@ export default function PracticeQuestion({ question, index }: PracticeQuestionPr
           </Badge>
         ))}
       </div>
-
-      {/* Question text */}
-      <div className="mb-5 text-base leading-relaxed text-foreground font-normal">
-        {renderMathContent(question.question_text)}
-      </div>
+      {(() => {
+        const { passage, prompt } = extractPassageContent(question.question_text, question.passage);
+        const wordCount = passage ? passage.split(/\s+/).filter(Boolean).length : 0;
+        return (
+          <>
+            {passage && (
+              <div className="mb-5 rounded-xl border border-border bg-secondary/30 p-4 sm:p-5 text-sm sm:text-base font-serif leading-[1.8] text-foreground/90">
+                <div className="flex items-center justify-between border-b border-border/60 pb-2 mb-3 text-xs font-mono text-muted-foreground uppercase">
+                  <span className="flex items-center gap-1.5 font-semibold text-foreground/80">
+                    <BookOpen className="h-3.5 w-3.5 text-primary" />
+                    Reading Passage
+                  </span>
+                  <span>{wordCount} words</span>
+                </div>
+                <div className="space-y-3">
+                  {passage.split(/\n\n+/).filter(Boolean).map((p, pIdx) => (
+                    <p key={pIdx} className="indent-4">{renderMathContent(p)}</p>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="mb-5 text-base leading-relaxed text-foreground font-normal">
+              {renderMathContent(prompt)}
+            </div>
+          </>
+        );
+      })()}
 
       {/* Options */}
       <div className="grid gap-2.5">

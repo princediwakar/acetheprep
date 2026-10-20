@@ -15,7 +15,7 @@ interface BlogIndexPageProps {
 }
 
 export const metadata: Metadata = {
-  title: `Engineering & Cognitive Science Guides | ${siteConfig.name}`,
+  title: "Engineering & Cognitive Science Guides",
   description:
     "First-principles research and strategy on memory decay, spaced repetition, distractor psychometrics, and high-yield competitive exam prep for SAT, GRE, GMAT Focus, CFA Level 1, IELTS Academic, TOEFL iBT, and global competitive exams.",
   openGraph: {

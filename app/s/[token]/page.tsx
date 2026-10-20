@@ -46,7 +46,7 @@ export async function generateMetadata({
 
     if (error || !card) {
       return {
-        title: "Session Results - AceThePrep",
+        title: "Session Results",
         description: "View practice session performance and mastery progress.",
       };
     }
@@ -61,7 +61,7 @@ export async function generateMetadata({
     const ogImageUrl = `${baseUrl}/api/og/result-card?token=${token}`;
 
     return {
-      title: `${examName} Results (${pct}%) - AceThePrep`,
+      title: `${examName} Results (${pct}%)`,
       description,
       openGraph: {
         title: `${examName}: Scored ${pct}%`,
@@ -80,7 +80,7 @@ export async function generateMetadata({
     };
   } catch {
     return {
-      title: "Share Card - AceThePrep",
+      title: "Share Card",
       description: "View practice session results on AceThePrep.",
     };
   }

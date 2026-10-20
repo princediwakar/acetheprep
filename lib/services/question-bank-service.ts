@@ -155,6 +155,8 @@ export async function fetchQuestionsFromBank(
       selectedQuestions.push({
         question_id: fallbackId,
         question_text: q.question_text,
+        passage: q.passage,
+        passage_id: q.passage_id,
         options: q.options,
         correct_option: q.correct_option,
         explanation: q.explanation,
@@ -200,6 +202,9 @@ export async function saveQuestionsToBank(
     distractor_analysis: q.distractor_analysis || {},
     misconception: q.misconception || null,
     time_estimate_seconds: q.time_estimate_seconds || 60,
+    metadata_json: {
+      ...(q.passage ? { passage: q.passage, passage_id: q.passage_id } : {}),
+    },
   }));
 
   try {
@@ -219,9 +224,12 @@ export async function saveQuestionsToBank(
 }
 
 function mapRowToSessionQuestion(row: QuestionBankRow): SessionQuestion {
+  const metadata = (row.metadata_json && typeof row.metadata_json === "object") ? (row.metadata_json as Record<string, any>) : {};
   return {
     question_id: row.id,
     question_text: row.question_text,
+    passage: metadata.passage || undefined,
+    passage_id: metadata.passage_id || undefined,
     options: row.options,
     correct_option: row.correct_option,
     explanation: row.explanation,

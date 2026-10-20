@@ -12,6 +12,8 @@ export const OptionSchema = z.union([OptionObjectSchema, OptionArraySchema]).tra
 
 export const QuestionSchema = z.object({
   question_text: z.string(),
+  passage: z.string().optional(),
+  passage_id: z.string().optional(),
   options: OptionSchema,
   correct_option: z.string(),
   explanation: z.string().optional().default(""),

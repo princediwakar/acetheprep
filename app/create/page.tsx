@@ -6,7 +6,7 @@ import { QuizDashboard } from "@/components/QuizDashboard";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Create a Quiz | AceThePrep",
+  title: "Create a Quiz",
   description:
     "Paste your notes or upload a PDF. Get practice tests in seconds. No card-making, no setup—just study what you don't know.",
   robots: {

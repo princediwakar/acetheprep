@@ -562,6 +562,8 @@ export async function generateAndCreateSession(
     validatedQuestions.push({
       question_id: crypto.randomUUID(),
       question_text: (q as any).question_text,
+      passage: (q as any).passage || undefined,
+      passage_id: (q as any).passage_id || undefined,
       options: (q as any).options,
       correct_option: (q as any).correct_option,
       explanation: (q as any).explanation || "",

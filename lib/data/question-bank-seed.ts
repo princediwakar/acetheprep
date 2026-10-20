@@ -6,6 +6,8 @@ export interface SeedQuestion {
   skill_domain: string;
   difficulty_tier: 1 | 2 | 3;
   question_text: string;
+  passage?: string;
+  passage_id?: string;
   options: { A: string; B: string; C: string; D: string; E?: string };
   correct_option: "A" | "B" | "C" | "D" | "E";
   explanation: string;

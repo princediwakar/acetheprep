@@ -14,7 +14,7 @@ const taxonomy = taxonomyRaw as unknown as TaxonomyData;
 const baseUrl = siteConfig.url;
 
 export const metadata: Metadata = {
-  title: `Free Competitive Exam Practice & Solutions | ${siteConfig.name}`,
+  title: "Free Competitive Exam Practice & Solutions",
   description:
     "Practice authentic exam questions with step-by-step solutions and common mistake breakdowns for Digital SAT, GRE General, GMAT Focus, CFA Level 1, JEE Main, NEET, and CAT.",
   alternates: {

@@ -26,7 +26,7 @@ for (const exam of EXAM_NAMES) {
 }
 
 export const metadata: Metadata = {
-  title: "Exam Profile Setup | AceThePrep",
+  title: "Exam Profile Setup",
   description: "Set up your personalized exam prep profile for AI-powered practice.",
   robots: {
     index: false,

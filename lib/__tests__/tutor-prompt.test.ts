@@ -70,4 +70,37 @@ describe("buildTutorUserMessage — Uniqueness and Negative Constraints", () => 
       "Must explicitly forbid trivial recall"
     );
   });
+
+  it("injects READING COMPREHENSION DIRECTIVE when target domain includes Reading Comprehension", () => {
+    const rcDomain: TargetDomain = {
+      skillDomain: "Reading Comprehension",
+      masteryScore: 0.4,
+      recentErrors: [],
+      isOverdue: true,
+      lastSeenAt: null,
+    };
+
+    const message = buildTutorUserMessage({
+      examName: "CAT",
+      examYear: "2025",
+      timeMode: "acceleration",
+      daysRemaining: 45,
+      targetDomains: [rcDomain],
+      questionCount: 4,
+      difficultyDistribution: { easy: 0, medium: 1, hard: 3 },
+    });
+
+    assert.ok(
+      message.includes("READING COMPREHENSION DIRECTIVE:"),
+      "Must include RC directive when domain is Reading Comprehension"
+    );
+    assert.ok(
+      message.includes("full authentic passage (350–500 words)"),
+      "Must specify 350-500 words authentic passage"
+    );
+    assert.ok(
+      message.includes('identical "passage_id"'),
+      "Must instruct LLM to group questions under the same passage_id"
+    );
+  });
 });

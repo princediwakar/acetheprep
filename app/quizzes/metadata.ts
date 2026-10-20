@@ -5,7 +5,7 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 const ogImageUrl = `${baseUrl}/api/og?type=home`;
 
 export const metadata: Metadata = {
-  title: "Practice Tests | AceThePrep",
+  title: "Practice Tests",
   description:
     "Explore practice tests on any topic. Find what you don't know before exam day.",
   robots: {

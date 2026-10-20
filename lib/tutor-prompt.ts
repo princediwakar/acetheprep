@@ -48,13 +48,19 @@ const TUTOR_SYSTEM_PROMPT = `You are a ruthless, elite competitive exam tutor (J
 2. DISTRACTORS: No filler options. Every wrong answer must represent a calculable error, sign mistake, formula misapplication, or conceptual trap.
 3. DISTRACTOR ANALYSIS: The correct option's entry must prove the answer mathematically/logically. Wrong options must deconstruct the specific trap or error.
 4. UNIQUENESS MANDATE: Formulate novel problem contexts, non-standard parameterizations, and realistic multi-variable scenarios. Never recycle standard textbook question tropes.
+5. READING COMPREHENSION & PASSAGES: When generating questions for "Reading Comprehension" or passage-based domains:
+- Provide an authentic, academic multi-paragraph passage (300 to 500 words for CAT/GMAT/GRE/CLAT; 150 to 300 words for UPSC) in the "passage" field.
+- If multiple questions in the batch test the same passage, assign them the exact same "passage_id" and identical "passage" content so they form a cohesive passage set.
+- Provide ONLY the specific question stem in "question_text" (e.g. "What is the primary rhetorical purpose of paragraph 2?"). NEVER duplicate the passage text inside "question_text".
 
 # OUTPUT INTERFACE
 Output ONLY raw JSON matching this schema. No markdown, no preambles.
 
 interface Response {
   questions: Array<{
-    question_text: string;
+    passage?: string; // Authentic multi-paragraph reading passage (300-500 words) for RC
+    passage_id?: string; // Unique shared identifier if multiple questions reference the same passage
+    question_text: string; // The question stem alone
     options: { A: string; B: string; C: string; D: string };
     correct_option: "A" | "B" | "C" | "D";
     distractor_analysis: { A: string; B: string; C: string; D: string };
@@ -110,6 +116,13 @@ export function buildTutorUserMessage(params: TutorPromptParams): string {
     ? `\nVARIATION FINGERPRINT: [${entropySeed}] — Formulate distinct problem contexts, non-standard parameterizations, or experimental setups. Avoid textbook clichés.`
     : "";
 
+  const hasReadingComprehension = targetDomains.some((d) =>
+    /reading comprehension|verbal ability|comprehension/i.test(d.skillDomain)
+  );
+  const rcDirective = hasReadingComprehension
+    ? `\n\nREADING COMPREHENSION DIRECTIVE:\nFor Reading Comprehension items, provide a full authentic passage (350–500 words) in the "passage" field. Group multiple questions under the same passage by assigning them the identical "passage_id" and identical "passage" text. In "question_text", provide ONLY the specific question prompt.`
+    : "";
+
   return `CONTEXT: ${examName} ${examYear} | Mode: ${timeMode} | ${daysRemaining} days remaining.
 
 TARGET DOMAINS & MASTERY:
@@ -119,7 +132,7 @@ EXECUTION DIRECTIVE:
 Generate exactly ${questionCount} questions strictly at exam-grade difficulty:
 - ${difficultyDistribution.easy} "foundation" tier (Trivial recall forbidden)
 - ${difficultyDistribution.medium} "application" tier (Rigorous multi-step problem solving)
-- ${difficultyDistribution.hard} "advanced" / "expert" tier (Deceptive distractors, analytical synthesis, calculus/derivation)${exclusions}${seedDirective}
+- ${difficultyDistribution.hard} "advanced" / "expert" tier (Deceptive distractors, analytical synthesis, calculus/derivation)${exclusions}${seedDirective}${rcDirective}
 
 CRITICAL: Every question MUST BE COMPLETELY NOVEL and distinct from previous sessions. Strictly use the exact TARGET DOMAIN names provided above for the \`skill_domain\` field.`;
 }

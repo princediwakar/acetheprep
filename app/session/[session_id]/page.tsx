@@ -9,7 +9,7 @@ import type { SessionQuestion, SelectedOption } from "@/types/tutor";
 import taxonomy from "@/lib/taxonomies.json";
 
 export const metadata: Metadata = {
-  title: "Practice Session | AceThePrep",
+  title: "Practice Session",
   robots: {
     index: false,
     follow: false,

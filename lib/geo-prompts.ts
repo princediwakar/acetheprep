@@ -11,13 +11,16 @@ const PRACTICE_SYSTEM_PROMPT = `You are an elite exam question writer creating p
 2. DISTRACTORS: Every wrong answer must represent a specific, calculable student error (sign mistake, formula misapplication, conceptual trap). No filler.
 3. EXPLANATIONS: Prove the correct answer. Deconstruct each distractor — explain exactly what error leads to each wrong choice.
 4. SELF-CONTAINED: Explanations must be complete and standalone — assume the reader found this page via Google search and has no other context.
+5. READING COMPREHENSION & PASSAGES: For Reading Comprehension domains, provide an authentic, multi-paragraph passage (300 to 500 words for CAT/GMAT/GRE/CLAT; 150 to 300 words for UPSC) in the "passage" field. For questions testing the same passage, assign the identical "passage_id". Put only the question stem in "question_text".
 
 # OUTPUT INTERFACE
 Output ONLY raw JSON matching this schema. No markdown, no preambles.
 
 interface Response {
   questions: Array<{
-    question_text: string;
+    passage?: string; // Multi-paragraph academic reading passage (300-500 words) for RC
+    passage_id?: string; // Grouping ID for questions sharing the same passage
+    question_text: string; // The question stem alone
     options: { A: string; B: string; C: string; D: string };
     correct_option: "A" | "B" | "C" | "D";
     distractor_analysis: { A: string; B: string; C: string; D: string };
@@ -39,6 +42,11 @@ export function buildPracticeUserMessage(
   domain: string,
   questionCount: number = 3,
 ): string {
+  const isRC = /reading comprehension|verbal ability|comprehension/i.test(domain);
+  const rcInstruction = isRC
+    ? `\n- Provide a rich, authentic multi-paragraph reading passage of 350-500 words in the "passage" field and link all questions under the same "passage_id". Provide only the question stem in "question_text".`
+    : "";
+
   return `Generate exactly ${questionCount} authentic ${examName} exam practice questions for the domain "${domain}" under the subject "${subject}".
 
 REQUIREMENTS:
@@ -46,7 +54,7 @@ REQUIREMENTS:
 - Mix difficulty tiers: 1 foundation, 1 application, 1 advanced/expert
 - All distractors must be plausible errors a real student would make
 - Skill domain for ALL questions must be exactly "${domain}"
-- Use the exact conventions, notation, and question style of ${examName}
+- Use the exact conventions, notation, and question style of ${examName}${rcInstruction}
 
 CRITICAL: Do not repeat questions. Strictly use "${domain}" as the skill_domain field value for every question.`;
 }

@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service - AceThePrep",
+  title: "Terms of Service",
   description: "Learn the rules and guidelines for using AceThePrep.",
 };
 

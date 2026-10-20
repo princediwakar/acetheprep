@@ -14,7 +14,7 @@ import {
 import { Check, HelpCircle, ShieldCheck, Sparkles, X } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Pricing & Plans | AceThePrep — Calibrated AI Test Prep",
+  title: "Pricing & Plans",
   description:
     "Simple, transparent pricing for competitive exams. Start free with 10-question practice sets or unlock official sectional drills and full mock simulations with AceThePrep Pro.",
 };

@@ -4,7 +4,7 @@ import { HistoryTabsView } from "@/components/tutor/HistoryTabsView";
 import type { SessionRow } from "@/types/tutor";
 
 export const metadata = {
-  title: "History | AceThePrep",
+  title: "History",
   description: "Review your past practice sessions, mock tests, and quiz results",
   robots: {
     index: false,

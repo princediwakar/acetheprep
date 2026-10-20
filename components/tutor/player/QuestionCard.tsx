@@ -1,9 +1,10 @@
 // Path: components/tutor/player/QuestionCard.tsx
 "use client";
 
-import { renderMathContent } from "@/lib/quiz-utils";
+import { useState } from "react";
+import { renderMathContent, extractPassageContent } from "@/lib/quiz-utils";
 import { cn } from "@/lib/utils";
-import { CheckCircle, XCircle, AlertTriangle } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, BookOpen, HelpCircle, ArrowRight } from "lucide-react";
 import type { SessionQuestion, SelectedOption } from "@/types/tutor";
 
 const OPTION_LETTERS = ["A", "B", "C", "D"] as const;
@@ -25,14 +26,29 @@ export function QuestionCard({
   isCorrect,
   onOptionClick,
 }: QuestionCardProps) {
+  const { passage, prompt } = extractPassageContent(current.question_text, current.passage);
+
+  // Sync mobile tab without useEffect (per React state-from-props guidance)
+  const [prevQuestionId, setPrevQuestionId] = useState(current.question_id);
+  const [mobileTab, setMobileTab] = useState<"passage" | "question">("passage");
+
+  if (current.question_id !== prevQuestionId) {
+    setPrevQuestionId(current.question_id);
+    setMobileTab("passage");
+  }
+
   const optionEntries = OPTION_LETTERS.filter((key) => key in current.options).map((key) => ({
     key,
     value: current.options[key],
   }));
 
-  return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      {/* Question Stem Header: Domain & Difficulty */}
+  const wordCount = passage ? passage.split(/\s+/).filter(Boolean).length : 0;
+  const passageParagraphs = passage ? passage.split(/\n\n+/).filter(Boolean) : [];
+
+  // Question stem & interactive options block
+  const renderQuestionStemAndOptions = () => (
+    <div className="space-y-6">
+      {/* Header: Domain & Difficulty */}
       <div className="space-y-3">
         <div className="flex items-center justify-between text-xs text-muted-foreground font-mono border-b border-border/80 pb-2.5">
           <span className="font-semibold text-foreground/80 tracking-wide">
@@ -44,7 +60,7 @@ export function QuestionCard({
         </div>
 
         <div className="font-heading text-lg sm:text-xl font-normal leading-relaxed text-foreground tracking-normal">
-          {renderMathContent(current.question_text)}
+          {renderMathContent(prompt)}
         </div>
       </div>
 
@@ -169,6 +185,117 @@ export function QuestionCard({
           )}
         </div>
       )}
+    </div>
+  );
+
+  // Dedicated Reading Passage Box
+  const renderPassageBox = () => (
+    <div className="flex flex-col rounded-xl border border-border bg-card/80 shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 bg-secondary/40 border-b border-border/80 text-xs">
+        <span className="flex items-center gap-1.5 font-semibold font-mono uppercase tracking-wider text-foreground/80">
+          <BookOpen className="h-3.5 w-3.5 text-primary" />
+          Reading Passage
+        </span>
+        <span className="font-mono text-[11px] text-muted-foreground bg-background px-2 py-0.5 rounded border border-border">
+          {wordCount} words
+        </span>
+      </div>
+
+      <div className="p-5 sm:p-6 overflow-y-auto max-h-[60vh] lg:max-h-[calc(100vh-240px)] space-y-4 text-foreground/90 font-serif leading-[1.8] text-sm sm:text-base selection:bg-primary/20">
+        {passageParagraphs.map((para, idx) => (
+          <p key={idx} className="indent-4 sm:indent-6">
+            {renderMathContent(para)}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+
+  // If no passage exists, render the standard single-column layout
+  if (!passage) {
+    return (
+      <div className="max-w-2xl mx-auto space-y-6">
+        {renderQuestionStemAndOptions()}
+      </div>
+    );
+  }
+
+  // Passage-based split layout (Desktop dual-pane, Mobile tabbed)
+  return (
+    <div className="max-w-6xl mx-auto w-full">
+      {/* Mobile Tab Switcher */}
+      <div className="lg:hidden mb-4 flex rounded-lg border border-border bg-muted/30 p-1 text-xs font-medium">
+        <button
+          type="button"
+          onClick={() => setMobileTab("passage")}
+          className={cn(
+            "flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md transition-all",
+            mobileTab === "passage"
+              ? "bg-background text-foreground shadow-sm font-semibold"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <BookOpen className="h-3.5 w-3.5" />
+          Passage ({wordCount}w)
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileTab("question")}
+          className={cn(
+            "flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md transition-all",
+            mobileTab === "question"
+              ? "bg-background text-foreground shadow-sm font-semibold"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <HelpCircle className="h-3.5 w-3.5" />
+          Question & Options
+        </button>
+      </div>
+
+      {/* Desktop Grid Layout */}
+      <div className="hidden lg:grid lg:grid-cols-12 lg:gap-8 items-start">
+        {/* Left Column: Passage */}
+        <div className="lg:col-span-7 sticky top-4">
+          {renderPassageBox()}
+        </div>
+
+        {/* Right Column: Question Stem & Options */}
+        <div className="lg:col-span-5">
+          {renderQuestionStemAndOptions()}
+        </div>
+      </div>
+
+      {/* Mobile Stacked / Tabbed View */}
+      <div className="lg:hidden">
+        {mobileTab === "passage" ? (
+          <div className="space-y-4">
+            {renderPassageBox()}
+            <button
+              type="button"
+              onClick={() => setMobileTab("question")}
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-sm shadow active:scale-[0.99] transition-all"
+            >
+              Proceed to Question <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <button
+              type="button"
+              onClick={() => setMobileTab("passage")}
+              className="w-full flex items-center justify-between px-3.5 py-2 rounded-lg border border-primary/30 bg-primary/5 text-primary text-xs font-medium hover:bg-primary/10 transition-colors"
+            >
+              <span className="flex items-center gap-1.5">
+                <BookOpen className="h-3.5 w-3.5" />
+                Referencing {wordCount}-word passage
+              </span>
+              <span className="underline">View Passage</span>
+            </button>
+            {renderQuestionStemAndOptions()}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -295,3 +295,81 @@ function isQuestion(q: unknown): q is Question {
     typeof obj.correct_option === "string"
   );
 }
+
+// ======================== Passage Extraction ========================
+export interface ExtractedQuestionContent {
+  passage: string | null;
+  prompt: string;
+}
+
+/**
+ * Extracts reading passage and question prompt cleanly.
+ * Works for explicit passage fields and backward-compatible embedded passages in question_text.
+ */
+export function extractPassageContent(
+  questionText: string,
+  explicitPassage?: string | null
+): ExtractedQuestionContent {
+  if (explicitPassage && explicitPassage.trim().length > 0) {
+    return {
+      passage: explicitPassage.trim(),
+      prompt: questionText.trim(),
+    };
+  }
+
+  if (!questionText) {
+    return { passage: null, prompt: "" };
+  }
+
+  // Pattern 1: Passage: '...' \n\n (Question prompt) or Passage excerpt: '...'
+  const passagePrefixRegex = /^(?:Passage(?:\s+excerpt)?|Read the (?:following )?passage(?: carefully)?(?:\s+and answer the question)?|Read the excerpt below):\s*["']?([\s\S]+?)["']?\s*\n\n+([\s\S]+)$/i;
+  const match = questionText.match(passagePrefixRegex);
+
+  if (match && match[1] && match[2]) {
+    const candidatePassage = match[1].trim().replace(/^['"]|['"]$/g, "");
+    if (candidatePassage.split(/\s+/).length >= 25) {
+      return {
+        passage: candidatePassage,
+        prompt: match[2].trim(),
+      };
+    }
+  }
+
+  // Pattern 2: Prompt followed by passage (CAT style: "According to the passage, ... is that:\n\nJoseph Schumpeter...")
+  const promptFirstRegex = /^([A-Z][\s\S]+?\?|According to the passage[\s\S]+?:\s*|Which of the following[\s\S]+?:\s*|Based on the passage[\s\S]+?:\s*)\n\n+([\s\S]+)$/i;
+  const promptFirstMatch = questionText.match(promptFirstRegex);
+  if (promptFirstMatch && promptFirstMatch[1] && promptFirstMatch[2]) {
+    const candidatePassage = promptFirstMatch[2].trim();
+    if (candidatePassage.split(/\s+/).length >= 35) {
+      return {
+        passage: candidatePassage,
+        prompt: promptFirstMatch[1].trim(),
+      };
+    }
+  }
+
+  // Pattern 3: Generic multi-paragraph where paragraph 1 is a long reading passage (>= 40 words)
+  // and the final paragraph is the question stem.
+  const paragraphs = questionText.split(/\n\n+/);
+  if (paragraphs.length >= 2) {
+    const lastParagraph = paragraphs[paragraphs.length - 1].trim();
+    const leadingParagraphs = paragraphs.slice(0, -1).join("\n\n").trim();
+    const isQuestionEnding =
+      lastParagraph.endsWith("?") ||
+      lastParagraph.endsWith(":") ||
+      /^(what|which|why|how|according|it can be inferred|the author)/i.test(lastParagraph);
+
+    if (leadingParagraphs.split(/\s+/).length >= 35 && isQuestionEnding) {
+      return {
+        passage: leadingParagraphs.replace(/^['"]|['"]$/g, ""),
+        prompt: lastParagraph,
+      };
+    }
+  }
+
+  return {
+    passage: null,
+    prompt: questionText.trim(),
+  };
+}
+

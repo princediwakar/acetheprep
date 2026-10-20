@@ -5,27 +5,218 @@ export const CAT_VERBAL_QUESTIONS: SeedQuestion[] = [
   // -------------------------------------------------------------
   // READING COMPREHENSION (10 Questions)
   // -------------------------------------------------------------
+  // -------------------------------------------------------------
+  // READING COMPREHENSION (10 Questions - Authentic Passage Sets)
+  // -------------------------------------------------------------
   {
     exam_name: "CAT",
     subject: "Verbal Ability",
     skill_domain: "Reading Comprehension",
     difficulty_tier: 3,
-    question_text: "According to the passage, the primary reason why 'creative destruction' in modern digital platforms differs from Schumpeter's classical model is that:\n\nJoseph Schumpeter formulated 'creative destruction' within the context of early industrial capitalism, wherein an innovative entrant dislodges an ossified incumbent by inventing a technologically superior product or manufacturing protocol. In contrast, modern platform monopolies rarely get displaced by superior standalone products. Armed with network effects, zero marginal costs, and massive data silos, incumbent tech platforms neutralize nascent competitive threats through preemptive acquisition or algorithmically demoting interoperability. Competition shifts from competing in the market to competing for the market—a winner-take-all tournament culminating in permanent quasi-sovereign entrenchment.",
+    passage_id: "cat_rc_platform_capitalism",
+    passage: `Joseph Schumpeter formulated the doctrine of 'creative destruction' within the crucible of early industrial capitalism. In his classic framework, the capitalist engine is sustained not through price competition among producers of identical commodities, but through the existential threat posed by innovative outsiders. An agile entrepreneur invents a radically superior manufacturing protocol or a fundamentally novel product, rendering existing capital investments obsolete and dislodging entrenched incumbents from their monopolistic perches. Creative destruction was thus conceived as an episodic, gale-like clearing mechanism that continually reallocates societal capital from inefficient legacy enterprises to pioneering disruptors.
+
+In contemporary digital platform economies, however, the structural physics of creative destruction have undergone a profound mutation. Modern platform giants rarely get dislodged by technologically superior standalone products. Armed with direct and indirect network effects, near-zero marginal distribution costs, and vast proprietary data feedback loops, digital platforms establish self-reinforcing moats that decouple market power from static product superiority. When every additional user increases the platform's intrinsic utility for all other participants, a tipping point is reached wherein competitive displacement becomes mathematically improbable for unnetworked rivals.
+
+Furthermore, incumbent tech platforms systematically neutralize nascent competitive threats long before they can achieve escape velocity. Through aggressive preemptive acquisitions—frequently termed 'killer acquisitions'—dominant platforms absorb embryonic innovators while they are still in their technological infancy, either integrating their specialized IP into the core ecosystem or quietly shuttering them to preserve existing profit centers. When acquisition is resisted, incumbents leverage their structural role as quasi-sovereign gatekeepers to algorithmically demote rival interoperability, restrict API access, or replicate competing features natively within their privileged surfaces.
+
+Consequently, competition has undergone an ontological migration: firms no longer compete within the market on the basis of marginal quality or cost efficiencies; they compete for the market in high-stakes, winner-take-all tournaments. Once won, the victor establishes a durable institutional entrenchment that resists classical Schumpeterian turnover, transforming dynamic capitalist turbulence into durable informational hegemony.`,
+    question_text: "According to the passage, the primary reason why 'creative destruction' in modern digital platform economies differs from Schumpeter's classical formulation is that:",
     options: {
-      A: "Modern tech platforms avoid making capital expenditures in hardware infrastructure.",
-      B: "Incumbent digital platforms exploit network effects and data scale to preemptively absorb or suppress potential disrupters, preventing product-level displacement.",
-      C: "Consumer demand for innovative software features has permanently subsided.",
-      D: "Governments aggressively subsidize classical industrial manufacturing over digital software companies.",
+      A: "Modern tech platforms avoid making long-term capital expenditures in hardware infrastructure.",
+      B: "Incumbent digital platforms exploit network effects and data silos to preemptively absorb or suppress competitors, preventing standalone product-level displacement.",
+      C: "Consumer demand for innovative software and digital services has permanently subsided.",
+      D: "Sovereign governments aggressively subsidize classical industrial manufacturing over digital software platforms.",
     },
     correct_option: "B",
-    explanation: "The author explicitly contrasts Schumpeter's model (where new entrants dislodge incumbents with superior products) with platform capitalism, where network effects, data silos, and preemptive acquisitions prevent displacement from occurring.",
+    explanation: "The author explicitly contrasts Schumpeter's classical model (where innovative entrants dislodge incumbents through superior products) with platform economies, where network effects, zero marginal costs, data feedback loops, and preemptive buyouts neutralize competitive threats before they can challenge market power.",
     distractor_analysis: {
-      A: "Incorrect. Capital expenditures are not discussed as the differentiating dynamic.",
-      B: "Correct. Accurately synthesizes the structural barriers (network effects, data silos, preemptive buyouts) identified in the text.",
-      C: "Incorrect. Consumer demand has not subsided.",
-      D: "Incorrect. Subsidies are unmentioned.",
+      A: "Incorrect. Hardware capital expenditure is not cited as the differentiating structural mechanism.",
+      B: "Correct. Accurately synthesizes the structural barriers (network effects, data scale, preemptive acquisitions) detailed in paragraphs 2 and 3.",
+      C: "Incorrect. The text never claims consumer desire for innovation has subsided.",
+      D: "Incorrect. Government subsidies are unmentioned in the passage.",
     },
-    misconception: "Focusing on external factors like government subsidies rather than the internal structural dynamics of platform network effects.",
+    misconception: "Focusing on external factors like government subsidies rather than the internal structural dynamics of digital network effects and platform gatekeeping.",
+    time_estimate_seconds: 90,
+  },
+  {
+    exam_name: "CAT",
+    subject: "Verbal Ability",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 3,
+    passage_id: "cat_rc_platform_capitalism",
+    passage: `Joseph Schumpeter formulated the doctrine of 'creative destruction' within the crucible of early industrial capitalism. In his classic framework, the capitalist engine is sustained not through price competition among producers of identical commodities, but through the existential threat posed by innovative outsiders. An agile entrepreneur invents a radically superior manufacturing protocol or a fundamentally novel product, rendering existing capital investments obsolete and dislodging entrenched incumbents from their monopolistic perches. Creative destruction was thus conceived as an episodic, gale-like clearing mechanism that continually reallocates societal capital from inefficient legacy enterprises to pioneering disruptors.
+
+In contemporary digital platform economies, however, the structural physics of creative destruction have undergone a profound mutation. Modern platform giants rarely get dislodged by technologically superior standalone products. Armed with direct and indirect network effects, near-zero marginal distribution costs, and vast proprietary data feedback loops, digital platforms establish self-reinforcing moats that decouple market power from static product superiority. When every additional user increases the platform's intrinsic utility for all other participants, a tipping point is reached wherein competitive displacement becomes mathematically improbable for unnetworked rivals.
+
+Furthermore, incumbent tech platforms systematically neutralize nascent competitive threats long before they can achieve escape velocity. Through aggressive preemptive acquisitions—frequently termed 'killer acquisitions'—dominant platforms absorb embryonic innovators while they are still in their technological infancy, either integrating their specialized IP into the core ecosystem or quietly shuttering them to preserve existing profit centers. When acquisition is resisted, incumbents leverage their structural role as quasi-sovereign gatekeepers to algorithmically demote rival interoperability, restrict API access, or replicate competing features natively within their privileged surfaces.
+
+Consequently, competition has undergone an ontological migration: firms no longer compete within the market on the basis of marginal quality or cost efficiencies; they compete for the market in high-stakes, winner-take-all tournaments. Once won, the victor establishes a durable institutional entrenchment that resists classical Schumpeterian turnover, transforming dynamic capitalist turbulence into durable informational hegemony.`,
+    question_text: "Which of the following, if true, would most seriously weaken the author's argument regarding the durability of digital platform monopolies?",
+    options: {
+      A: "Venture capital investment in enterprise software startups has fluctuated significantly over the past decade.",
+      B: "Regulatory antitrust authorities in multiple jurisdictions have imposed substantial monetary fines on major tech corporations.",
+      C: "Historical tracking reveals that open-source decentralized protocols routinely induce catastrophic user migrations away from dominant platforms whenever platform take-rates rise above zero.",
+      D: "Digital advertising revenue is projected to grow faster than television advertising in emerging markets.",
+    },
+    correct_option: "C",
+    explanation: "The author's core thesis is that network effects and gatekeeping create permanent entrenchment that resists competitive displacement. If open-source decentralized protocols routinely induce catastrophic user flight when take-rates rise, it proves that platform network effects are fragile and displaceable, directly weakening the central thesis.",
+    distractor_analysis: {
+      A: "Incorrect. Fluctuation in venture investment does not demonstrate that platform moats are permeable.",
+      B: "Incorrect. Monetary fines do not fundamentally challenge platform business models unless they dismantle network effects.",
+      C: "Correct. Directly attacks the foundational premise of permanent, irreversible lock-in by showing a routine displacement mechanism.",
+      D: "Incorrect. Industry ad spend trajectories are tangential to market power contestability.",
+    },
+    misconception: "Treating regulatory fines as fatal competitive disrupters rather than evaluating economic mechanisms of user migration.",
+    time_estimate_seconds: 85,
+  },
+  {
+    exam_name: "CAT",
+    subject: "Verbal Ability",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 2,
+    passage_id: "cat_rc_automation_labor",
+    passage: `As robotic automation and generative artificial intelligence subsume increasingly sophisticated procedural and cognitive workflows, contemporary managerial theorists predict a radical liberation of the human intellect. Stripped of repetitive analytical drudgery and algorithmic paperwork, knowledge workers will supposedly cultivate an unconstrained reservoir of speculative empathy, high-order strategic creativity, and philosophical inquiry—a state frequently celebrated as 'surplus consciousness.' In this techno-optimist teleology, machine capability does not eliminate human relevance; rather, it elevates humanity into an aristocratic leisure class dedicated to contemplative and relational pursuits.
+
+Yet historical precedents in domestic and industrial technology suggest a considerably less elevated trajectory. When domestic appliances such as washing machines, vacuum cleaners, and automated refrigerators permeated mid-twentieth-century households, economists forecasted an unprecedented collapse in domestic working hours. Instead, as sociologists have meticulously documented, the freed hours were not absorbed by artistic contemplation or civic engagement. Rather, the social standards and normative expectations governing domestic cleanliness escalated proportionally: carpets were expected to be cleaned daily rather than seasonally, laundry was washed after a single wearing, and the net weekly unpaid hours devoted to household management remained virtually unchanged.
+
+This sociological dynamic—often described as the expansion of normative demand—operates with equal vigor across modern corporate environments. When spreadsheet software automated manual financial bookkeeping in the 1980s, corporate finance departments did not shrink or redirect their surplus hours toward philosophical reflection. Instead, executive demand for financial modeling exploded exponentially: organizations that previously operated on quarterly financial summaries suddenly demanded hourly scenario forecasts and multi-variable stochastic projections. The efficiency dividend created by automation was instantaneously swallowed by escalating analytical overhead.
+
+The promise of 'surplus consciousness' thus commits a fundamental sociological error: it treats human workload as a fixed quantity of necessary tasks to be completed, rather than an elastic, socially constructed appetite that dynamically expands to consume all available operational capacity.`,
+    question_text: "Based on the passage, the concept of 'surplus consciousness' in automated labor markets refers to:",
+    options: {
+      A: "A psychological condition characterized by cognitive fatigue from excessive reliance on generative algorithms.",
+      B: "The theoretical liberation of human cognitive capacity toward creative, empathetic, and philosophical endeavors once rote procedural labor is automated.",
+      C: "The excess computational memory allocated to neural network weights in industrial automation.",
+      D: "Unproductive employee daydreaming that managers seek to eliminate through algorithmic surveillance.",
+    },
+    correct_option: "B",
+    explanation: "The first paragraph explicitly defines surplus consciousness as the idealized state where workers, freed from rote analytical drudgery, cultivate 'an unconstrained reservoir of speculative empathy, high-order strategic creativity, and philosophical inquiry.'",
+    distractor_analysis: {
+      A: "Incorrect. Not a psychological pathology or fatigue state.",
+      B: "Correct. Precise synthesis of the managerial techno-optimist thesis described in paragraph 1.",
+      C: "Incorrect. Conflates human consciousness with hardware RAM allocation.",
+      D: "Incorrect. The term is formulated by theorists as an elevated potential, not idle daydreaming.",
+    },
+    misconception: "Confusing a philosophical construct about human capability with computer engineering hardware terminology.",
+    time_estimate_seconds: 70,
+  },
+  {
+    exam_name: "CAT",
+    subject: "Verbal Ability",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 3,
+    passage_id: "cat_rc_automation_labor",
+    passage: `As robotic automation and generative artificial intelligence subsume increasingly sophisticated procedural and cognitive workflows, contemporary managerial theorists predict a radical liberation of the human intellect. Stripped of repetitive analytical drudgery and algorithmic paperwork, knowledge workers will supposedly cultivate an unconstrained reservoir of speculative empathy, high-order strategic creativity, and philosophical inquiry—a state frequently celebrated as 'surplus consciousness.' In this techno-optimist teleology, machine capability does not eliminate human relevance; rather, it elevates humanity into an aristocratic leisure class dedicated to contemplative and relational pursuits.
+
+Yet historical precedents in domestic and industrial technology suggest a considerably less elevated trajectory. When domestic appliances such as washing machines, vacuum cleaners, and automated refrigerators permeated mid-twentieth-century households, economists forecasted an unprecedented collapse in domestic working hours. Instead, as sociologists have meticulously documented, the freed hours were not absorbed by artistic contemplation or civic engagement. Rather, the social standards and normative expectations governing domestic cleanliness escalated proportionally: carpets were expected to be cleaned daily rather than seasonally, laundry was washed after a single wearing, and the net weekly unpaid hours devoted to household management remained virtually unchanged.
+
+This sociological dynamic—often described as the expansion of normative demand—operates with equal vigor across modern corporate environments. When spreadsheet software automated manual financial bookkeeping in the 1980s, corporate finance departments did not shrink or redirect their surplus hours toward philosophical reflection. Instead, executive demand for financial modeling exploded exponentially: organizations that previously operated on quarterly financial summaries suddenly demanded hourly scenario forecasts and multi-variable stochastic projections. The efficiency dividend created by automation was instantaneously swallowed by escalating analytical overhead.
+
+The promise of 'surplus consciousness' thus commits a fundamental sociological error: it treats human workload as a fixed quantity of necessary tasks to be completed, rather than an elastic, socially constructed appetite that dynamically expands to consume all available operational capacity.`,
+    question_text: "What is the primary rhetorical function of the author's discussion of 'mid-twentieth-century domestic appliances' in the passage?",
+    options: {
+      A: "To demonstrate that mechanical domestic engineering lagged behind modern electronic software development.",
+      B: "To introduce a historical counter-analogy showing that technological time-savings are routinely reabsorbed by escalating normative expectations rather than converted into leisure.",
+      C: "To criticize mid-century advertising agencies for misrepresenting appliance capabilities to consumers.",
+      D: "To argue that domestic household labor was more exhausting than modern corporate analytical employment.",
+    },
+    correct_option: "B",
+    explanation: "The author uses the domestic appliance history as a structural analogy to dismantle the surplus consciousness theory: when appliances automated chores, rising standards of cleanliness absorbed the freed time, exactly mirroring how automation in modern offices triggers escalating analytical demands.",
+    distractor_analysis: {
+      A: "Incorrect. The passage does not evaluate relative mechanical vs software engineering sophistication.",
+      B: "Correct. Highlights the sociological mechanism: efficiency dividends are absorbed by expanding baseline standards.",
+      C: "Incorrect. Advertising deception is unmentioned.",
+      D: "Incorrect. No comparative exhaustion ranking is made between domestic and corporate work.",
+    },
+    misconception: "Viewing the historical example as an isolated factual trivia point rather than recognizing its structural argumentative role as an empirical counter-analogy.",
+    time_estimate_seconds: 75,
+  },
+  {
+    exam_name: "CAT",
+    subject: "Verbal Ability",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 2,
+    passage_id: "cat_rc_philosophy_science",
+    passage: `In the philosophy of science, the demarcation problem—the challenge of establishing clear criteria to distinguish genuine empirical science from pseudoscience and metaphysics—has persistently defied simplistic falsificationist solutions. In the mid-twentieth century, Karl Popper proposed what appeared to be an elegant, decisive razor: a hypothesis is scientific if and only if it makes bold, risky empirical predictions that are capable in principle of refutation by observational data. Under Popper's normative doctrine of naive falsificationism, the moment an experimental observation directly contradicts a theoretical deduction, the scientist is intellectually obligated to discard the overarching theory immediately.
+
+However, historical examination of actual scientific revolutions reveals that practicing scientists rarely, if ever, abide by Popper's strict falsificationist rubric. As Thomas Kuhn demonstrated in his landmark study of scientific paradigms, established research communities do not abandon their core frameworks in the face of counter-instances and empirical anomalies. Instead, scientists routinely construct protective belts of auxiliary ad-hoc hypotheses, question the calibration of experimental instrumentation, or temporarily set aside recalcitrant data while continuing normal problem-solving within the dominant paradigm. Copernicus's heliocentric model, for instance, produced observational predictions regarding stellar parallax that were directly contradicted by contemporary astronomical instruments; had early astronomers adhered strictly to Popperian falsification, heliocentrism would have been discarded in its infancy.
+
+Philosopher Imre Lakatos synthesized these competing insights by shifting the unit of epistemological appraisal from isolated hypotheses to dynamic 'research programmes.' In Lakatos's sophisticated framework, a research programme is characterized by a tenacious 'hard core' of foundational axioms surrounded by an adaptable protective belt of auxiliary hypotheses. The critical demarcation lies not in whether a programme produces instantaneous refutations, but whether it is theoretically and empirically 'progressive' or 'degenerating.' A progressive programme anticipates novel, unexpected facts and systematically resolves anomalies through content-increasing auxiliary modifications, whereas a degenerating programme merely invents ad-hoc excuses retroactively to defend an intellectually exhausted paradigm.`,
+    question_text: "Which choice best captures the central thesis of the passage regarding the demarcation problem in science?",
+    options: {
+      A: "Karl Popper's falsificationist criterion remains the single universally accepted standard among practicing physicists.",
+      B: "Demarcating science from pseudoscience cannot rely on simplistic instantaneous falsification, but requires evaluating whether a broader research programme dynamically expands empirical predictions over time.",
+      C: "Thomas Kuhn proved that experimental observation is entirely subjective and devoid of objective scientific validity.",
+      D: "Pseudoscience and empirical science share identical epistemological methodologies and cannot be separated.",
+    },
+    correct_option: "B",
+    explanation: "The passage begins by identifying the insufficiency of Popperian naive falsification (challenged by Kuhn's historical evidence) and concludes by endorsing Lakatos's criterion: evaluating research programmes on whether they are dynamically progressive (generating novel empirical content) versus degenerating.",
+    distractor_analysis: {
+      A: "Incorrect. The passage argues that Popper's criterion fails to describe real scientific practice.",
+      B: "Correct. Synthesizes the theoretical evolution from naive falsification to Lakatosian progressive research programmes.",
+      C: "Incorrect. Kuhn highlighted paradigm defense, but never claimed empirical observation is worthless.",
+      D: "Incorrect. The passage explicitly defends demarcation through Lakatos's progressive-vs-degenerating distinction.",
+    },
+    misconception: "Selecting Popper's falsifiability as the main idea when the text explicitly frames it as historically naive and superseded by Lakatos.",
+    time_estimate_seconds: 80,
+  },
+  {
+    exam_name: "CAT",
+    subject: "Verbal Ability",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 3,
+    passage_id: "cat_rc_philosophy_science",
+    passage: `In the philosophy of science, the demarcation problem—the challenge of establishing clear criteria to distinguish genuine empirical science from pseudoscience and metaphysics—has persistently defied simplistic falsificationist solutions. In the mid-twentieth century, Karl Popper proposed what appeared to be an elegant, decisive razor: a hypothesis is scientific if and only if it makes bold, risky empirical predictions that are capable in principle of refutation by observational data. Under Popper's normative doctrine of naive falsificationism, the moment an experimental observation directly contradicts a theoretical deduction, the scientist is intellectually obligated to discard the overarching theory immediately.
+
+However, historical examination of actual scientific revolutions reveals that practicing scientists rarely, if ever, abide by Popper's strict falsificationist rubric. As Thomas Kuhn demonstrated in his landmark study of scientific paradigms, established research communities do not abandon their core frameworks in the face of counter-instances and empirical anomalies. Instead, scientists routinely construct protective belts of auxiliary ad-hoc hypotheses, question the calibration of experimental instrumentation, or temporarily set aside recalcitrant data while continuing normal problem-solving within the dominant paradigm. Copernicus's heliocentric model, for instance, produced observational predictions regarding stellar parallax that were directly contradicted by contemporary astronomical instruments; had early astronomers adhered strictly to Popperian falsification, heliocentrism would have been discarded in its infancy.
+
+Philosopher Imre Lakatos synthesized these competing insights by shifting the unit of epistemological appraisal from isolated hypotheses to dynamic 'research programmes.' In Lakatos's sophisticated framework, a research programme is characterized by a tenacious 'hard core' of foundational axioms surrounded by an adaptable protective belt of auxiliary hypotheses. The critical demarcation lies not in whether a programme produces instantaneous refutations, but whether it is theoretically and empirically 'progressive' or 'degenerating.' A progressive programme anticipates novel, unexpected facts and systematically resolves anomalies through content-increasing auxiliary modifications, whereas a degenerating programme merely invents ad-hoc excuses retroactively to defend an intellectually exhausted paradigm.`,
+    question_text: "According to the passage, the example of early Copernican heliocentrism is cited primarily to show that:",
+    options: {
+      A: "Astronomical observation in the Renaissance was fundamentally flawed due to religious bias.",
+      B: "Strict adherence to instantaneous falsificationism would have prematurely extinguished a revolutionary theory that was contradicted by contemporary measurements.",
+      C: "Heliocentrism was an example of a degenerating research programme that relied on theological axioms.",
+      D: "Copernicus was the first scientist to successfully formulate the demarcation razor.",
+    },
+    correct_option: "B",
+    explanation: "The passage notes that Copernicus's theory predicted stellar parallax that contemporary instruments could not verify; had astronomers strictly followed Popper's mandate to instantly discard theories facing contradicting data, heliocentrism would have been abandoned in its infancy.",
+    distractor_analysis: {
+      A: "Incorrect. The text points to instrument limitations, not religious bias.",
+      B: "Correct. Highlights the danger of naive falsificationism in suppressing fruitful nascent paradigms.",
+      C: "Incorrect. The text treats heliocentrism as a revolutionary triumph, not a degenerating programme.",
+      D: "Incorrect. Popper, not Copernicus, formulated the demarcation razor discussed.",
+    },
+    misconception: "Attributing theoretical abandonment to ideological bias rather than the epistemological danger of naive falsificationism.",
+    time_estimate_seconds: 75,
+  },
+  {
+    exam_name: "CAT",
+    subject: "Verbal Ability",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 2,
+    passage_id: "cat_rc_smart_cities",
+    passage: `Smart-city evangelists promise that embedding ubiquitous sensor arrays, automated traffic grids, and algorithmic dispatch systems into metropolitan infrastructure will resolve urban congestion, homelessness, and municipal decay. In their marketing discourse, the twenty-first-century city is reimagined not as an organic, contested political community, but as an engineering system—a complex thermodynamic machine ripe for data optimization and automated feedback control. If only enough real-time telemetry can be gathered from street corners, waste receptacles, and pedestrian smartphones, municipal management can supposedly transcend ideological gridlock and achieve frictionless operational efficiency.
+
+This techno-solutionist hubris fundamentally misdiagnoses deep-seated socioeconomic pathologies as mere informational coordination defects. The chronic crises afflicting contemporary metropolitan regions—concentrated generational poverty, racial residential segregation, the catastrophic deficit of deeply affordable housing, and underfunded public schooling—do not stem from an absence of digital sensors or insufficient algorithmic processing power. They are the deliberate, accumulated outcomes of structural economic arrangements, regressive zoning statutes, and fiscal policies that protect private wealth at the expense of collective civic welfare.
+
+You cannot code away structural poverty with an IoT sensor, nor can an automated traffic light substitute for capital investment in equitable public transit networks. By depoliticizing municipal governance into a series of technical dashboard metrics, smart-city initiatives perform a dangerous ideological sleight of hand: they redirect finite public resources toward lucrative corporate surveillance contracts while evading the messy, democratic negotiations necessary to redistribute wealth and access. When metropolitan governance is reduced purely to algorithmic optimization, the system naturally optimizes for those with the power to define the objective function, leaving existing hierarchies intact beneath a veneer of digital sophistication.`,
+    question_text: "The author's tone toward 'smart-city evangelism' throughout the passage can best be described as:",
+    options: {
+      A: "Ambivalent and resigned",
+      B: "Skeptical, scathing, and polemical",
+      C: "Cautiously encouraging and pragmatic",
+      D: "Objective, dispassionate, and analytical",
+    },
+    correct_option: "B",
+    explanation: "The author employs cutting language throughout: 'techno-solutionist hubris', 'ideological sleight of hand', 'lucidly dangerous', and 'cannot code away structural poverty.' This reflects a sharply critical, scathing, and polemical posture against technocratic solutionism.",
+    distractor_analysis: {
+      A: "Incorrect. The author shows passionate anger and clear conviction, not passive resignation.",
+      B: "Correct. Perfectly captures the aggressive intellectual and moral critique mounted across all three paragraphs.",
+      C: "Incorrect. The author offers zero encouragement to smart-city proposals.",
+      D: "Incorrect. The prose is explicitly ideological and polemical, far from dispassionate neutrality.",
+    },
+    misconception: "Assuming academic prose must always be classified as neutral or dispassionate regardless of its polemical vocabulary.",
     time_estimate_seconds: 60,
   },
   {
@@ -33,207 +224,87 @@ export const CAT_VERBAL_QUESTIONS: SeedQuestion[] = [
     subject: "Verbal Ability",
     skill_domain: "Reading Comprehension",
     difficulty_tier: 3,
-    question_text: "Which of the following, if true, would most seriously challenge the author's argument regarding algorithmic recommendation systems?\n\nCritics contend that algorithmic recommendation engines inherently entrap users within cognitive echo chambers, steadily radicalizing viewpoints by serving progressively extreme content to maximize attention capture. However, empirical telemetry of large-scale browsing patterns paints a more nuanced picture. Rather than segregating into ideological silos, typical digital consumers graze across a diverse spectrum of mainstream news and entertainment, encountering oppositional perspectives far more frequently than historical print subscribers did.",
+    passage_id: "cat_rc_smart_cities",
+    passage: `Smart-city evangelists promise that embedding ubiquitous sensor arrays, automated traffic grids, and algorithmic dispatch systems into metropolitan infrastructure will resolve urban congestion, homelessness, and municipal decay. In their marketing discourse, the twenty-first-century city is reimagined not as an organic, contested political community, but as an engineering system—a complex thermodynamic machine ripe for data optimization and automated feedback control. If only enough real-time telemetry can be gathered from street corners, waste receptacles, and pedestrian smartphones, municipal management can supposedly transcend ideological gridlock and achieve frictionless operational efficiency.
+
+This techno-solutionist hubris fundamentally misdiagnoses deep-seated socioeconomic pathologies as mere informational coordination defects. The chronic crises afflicting contemporary metropolitan regions—concentrated generational poverty, racial residential segregation, the catastrophic deficit of deeply affordable housing, and underfunded public schooling—do not stem from an absence of digital sensors or insufficient algorithmic processing power. They are the deliberate, accumulated outcomes of structural economic arrangements, regressive zoning statutes, and fiscal policies that protect private wealth at the expense of collective civic welfare.
+
+You cannot code away structural poverty with an IoT sensor, nor can an automated traffic light substitute for capital investment in equitable public transit networks. By depoliticizing municipal governance into a series of technical dashboard metrics, smart-city initiatives perform a dangerous ideological sleight of hand: they redirect finite public resources toward lucrative corporate surveillance contracts while evading the messy, democratic negotiations necessary to redistribute wealth and access. When metropolitan governance is reduced purely to algorithmic optimization, the system naturally optimizes for those with the power to define the objective function, leaving existing hierarchies intact beneath a veneer of digital sophistication.`,
+    question_text: "According to the passage, the primary structural danger of conceptualizing municipal governance purely as an 'optimization problem' is that it:",
     options: {
-      A: "Print newspapers charged monthly subscription fees that excluded impoverished readers.",
-      B: "Controlled randomized trials demonstrate that when recommendation engines suppress fringe sources, user retention drops by over 35% as radicalized cohorts migrate to unmoderated alt-networks.",
-      C: "Multi-year behavioral tracking reveals that while users graze broadly, their core political beliefs polarize sharply precisely because encountering hostile opposing perspectives triggers affective tribal defense mechanisms.",
-      D: "Digital advertising revenue is projected to exceed traditional television advertising by 2030.",
-    },
-    correct_option: "C",
-    explanation: "The author assumes that encountering diverse perspectives disproves ideological polarization. Choice C directly dismantles this by showing that exposure to opposing views actually accelerates polarization via affective tribalism, undermining the author's benign conclusion.",
-    distractor_analysis: {
-      A: "Incorrect. Subscription costs of print media are irrelevant to polarization mechanisms.",
-      B: "Incorrect. Migration to fringe apps does not disprove the browsing patterns cited.",
-      C: "Correct. Directly severs the author's implied premise that 'exposure to opposing views equals depolarization.'",
-      D: "Incorrect. Commercial ad revenue projections have no bearing on cognitive echo chambers.",
-    },
-    misconception: "Assuming that exposure to diverse viewpoints inherently promotes intellectual moderation.",
-    time_estimate_seconds: 70,
-  },
-  {
-    exam_name: "CAT",
-    subject: "Verbal Ability",
-    skill_domain: "Reading Comprehension",
-    difficulty_tier: 2,
-    question_text: "Based on the passage, the concept of 'surplus consciousness' in automated labor markets refers to:\n\nAs robotic automation and generative AI subsume procedural analytical tasks, managerial theorists predict a radical liberation of human intellect. Stripped of rote cognitive labor, workers will supposedly cultivate 'surplus consciousness'—an unconstrained reservoir of speculative empathy, high-order strategic creativity, and philosophical inquiry. Yet historical precedents suggest a less elevated trajectory: when domestic appliances automated household chores in the mid-twentieth century, the freed hours were not absorbed by artistic contemplation, but by escalating standards of cleanliness and increased unpaid domestic expectations.",
-    options: {
-      A: "A neurological disorder caused by excessive digital screen exposure.",
-      B: "The idealized creative and philosophical intellectual capacity unlocked when procedural tasks are automated.",
-      C: "The excess computational memory allocated to neural network weights.",
-      D: "Unproductive daydreaming that degrades corporate worker productivity.",
+      A: "Causes municipal servers to crash under the burden of massive real-time telemetry ingestion.",
+      B: "Depoliticizes governance by framing systemic political inequalities as technical problems, reinforcing existing hierarchies while serving corporate tech contractors.",
+      C: "Prevents software engineers from obtaining fair wages for civic contract work.",
+      D: "Encourages citizens to abandon urban centers in favor of rural agrarian cooperatives.",
     },
     correct_option: "B",
-    explanation: "The text explicitly defines surplus consciousness as 'an unconstrained reservoir of speculative empathy, high-order strategic creativity, and philosophical inquiry' that theorists claim will emerge when rote labor is eliminated.",
+    explanation: "The final paragraph explicitly states that reducing municipal governance to technical dashboard metrics depoliticizes governance, evades democratic negotiation over wealth redistribution, directs public funds to surveillance firms, and optimizes for those who define the algorithm.",
     distractor_analysis: {
-      A: "Incorrect. Not a neurological disorder.",
-      B: "Correct. Precisely captures the theoretical construct described in the text.",
-      C: "Incorrect. Refers to human consciousness, not silicon computer RAM.",
-      D: "Incorrect. The term is framed as elevated human potential, though historically questioned.",
+      A: "Incorrect. Technical computing capacity is not the critique.",
+      B: "Correct. Captures the central political insight: algorithmic governance obscures and entrenches power asymmetries.",
+      C: "Incorrect. Engineer compensation is completely unaddressed.",
+      D: "Incorrect. Rural migration is outside the scope of the text.",
     },
-    misconception: "Confusing the philosophical/theoretical concept with computer memory terminology.",
-    time_estimate_seconds: 50,
-  },
-  {
-    exam_name: "CAT",
-    subject: "Verbal Ability",
-    skill_domain: "Reading Comprehension",
-    difficulty_tier: 3,
-    question_text: "What is the primary rhetorical function of the author's reference to the 'mid-twentieth century domestic appliances' in the excerpt above?",
-    options: {
-      A: "To praise modern washing machines for reducing water consumption.",
-      B: "To provide a historical cautionary analogy illustrating that time saved through automation is often absorbed by rising expectations rather than leisure.",
-      C: "To prove that women performed more labor than men in agrarian societies.",
-      D: "To argue that electronic appliances caused the post-war economic boom.",
-    },
-    correct_option: "B",
-    explanation: "The domestic appliance example serves as a historical counter-analogy to debunk the utopian claim that automating work will automatically free time for high-minded pursuits.",
-    distractor_analysis: {
-      A: "Incorrect. Water efficiency is completely outside the scope.",
-      B: "Correct. Highlights the sociological tendency for productivity gains to expand systemic demands rather than expand true leisure.",
-      C: "Incorrect. Agrarian gender division is not discussed.",
-      D: "Incorrect. The focus is on time absorption, not macroeconomic boom drivers.",
-    },
-    misconception: "Viewing the historical analogy as a literal endorsement of appliance engineering rather than an analytical critique.",
-    time_estimate_seconds: 50,
-  },
-  {
-    exam_name: "CAT",
-    subject: "Verbal Ability",
-    skill_domain: "Reading Comprehension",
-    difficulty_tier: 2,
-    question_text: "Which choice best captures the central thesis of the passage?\n\nIn the philosophy of science, the demarcation problem—distinguishing genuine empirical science from pseudoscience—has resisted simplistic falsificationist solutions. Karl Popper asserted that a theory is scientific if and only if it makes risky predictions capable of empirical refutation. Yet Thomas Kuhn demonstrated that practicing scientists routinely defend dominant paradigms against anomalies by introducing auxiliary ad-hoc hypotheses rather than discarding the paradigm. A theory's vitality lies not in instantaneous falsifiability, but in its dynamic progressive problem-solving capacity over extended research programs.",
-    options: {
-      A: "Karl Popper's criterion of falsifiability is universally accepted by all practicing experimental physicists.",
-      B: "Demarcating science from pseudoscience requires evaluating long-term progressive problem-solving capability rather than relying solely on immediate Popperian falsification.",
-      C: "Pseudoscience is identical in methodology to theoretical astrophysics.",
-      D: "Thomas Kuhn proved that empirical observation is completely subjective and worthless.",
-    },
-    correct_option: "B",
-    explanation: "The passage moves from Popper's strict falsification criterion to Kuhn's critique (scientists protect paradigms with ad-hoc hypotheses) and concludes with Lakatosian progressive problem-solving as the true demarcation.",
-    distractor_analysis: {
-      A: "Incorrect. Popper's view is challenged in the text, not universally accepted.",
-      B: "Correct. Synthesizes the transition from naive falsification to progressive research programs.",
-      C: "Incorrect. Pseudoscience is not equated with astrophysics.",
-      D: "Incorrect. Kuhn did not dismiss empirical observation as worthless.",
-    },
-    misconception: "Selecting Popper's falsificationism as the main idea when the text specifically qualifies and supersedes it.",
-    time_estimate_seconds: 55,
-  },
-  {
-    exam_name: "CAT",
-    subject: "Verbal Ability",
-    skill_domain: "Reading Comprehension",
-    difficulty_tier: 3,
-    question_text: "The author implies that practicing scientists handle experimental anomalies primarily by:\n(Refer to the demarcation passage above)",
-    options: {
-      A: "Immediately renouncing their foundational theories upon observing the first conflicting datum.",
-      B: "Constructing protective auxiliary hypotheses to absorb anomalies without abandoning the overarching paradigm.",
-      C: "Falsifying laboratory records to suppress contradictory findings.",
-      D: "Appealing to non-scientific philosophical doctrines.",
-    },
-    correct_option: "B",
-    explanation: "The text states: 'practicing scientists routinely defend dominant paradigms against anomalies by introducing auxiliary ad-hoc hypotheses rather than discarding the paradigm.'",
-    distractor_analysis: {
-      A: "Incorrect. The text explicitly says they do NOT discard the paradigm.",
-      B: "Correct. Accurately reflects Kuhn's insight regarding protective auxiliary hypotheses.",
-      C: "Incorrect. The text does not accuse scientists of fraudulent record falsification.",
-      D: "Incorrect. They construct scientific auxiliary hypotheses, not theological or non-scientific doctrines.",
-    },
-    misconception: "Equating legitimate auxiliary hypothesis formulation with fraudulent data suppression.",
-    time_estimate_seconds: 45,
-  },
-  {
-    exam_name: "CAT",
-    subject: "Verbal Ability",
-    skill_domain: "Reading Comprehension",
-    difficulty_tier: 2,
-    question_text: "The tone of the passage toward 'technological solutionism' in urban planning can best be described as:\n\nSmart-city evangelists promise that embedding ubiquitous sensors and algorithmic dispatch grids into metropolitan infrastructure will magically resolve traffic congestion, homelessness, and municipal decay. This techno-solutionist hubris fundamentally misdiagnoses deep-seated socioeconomic pathologies as mere data optimization problems. You cannot code away structural poverty with an IoT sensor, nor can an automated traffic light substitute for equitable public transit investment.",
-    options: {
-      A: "laudatory and enthusiastic",
-      B: "scornful and acutely critical",
-      C: "dispassionate and nonpartisan",
-      D: "hesitant and uncertain",
-    },
-    correct_option: "B",
-    explanation: "Words like 'magically resolve', 'techno-solutionist hubris', 'fundamentally misdiagnoses', and 'cannot code away structural poverty' denote an openly critical, scornful posture.",
-    distractor_analysis: {
-      A: "Incorrect. The author explicitly rejects the evangelists' claims.",
-      B: "Correct. Accurately identifies the biting skepticism and moral critique of technological arrogance.",
-      C: "Incorrect. The writing is passionate and sharply polemical.",
-      D: "Incorrect. There is no hesitation or uncertainty.",
-    },
-    misconception: "Assuming academic critiques of technology must be neutral or dispassionate.",
-    time_estimate_seconds: 40,
-  },
-  {
-    exam_name: "CAT",
-    subject: "Verbal Ability",
-    skill_domain: "Reading Comprehension",
-    difficulty_tier: 3,
-    question_text: "According to the passage, the primary danger of conceptualizing municipal governance purely as an 'optimization problem' is that:\n(Refer to the smart-city passage above)",
-    options: {
-      A: "Computer servers consume excessive electricity.",
-      B: "It obscures and ignores the structural, political, and economic causes of urban inequality that require civic rather than algorithmic intervention.",
-      C: "Sensor networks are vulnerable to software bugs.",
-      D: "Citizens dislike smartphones.",
-    },
-    correct_option: "B",
-    explanation: "The text asserts that techno-solutionism 'fundamentally misdiagnoses deep-seated socioeconomic pathologies as mere data optimization problems' and fails to address structural poverty and equity.",
-    distractor_analysis: {
-      A: "Incorrect. Power consumption is unmentioned.",
-      B: "Correct. Highlights the depoliticizing effect of framing systemic poverty as a technical data problem.",
-      C: "Incorrect. Software bugs are a secondary engineering defect, not the conceptual danger.",
-      D: "Incorrect. Factually baseless.",
-    },
-    misconception: "Focusing on minor technical failure modes (software bugs, server power) rather than systemic political blindness.",
-    time_estimate_seconds: 45,
+    misconception: "Focusing on operational technical bottlenecks (server load) rather than ideological power dynamics.",
+    time_estimate_seconds: 75,
   },
   {
     exam_name: "CAT",
     subject: "Verbal Ability",
     skill_domain: "Reading Comprehension",
     difficulty_tier: 1,
-    question_text: "What does the author suggest about public transit investment in metropolitan centers?\n(Refer to the smart-city passage above)",
+    passage_id: "cat_rc_smart_cities",
+    passage: `Smart-city evangelists promise that embedding ubiquitous sensor arrays, automated traffic grids, and algorithmic dispatch systems into metropolitan infrastructure will resolve urban congestion, homelessness, and municipal decay. In their marketing discourse, the twenty-first-century city is reimagined not as an organic, contested political community, but as an engineering system—a complex thermodynamic machine ripe for data optimization and automated feedback control. If only enough real-time telemetry can be gathered from street corners, waste receptacles, and pedestrian smartphones, municipal management can supposedly transcend ideological gridlock and achieve frictionless operational efficiency.
+
+This techno-solutionist hubris fundamentally misdiagnoses deep-seated socioeconomic pathologies as mere informational coordination defects. The chronic crises afflicting contemporary metropolitan regions—concentrated generational poverty, racial residential segregation, the catastrophic deficit of deeply affordable housing, and underfunded public schooling—do not stem from an absence of digital sensors or insufficient algorithmic processing power. They are the deliberate, accumulated outcomes of structural economic arrangements, regressive zoning statutes, and fiscal policies that protect private wealth at the expense of collective civic welfare.
+
+You cannot code away structural poverty with an IoT sensor, nor can an automated traffic light substitute for capital investment in equitable public transit networks. By depoliticizing municipal governance into a series of technical dashboard metrics, smart-city initiatives perform a dangerous ideological sleight of hand: they redirect finite public resources toward lucrative corporate surveillance contracts while evading the messy, democratic negotiations necessary to redistribute wealth and access. When metropolitan governance is reduced purely to algorithmic optimization, the system naturally optimizes for those with the power to define the objective function, leaving existing hierarchies intact beneath a veneer of digital sophistication.`,
+    question_text: "What does the author imply regarding capital investment in public transit infrastructure?",
     options: {
-      A: "It is obsolete in the age of autonomous ridesharing.",
-      B: "It represents a vital structural civic intervention that cannot be replaced by algorithmic signal tuning.",
-      C: "It should be funded entirely through private venture capital.",
-      D: "It should be discontinued in favor of expanded multi-lane highways.",
+      A: "It is an outdated public utility that should be privatized and replaced with autonomous ridesharing fleets.",
+      B: "It constitutes an essential structural public commitment that cannot be substituted by algorithmic traffic light tuning.",
+      C: "It should only be funded through venture capital debt instruments.",
+      D: "It is less cost-effective than deploying municipal camera surveillance arrays.",
     },
     correct_option: "B",
-    explanation: "The author explicitly concludes: 'nor can an automated traffic light substitute for equitable public transit investment.'",
+    explanation: "Paragraph 3 states unequivocally: 'nor can an automated traffic light substitute for capital investment in equitable public transit networks.' The author treats transit as a non-negotiable structural commitment.",
     distractor_analysis: {
-      A: "Incorrect. The author defends public transit against technocratic replacement.",
-      B: "Correct. Reflects the author's final emphatic assertion.",
-      C: "Incorrect. Venture capital funding is not advocated.",
-      D: "Incorrect. Expanding highways is contrary to the author's urbanist philosophy.",
+      A: "Incorrect. The author explicitly rejects technocratic replacement of public transit.",
+      B: "Correct. Directly mirrors the text's defense of physical transit over algorithmic surface fixes.",
+      C: "Incorrect. Venture debt funding is unmentioned.",
+      D: "Incorrect. The author condemns surveillance spending as a distraction from vital public infrastructure.",
     },
-    misconception: "Assuming the author prefers private technology solutions to public infrastructure.",
-    time_estimate_seconds: 35,
+    misconception: "Assuming the author views technology and infrastructure as mutually exclusive, rather than prioritizing structural equity over algorithmic band-aids.",
+    time_estimate_seconds: 60,
   },
   {
     exam_name: "CAT",
     subject: "Verbal Ability",
     skill_domain: "Reading Comprehension",
     difficulty_tier: 2,
-    question_text: "Which choice best describes the logical relationship between the first and second sentences of the smart-city passage?",
+    passage_id: "cat_rc_smart_cities",
+    passage: `Smart-city evangelists promise that embedding ubiquitous sensor arrays, automated traffic grids, and algorithmic dispatch systems into metropolitan infrastructure will resolve urban congestion, homelessness, and municipal decay. In their marketing discourse, the twenty-first-century city is reimagined not as an organic, contested political community, but as an engineering system—a complex thermodynamic machine ripe for data optimization and automated feedback control. If only enough real-time telemetry can be gathered from street corners, waste receptacles, and pedestrian smartphones, municipal management can supposedly transcend ideological gridlock and achieve frictionless operational efficiency.
+
+This techno-solutionist hubris fundamentally misdiagnoses deep-seated socioeconomic pathologies as mere informational coordination defects. The chronic crises afflicting contemporary metropolitan regions—concentrated generational poverty, racial residential segregation, the catastrophic deficit of deeply affordable housing, and underfunded public schooling—do not stem from an absence of digital sensors or insufficient algorithmic processing power. They are the deliberate, accumulated outcomes of structural economic arrangements, regressive zoning statutes, and fiscal policies that protect private wealth at the expense of collective civic welfare.
+
+You cannot code away structural poverty with an IoT sensor, nor can an automated traffic light substitute for capital investment in equitable public transit networks. By depoliticizing municipal governance into a series of technical dashboard metrics, smart-city initiatives perform a dangerous ideological sleight of hand: they redirect finite public resources toward lucrative corporate surveillance contracts while evading the messy, democratic negotiations necessary to redistribute wealth and access. When metropolitan governance is reduced purely to algorithmic optimization, the system naturally optimizes for those with the power to define the objective function, leaving existing hierarchies intact beneath a veneer of digital sophistication.`,
+    question_text: "Which choice best describes the logical structural progression between the first and second paragraphs of the passage?",
     options: {
-      A: "The first sentence defines a technical term, while the second sentence lists historical examples.",
-      B: "The first sentence introduces an optimistic promotive claim, while the second sentence delivers a sharp critical refutation of its core premise.",
-      C: "The first sentence concedes a weakness, while the second sentence defends the status quo.",
-      D: "Both sentences provide complementary statistical proofs of smart-city efficiency.",
+      A: "Paragraph 1 outlines an empirical research finding, while Paragraph 2 questions the statistical methodology used by the investigators.",
+      B: "Paragraph 1 articulates the promotional vision of smart-city proponents, while Paragraph 2 exposes the foundational fallacy of framing political inequities as data coordination problems.",
+      C: "Paragraph 1 defines technical IoT terminology, while Paragraph 2 traces the historical origins of nineteenth-century municipal architecture.",
+      D: "Paragraph 1 concedes the economic benefits of sensor networks, while Paragraph 2 advocates for higher municipal income taxes.",
     },
     correct_option: "B",
-    explanation: "Sentence 1 states what smart-city evangelists promise (magical resolution), while Sentence 2 refutes it ('This techno-solutionist hubris fundamentally misdiagnoses...').",
+    explanation: "Paragraph 1 presents the technocratic vision of the city as an engineering system ripe for optimization. Paragraph 2 immediately counter-attacks, diagnosing this as hubris that mistakes structural poverty and political decisions for technical coordination defects.",
     distractor_analysis: {
-      A: "Incorrect. No technical definitions or historical lists are present.",
-      B: "Correct. Captures the claim-versus-critique structure.",
-      C: "Incorrect. Sentence 1 is not a concession.",
-      D: "Incorrect. Neither sentence offers statistical proof.",
+      A: "Incorrect. Neither paragraph describes empirical research or statistical methodology.",
+      B: "Correct. Accurately synthesizes the thesis-versus-critique structure between paragraphs 1 and 2.",
+      C: "Incorrect. No historical 19th-century architecture discussion is present.",
+      D: "Incorrect. Paragraph 1 contains no concession of benefits.",
     },
-    misconception: "Misidentifying the thesis-antithesis movement of argumentative paragraphs.",
-    time_estimate_seconds: 40,
+    misconception: "Confusing an author's summary of an opposing viewpoint with an endorsement or concession.",
+    time_estimate_seconds: 70,
   },
 
   // -------------------------------------------------------------

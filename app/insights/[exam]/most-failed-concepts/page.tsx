@@ -102,7 +102,7 @@ export async function generateMetadata({
   const canonicalUrl = `${baseUrl}/insights/${slug}/most-failed-concepts`;
 
   return {
-    title: `${canonicalName} Most Failed Concepts & Error Rates | AceThePrep Insights`,
+    title: `${canonicalName} Most Failed Concepts & Error Rates — Insights`,
     description: `Official failure rate analytics for ${canonicalName}. Ranked list of concept domains by student error percentage, derived from real practice sessions.`,
     alternates: {
       canonical: canonicalUrl,

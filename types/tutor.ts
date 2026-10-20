@@ -47,6 +47,8 @@ export interface ConceptMastery extends SM2State {
 export interface SessionQuestion {
   question_id: string;
   question_text: string;
+  passage?: string;
+  passage_id?: string;
   options: Record<string, string>;
   correct_option: string;
   explanation: string;

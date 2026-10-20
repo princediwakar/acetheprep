@@ -10,7 +10,7 @@ import taxonomyRaw from "@/lib/taxonomies.json";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Hardest Exam Topics & Common Mistakes | AceThePrep",
+  title: "Hardest Exam Topics & Common Mistakes",
   description:
     "Discover the hardest exam topics and most frequent mistakes across competitive exams like Digital SAT, GRE, GMAT Focus, CFA Level 1, IELTS, and TOEFL.",
 };

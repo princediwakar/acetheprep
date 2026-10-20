@@ -111,7 +111,7 @@ export async function generateMetadata({
   const canonicalUrl = `${baseUrl}/insights/${slug}/hardest-topics`;
 
   return {
-    title: `${canonicalName} Hardest Topics & Failure Rates | AceThePrep Insights`,
+    title: `${canonicalName} Hardest Topics & Failure Rates — Insights`,
     description: `Student performance data for ${canonicalName}. Ranked list of topics by student error rates and time spent per question, derived from real practice sessions.`,
     alternates: {
       canonical: canonicalUrl,
