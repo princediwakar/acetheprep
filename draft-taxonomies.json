@@ -13,7 +13,7 @@
     "General Studies I": ["Indian History", "Art and Culture", "World Geography", "Indian Society"],
     "General Studies II": ["Indian Constitution", "Governance", "Social Justice", "International Relations"],
     "General Studies III": ["Economy", "Environment and Ecology", "Science and Technology", "Security and Disaster Management"],
-    "CSAT": ["Logical Reasoning", "Analytical Ability", "Decision Making", "Basic Numeracy", "Data Interpretation"]
+    "CSAT": ["Reading Comprehension", "Logical Reasoning", "Analytical Ability", "Decision Making", "Basic Numeracy", "Data Interpretation"]
   },
   "GMAT Focus": {
     "Quantitative Reasoning": ["Arithmetic", "Algebra"],

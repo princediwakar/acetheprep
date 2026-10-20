@@ -1286,4 +1286,289 @@ export const UPSC_CSAT_QUESTIONS: SeedQuestion[] = [
     misconception: "Confusing highest absolute water volume gained (Dam Y with 520 MCM) with highest percentage increase relative to base level (Dam Z with 620%).",
     time_estimate_seconds: 60,
   },
+
+  // =============================================================
+  // CSAT: Reading Comprehension (11 Questions across 4 Passages)
+  // =============================================================
+  // Passage 1: Ecological Economics & Groundwater Commons (265 words)
+  {
+    exam_name: "UPSC CSE",
+    subject: "CSAT",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 3,
+    passage_id: "upsc_csat_groundwater_commons",
+    passage: `Groundwater in peninsular and semi-arid India represents the quintessential open-access common-pool resource. Because property rights over subterranean aquifers remain legally tethered to surface land ownership under outdated colonial tenancy jurisprudence, landowners possess unrestricted legal rights to extract unlimited water from beneath their plots. The widespread subsidization of agricultural electricity has accelerated this race to the bottom: solar and grid subsidies reduce the marginal energy cost of pumping to near zero, incentivizing farmers to drill ever-deeper borewells.
+
+The ecological consequence is catastrophic aquifer depletion that disproportionately impoverishes marginal and smallholder farmers who lack the capital to bore beyond critical fracture zones. Crucially, technological solutions such as micro-irrigation systems (drip and sprinkler), while improving field-level water application efficiency, paradoxically fail to reduce basin-level water consumption. When subsidized drip irrigation increases crop profitability, farmers invariably expand irrigated acreage or switch to more water-intensive cash crops, thereby exacerbating aggregate aquifer depletion—a classic manifestation of Jevons' Paradox in resource economics.`,
+    question_text: "Which of the following statements best reflects the most critical and rational message conveyed by the passage?",
+    options: {
+      A: "Surface land ownership should be permanently decoupled from subterranean aquifer rights, and technical efficiency gains must be governed by aggregate volumetric extraction limits.",
+      B: "Micro-irrigation techniques such as drip and sprinkler should be discontinued immediately across peninsular India.",
+      C: "Subsidized agricultural electricity is the sole cause of subterranean aquifer exhaustion.",
+      D: "Small and marginal farmers are primarily responsible for drilling unsustainable deep borewells.",
+    },
+    correct_option: "A",
+    explanation: "The passage identifies two foundational structural flaws: legal linkage of water rights to land ownership and Jevons' paradox (where micro-irrigation paradoxically expands aggregate consumption in the absence of extraction limits). The critical message is addressing these structural foundations: decoupling rights and capping aggregate volumetric extraction.",
+    distractor_analysis: {
+      A: "Correct. Directly addresses the root causes: legal property framework and the aggregate limit needed to overcome Jevons' paradox.",
+      B: "Incorrect. Extreme and absurd takeaway; micro-irrigation is beneficial if aggregate extraction is capped.",
+      C: "Incorrect. The passage identifies legal frameworks, crop choice incentives, and subsidies collectively, not electricity subsidies alone.",
+      D: "Incorrect. The passage explicitly states smallholders are victims who lack capital to drill deeper.",
+    },
+    misconception: "Assuming technological efficiency improvements automatically equate to resource conservation without considering economic rebound effects.",
+    time_estimate_seconds: 75,
+  },
+  {
+    exam_name: "UPSC CSE",
+    subject: "CSAT",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 3,
+    passage_id: "upsc_csat_groundwater_commons",
+    passage: `Groundwater in peninsular and semi-arid India represents the quintessential open-access common-pool resource. Because property rights over subterranean aquifers remain legally tethered to surface land ownership under outdated colonial tenancy jurisprudence, landowners possess unrestricted legal rights to extract unlimited water from beneath their plots. The widespread subsidization of agricultural electricity has accelerated this race to the bottom: solar and grid subsidies reduce the marginal energy cost of pumping to near zero, incentivizing farmers to drill ever-deeper borewells.
+
+The ecological consequence is catastrophic aquifer depletion that disproportionately impoverishes marginal and smallholder farmers who lack the capital to bore beyond critical fracture zones. Crucially, technological solutions such as micro-irrigation systems (drip and sprinkler), while improving field-level water application efficiency, paradoxically fail to reduce basin-level water consumption. When subsidized drip irrigation increases crop profitability, farmers invariably expand irrigated acreage or switch to more water-intensive cash crops, thereby exacerbating aggregate aquifer depletion—a classic manifestation of Jevons' Paradox in resource economics.`,
+    question_text: "Based on the passage, consider the following assumptions:\n1. Technological efficiency interventions cannot ensure resource conservation if unaccompanied by institutional regulation of total consumption.\n2. Subsidies that lower marginal operational costs often generate perverse environmental outcomes in open-access regimes.\n\nWhich of the assumptions given above is/are valid?",
+    options: {
+      A: "1 only",
+      B: "2 only",
+      C: "Both 1 and 2",
+      D: "Neither 1 nor 2",
+    },
+    correct_option: "C",
+    explanation: "Assumption 1 is valid: Jevons' Paradox illustrates that micro-irrigation fails to reduce basin-level use without aggregate caps. Assumption 2 is valid: zero-marginal-cost electricity subsidies accelerate aquifer depletion. Both assumptions logically underpin the author's argument.",
+    distractor_analysis: {
+      A: "Incorrect. Incomplete; assumption 2 is equally valid.",
+      B: "Incorrect. Incomplete; assumption 1 is equally valid.",
+      C: "Correct. Both assumptions are foundational to the author's diagnosis.",
+      D: "Incorrect. Both premises are demonstrably sound based on the text.",
+    },
+    misconception: "Treating each valid assumption as mutually exclusive.",
+    time_estimate_seconds: 70,
+  },
+  {
+    exam_name: "UPSC CSE",
+    subject: "CSAT",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 2,
+    passage_id: "upsc_csat_groundwater_commons",
+    passage: `Groundwater in peninsular and semi-arid India represents the quintessential open-access common-pool resource. Because property rights over subterranean aquifers remain legally tethered to surface land ownership under outdated colonial tenancy jurisprudence, landowners possess unrestricted legal rights to extract unlimited water from beneath their plots. The widespread subsidization of agricultural electricity has accelerated this race to the bottom: solar and grid subsidies reduce the marginal energy cost of pumping to near zero, incentivizing farmers to drill ever-deeper borewells.
+
+The ecological consequence is catastrophic aquifer depletion that disproportionately impoverishes marginal and smallholder farmers who lack the capital to bore beyond critical fracture zones. Crucially, technological solutions such as micro-irrigation systems (drip and sprinkler), while improving field-level water application efficiency, paradoxically fail to reduce basin-level water consumption. When subsidized drip irrigation increases crop profitability, farmers invariably expand irrigated acreage or switch to more water-intensive cash crops, thereby exacerbating aggregate aquifer depletion—a classic manifestation of Jevons' Paradox in resource economics.`,
+    question_text: "In the context of the passage, 'Jevons' Paradox' refers to the situation where:",
+    options: {
+      A: "Technological improvements in water efficiency lead to an overall increase in water consumption rather than a decrease.",
+      B: "Subsidies designed to help small farmers end up benefiting only wealthy industrial landowners.",
+      C: "Drilling deeper borewells results in saline water contamination rather than potable freshwater.",
+      D: "Increasing electricity tariffs causes farmers to abandon farming entirely.",
+    },
+    correct_option: "A",
+    explanation: "The passage directly defines Jevons' Paradox in this context: 'When subsidized drip irrigation increases crop profitability, farmers invariably expand irrigated acreage or switch to more water-intensive cash crops, thereby exacerbating aggregate aquifer depletion.'",
+    distractor_analysis: {
+      A: "Correct. Direct and exact definition of Jevons' Paradox given in the text.",
+      B: "Incorrect. This describes subsidy capture, not Jevons' Paradox.",
+      C: "Incorrect. This describes physical aquifer salinization.",
+      D: "Incorrect. Completely unrelated to the economic paradox.",
+    },
+    misconception: "Confusing general economic inequality with specific technological rebound paradoxes.",
+    time_estimate_seconds: 60,
+  },
+
+  // Passage 2: Algorithmic Governance & Democratic Deliberation (250 words)
+  {
+    exam_name: "UPSC CSE",
+    subject: "CSAT",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 3,
+    passage_id: "upsc_csat_algorithmic_governance",
+    passage: `The deployment of automated algorithmic decision-making in public administrative systems is frequently championed under the banner of procedural objectivity and bureaucratic optimization. Proponents assert that replacing discretionary civil service human judgment with algorithmic risk-scoring eliminates individual corruption, nepotism, and cognitive fatigue. In welfare allocation, criminal bail determinations, and public housing prioritization, predictive models are marketed as value-neutral statistical instruments.
+
+However, this technocratic optimism obscures a profound democratic hazard. Machine-learning models do not operate in a sociological vacuum; their training data inevitably mirrors historical structural inequities, institutional prejudices, and administrative enforcement biases. When an algorithm is trained on decades of arrest records or welfare denial histories that reflect historical discrimination, the model mathematically formalizes and codifies those past injustices under the deceptive veneer of mathematical precision. 
+
+Worse still, unlike bureaucratic decisions made by public officials who can be questioned through administrative law, parliamentary inquiries, or judicial review, proprietary algorithmic architectures operate as opaque 'black boxes.' When citizens cannot interrogate the computational weights, feature importance, or logic underpinning decisions that curtail their constitutional liberties, the core principle of administrative accountability—reasoned decision-making subject to appeal—is fundamentally eviscerated.`,
+    question_text: "Which of the following is the most logical and critical inference that can be drawn from the passage?",
+    options: {
+      A: "Automated predictive tools in public administration must be made subject to transparency, explainability, and legal scrutiny to prevent the entrenchment of historical bias.",
+      B: "Modern computing technology has no useful application in public administrative services.",
+      C: "Human bureaucratic discretion is completely free of prejudices and should always replace predictive algorithms.",
+      D: "Private corporations should be granted exclusive sovereign authority to regulate public welfare delivery.",
+    },
+    correct_option: "A",
+    explanation: "The passage highlights two major threats: the uncritical encoding of historical biases as mathematical truth and the destruction of democratic accountability due to opaque 'black-box' systems. The logical inference is that algorithmic governance must be subjected to public transparency, explainability, and institutional review.",
+    distractor_analysis: {
+      A: "Correct. Accurately synthesizes the author's critique into a constructive democratic standard.",
+      B: "Incorrect. Extreme and unsupported rejection of all computing technology.",
+      C: "Incorrect. The passage acknowledges human judgment had corruption and fatigue issues.",
+      D: "Incorrect. The passage warns against proprietary private control over sovereign public functions.",
+    },
+    misconception: "Assuming the author's critique of algorithmic opacity implies an uncritical defense of historical human bureaucratic discretion.",
+    time_estimate_seconds: 75,
+  },
+  {
+    exam_name: "UPSC CSE",
+    subject: "CSAT",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 3,
+    passage_id: "upsc_csat_algorithmic_governance",
+    passage: `The deployment of automated algorithmic decision-making in public administrative systems is frequently championed under the banner of procedural objectivity and bureaucratic optimization. Proponents assert that replacing discretionary civil service human judgment with algorithmic risk-scoring eliminates individual corruption, nepotism, and cognitive fatigue. In welfare allocation, criminal bail determinations, and public housing prioritization, predictive models are marketed as value-neutral statistical instruments.
+
+However, this technocratic optimism obscures a profound democratic hazard. Machine-learning models do not operate in a sociological vacuum; their training data inevitably mirrors historical structural inequities, institutional prejudices, and administrative enforcement biases. When an algorithm is trained on decades of arrest records or welfare denial histories that reflect historical discrimination, the model mathematically formalizes and codifies those past injustices under the deceptive veneer of mathematical precision. 
+
+Worse still, unlike bureaucratic decisions made by public officials who can be questioned through administrative law, parliamentary inquiries, or judicial review, proprietary algorithmic architectures operate as opaque 'black boxes.' When citizens cannot interrogate the computational weights, feature importance, or logic underpinning decisions that curtail their constitutional liberties, the core principle of administrative accountability—reasoned decision-making subject to appeal—is fundamentally eviscerated.`,
+    question_text: "According to the author, the primary danger of using predictive models trained on historical public records is that they:",
+    options: {
+      A: "Mathematicalize and institutionalize past societal prejudices under the guise of scientific objectivity.",
+      B: "Process administrative records much slower than human bureaucrats.",
+      C: "Require massive physical paper storage facilities in municipal government offices.",
+      D: "Invariably cause immediate state financial bankruptcy.",
+    },
+    correct_option: "A",
+    explanation: "The author explicitly warns that because training data mirrors historical inequities, predictive models 'mathematically formalize and codify those past injustices under the deceptive veneer of mathematical precision.'",
+    distractor_analysis: {
+      A: "Correct. Precise alignment with the central thesis of the second paragraph.",
+      B: "Incorrect. Computational models are faster, not slower.",
+      C: "Incorrect. Digital models reduce paper storage.",
+      D: "Incorrect. Financial bankruptcy is unaddressed.",
+    },
+    misconception: "Overlooking the sociological critique of algorithmic training data.",
+    time_estimate_seconds: 65,
+  },
+
+  // Passage 3: Public Health Ethics & Patent Monopolies (240 words)
+  {
+    exam_name: "UPSC CSE",
+    subject: "CSAT",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 2,
+    passage_id: "upsc_csat_public_health_ip",
+    passage: `The intersection of intellectual property rights and global public health presents a profound ethical tension between private capital incentives and universal human rights. Under the WTO TRIPS Agreement, pharmaceutical conglomerates enjoy twenty-year patent monopolies on novel therapeutic formulations, justified by the immense financial risks and capital expenditures required for biomedical research and clinical trials. Monopolistic pricing enables pharmaceutical developers to recoup R&D investments and generate shareholder returns.
+
+However, during pandemic emergencies or endemic communicable crises in the Global South, monopolistic pricing renders life-saving therapeutics inaccessible to impoverished populations, transforming treatable illnesses into mass mortality events. Public health ethicists argue that essential medicines cannot be treated as ordinary commercial commodities. When foundational biomedical breakthroughs are overwhelmingly funded by public taxpayer grants through government research institutes, granting exclusive private monopoly rights that restrict manufacturing and price out the vulnerable subverts the social contract of biomedical innovation.`,
+    question_text: "Which of the following best reflects the crux of the author's argument?",
+    options: {
+      A: "Publicly funded biomedical innovations must balance intellectual property incentives with equitable access to prevent life-saving therapies from being commodified beyond the reach of the poor.",
+      B: "The World Trade Organization should eliminate all patent protection for all industrial products permanently.",
+      C: "Private pharmaceutical companies do not spend any capital on clinical trial procedures.",
+      D: "Government research institutes should stop funding biomedical scientific inquiries.",
+    },
+    correct_option: "A",
+    explanation: "The author argues that while monopolies are justified by private R&D costs, public funding and universal health ethics demand that essential medicines not be restricted as pure commodities during health crises. Option A captures this ethical balance.",
+    distractor_analysis: {
+      A: "Correct. Captures the essential dilemma and ethical demand for accessible therapies.",
+      B: "Incorrect. Extreme absolute generalization beyond pharmaceuticals.",
+      C: "Incorrect. The author explicitly acknowledges immense private expenditures.",
+      D: "Incorrect. The author emphasizes public funding as a reason to ensure public benefit.",
+    },
+    misconception: "Confusing a call for public health exceptions with the complete abolition of all intellectual property across all industries.",
+    time_estimate_seconds: 70,
+  },
+  {
+    exam_name: "UPSC CSE",
+    subject: "CSAT",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 3,
+    passage_id: "upsc_csat_public_health_ip",
+    passage: `The intersection of intellectual property rights and global public health presents a profound ethical tension between private capital incentives and universal human rights. Under the WTO TRIPS Agreement, pharmaceutical conglomerates enjoy twenty-year patent monopolies on novel therapeutic formulations, justified by the immense financial risks and capital expenditures required for biomedical research and clinical trials. Monopolistic pricing enables pharmaceutical developers to recoup R&D investments and generate shareholder returns.
+
+However, during pandemic emergencies or endemic communicable crises in the Global South, monopolistic pricing renders life-saving therapeutics inaccessible to impoverished populations, transforming treatable illnesses into mass mortality events. Public health ethicists argue that essential medicines cannot be treated as ordinary commercial commodities. When foundational biomedical breakthroughs are overwhelmingly funded by public taxpayer grants through government research institutes, granting exclusive private monopoly rights that restrict manufacturing and price out the vulnerable subverts the social contract of biomedical innovation.`,
+    question_text: "Based on the passage, the author's reference to taxpayer-funded research grants serves primarily to:",
+    options: {
+      A: "Challenge the moral claim that private pharmaceutical monopolies alone bear the full financial burden of foundational biomedical discovery.",
+      B: "Prove that government agencies are more efficient drug manufacturers than private pharmaceutical corporations.",
+      C: "Demonstrate that university laboratories should be privatized immediately.",
+      D: "Argue that clinical trials should no longer be required for life-saving therapeutics.",
+    },
+    correct_option: "A",
+    explanation: "By highlighting that breakthroughs are often publicly funded by taxpayers, the author undermines the argument that private corporations took all the risk and therefore have an unrestricted moral right to exclude patients through monopoly pricing.",
+    distractor_analysis: {
+      A: "Correct. Directly identifies the rhetorical role of public research grants in questioning absolute private monopoly claims.",
+      B: "Incorrect. Manufacturing efficiency is not compared.",
+      C: "Incorrect. The author argues for public benefit, not privatization.",
+      D: "Incorrect. Safety and clinical trials are not challenged.",
+    },
+    misconception: "Interpreting an ethical argument about risk-reward distribution as a technical comparison of manufacturing efficiency.",
+    time_estimate_seconds: 65,
+  },
+
+  // Passage 4: Constitutional Neutrality & Civil Service (260 words)
+  {
+    exam_name: "UPSC CSE",
+    subject: "CSAT",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 3,
+    passage_id: "upsc_csat_civil_service_neutrality",
+    passage: `The foundational premise of the permanent civil service in a constitutional parliamentary democracy is political neutrality and institutional autonomy. While elected political executives represent the transitory democratic mandate of the electoral majority, the permanent bureaucracy provides institutional memory, continuity of administrative governance, and adherence to the rule of law. A civil servant owes primary constitutional fidelity not to the ideological party currently occupying executive office, but to the Constitution and statutory enactments.
+
+In contemporary administrative practice, however, the boundary between policy execution and partisan alignment has become increasingly fragile. When career advancement, plum postings, and post-retirement sinecures are conditioned upon demonstrated ideological compliance, civil servants face perverse careerist incentives to succumb to executive overreach. The erosion of civil service neutrality replaces evidence-based policy appraisal with sycophantic accommodation. When public servants cease speaking truth to political power, public policy decisions deteriorate into short-term populism, hollow sloganism, and unchecked administrative arbitrariness, ultimately hollowing out the democratic constitutional order from within.`,
+    question_text: "Which of the following is the most decisive and critical takeaway from the passage?",
+    options: {
+      A: "Insulating civil service career appointments and transfers from partisan political discretion is essential for preserving evidence-based governance and constitutional integrity.",
+      B: "Elected political executives should have unconditional authority to appoint their own loyal partisan supporters to permanent civil service positions.",
+      C: "Permanent civil servants should contest parliamentary elections to secure direct democratic legitimacy.",
+      D: "Administrative memory and procedural continuity are unnecessary in modern fast-paced governance.",
+    },
+    correct_option: "A",
+    explanation: "The author shows that when career postings are tied to political compliance, civil service neutrality collapses, causing evidence-based governance to fail. The essential takeaway is protecting civil service appointments from partisan interference to uphold constitutional integrity.",
+    distractor_analysis: {
+      A: "Correct. Highlights the necessary institutional safeguard to prevent bureaucratic politicization.",
+      B: "Incorrect. This spoils-system approach directly causes the deterioration described by the author.",
+      C: "Incorrect. The civil service is explicitly premised on permanent neutrality, not political contestation.",
+      D: "Incorrect. The author explicitly praises institutional memory and continuity.",
+    },
+    misconception: "Confusing democratic executive authority with the destruction of constitutional civil service autonomy.",
+    time_estimate_seconds: 70,
+  },
+  {
+    exam_name: "UPSC CSE",
+    subject: "CSAT",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 2,
+    passage_id: "upsc_csat_civil_service_neutrality",
+    passage: `The foundational premise of the permanent civil service in a constitutional parliamentary democracy is political neutrality and institutional autonomy. While elected political executives represent the transitory democratic mandate of the electoral majority, the permanent bureaucracy provides institutional memory, continuity of administrative governance, and adherence to the rule of law. A civil servant owes primary constitutional fidelity not to the ideological party currently occupying executive office, but to the Constitution and statutory enactments.
+
+In contemporary administrative practice, however, the boundary between policy execution and partisan alignment has become increasingly fragile. When career advancement, plum postings, and post-retirement sinecures are conditioned upon demonstrated ideological compliance, civil servants face perverse careerist incentives to succumb to executive overreach. The erosion of civil service neutrality replaces evidence-based policy appraisal with sycophantic accommodation. When public servants cease speaking truth to political power, public policy decisions deteriorate into short-term populism, hollow sloganism, and unchecked administrative arbitrariness, ultimately hollowing out the democratic constitutional order from within.`,
+    question_text: "According to the passage, the primary constitutional allegiance of a permanent civil servant is owed to:",
+    options: {
+      A: "The Constitution and statutory legal frameworks.",
+      B: "The leadership of the currently governing political party.",
+      C: "Private industry lobby associations in their jurisdiction.",
+      D: "The immediate supervisor who conducts annual performance appraisals.",
+    },
+    correct_option: "A",
+    explanation: "The first paragraph explicitly states: 'A civil servant owes primary constitutional fidelity not to the ideological party currently occupying executive office, but to the Constitution and statutory enactments.'",
+    distractor_analysis: {
+      A: "Correct. Direct and exact textual statement.",
+      B: "Incorrect. The author explicitly rejects allegiance to the governing party.",
+      C: "Incorrect. Private lobbies are not mentioned.",
+      D: "Incorrect. Careerism based on appraisal compliance is diagnosed as a pathology, not an allegiance.",
+    },
+    misconception: "Equating duty to the government of the day with constitutional duty to the statutory legal order.",
+    time_estimate_seconds: 55,
+  },
+  {
+    exam_name: "UPSC CSE",
+    subject: "CSAT",
+    skill_domain: "Reading Comprehension",
+    difficulty_tier: 3,
+    passage_id: "upsc_csat_civil_service_neutrality",
+    passage: `The foundational premise of the permanent civil service in a constitutional parliamentary democracy is political neutrality and institutional autonomy. While elected political executives represent the transitory democratic mandate of the electoral majority, the permanent bureaucracy provides institutional memory, continuity of administrative governance, and adherence to the rule of law. A civil servant owes primary constitutional fidelity not to the ideological party currently occupying executive office, but to the Constitution and statutory enactments.
+
+In contemporary administrative practice, however, the boundary between policy execution and partisan alignment has become increasingly fragile. When career advancement, plum postings, and post-retirement sinecures are conditioned upon demonstrated ideological compliance, civil servants face perverse careerist incentives to succumb to executive overreach. The erosion of civil service neutrality replaces evidence-based policy appraisal with sycophantic accommodation. When public servants cease speaking truth to political power, public policy decisions deteriorate into short-term populism, hollow sloganism, and unchecked administrative arbitrariness, ultimately hollowing out the democratic constitutional order from within.`,
+    question_text: "The author implies that when civil servants succumb to sycophantic accommodation, the immediate casualty in public policy formulation is:",
+    options: {
+      A: "Objective, evidence-based policy analysis and adherence to procedural legality.",
+      B: "The total collapse of foreign diplomatic treaties.",
+      C: "A surge in tax revenues collected by the central treasury.",
+      D: "The immediate privatization of municipal transport networks.",
+    },
+    correct_option: "A",
+    explanation: "The passage notes: 'The erosion of civil service neutrality replaces evidence-based policy appraisal with sycophantic accommodation.' The casualty is rigorous, evidence-based policy appraisal.",
+    distractor_analysis: {
+      A: "Correct. Directly captures the textual causal link.",
+      B: "Incorrect. Foreign treaties are unmentioned.",
+      C: "Incorrect. Tax surges are unrelated.",
+      D: "Incorrect. Municipal transport is not discussed.",
+    },
+    misconception: "Assuming bureaucratic compliance affects only international diplomacy rather than domestic evidence-based policy formulation.",
+    time_estimate_seconds: 60,
+  },
 ];

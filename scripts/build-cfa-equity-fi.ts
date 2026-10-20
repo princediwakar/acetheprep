@@ -16,13 +16,13 @@ function q(
   trap: string,
   time: number = 60
 ): SeedQuestion {
-  const letters = ["A", "B", "C", "D"] as const;
+  const letters = ["A", "B", "C"] as const;
   const dist: Record<string, string> = {};
   for (const l of letters) {
     if (l === ans) {
-      dist[l] = `Correct. ${exp.slice(0, 80)}`;
+      dist[l] = `Correct. ${exp}`;
     } else {
-      dist[l] = `Incorrect. Common distractor based on: ${trap.slice(0, 60)}`;
+      dist[l] = `Incorrect. Common distractor based on: ${trap}`;
     }
   }
   return {

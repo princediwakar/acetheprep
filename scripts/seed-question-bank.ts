@@ -197,6 +197,10 @@ async function importCuratedSeed(dryRun: boolean = false) {
 
   for (const q of ALL_BANKS) {
 
+    const metadata_json = (q.passage || q.passage_id)
+      ? { passage: q.passage, passage_id: q.passage_id }
+      : {};
+
     const record = {
       exam_name: q.exam_name,
       subject: q.subject,
@@ -209,6 +213,7 @@ async function importCuratedSeed(dryRun: boolean = false) {
       distractor_analysis: q.distractor_analysis,
       misconception: q.misconception,
       time_estimate_seconds: q.time_estimate_seconds,
+      metadata_json,
     };
 
     if (dryRun) {
@@ -264,6 +269,13 @@ async function generateForExam(targetExam?: string, questionsPerDomain: number =
         }
 
         try {
+          const isDeepSeek = ai!.model.includes("deepseek");
+          const isPassage = /reading|comprehension|rc|passage|caselet|dilr/i.test(domain);
+          const perQTokens = isPassage ? 2500 : 1000;
+          const maxTokens = isDeepSeek
+            ? Math.max(questionsPerDomain * perQTokens + (isPassage ? 4000 : 2000), 16384)
+            : Math.max(questionsPerDomain * 1000 + 2000, 4096);
+
           const completion = await ai!.client.chat.completions.create({
             model: ai!.model,
             messages: [
@@ -272,8 +284,8 @@ async function generateForExam(targetExam?: string, questionsPerDomain: number =
             ],
             response_format: { type: "json_object" },
             temperature: 0.7,
-            max_tokens: Math.max(questionsPerDomain * 1000 + 2000, 4096),
-            ...(ai!.model.includes("deepseek") ? { thinking: { type: "disabled" } } : {}),
+            max_tokens: maxTokens,
+            ...(isDeepSeek ? { thinking: { type: "disabled" } } : {}),
           } as any);
 
 
@@ -301,6 +313,9 @@ async function generateForExam(targetExam?: string, questionsPerDomain: number =
             distractor_analysis: q.distractor_analysis || {},
             misconception: q.misconception || null,
             time_estimate_seconds: q.time_estimate_seconds || 60,
+            metadata_json: (q.passage || q.passage_id)
+              ? { passage: q.passage, passage_id: q.passage_id }
+              : {},
           }));
 
           const { error: upsertError } = await admin!

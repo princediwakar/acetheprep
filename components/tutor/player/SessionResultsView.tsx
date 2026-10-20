@@ -89,16 +89,16 @@ export function SessionResultsView({
           <ThemeToggle />
           <Button
             size="sm"
-            variant="ghost"
+            variant="default"
             onClick={onBackToDashboard}
-            className="text-muted-foreground hover:text-foreground"
           >
             Dashboard
           </Button>
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto p-4 sm:p-6 max-w-4xl mx-auto w-full space-y-6">
+      <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 w-full">
+        <div className="max-w-4xl mx-auto space-y-6">
         <div className="text-center space-y-2 pt-4">
           <h1 className="font-heading text-3xl font-semibold tracking-tight text-foreground">
             Session Performance Breakdown
@@ -330,6 +330,7 @@ export function SessionResultsView({
           >
             Back to Dashboard
           </Button>
+        </div>
         </div>
       </main>
     </div>

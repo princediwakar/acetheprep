@@ -376,7 +376,13 @@ export async function generateAndCreateSession(
           entropySeed,
         });
 
-    const maxTokens = Math.max(neededFromAI * 1200 + 2000, 4096);
+    const isPassageDomain = aiTargetDomains.some((d) =>
+      /reading|comprehension|rc|passage|caselet|dilr|case/i.test(d.skillDomain)
+    );
+    const isDeepSeek = IS_DEEPSEEK || MODEL.includes("deepseek");
+    const perQuestionTokens = isPassageDomain ? 2500 : 1200;
+    const baseTokens = neededFromAI * perQuestionTokens + (isPassageDomain ? 4000 : 2000);
+    const maxTokens = isDeepSeek ? Math.max(baseTokens, 16384) : Math.max(baseTokens, 4096);
 
     async function callAI(temp: number, promptOverride?: string): Promise<string> {
       const completion = await openai.chat.completions.create({
@@ -388,7 +394,7 @@ export async function generateAndCreateSession(
         temperature: temp,
         max_tokens: maxTokens,
         response_format: { type: "json_object" as const },
-        ...(IS_DEEPSEEK || MODEL.includes("deepseek") ? { thinking: { type: "disabled" } } : {}),
+        ...(isDeepSeek ? { thinking: { type: "disabled" } } : {}),
       } as any);
       return completion.choices[0]?.message?.content || "";
     }
@@ -460,7 +466,13 @@ export async function generateAndCreateSession(
         entropySeed: `${entropySeed}_b${batchIdx}`,
       });
 
-      const maxTokens = Math.max(batchCount * 1200 + 2000, 4096);
+      const isBatchPassageDomain = batchDomains.some((d) =>
+        /reading|comprehension|rc|passage|caselet|dilr|case/i.test(d.skillDomain)
+      );
+      const isDeepSeek = IS_DEEPSEEK || MODEL.includes("deepseek");
+      const perQuestionTokens = isBatchPassageDomain ? 2500 : 1200;
+      const baseTokens = batchCount * perQuestionTokens + (isBatchPassageDomain ? 4000 : 2000);
+      const maxTokens = isDeepSeek ? Math.max(baseTokens, 16384) : Math.max(baseTokens, 4096);
 
       async function callBatchAI(temp: number, promptOverride?: string): Promise<string> {
         const completion = await openai.chat.completions.create({
@@ -472,7 +484,7 @@ export async function generateAndCreateSession(
           temperature: temp,
           max_tokens: maxTokens,
           response_format: { type: "json_object" as const },
-          ...(IS_DEEPSEEK || MODEL.includes("deepseek") ? { thinking: { type: "disabled" } } : {}),
+          ...(isDeepSeek ? { thinking: { type: "disabled" } } : {}),
         } as any);
         return completion.choices[0]?.message?.content || "";
       }
