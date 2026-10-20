@@ -9,9 +9,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { Metadata } from "next";
 import type { SelfAssessment } from "@/types/tutor";
 import taxonomy from "@/lib/taxonomies.json";
+import { slugToExam, GLOBAL_EXAM_PRIORITY } from "@/lib/slugs";
+import { Sparkles, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
 
 const TAXONOMY = taxonomy as unknown as Record<string, Record<string, string[]>>;
-const EXAM_NAMES = Object.keys(TAXONOMY).filter((k) => k !== "_schema_version");
+const EXAM_NAMES = Object.keys(TAXONOMY)
+  .filter((k) => k !== "_schema_version")
+  .sort((a, b) => {
+    const ia = GLOBAL_EXAM_PRIORITY.indexOf(a);
+    const ib = GLOBAL_EXAM_PRIORITY.indexOf(b);
+    return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+  });
 const EXAM_SUBJECTS: Record<string, string[]> = {};
 for (const exam of EXAM_NAMES) {
   EXAM_SUBJECTS[exam] = Object.keys(TAXONOMY[exam] ?? {});
@@ -25,10 +33,6 @@ export const metadata: Metadata = {
     follow: false,
   },
 };
-
-
-import { Sparkles, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
-import { slugToExam } from "@/lib/slugs";
 
 export default async function SetupPage({
   searchParams,

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none">
+  <!-- AceThePrep App Icon / Emblem (Light Mode) -->
+  <defs>
+    <linearGradient id="bgLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f8fafc" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer Rounded Squircle Tile -->
+  <rect x="8" y="8" width="496" height="496" rx="112" fill="url(#bgLight)" />
+  <rect x="8" y="8" width="496" height="496" rx="112" stroke="#E2E8F0" stroke-width="4" />
+  
+  <!-- Central Stylized 'A' -->
+  <path d="M298.91 294.84L204.27 294.84L204.27 279.16L298.91 279.16L298.91 294.84M264.05 170.24L338.53 346.78L360.23 354.48L360.23 361.76L281.69 361.76L281.69 354.48L305.77 347.06L242.91 195.02L250.89 195.02L191.95 347.06L214.91 354.48L214.91 361.76L151.77 361.76L151.77 354.48L173.61 347.06L245.29 170.24" fill="#0F172A" />
+  
+  <!-- Signature Blue Accent Dot -->
+  <circle cx="376.23" cy="331.76" r="18" fill="#2563EB" />
+</svg>

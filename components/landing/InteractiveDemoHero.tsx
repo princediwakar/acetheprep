@@ -42,13 +42,7 @@ const demoQuestions = demoQuestionsRaw as unknown as {
   exams: Record<string, DemoEntry>;
 };
 
-// Global primary standardized tracks (SAT, GRE, GMAT, CFA)
-const GLOBAL_FEATURED_EXAMS = [
-  { id: "SAT", label: "Digital SAT", badge: "College Board" },
-  { id: "GRE", label: "GRE General", badge: "ETS" },
-  { id: "GMAT Focus", label: "GMAT Focus", badge: "GMAC" },
-  { id: "CFA Level 1", label: "CFA Level 1", badge: "CFA Institute" },
-];
+import SupportedExamsBar, { ALL_SUPPORTED_EXAMS } from "@/components/landing/SupportedExamsBar";
 
 // Conceptual / formula hints for users wondering how to approach the problem
 const EXAM_HINTS: Record<string, string> = {
@@ -60,6 +54,10 @@ const EXAM_HINTS: Record<string, string> = {
     "The Zero Trap: |x| = x implies x ≥ 0 (not strictly x > 0), because |0| = 0. Always test 0 as a critical boundary condition.",
   "CFA Level 1":
     "Effective Annual Rate: EAR = (1 + r/m)^m − 1. For monthly compounding (m = 12), EAR is always strictly greater than nominal APR because interest earns interest across periods.",
+  "IELTS Academic":
+    "In IELTS Reading, 'False' means the passage contradicts the claim; 'Not Given' means the passage neither confirms nor denies it. Never extrapolate external real-world knowledge beyond the text.",
+  "TOEFL iBT":
+    "In TOEFL Sentence Insertion, verify cohesive pronoun references ('this result', 'such factors') and transition contrasts ('however', 'consequently') around the insertion point.",
   "JEE Main":
     "Lens Maker's Formula: 1/f = (n − 1)(1/R₁ − 1/R₂). Cartesian sign convention: front surface is convex (R₁ = +15 cm), rear surface is curved inward relative to incident ray (R₂ = −10 cm).",
   "NEET":
@@ -457,7 +455,7 @@ export default function InteractiveDemoHero() {
                     fill="currentColor"
                   />
                 </svg>
-                <span>Get Exam-Ready Free</span>
+                <span>Get Started</span>
                 <ArrowRight className="h-4 w-4" />
               </button>
             ) : (
@@ -485,11 +483,11 @@ export default function InteractiveDemoHero() {
                   <option value="IELTS Academic">IELTS Academic</option>
                   <option value="TOEFL iBT">TOEFL iBT</option>
                 </optgroup>
-                <optgroup label="Other Curricula">
-                  <option value="CAT">CAT (IIM)</option>
-                  <option value="GATE">GATE</option>
+                <optgroup label="National Competitive Tracks">
                   <option value="JEE Main">JEE Main</option>
                   <option value="NEET">NEET</option>
+                  <option value="CAT">CAT (IIM)</option>
+                  <option value="GATE">GATE</option>
                   <option value="UPSC CSE">UPSC CSE</option>
                   <option value="CLAT">CLAT Law</option>
                   <option value="CA Foundation">CA Foundation</option>
@@ -531,10 +529,25 @@ export default function InteractiveDemoHero() {
         </motion.div>
 
         {/* ============================================================== */}
+        {/* Upfront Supported Curricula Showcase (All 13 Tracks)           */}
+        {/* ============================================================== */}
+        <motion.div
+          className="mt-8 sm:mt-10 mx-auto max-w-5xl"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.1 }}
+        >
+          <SupportedExamsBar
+            activeExam={exam}
+            onSelectExam={handleExamChange}
+          />
+        </motion.div>
+
+        {/* ============================================================== */}
         {/* 2. The Interactive Dual-Pane Diagnostic Cockpit                */}
         {/* ============================================================== */}
         <motion.div
-          className="mt-10 sm:mt-12 mx-auto max-w-5xl"
+          className="mt-8 sm:mt-10 mx-auto max-w-5xl"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
@@ -559,9 +572,9 @@ export default function InteractiveDemoHero() {
                 </span>
               </div>
 
-              {/* Segmented Global Track Tabs */}
+              {/* Segmented Track Tabs */}
               <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
-                {GLOBAL_FEATURED_EXAMS.map(({ id, label }) => {
+                {ALL_SUPPORTED_EXAMS.map(({ id, shortName }) => {
                   const isActive = exam === id;
                   return (
                     <button
@@ -569,13 +582,13 @@ export default function InteractiveDemoHero() {
                       type="button"
                       onClick={() => handleExamChange(id)}
                       className={cn(
-                        "whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition-all shrink-0 cursor-pointer",
+                        "whitespace-nowrap rounded-lg px-2.5 py-1 text-xs font-medium transition-all shrink-0 cursor-pointer",
                         isActive
-                          ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                          ? "bg-primary text-primary-foreground font-semibold shadow-xs"
                           : "text-muted-foreground hover:text-foreground hover:bg-secondary/60",
                       )}
                     >
-                      {label}
+                      {shortName}
                     </button>
                   );
                 })}

@@ -24,7 +24,7 @@ export const EXAM_CATEGORIES: ExamCategory[] = [
     id: "national-competitive",
     name: "National Competitive Tracks",
     description: "Engineering, Medical, Civil Services, Management & Law",
-    exams: ["JEE Main", "NEET", "UPSC CSE", "CAT", "GATE", "CLAT", "CA Foundation"],
+    exams: ["JEE Main", "NEET", "CAT", "GATE", "UPSC CSE", "CLAT", "CA Foundation"],
   },
 ];
 

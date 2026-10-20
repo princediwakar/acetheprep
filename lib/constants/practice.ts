@@ -9,9 +9,9 @@ export const EXAM_DATES: Record<string, string> = {
   "TOEFL iBT": "2026-12-31",
   "JEE Main": "2026-04-15",
   "NEET": "2026-05-07",
-  "UPSC CSE": "2026-05-28",
   "CAT": "2026-11-29",
   "GATE": "2026-02-15",
+  "UPSC CSE": "2026-05-28",
   "CLAT": "2026-12-15",
   "CA Foundation": "2026-06-15",
 };

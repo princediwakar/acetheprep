@@ -79,13 +79,6 @@ const EXAM_TRACKS: ExamTrack[] = [
     focus: "Time-Speed-Distance, Arrangements & Critical Reasoning",
   },
   {
-    slug: "upsc-cse",
-    name: "UPSC CSE",
-    badge: "Civil Services",
-    subjects: ["CSAT", "Polity & Governance", "Indian Economy"],
-    focus: "Syllogistic Deductions, Analytical Reasoning & Constitutional Law",
-  },
-  {
     slug: "gate",
     name: "GATE",
     badge: "Technical",
@@ -93,11 +86,25 @@ const EXAM_TRACKS: ExamTrack[] = [
     focus: "Linear Algebra Eigenvectors, Cache Coherence & Complexity",
   },
   {
+    slug: "upsc-cse",
+    name: "UPSC CSE",
+    badge: "Civil Services",
+    subjects: ["CSAT", "Polity & Governance", "Indian Economy"],
+    focus: "Syllogistic Deductions, Analytical Reasoning & Constitutional Law",
+  },
+  {
     slug: "clat",
     name: "CLAT",
     badge: "Law",
     subjects: ["Legal Reasoning", "Logical Reasoning", "Current Affairs"],
     focus: "Principle-Fact Deductions, Analogies & Legal Precedents",
+  },
+  {
+    slug: "ca-foundation",
+    name: "CA Foundation",
+    badge: "Accounting",
+    subjects: ["Accounting", "Business Laws", "Quantitative Aptitude", "Economics"],
+    focus: "Contract Act Precedents, Partnership Traps & Annuities",
   },
 ];
 

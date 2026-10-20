@@ -81,9 +81,9 @@ export const GLOBAL_EXAM_PRIORITY = [
   "TOEFL iBT",
   "JEE Main",
   "NEET",
-  "UPSC CSE",
   "CAT",
   "GATE",
+  "UPSC CSE",
   "CLAT",
   "CA Foundation",
 ];

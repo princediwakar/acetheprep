@@ -12,13 +12,13 @@ export default function SiteFooter({ className }: React.HTMLAttributes<HTMLEleme
     {
       title: "Supported Exams",
       items: [
+        { title: "Digital SAT", href: "/practice/sat" },
+        { title: "GRE General", href: "/practice/gre" },
         { title: "GMAT Focus", href: "/practice/gmat-focus" },
         { title: "CFA Level 1", href: "/practice/cfa-level-1" },
-        { title: "GRE General", href: "/practice/gre" },
-        { title: "Digital SAT", href: "/practice/sat" },
         { title: "JEE Main", href: "/practice/jee-main" },
         { title: "NEET Medical", href: "/practice/neet" },
-        { title: "View All Exams", href: "/practice" },
+        { title: "View All 13 Exams", href: "/practice" },
       ],
     },
     {

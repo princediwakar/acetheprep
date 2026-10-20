@@ -49,6 +49,7 @@ export interface SessionPlayerProps {
   initialScore?: number;
   initialTimeElapsed?: number;
   initialIndex?: number;
+  autoStart?: boolean;
 }
 
 const OPTION_LETTERS = ["A", "B", "C", "D"] as const;
@@ -73,11 +74,12 @@ export function SessionPlayer({
   initialScore,
   initialTimeElapsed,
   initialIndex = 0,
+  autoStart = false,
 }: SessionPlayerProps) {
   const router = useRouter();
 
   const [mode, setMode] = useState<"tutor" | "exam">(initialMode);
-  const [hasStarted, setHasStarted] = useState(isReviewMode || initialIndex > 0);
+  const [hasStarted, setHasStarted] = useState(isReviewMode || initialIndex > 0 || Boolean(autoStart));
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [selectedOption, setSelectedOption] = useState<SelectedOption | null>(null);
   const [answerState, setAnswerState] = useState<"pending" | "answered">("pending");
@@ -199,27 +201,24 @@ export function SessionPlayer({
       }));
 
       recordAnswer(option, correct, revealed, timeMs);
-
-      if (mode === "exam") {
-        setNextEnabled(true);
-      } else {
-        const delay = revealed
-          ? TUTOR_CONFIG.REVEAL_ANSWER_COOLDOWN_MS
-          : TUTOR_CONFIG.NEXT_QUESTION_DELAY_MS;
-        nextTimerRef.current = setTimeout(() => setNextEnabled(true), delay);
-      }
+      setNextEnabled(true);
     },
-    [recordAnswer, current?.question_id, mode]
+    [recordAnswer, current?.question_id]
   );
 
   const handleOptionClick = useCallback(
     (option: SelectedOption) => {
+      if (mode === "exam") {
+        setSelectedOption(option);
+        setNextEnabled(true);
+        return;
+      }
       if (answerState === "answered") return;
       const correct = option === current.correct_option;
       setSelectedOption(option);
       lockInAnswer(option, correct, false);
     },
-    [answerState, current, lockInAnswer]
+    [mode, answerState, current, lockInAnswer]
   );
 
   const handleReveal = useCallback(() => {
@@ -229,7 +228,14 @@ export function SessionPlayer({
   }, [answerState, lockInAnswer]);
 
   const handleNext = useCallback(() => {
-    if (!nextEnabled) return;
+    if (mode === "exam") {
+      if (!selectedOption) return;
+      const correct = selectedOption === current.correct_option;
+      lockInAnswer(selectedOption, correct, false);
+    } else {
+      if (!nextEnabled) return;
+    }
+
     const next = currentIndex + 1;
     if (next < total) {
       setCurrentIndex(next);
@@ -242,9 +248,27 @@ export function SessionPlayer({
     } else {
       setSessionComplete(true);
     }
-  }, [nextEnabled, currentIndex, total]);
+  }, [mode, selectedOption, nextEnabled, currentIndex, total, current, lockInAnswer]);
+
+  const handleSkipQuestion = useCallback(() => {
+    if (mode !== "exam") return;
+    lockInAnswer(null, false, false);
+    const next = currentIndex + 1;
+    if (next < total) {
+      setCurrentIndex(next);
+      setSelectedOption(null);
+      setAnswerState("pending");
+      setIsCorrect(null);
+      setIsRevealed(false);
+      setNextEnabled(false);
+      questionStartRef.current = Date.now();
+    } else {
+      setSessionComplete(true);
+    }
+  }, [mode, currentIndex, total, lockInAnswer]);
 
   const handleComplete = useCallback(async () => {
+    if (completing || completeResult) return;
     setCompleting(true);
     try {
       const res = await fetch(TUTOR_ROUTES.API_SESSION_COMPLETE, {
@@ -258,13 +282,20 @@ export function SessionPlayer({
       }
       const data = await res.json();
       setCompleteResult(data);
-      toast.success("Session completed! Check your dashboard for updated stats.");
+      toast.success("Session completed! SuperMemo-2 mastery calibrated.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to complete session. Try again.");
     } finally {
       setCompleting(false);
     }
-  }, [sessionId, examProfileId]);
+  }, [sessionId, examProfileId, completing, completeResult]);
+
+  // Automated persistence: save session mastery immediately when test completes
+  useEffect(() => {
+    if (sessionComplete && !isReviewMode && !completeResult && !completing) {
+      handleComplete();
+    }
+  }, [sessionComplete, isReviewMode, completeResult, completing, handleComplete]);
 
   const handleBackToDashboard = useCallback(() => {
     router.refresh();
@@ -338,22 +369,34 @@ export function SessionPlayer({
         }
         return;
       }
-      if (answerState === "answered") {
-        if (e.key === "Enter" && nextEnabled) {
+      if (mode === "tutor") {
+        if (answerState === "answered") {
+          if (e.key === "Enter" && nextEnabled) {
+            e.preventDefault();
+            handleNext();
+          }
+          return;
+        }
+        const key = e.key.toUpperCase();
+        if (OPTION_LETTERS.includes(key as SelectedOption)) {
+          e.preventDefault();
+          handleOptionClick(key as SelectedOption);
+        }
+      } else {
+        // Exam Mode
+        const key = e.key.toUpperCase();
+        if (OPTION_LETTERS.includes(key as SelectedOption)) {
+          e.preventDefault();
+          handleOptionClick(key as SelectedOption);
+        } else if (e.key === "Enter" && selectedOption) {
           e.preventDefault();
           handleNext();
         }
-        return;
-      }
-      const key = e.key.toUpperCase();
-      if (OPTION_LETTERS.includes(key as SelectedOption)) {
-        e.preventDefault();
-        handleOptionClick(key as SelectedOption);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [hasStarted, answerState, nextEnabled, handleNext, handleOptionClick, handleStartTest]);
+  }, [hasStarted, mode, answerState, nextEnabled, selectedOption, handleNext, handleOptionClick, handleStartTest]);
 
   if (!questions.length) {
     return (
@@ -511,6 +554,25 @@ export function SessionPlayer({
           </div>
         </div>
 
+        {/* Top Completion & Action Bar */}
+        {completing && (
+          <div className="flex items-center justify-center gap-3 p-4 rounded-xl bg-primary/10 border border-primary/20 text-sm animate-pulse">
+            <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <span className="font-semibold text-primary">Calibrating SuperMemo-2 mastery and updating readiness...</span>
+          </div>
+        )}
+
+        {!completing && !completeResult && !isReviewMode && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/25">
+            <span className="text-xs sm:text-sm font-medium text-amber-800 dark:text-amber-300">
+              Session completed. Finalizing calibration...
+            </span>
+            <Button size="sm" onClick={handleComplete} disabled={completing} className="font-bold">
+              Save & Calibrate Mastery
+            </Button>
+          </div>
+        )}
+
         {/* Readiness updates */}
         {completeResult && (
           <div className="space-y-3 border rounded-xl p-4 bg-muted/20">
@@ -531,6 +593,41 @@ export function SessionPlayer({
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Top Primary Actions */}
+        {(completeResult || isReviewMode) && (
+          <div className="grid gap-3 sm:grid-cols-2 pt-1">
+            {nextDomain ? (
+              <Button
+                className="w-full text-base py-5 font-bold shadow-sm"
+                size="lg"
+                onClick={handleStartNextTopic}
+                disabled={startingNext}
+              >
+                {startingNext ? "Starting..." : `Practice Next Topic: ${nextDomain}`}
+                <ChevronRight className="ml-2 h-5 w-5" />
+              </Button>
+            ) : isReviewMode ? (
+              <Button
+                className="w-full text-base py-5 font-bold shadow-sm"
+                size="lg"
+                onClick={() => router.push("/analytics")}
+              >
+                <ArrowLeft className="mr-2 h-5 w-5" />
+                Back to Analytics
+              </Button>
+            ) : null}
+            <Button
+              className="w-full text-base py-5 font-semibold"
+              size="lg"
+              variant={nextDomain || isReviewMode ? "outline" : "default"}
+              onClick={handleBackToDashboard}
+            >
+              <ArrowLeft className="mr-2 h-5 w-5" />
+              Back to Dashboard
+            </Button>
           </div>
         )}
 
@@ -578,6 +675,45 @@ export function SessionPlayer({
             </div>
           </div>
 
+          {/* Quick Jump Question Matrix */}
+          <div className="p-3.5 rounded-xl bg-muted/40 border border-border/60 space-y-2">
+            <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <span>Question Navigation Grid</span>
+              <span className="text-[11px] font-normal lowercase text-muted-foreground">Jump directly to question autopsy</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {questions.map((q, idx) => {
+                const attempt = userAttempts[q.question_id];
+                const isTrap = attempt?.selected && !attempt.isCorrect && Boolean(q.distractor_analysis?.[attempt.selected]);
+                const isCorrect = attempt?.isCorrect;
+                return (
+                  <button
+                    key={q.question_id}
+                    type="button"
+                    onClick={() => {
+                      setExpandedQuestions((prev) => ({ ...prev, [q.question_id]: true }));
+                      const el = document.getElementById(`question-card-${q.question_id}`);
+                      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }}
+                    className={cn(
+                      "w-7 h-7 rounded-lg text-xs font-bold transition-all flex items-center justify-center border",
+                      isCorrect
+                        ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20"
+                        : isTrap
+                        ? "bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-400 hover:bg-amber-500/25 ring-1 ring-amber-500/30"
+                        : attempt
+                        ? "bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-400 hover:bg-rose-500/20"
+                        : "bg-muted text-muted-foreground border-border hover:bg-muted/80"
+                    )}
+                    title={`Question ${idx + 1}: ${isCorrect ? "Correct" : isTrap ? "Trap Triggered" : "Incorrect"}`}
+                  >
+                    {idx + 1}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="space-y-4">
             {filteredQuestions.map((q) => {
               const attempt = userAttempts[q.question_id];
@@ -585,7 +721,11 @@ export function SessionPlayer({
               const isExpanded = expandedQuestions[q.question_id] ?? true;
 
               return (
-                <div key={q.question_id} className="border rounded-xl bg-card p-4 sm:p-5 space-y-4 shadow-sm transition-all">
+                <div
+                  key={q.question_id}
+                  id={`question-card-${q.question_id}`}
+                  className="border rounded-xl bg-card p-4 sm:p-5 space-y-4 shadow-sm transition-all"
+                >
                   <div className="flex items-center justify-between cursor-pointer" onClick={() => toggleQuestionExpand(q.question_id)}>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-bold text-sm text-foreground">Question {questions.indexOf(q) + 1}</span>
@@ -795,8 +935,8 @@ export function SessionPlayer({
           let borderClass = "border-border";
           let bgClass = "";
 
-          if (answerState === "answered") {
-            if (mode === "tutor") {
+          if (mode === "tutor") {
+            if (answerState === "answered") {
               if (isCorrectOption) {
                 borderClass = "border-green-500";
                 bgClass = "bg-green-500/10";
@@ -806,13 +946,11 @@ export function SessionPlayer({
               } else {
                 bgClass = "opacity-50";
               }
-            } else {
-              // Exam Mode: Neutral clean highlight, ZERO green/red spoilers
-              if (isSelected) {
-                borderClass = "border-primary ring-2 ring-primary/20 bg-primary/10";
-              } else {
-                bgClass = "opacity-70";
-              }
+            }
+          } else {
+            // Exam Mode: Neutral clean highlight, ZERO green/red spoilers
+            if (isSelected) {
+              borderClass = "border-primary ring-2 ring-primary/20 bg-primary/10";
             }
           }
 
@@ -820,14 +958,14 @@ export function SessionPlayer({
             <button
               key={key}
               onClick={() => handleOptionClick(key)}
-              disabled={answerState === "answered"}
+              disabled={mode === "tutor" && answerState === "answered"}
               className={cn(
                 "w-full flex items-start gap-3 rounded-lg border p-4 text-left transition-all duration-150 text-foreground",
                 borderClass,
                 bgClass,
-                answerState === "pending" &&
+                (mode === "exam" || answerState === "pending") &&
                   "hover:border-primary/50 hover:bg-accent/50 active:scale-[0.99]",
-                answerState === "answered" && "cursor-default"
+                mode === "tutor" && answerState === "answered" && "cursor-default"
               )}
             >
               <span
@@ -853,6 +991,38 @@ export function SessionPlayer({
         })}
       </div>
 
+      {/* Exam Mode Bottom Controls */}
+      {mode === "exam" && (
+        <div className="flex items-center justify-between gap-3 pt-4 border-t">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleSkipQuestion}
+            className="text-muted-foreground hover:text-foreground text-xs"
+          >
+            Skip Question
+          </Button>
+          <div className="flex items-center gap-3">
+            {selectedOption && (
+              <span className="hidden sm:inline text-xs text-muted-foreground">
+                Press <kbd className="px-1.5 py-0.5 rounded bg-muted border font-mono font-bold text-foreground">Enter ↵</kbd>
+              </span>
+            )}
+            <Button
+              type="button"
+              size="lg"
+              disabled={!selectedOption}
+              onClick={handleNext}
+              className="font-semibold px-6 h-11"
+            >
+              {currentIndex + 1 < total ? "Next Question" : "Submit Exam"}
+              <ChevronRight className="ml-1 h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Tutor Reveal Helper */}
       {answerState === "pending" && mode === "tutor" && (
         <Button
@@ -866,74 +1036,60 @@ export function SessionPlayer({
         </Button>
       )}
 
-      {/* Answer Feedback Card */}
-      {answerState === "answered" && (
+      {/* Tutor Answer Feedback Card */}
+      {mode === "tutor" && answerState === "answered" && (
         <div className="space-y-4 border rounded-xl p-5 bg-card shadow-sm animate-in fade-in duration-200">
-          {mode === "tutor" ? (
-            <>
-              <div>
-                {isRevealed ? (
-                  <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold text-sm">
-                    <Eye className="h-4 w-4" />
-                    Answer Revealed
-                  </div>
-                ) : isCorrect ? (
-                  <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold text-sm">
-                    <CheckCircle className="h-4 w-4" />
-                    Correct
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-semibold text-sm">
-                    <XCircle className="h-4 w-4" />
-                    Incorrect
-                  </div>
-                )}
+          <div>
+            {isRevealed ? (
+              <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold text-sm">
+                <Eye className="h-4 w-4" />
+                Answer Revealed
               </div>
+            ) : isCorrect ? (
+              <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold text-sm">
+                <CheckCircle className="h-4 w-4" />
+                Correct
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-semibold text-sm">
+                <XCircle className="h-4 w-4" />
+                Incorrect
+              </div>
+            )}
+          </div>
 
-              {selectedOption && current.distractor_analysis?.[selectedOption] && (
-                <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
-                    Explanation
-                  </h4>
-                  <div className="text-sm text-foreground/90 leading-relaxed">
-                    {renderMathContent(current.distractor_analysis[selectedOption])}
-                  </div>
-                </div>
-              )}
+          {selectedOption && current.distractor_analysis?.[selectedOption] && (
+            <div>
+              <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+                Explanation
+              </h4>
+              <div className="text-sm text-foreground/90 leading-relaxed">
+                {renderMathContent(current.distractor_analysis[selectedOption])}
+              </div>
+            </div>
+          )}
 
-              {isCorrect && !isRevealed && current.misconception && (
-                <div className="border-t pt-3 mt-3">
-                  <h4 className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400 mb-1">
-                    Common Trap
-                  </h4>
-                  <div className="text-sm text-foreground/90 leading-relaxed">
-                    {current.misconception}
-                  </div>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>Answer locked in Exam Mode. Full analysis available at completion.</span>
-              <span className="font-semibold text-primary">Press Enter or click Next</span>
+          {isCorrect && !isRevealed && current.misconception && (
+            <div className="border-t pt-3 mt-3">
+              <h4 className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400 mb-1">
+                Common Trap
+              </h4>
+              <div className="text-sm text-foreground/90 leading-relaxed">
+                {current.misconception}
+              </div>
             </div>
           )}
 
           <div className="pt-2">
             <Button
               className="w-full h-12 text-base font-semibold"
-              disabled={!nextEnabled}
               onClick={handleNext}
               size="lg"
             >
-              {nextEnabled
-                ? currentIndex + 1 < total
-                  ? "Next Question"
-                  : "Submit & View Solutions"
-                : currentIndex + 1 < total
-                  ? `Next question in a moment...`
-                  : `Results in a moment...`}
-              {nextEnabled && <ChevronRight className="ml-1 h-5 w-5" />}
+              {currentIndex + 1 < total
+                ? "Next Question"
+                : "Submit & View Solutions"}
+              <ChevronRight className="ml-1 h-5 w-5" />
             </Button>
           </div>
         </div>

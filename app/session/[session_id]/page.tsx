@@ -29,7 +29,7 @@ interface SessionRow {
 
 interface PageProps {
   params: Promise<{ session_id: string }>;
-  searchParams?: Promise<{ mode?: string }>;
+  searchParams?: Promise<{ mode?: string; autostart?: string; start?: string }>;
 }
 
 export default async function SessionPage({ params, searchParams }: PageProps) {

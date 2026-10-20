@@ -85,7 +85,7 @@ const FAQS = [
   },
   {
     q: "Which exams does AceThePrep support?",
-    a: "We provide dedicated taxonomies and calibrated distractor engines for GMAT Focus, CFA Level 1, GRE, Digital SAT, IELTS Academic, TOEFL iBT, JEE Main, NEET, UPSC CSE, CAT, and GATE.",
+    a: "We provide dedicated taxonomies and calibrated distractor engines for Digital SAT, GRE General, GMAT Focus, CFA Level 1, IELTS Academic, TOEFL iBT, JEE Main, NEET, CAT, GATE, UPSC CSE, CLAT, and CA Foundation.",
   },
   {
     q: "What makes AceThePrep different from traditional question banks?",
