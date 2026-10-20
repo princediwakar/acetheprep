@@ -16,24 +16,24 @@ interface ComparisonItem {
 
 const COMPARISONS: ComparisonItem[] = [
   {
-    dimension: "Retention & Decay",
-    oldWay: "Reread textbooks and notes for 8 hours. Forget 70% of facts by the following weekend due to exponential memory decay.",
-    aceWay: "Algorithmic Spaced Retrieval scheduled on Days 3, 7, and 14. Locks knowledge into permanent long-term memory with minimal time investment.",
+    dimension: "Long-Term Retention",
+    oldWay: "Reread textbooks and notes for 8 hours, only to forget most key concepts within days.",
+    aceWay: "Spaced review intervals on Days 3, 7, and 14 lock key concepts into permanent memory.",
   },
   {
     dimension: "Practice Efficiency",
-    oldWay: "Solve 50 repetitive questions on comfortable topics, creating a false illusion of competence without addressing weak spots.",
-    aceWay: "Targeted Gap Isolation: Diagnostics identify the exact sub-domain where you slip, eliminating wasted time on mastered material.",
+    oldWay: "Solve 50 repetitive questions on comfortable topics, creating a false sense of confidence without fixing weak spots.",
+    aceWay: "Targeted Gap Isolation: Pinpoint exact weak topics so you spend study time only where it improves your score.",
   },
   {
     dimension: "Error Analysis",
-    oldWay: "Glance at the correct option letter, nod along passively, and repeat the same algebraic or conceptual trap on exam day.",
-    aceWay: "Distractor Telemetry: Deconstructs the exact misconception 70% of candidates fell for, turning every mistake into cognitive immunity.",
+    oldWay: "Glance at the correct option letter, nod passively, and fall for the exact same trap on exam day.",
+    aceWay: "In-Depth Trap Breakdown: Shows you exactly why tempting wrong choices look right, so you never get tricked.",
   },
   {
     dimension: "Mental Fatigue",
-    oldWay: "Draining 3-hour marathon mock exams every weekend that produce test anxiety and burnout rather than actionable insights.",
-    aceWay: "5-minute daily calibrated assessments that continuously update your Readiness Index with zero test fatigue.",
+    oldWay: "Draining 3-hour marathon tests every weekend that cause burnout rather than actionable insights.",
+    aceWay: "Focused 10-question practice sprints that give you instant, clear feedback with zero test fatigue.",
   },
 ];
 
@@ -46,13 +46,13 @@ export default function ReliefComparisonSection() {
       <MaxWidthWrapper>
         <div className="text-center mb-16 max-w-3xl mx-auto">
           <span className="inline-block rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
-            Comparative Physics
+            The Difference
           </span>
           <h2 className="mt-4 font-heading text-3xl md:text-4xl lg:text-5xl font-normal tracking-tight text-foreground leading-[1.15] text-balance">
-            The Passive Cramming Trap vs. Calibrated Retrieval
+            Passive Cramming vs. Smart Targeted Practice
           </h2>
           <p className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed text-balance">
-            Most aspirants don&apos;t fail because they lacked commitment. They fail because their study mechanics violate cognitive learning laws.
+            Most students don&apos;t fail because they lacked commitment. They fail because passive rereading doesn&apos;t prepare you for tricky exam traps.
           </p>
         </div>
 

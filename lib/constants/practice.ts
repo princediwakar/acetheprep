@@ -11,6 +11,9 @@ export const EXAM_DATES: Record<string, string> = {
   "GATE": "2026-02-15",
   "CLAT": "2026-12-15",
   "CA Foundation": "2026-06-15",
+  "CFA Level 1": "2026-11-15",
+  "IELTS Academic": "2026-12-31",
+  "TOEFL iBT": "2026-12-31",
 };
 
 export function getDaysUntilExam(examName: string): number | null {

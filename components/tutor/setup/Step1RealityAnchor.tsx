@@ -7,13 +7,16 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import type { SelfAssessment, TimeMode } from "@/types/tutor";
 import { SegmentedControl } from "./SegmentedControl";
 import { TimeModeBadge } from "./TimeModeBadge";
+import { EXAM_CATEGORIES } from "@/lib/constants/exam-groups";
 
 function getTodayISO(): string {
   const now = new Date();
@@ -48,6 +51,10 @@ export function Step1RealityAnchor({
   onAssessmentChange,
   selectRef,
 }: Step1RealityAnchorProps) {
+  // Pre-calculate categorized exams and any leftovers
+  const categorizedExams = new Set(EXAM_CATEGORIES.flatMap((c) => c.exams));
+  const uncategorized = examNames.filter((e) => !categorizedExams.has(e));
+
   return (
     <Card className="w-full">
       <CardContent className="space-y-5 pt-6">
@@ -58,12 +65,35 @@ export function Step1RealityAnchor({
             <SelectTrigger ref={selectRef} id="exam-select">
               <SelectValue placeholder="Select your exam..." />
             </SelectTrigger>
-            <SelectContent>
-              {examNames.map((name) => (
-                <SelectItem key={name} value={name}>
-                  {name}
-                </SelectItem>
-              ))}
+            <SelectContent className="max-h-80">
+              {EXAM_CATEGORIES.map((category) => {
+                const categoryExams = category.exams.filter((e) => examNames.includes(e));
+                if (categoryExams.length === 0) return null;
+                return (
+                  <SelectGroup key={category.id} className="py-1">
+                    <SelectLabel className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold px-2 py-1 bg-muted/40 rounded-sm mb-1">
+                      {category.name}
+                    </SelectLabel>
+                    {categoryExams.map((name) => (
+                      <SelectItem key={name} value={name} className="cursor-pointer pl-4">
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                );
+              })}
+              {uncategorized.length > 0 && (
+                <SelectGroup className="py-1 border-t">
+                  <SelectLabel className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold px-2 py-1">
+                    Other Exams
+                  </SelectLabel>
+                  {uncategorized.map((name) => (
+                    <SelectItem key={name} value={name} className="cursor-pointer pl-4">
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              )}
             </SelectContent>
           </Select>
         </div>

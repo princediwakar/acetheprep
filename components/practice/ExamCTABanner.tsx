@@ -24,7 +24,7 @@ export default function ExamCTABanner({ examName }: ExamCTABannerProps) {
         <div className="space-y-2 max-w-xl">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-0.5 text-xs font-semibold text-primary">
             <Sparkles className="h-3.5 w-3.5" />
-            <span>Calibrated Retrieval Schedule</span>
+            <span>Target Exam Preparation</span>
           </div>
 
           <h3 className="font-heading text-2xl sm:text-3xl font-normal text-foreground tracking-tight">
@@ -34,10 +34,10 @@ export default function ExamCTABanner({ examName }: ExamCTABannerProps) {
           <p className="text-sm text-muted-foreground leading-relaxed">
             {daysRemaining !== null && daysRemaining > 0 ? (
               <>
-                Only <strong className="text-foreground">{daysRemaining} days</strong> remaining until {examName}{dateDisplay ? ` (${dateDisplay})` : ""}. Eliminate the forgetting curve with adaptive micro-retrievals.
+                Only <strong className="text-foreground">{daysRemaining} days</strong> remaining until {examName}{dateDisplay ? ` (${dateDisplay})` : ""}. Practice daily questions with step-by-step solutions to master the tricky traps before exam day.
               </>
             ) : (
-              `Take the 2-minute diagnostic setup to establish your memory retention baseline and schedule spaced reviews across all ${examName} subjects.`
+              `Start free practice sessions across all ${examName} subjects. Learn why tricky trap options fool students and build real exam confidence.`
             )}
           </p>
         </div>
@@ -47,7 +47,7 @@ export default function ExamCTABanner({ examName }: ExamCTABannerProps) {
             href="/setup"
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:scale-[0.98] transition-all"
           >
-            <span>Start Free Assessment</span>
+            <span>Start Practicing Now</span>
             <ArrowRight className="h-4 w-4 shrink-0" />
           </Link>
         </div>

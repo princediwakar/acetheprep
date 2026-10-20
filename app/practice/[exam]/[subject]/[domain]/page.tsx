@@ -251,7 +251,7 @@ export default async function PracticePage({ params }: PracticePageProps) {
         schema={faqPageSchema(knowledge.faqs) as WithContext<any>}
       />
 
-      <div className="mx-auto max-w-4xl px-4 py-8">
+      <div className="mx-auto max-w-4xl pt-28 pb-16 px-4 sm:px-6">
         {/* Breadcrumb navigation */}
         <nav aria-label="Breadcrumb" className="mb-6">
           <ol className="flex flex-wrap items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
@@ -310,23 +310,21 @@ export default async function PracticePage({ params }: PracticePageProps) {
             </span>
           </div>
 
-          <h1 className="mb-3 text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
-            {domainName} Practice Questions & Distractor Traps
+          <h1 className="mb-3 text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 font-heading">
+            {domainName} Practice Questions & Solutions
           </h1>
           <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl">
-            Authentic {examName} ({subjectName}) practice problems. Each
-            question includes real-time distractor analysis identifying the
-            exact student misconception behind every wrong choice.
+            Authentic {examName} ({subjectName}) practice problems with step-by-step solutions showing you exactly why common wrong choices are traps.
           </p>
         </div>
 
-        {/* Core Principles & Formula Card (High Informational Entropy) */}
+        {/* Core Principles & Key Formulas */}
         <div className="mb-8 rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
           <div className="flex items-center gap-2.5 mb-4 text-foreground font-semibold text-base">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
               <BookOpen className="h-4 w-4" />
             </div>
-            <span>Core Principles & High-Yield Heuristics</span>
+            <span>Core Principles & Key Formulas</span>
           </div>
           <ul className="space-y-2.5 text-sm text-muted-foreground leading-relaxed">
             {knowledge.corePrinciples.map((principle, idx) => (
@@ -340,13 +338,13 @@ export default async function PracticePage({ params }: PracticePageProps) {
           </ul>
         </div>
 
-        {/* Primary Distractor Trap Card */}
+        {/* Primary Exam Trap Card */}
         <div className="mb-8 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-6">
           <div className="flex items-center gap-2.5 mb-3 text-amber-600 dark:text-amber-400 font-semibold text-base">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400">
               <AlertTriangle className="h-4 w-4" />
             </div>
-            <span>#1 Distractor Trap: {knowledge.primaryDistractorTrap.trapName}</span>
+            <span>Most Common Trap: {knowledge.primaryDistractorTrap.trapName}</span>
           </div>
           <p className="text-sm text-foreground/90 leading-relaxed mb-3">
             {knowledge.primaryDistractorTrap.description}
@@ -371,10 +369,10 @@ export default async function PracticePage({ params }: PracticePageProps) {
         <div className="mb-10">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-foreground">
-              Diagnostic Question & Distractor Deconstruction
+              Practice Questions & Explanations
             </h2>
             <span className="text-xs text-muted-foreground font-medium">
-              Interactive Mode
+              Interactive Practice
             </span>
           </div>
           <div className="space-y-6">
@@ -413,24 +411,6 @@ export default async function PracticePage({ params }: PracticePageProps) {
           </div>
         )}
 
-        {/* Deep Link to Telemetry & Hardest Topics */}
-        <div className="mb-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-primary/20 bg-primary/5 p-5">
-          <div>
-            <h4 className="text-sm font-semibold text-foreground">
-              See Where {examName} Aspirants Struggle Most
-            </h4>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Review live failure percentiles, time-spent telemetry, and mistake frequency across all {examName} domains.
-            </p>
-          </div>
-          <Link
-            href={`/insights/${examSlug}/hardest-topics`}
-            className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-all"
-          >
-            View {examName} Insights
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
 
         {/* FAQ Section for SEO / GEO Rich Snippets */}
         <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">

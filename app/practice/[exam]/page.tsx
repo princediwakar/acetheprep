@@ -97,7 +97,7 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
   const firstDomainSlug = firstDomainName ? domainToSlug(firstDomainName) : "";
 
   return (
-    <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background pt-28 pb-20 px-4 sm:px-6 lg:px-8">
       <StructuredData schema={breadcrumbSchema(breadcrumbs)} />
 
       <div className="max-w-5xl mx-auto">
@@ -111,91 +111,28 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
         </Link>
 
         {/* Header */}
-        <div className="mb-8 border-b border-border pb-8">
+        <div className="mb-10 border-b border-border pb-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary mb-3">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Target Curriculum</span>
+            <span>Curriculum & Questions</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground font-heading">
             {examName} Practice Questions
           </h1>
           <p className="mt-3 text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed">
-            Select a subject and topic below to practice verified {examName} questions with interactive distractor deconstructions.
+            Practice authentic {examName} questions organized by section, with step-by-step solutions showing you how to spot and eliminate tricky trap options.
           </p>
 
-          <div className="mt-4 flex flex-wrap gap-4 text-xs font-semibold">
-            <Link
-              href={`/insights/${encodeURIComponent(examName)}/hardest-topics`}
-              className="inline-flex items-center gap-1.5 text-primary hover:underline"
-            >
-              <BarChart3 className="w-3.5 h-3.5" />
-              View {examName} Hardest Topics Telemetry →
-            </Link>
-          </div>
         </div>
 
-        {/* Clear Action Guide Cards */}
-        <div className="mb-10 grid gap-4 sm:grid-cols-2">
-          {/* Card 1: Full Personalized Calibration */}
-          <div className="flex flex-col justify-between rounded-2xl border border-primary/30 bg-primary/5 p-6 transition-all hover:border-primary/50">
-            <div className="space-y-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
-                <Sparkles className="h-3 w-3" />
-                Recommended
-              </span>
-              <h2 className="text-lg font-bold text-foreground">
-                Calibrate Your {examName} Spaced Schedule
-              </h2>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Take the 2-minute diagnostic setup to establish your forgetting-curve baseline, set your target exam date, and unlock continuous readiness tracking.
-              </p>
-            </div>
-            <div className="pt-4">
-              <Link
-                href="/setup"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 transition-opacity"
-              >
-                Start Calibrated Setup
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Card 2: Quick Jump to First Topic Drill */}
-          {firstSubjectName && firstDomainName && (
-            <div className="flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-6 transition-all hover:border-border">
-              <div className="space-y-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-foreground">
-                  <BookOpen className="h-3 w-3" />
-                  Instant Practice
-                </span>
-                <h2 className="text-lg font-bold text-foreground">
-                  Quick-Start: {firstDomainName}
-                </h2>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Jump directly into verified {firstSubjectName} problems with real-time candidate distractor deconstructions. Zero signup required to sample.
-                </p>
-              </div>
-              <div className="pt-4">
-                <Link
-                  href={`/practice/${examSlug}/${firstSubjectSlug}/${firstDomainSlug}`}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border/80 bg-background px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-accent transition-colors"
-                >
-                  Practice {firstDomainName} →
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Header for Catalog Topics */}
+        {/* Subjects & Topics Section */}
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-foreground">
-              Or Choose a Specific Subject & Topic
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground">
+              Exam Subjects & Topics
             </h2>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Browse complete {examName} curriculum modules:
+              Select any topic below to practice verified questions:
             </p>
           </div>
         </div>

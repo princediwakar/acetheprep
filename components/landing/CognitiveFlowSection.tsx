@@ -17,29 +17,29 @@ const FLOW_STEPS: FlowStep[] = [
   {
     icon: GitBranch,
     stepNumber: "01",
-    badge: "Memory Physics",
-    title: "Forgetting Curve Flattening",
+    badge: "Smart Review",
+    title: "Spaced Retention Intervals",
     description:
-      "Human memory drops 70% of material within seven days. AceThePrep models your personalized decay curve and schedules micro-retrievals at intervals of 3, 7, and 14 days, transforming volatile short-term recall into permanent conceptual reflex.",
+      "Never lose what you studied. AceThePrep schedules timely reviews at intervals of 3, 7, and 14 days, transforming fragile short-term recall into lasting exam-day mastery.",
     metric: "91% Long-Term Retention",
   },
   {
     icon: ShieldAlert,
     stepNumber: "02",
-    badge: "Cognitive Invariants",
-    title: "Distractor Deconstruction",
+    badge: "Trap Analysis",
+    title: "Step-by-Step Trap Explanations",
     description:
-      "High-stakes exam questions don't test memory; they test whether you can resist designed traps. We analyze every distractor to reveal the exact misconception 70% of candidates fall for, teaching you to eliminate traps in seconds.",
+      "Competitive exam questions are engineered with tempting wrong choices. We explain why wrong options look right and teach you the exact triggers to eliminate traps instantly.",
     metric: "Zero Trap Blindspots",
   },
   {
     icon: Cpu,
     stepNumber: "03",
-    badge: "Zero Test Fatigue",
-    title: "Calibrated Readiness Index",
+    badge: "Targeted Practice",
+    title: "Focus on Your Weak Spots",
     description:
-      "Stop taking draining 3-hour mock tests just to discover you have a gap in one domain. A 5-minute adaptive session continuously refines your Readiness Index across all subjects, pinpointing the single formula you actually need to review today.",
-    metric: "5-Min Daily Cadence",
+      "Stop taking draining 3-hour tests just to find a single gap. Focused 10-question practice sprints instantly isolate weak areas so you study only what actually moves your score.",
+    metric: "5-Min Daily Sprints",
   },
 ];
 
@@ -48,9 +48,9 @@ export default function CognitiveFlowSection() {
     <section className="relative py-20 sm:py-28 border-t border-border/60 bg-muted/20">
       <MaxWidthWrapper>
         <HeaderSection
-          label="The Cognitive Science"
-          title="Engineered around the physics of human memory."
-          subtitle="Traditional coaching promotes passive rereading and marathon 100-question drill sessions. AceThePrep replaces brute force with cognitive retrieval science."
+          label="How AceThePrep Works"
+          title="Study what actually moves your score."
+          subtitle="Traditional test prep pushes passive rereading and mindless marathon drills. AceThePrep focuses on active problem solving and spotting the tricky traps that drop candidate percentiles."
         />
 
         <div className="mt-16 grid gap-6 md:grid-cols-3">

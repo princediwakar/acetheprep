@@ -52,5 +52,26 @@
     "Business Laws": ["Indian Contract Act", "Sale of Goods Act", "Partnership Act"],
     "Business Mathematics": ["Ratio and Proportion", "Equations and Matrices", "Linear Inequalities"],
     "Business Economics": ["Theory of Demand and Supply", "Theory of Production and Cost", "Market Structures"]
+  },
+  "CFA Level 1": {
+    "Ethical & Professional Standards": ["Code of Ethics", "Standards of Professional Conduct", "Global Investment Performance Standards (GIPS)"],
+    "Quantitative Methods": ["Time Value of Money", "Statistical Concepts & Market Returns", "Probability Distributions", "Hypothesis Testing", "Simple Linear Regression"],
+    "Economics": ["Microeconomic Analysis", "Monetary and Fiscal Policy", "International Trade & Capital Flows", "Currency Exchange Rates"],
+    "Financial Statement Analysis": ["Financial Reporting Standards", "Income Statements", "Balance Sheets", "Cash Flow Statements", "Inventories & Long-Lived Assets", "Financial Analysis Techniques"],
+    "Corporate Issuers": ["Corporate Governance", "Working Capital & Liquidity", "Capital Structure", "Capital Investments"],
+    "Equity Investments": ["Market Organization & Structure", "Security Market Indexes", "Market Efficiency", "Equity Valuation"],
+    "Fixed Income": ["Fixed-Income Securities", "Fixed-Income Valuation", "Asset-Backed Securities", "Yield & Spread Analysis", "Credit Analysis"],
+    "Derivatives": ["Derivative Markets & Instruments", "Forward & Futures Contracts", "Option Basics", "Swaps"],
+    "Alternative Investments": ["Real Estate", "Private Equity", "Hedge Funds", "Commodities"],
+    "Portfolio Management": ["Portfolio Risk & Return", "Portfolio Planning & Construction", "Behavioral Biases"]
+  },
+  "IELTS Academic": {
+    "Reading": ["Inference and Implication", "True-False-Not Given", "Headings and Main Idea Matching", "Summary Completion", "Sentence Completion", "Academic Vocabulary in Context"],
+    "Listening": ["Multiple Choice Traps", "Form and Note Completion", "Map and Diagram Labelling", "Classification of Features", "Short Answer Comprehension"]
+  },
+  "TOEFL iBT": {
+    "Reading": ["Factual Information", "Inference and Rhetorical Purpose", "Vocabulary in Context", "Sentence Simplification", "Insert Text", "Prose Summary"],
+    "Listening": ["Gist-Content and Purpose", "Detail Identification", "Function and Speaker Stance", "Organization and Categorization", "Connecting Content"]
   }
 }
+

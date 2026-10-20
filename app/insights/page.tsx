@@ -34,13 +34,13 @@ export default async function InsightsPage() {
         <div className="text-center mb-12 max-w-2xl mx-auto space-y-3">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
             <Activity className="h-3.5 w-3.5" />
-            Distractor Telemetry
+            Exam Analytics
           </span>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-foreground">
-            Exam Difficulty Telemetry
+            Hardest Exam Topics & Traps
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Discover which topics students find most challenging across major competitive tracks. Ranked by student error rates and time-to-solve.
+            Discover which topics students find most challenging across major exams, ranked by error rates and tricky distractor traps.
           </p>
         </div>
 

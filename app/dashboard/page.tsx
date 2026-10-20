@@ -9,6 +9,7 @@ import { DashboardView, DashboardViewLoading } from "@/components/tutor/Dashboar
 import type { ExamProfile, ConceptMastery, TimeMode } from "@/types/tutor";
 import type { ProjectionHeroProps } from "@/components/tutor/ProjectionHero";
 import { marksToPercentile, getColdStartBand, computeCompositePercentile } from "@/lib/predictor/nta-priors";
+import { getUserSubscriptionStatus } from "@/lib/billing";
 import taxonomy from "@/lib/taxonomies.json";
 
 interface ConceptRow {
@@ -49,6 +50,7 @@ export interface DashboardPageData {
   overdueDomainCount: number;
   weakestOverdueDomain: string | null;
   prediction: ProjectionHeroProps["prediction"];
+  isPro?: boolean;
 }
 
 export default function DashboardPage() {
@@ -116,6 +118,7 @@ async function DashboardPageContent() {
     completedSessionsRes,
     overdueCountRes,
     predictionRes,
+    subscriptionStatus,
   ] = await Promise.all([
     supabase
       .from("concept_mastery")
@@ -150,6 +153,7 @@ async function DashboardPageContent() {
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
+    getUserSubscriptionStatus(user.id),
   ]);
   const concepts = (conceptsRes.data || []) as ConceptRow[];
   const questionResults = (questionResultsRes.data || []) as { answered_at: string }[];
@@ -274,6 +278,7 @@ async function DashboardPageContent() {
             totalTrackedSessions: 0,
           };
         })(),
+    isPro: subscriptionStatus.isPro,
   };
 
   return <DashboardView data={data} />;

@@ -44,16 +44,13 @@ export const Header = memo(() => {
           {!isQuizPage && (
             <div className="hidden sm:flex items-center space-x-6 text-sm font-medium text-muted-foreground">
               <Link href="/practice" className="hover:text-foreground transition-colors">
-                Exam Tracks
+                Exams
               </Link>
-              <Link href="/insights" className="hover:text-foreground transition-colors">
-                Telemetry
+              <Link href="/pricing" className="hover:text-foreground transition-colors">
+                Pricing
               </Link>
               <Link href="/blog" className="hover:text-foreground transition-colors">
-                Cognitive Science
-              </Link>
-              <Link href="/quizzes" className="hover:text-foreground transition-colors">
-                Explore
+                Study Guides
               </Link>
             </div>
           )}

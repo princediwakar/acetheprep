@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/tooltip";
 import type { DashboardPageData, SyllabusSubject, SyllabusDomain } from "@/app/dashboard/page";
 import { TUTOR_ROUTES, TUTOR_CONFIG } from "@/lib/constants/tutor";
+import { UpgradeModal } from "@/components/billing/UpgradeModal";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import {
@@ -158,11 +159,13 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
 
   const [isLinearMode, setIsLinearMode] = useState(false);
   const [sessionQuestionCount, setSessionQuestionCount] = useState<number>(10);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeReason, setUpgradeReason] = useState<string | undefined>(undefined);
 
   const SESSION_SIZE_PRESETS = [
-    { count: 10, label: "10 Sprint" },
-    { count: 25, label: "25 Practice" },
-    { count: 50, label: "50 Mock" },
+    { count: 10, label: "10 Sprint", proOnly: false },
+    { count: 25, label: "25 Practice", proOnly: true },
+    { count: 50, label: "50 Mock", proOnly: true },
   ] as const;
 
   useEffect(() => {
@@ -174,11 +177,17 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
     if (savedCount) {
       const parsed = parseInt(savedCount, 10);
       if ([10, 25, 50].includes(parsed)) {
-        setSessionQuestionCount(parsed);
-        setModalQuestionCount(parsed);
+        // If saved size was > 10 but user is not Pro, fallback to 10
+        if (parsed > 10 && !data.isPro) {
+          setSessionQuestionCount(10);
+          setModalQuestionCount(10);
+        } else {
+          setSessionQuestionCount(parsed);
+          setModalQuestionCount(parsed);
+        }
       }
     }
-  }, []);
+  }, [data.isPro]);
 
   const handleToggleLinear = useCallback((checked: boolean) => {
     setIsLinearMode(checked);
@@ -186,10 +195,15 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
   }, []);
 
   const handleSelectSessionSize = useCallback((count: number) => {
+    if (count > 10 && !data.isPro) {
+      setUpgradeReason(`Extended ${count}-question session sets are exclusive to AceThePrep Pro.`);
+      setShowUpgradeModal(true);
+      return;
+    }
     setSessionQuestionCount(count);
     setModalQuestionCount(count);
     localStorage.setItem("acetheprep_session_count", String(count));
-  }, []);
+  }, [data.isPro]);
 
   async function startSession(intent: string, focusDomains?: string[], count: number = modalQuestionCount) {
     const body: Record<string, unknown> = {
@@ -292,16 +306,41 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
             <CalendarDays className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <div className="font-bold text-base">{data.examName}</div>
+            <div className="font-bold text-base flex items-center gap-2">
+              {data.examName}
+              {data.isPro && (
+                <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] uppercase font-bold tracking-wider px-2 py-0.5">
+                  <Sparkles className="w-3 h-3 mr-1 inline" />
+                  Pro
+                </Badge>
+              )}
+            </div>
             <div className="text-muted-foreground text-xs">
               {data.daysRemaining} day{data.daysRemaining !== 1 ? "s" : ""} left
             </div>
           </div>
         </div>
-        <div className="text-right">
-          <div className="text-muted-foreground text-xs uppercase tracking-wider font-semibold mb-0.5">Readiness</div>
-          <div className="font-black text-2xl tabular-nums leading-none">
-            {data.readinessIndex}<span className="text-muted-foreground text-base font-medium">/100</span>
+        <div className="flex items-center gap-4">
+          {!data.isPro && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setUpgradeReason("Upgrade to AceThePrep Pro for unlimited daily sessions, full 50Q mock simulations, and detailed step-by-step solutions.");
+                setShowUpgradeModal(true);
+              }}
+              className="hidden sm:flex text-xs font-bold border-primary/30 text-primary hover:bg-primary/10 gap-1.5 h-8 px-3 rounded-lg"
+            >
+              <Zap className="w-3.5 h-3.5 fill-primary" />
+              Upgrade to Pro
+            </Button>
+          )}
+          <div className="text-right">
+            <div className="text-muted-foreground text-xs uppercase tracking-wider font-semibold mb-0.5">Readiness</div>
+            <div className="font-black text-2xl tabular-nums leading-none">
+              {data.readinessIndex}<span className="text-muted-foreground text-base font-medium">/100</span>
+            </div>
           </div>
         </div>
       </div>
@@ -315,17 +354,19 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
         <div className="flex items-center gap-1.5 bg-muted/60 p-1 rounded-lg">
           {SESSION_SIZE_PRESETS.map((preset) => {
             const isActive = sessionQuestionCount === preset.count;
+            const isLocked = Boolean(preset.proOnly && !data.isPro);
             return (
               <button
                 key={preset.count}
                 type="button"
                 onClick={() => handleSelectSessionSize(preset.count)}
-                className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
+                className={`px-3 py-1 text-xs font-semibold rounded-md transition-all flex items-center gap-1 ${
                   isActive
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 }`}
               >
+                {isLocked && <Lock className="w-2.5 h-2.5 opacity-70" />}
                 {preset.label}
               </button>
             );
@@ -549,7 +590,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
                 <p className="text-sm text-muted-foreground min-h-[44px] flex items-center justify-center transition-all leading-relaxed">
                   {launchStep === 0 && "🧠 Analyzing recent performance & syllabus mastery curve..."}
                   {launchStep === 1 && `🎯 Generating ${modalQuestionCount} high-distractor questions for ${data.examName}...`}
-                  {launchStep === 2 && "🔬 Calibrating cognitive autopsy matrix & trap rationale..."}
+                  {launchStep === 2 && "🔬 Verifying questions and detailed trap explanations..."}
                   {launchStep >= 3 && "⚡ Finalizing test payload and pre-flight cockpit..."}
                 </p>
               </div>
@@ -579,23 +620,38 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
                   <div className="grid grid-cols-3 gap-2.5">
                     {SESSION_SIZE_PRESETS.map((preset) => {
                       const isSelected = modalQuestionCount === preset.count;
+                      const isLocked = Boolean(preset.proOnly && !data.isPro);
                       return (
                         <button
                           key={preset.count}
                           type="button"
                           disabled={isLaunching}
                           onClick={() => {
+                            if (isLocked) {
+                              setUpgradeReason(`Extended ${preset.label} sessions are exclusive to AceThePrep Pro.`);
+                              setShowUpgradeModal(true);
+                              return;
+                            }
                             setModalQuestionCount(preset.count);
                             handleSelectSessionSize(preset.count);
                           }}
                           className={cn(
-                            "p-3 rounded-xl border text-center transition-all flex flex-col items-center gap-1",
+                            "p-3 rounded-xl border text-center transition-all flex flex-col items-center gap-1 relative",
                             isSelected
                               ? "border-primary bg-primary/10 ring-2 ring-primary/20 text-foreground font-semibold shadow-sm"
-                              : "border-border hover:border-border/80 bg-background/50 text-muted-foreground"
+                              : "border-border hover:border-border/80 bg-background/50 text-muted-foreground",
+                            isLocked && "opacity-85 hover:border-primary/50"
                           )}
                         >
-                          <span className="text-sm">{preset.label}</span>
+                          {isLocked && (
+                            <Badge className="absolute -top-2 right-2 text-[9px] uppercase font-bold px-1.5 h-4 bg-primary text-primary-foreground">
+                              Pro
+                            </Badge>
+                          )}
+                          <span className="text-sm flex items-center gap-1">
+                            {isLocked && <Lock className="w-3 h-3 text-muted-foreground" />}
+                            {preset.label}
+                          </span>
                           <span className="text-[11px] text-muted-foreground font-normal">
                             {preset.count === 10 ? "Quick Drill" : preset.count === 25 ? "Standard" : "Full Simulation"}
                           </span>
@@ -634,7 +690,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
                           </Badge>
                         </div>
                         <p className="text-xs leading-relaxed text-muted-foreground">
-                          Real exam conditions. Zero spoilers or explanations mid-test with instant question flow. Full cognitive autopsy matrix & trap deconstruction revealed upon completion.
+                          Real exam conditions. Zero spoilers during the test with timed question flow. Complete question breakdown, step-by-step solutions, and trap analysis revealed upon completion.
                         </p>
                       </div>
                     </button>
@@ -696,6 +752,14 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Dodo Payments Pro Upgrade Modal */}
+      <UpgradeModal
+        open={showUpgradeModal}
+        onOpenChange={setShowUpgradeModal}
+        reason={upgradeReason}
+        examName={data.examName}
+      />
     </div>
   );
 }

@@ -15,46 +15,18 @@ interface ExamTrack {
 
 const EXAM_TRACKS: ExamTrack[] = [
   {
-    slug: "jee-main",
-    name: "JEE Main",
-    badge: "Engineering",
-    subjects: ["Physics", "Chemistry", "Mathematics"],
-    focus: "Ray Optics, Rotational Dynamics & Calculus Invariants",
-  },
-  {
-    slug: "neet",
-    name: "NEET",
-    badge: "Medical",
-    subjects: ["Biology", "Physics", "Chemistry"],
-    focus: "Mendelian Genetics, Plant Physiology & NCERT Invariants",
-  },
-  {
-    slug: "upsc-cse",
-    name: "UPSC CSE",
-    badge: "Civil Services",
-    subjects: ["CSAT", "Polity & Governance", "Indian Economy"],
-    focus: "Syllogistic Deductions, Analytical Traps & Constitutional Law",
-  },
-  {
-    slug: "cat",
-    name: "CAT",
-    badge: "Management",
-    subjects: ["Quantitative Aptitude", "DILR", "VARC"],
-    focus: "Time-Speed-Distance Invariants, Arrangements & Critical Reasoning",
-  },
-  {
-    slug: "gate",
-    name: "GATE",
-    badge: "Technical",
-    subjects: ["Engineering Math", "Algorithms", "Operating Systems"],
-    focus: "Linear Algebra Eigenvectors, Cache Coherence & Complexity",
-  },
-  {
     slug: "gmat-focus",
     name: "GMAT Focus",
     badge: "Global MBA",
     subjects: ["Quantitative", "Data Insights", "Verbal"],
-    focus: "Sufficiency Traps, Graphical Interpretations & Inference",
+    focus: "Data Sufficiency Traps, Graphical Interpretations & Critical Reasoning",
+  },
+  {
+    slug: "cfa-level-1",
+    name: "CFA Level 1",
+    badge: "Finance & Investment",
+    subjects: ["Financial Reporting", "Ethics", "Fixed Income", "Equity"],
+    focus: "Reporting Standards, Duration Traps & Corporate Governance",
   },
   {
     slug: "gre",
@@ -66,16 +38,51 @@ const EXAM_TRACKS: ExamTrack[] = [
   {
     slug: "sat",
     name: "Digital SAT",
-    badge: "Undergraduate",
+    badge: "College Admissions",
     subjects: ["Reading & Writing", "Math"],
     focus: "Desmos Optimization, Quadratic Systems & Rhetorical Synthesis",
+  },
+  {
+    slug: "jee-main",
+    name: "JEE Main",
+    badge: "Engineering",
+    subjects: ["Physics", "Chemistry", "Mathematics"],
+    focus: "Ray Optics, Rotational Dynamics & Calculus Traps",
+  },
+  {
+    slug: "neet",
+    name: "NEET",
+    badge: "Medical",
+    subjects: ["Biology", "Physics", "Chemistry"],
+    focus: "Mendelian Genetics, Plant Physiology & NCERT Key Traps",
+  },
+  {
+    slug: "cat",
+    name: "CAT",
+    badge: "Management",
+    subjects: ["Quantitative Aptitude", "DILR", "VARC"],
+    focus: "Time-Speed-Distance, Arrangements & Critical Reasoning",
+  },
+  {
+    slug: "upsc-cse",
+    name: "UPSC CSE",
+    badge: "Civil Services",
+    subjects: ["CSAT", "Polity & Governance", "Indian Economy"],
+    focus: "Syllogistic Deductions, Analytical Traps & Constitutional Law",
+  },
+  {
+    slug: "gate",
+    name: "GATE",
+    badge: "Technical",
+    subjects: ["Engineering Math", "Algorithms", "Operating Systems"],
+    focus: "Linear Algebra Eigenvectors, Cache Coherence & Complexity",
   },
   {
     slug: "clat",
     name: "CLAT",
     badge: "Law",
     subjects: ["Legal Reasoning", "Logical Reasoning", "Current Affairs"],
-    focus: "Principle-Fact Deductions, Analogies & Constitutional Precedents",
+    focus: "Principle-Fact Deductions, Analogies & Legal Precedents",
   },
 ];
 
@@ -84,9 +91,9 @@ export default function ExamTracksSection() {
     <section className="relative py-20 sm:py-28 border-t border-border/70">
       <MaxWidthWrapper>
         <HeaderSection
-          label="10 Curated Exam Tracks"
-          title="Direct portals tailored to your specific syllabus."
-          subtitle="Every exam track features dedicated distractor telemetry, syllabus taxonomies, and calibrated review algorithms."
+          label="Supported Exams"
+          title="Practice questions built for your exact syllabus."
+          subtitle="Real exam questions with instant step-by-step solutions showing you exactly why common mistakes are traps."
         />
 
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

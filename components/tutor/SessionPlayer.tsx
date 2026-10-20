@@ -419,8 +419,8 @@ export function SessionPlayer({
             <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
               {questions.length} Questions · ~{estimatedMinutes} mins ·{" "}
               {mode === "exam"
-                ? "Timed simulation. Zero spoilers mid-test; complete autopsy matrix at the end."
-                : "Learning drill. Immediate feedback and distractor trap deconstruction after each question."}
+                ? "Timed simulation. Zero spoilers mid-test; full question breakdown & solutions at the end."
+                : "Learning drill. Immediate feedback and step-by-step explanations after each question."}
             </p>
           </div>
 
@@ -524,9 +524,9 @@ export function SessionPlayer({
             <div>
               <h2 className="text-lg font-bold flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-primary" />
-                Cognitive Autopsy & Solutions
+                Question Breakdown & Solutions
               </h2>
-              <p className="text-xs text-muted-foreground">Deconstruct misconceptions and verify step-by-step logic.</p>
+              <p className="text-xs text-muted-foreground">Review your mistakes and step-by-step explanations.</p>
             </div>
 
             {/* Filter Tabs */}
@@ -894,7 +894,7 @@ export function SessionPlayer({
               {nextEnabled
                 ? currentIndex + 1 < total
                   ? "Next Question"
-                  : "Submit & View Autopsy"
+                  : "Submit & View Solutions"
                 : currentIndex + 1 < total
                   ? `Next question in a moment...`
                   : `Results in a moment...`}
