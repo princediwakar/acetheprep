@@ -23,12 +23,17 @@ interface ConceptRow {
   next_review_at: string;
 }
 
-interface SessionRow {
+export interface SessionRow {
   id: string;
   status: string;
   created_at: string;
   completed_at: string | null;
   target_domains: string[];
+  session_intent?: string;
+  totalQuestions: number;
+  answeredCount: number;
+  correctCount: number;
+  accuracy: number;
 }
 
 export interface AnalyticsPageData {
@@ -83,7 +88,7 @@ async function AnalyticsPageContent() {
       .eq("exam_profile_id", profileId),
     supabase
       .from("sessions")
-      .select("id, status, created_at, completed_at, target_domains")
+      .select("id, status, created_at, completed_at, target_domains, session_intent, questions_json")
       .eq("user_id", user.id)
       .eq("exam_profile_id", profileId)
       .order("created_at", { ascending: false })
@@ -104,7 +109,54 @@ async function AnalyticsPageContent() {
   ]);
 
   const concepts = (conceptsRes.data || []) as ConceptRow[];
-  const recentSessions = (recentSessionsRes.data || []) as SessionRow[];
+  const recentSessionsRaw = (recentSessionsRes.data || []) as {
+    id: string;
+    status: string;
+    created_at: string;
+    completed_at: string | null;
+    target_domains: string[] | null;
+    session_intent?: string;
+    questions_json?: unknown;
+  }[];
+
+  const sessionIds = recentSessionsRaw.map((s) => s.id);
+  const sessionStatsMap: Record<string, { answered: number; correct: number }> = {};
+
+  if (sessionIds.length > 0) {
+    const { data: answersData } = await supabase
+      .from("session_answers")
+      .select("session_id, is_correct")
+      .in("session_id", sessionIds);
+
+    for (const a of answersData || []) {
+      if (!sessionStatsMap[a.session_id]) {
+        sessionStatsMap[a.session_id] = { answered: 0, correct: 0 };
+      }
+      sessionStatsMap[a.session_id].answered += 1;
+      if (a.is_correct) {
+        sessionStatsMap[a.session_id].correct += 1;
+      }
+    }
+  }
+
+  const recentSessions: SessionRow[] = recentSessionsRaw.map((s) => {
+    const totalQ = Array.isArray(s.questions_json) ? s.questions_json.length : 0;
+    const stats = sessionStatsMap[s.id] || { answered: 0, correct: 0 };
+    const accuracy = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0;
+    return {
+      id: s.id,
+      status: s.status,
+      created_at: s.created_at,
+      completed_at: s.completed_at,
+      target_domains: s.target_domains || [],
+      session_intent: s.session_intent,
+      totalQuestions: totalQ,
+      answeredCount: stats.answered,
+      correctCount: stats.correct,
+      accuracy,
+    };
+  });
+
   const questionResults = (questionResultsRes.data || []) as { answered_at: string }[];
 
   const examTaxonomy = taxonomy as unknown as Record<string, Record<string, string[]>>;

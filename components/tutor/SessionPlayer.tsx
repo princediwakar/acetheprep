@@ -29,7 +29,14 @@ import {
 import { Badge } from "@/components/ui/badge";
 import type { SessionQuestion, SelectedOption } from "@/types/tutor";
 
-interface SessionPlayerProps {
+export interface QuestionAttemptRecord {
+  selected: SelectedOption | null;
+  isCorrect: boolean;
+  wasRevealed: boolean;
+  timeMs: number;
+}
+
+export interface SessionPlayerProps {
   sessionId: string;
   questions: SessionQuestion[];
   examProfileId: string;
@@ -37,13 +44,11 @@ interface SessionPlayerProps {
   initialMastery?: Record<string, number>;
   initialMode?: "tutor" | "exam";
   examName?: string;
-}
-
-interface QuestionAttemptRecord {
-  selected: SelectedOption | null;
-  isCorrect: boolean;
-  wasRevealed: boolean;
-  timeMs: number;
+  isReviewMode?: boolean;
+  initialUserAttempts?: Record<string, QuestionAttemptRecord>;
+  initialScore?: number;
+  initialTimeElapsed?: number;
+  initialIndex?: number;
 }
 
 const OPTION_LETTERS = ["A", "B", "C", "D"] as const;
@@ -63,19 +68,24 @@ export function SessionPlayer({
   initialMastery,
   initialMode = "tutor",
   examName,
+  isReviewMode = false,
+  initialUserAttempts,
+  initialScore,
+  initialTimeElapsed,
+  initialIndex = 0,
 }: SessionPlayerProps) {
   const router = useRouter();
 
   const [mode, setMode] = useState<"tutor" | "exam">(initialMode);
-  const [hasStarted, setHasStarted] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [hasStarted, setHasStarted] = useState(isReviewMode || initialIndex > 0);
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [selectedOption, setSelectedOption] = useState<SelectedOption | null>(null);
   const [answerState, setAnswerState] = useState<"pending" | "answered">("pending");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [isRevealed, setIsRevealed] = useState(false);
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState(initialScore ?? 0);
   const [nextEnabled, setNextEnabled] = useState(false);
-  const [sessionComplete, setSessionComplete] = useState(false);
+  const [sessionComplete, setSessionComplete] = useState(isReviewMode);
   const [completing, setCompleting] = useState(false);
   const [startingNext, setStartingNext] = useState(false);
   const [completeResult, setCompleteResult] = useState<{
@@ -84,13 +94,15 @@ export function SessionPlayer({
     share_token?: string;
   } | null>(null);
 
-  const [userAttempts, setUserAttempts] = useState<Record<string, QuestionAttemptRecord>>({});
+  const [userAttempts, setUserAttempts] = useState<Record<string, QuestionAttemptRecord>>(
+    initialUserAttempts || {}
+  );
   const [reviewFilter, setReviewFilter] = useState<"all" | "incorrect" | "traps" | "correct">("all");
   const [expandedQuestions, setExpandedQuestions] = useState<Record<string, boolean>>({});
 
   const timerStartRef = useRef<number>(Date.now());
   const questionStartRef = useRef<number>(Date.now());
-  const [totalTimeElapsed, setTotalTimeElapsed] = useState(0);
+  const [totalTimeElapsed, setTotalTimeElapsed] = useState(initialTimeElapsed ?? 0);
   const nextTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const submittingRef = useRef(false);
@@ -465,9 +477,13 @@ export function SessionPlayer({
               <Trophy className="h-12 w-12 text-primary" />
             </div>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Session Complete</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight">
+            {isReviewMode ? "Session Review" : "Session Complete"}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            {mode === "exam" ? "Exam Simulation submitted." : "Tutor Drill finished."} Review your cognitive performance below.
+            {isReviewMode
+              ? "Review your questions, cognitive traps, and detailed solution derivations."
+              : `${mode === "exam" ? "Exam Simulation submitted." : "Tutor Drill finished."} Review your cognitive performance below.`}
           </p>
         </div>
 
@@ -656,7 +672,26 @@ export function SessionPlayer({
 
         {/* Complete / Actions Bar */}
         <div className="pt-4 border-t space-y-3">
-          {!completeResult ? (
+          {isReviewMode ? (
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Button
+                className="w-full text-base py-5"
+                size="lg"
+                onClick={() => router.push("/analytics")}
+              >
+                <ArrowLeft className="mr-2 h-5 w-5" />
+                Back to Analytics
+              </Button>
+              <Button
+                className="w-full text-base py-5"
+                size="lg"
+                variant="outline"
+                onClick={handleBackToDashboard}
+              >
+                Go to Dashboard
+              </Button>
+            </div>
+          ) : !completeResult ? (
             <Button className="w-full text-base py-6 font-bold" size="lg" onClick={handleComplete} disabled={completing}>
               {completing ? "Recording mastery..." : "Complete & Save Session"}
               <ChevronRight className="ml-2 h-5 w-5" />

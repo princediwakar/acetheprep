@@ -2,9 +2,9 @@
 
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { SessionPlayer } from "@/components/tutor/SessionPlayer";
+import { SessionPlayer, type QuestionAttemptRecord } from "@/components/tutor/SessionPlayer";
 import { TUTOR_ERRORS } from "@/lib/constants/tutor";
-import type { SessionQuestion } from "@/types/tutor";
+import type { SessionQuestion, SelectedOption } from "@/types/tutor";
 import taxonomy from "@/lib/taxonomies.json";
 
 interface SessionRow {
@@ -63,15 +63,6 @@ export default async function SessionPage({ params, searchParams }: PageProps) {
     );
   }
 
-  if (sessionData.status === "completed") {
-    return (
-      <div className="max-w-2xl mx-auto p-6 text-center mt-20">
-        <h1 className="text-2xl font-bold mb-4">Session Completed</h1>
-        <p className="text-muted-foreground">{TUTOR_ERRORS.SESSION_ALREADY_COMPLETED}</p>
-      </div>
-    );
-  }
-
   const questions = sessionData.questions_json;
 
   if (!questions || questions.length === 0) {
@@ -83,11 +74,51 @@ export default async function SessionPage({ params, searchParams }: PageProps) {
     );
   }
 
-  const { data: profile } = await supabase
-    .from("exam_profiles")
-    .select("exam_name")
-    .eq("id", sessionData.exam_profile_id)
-    .single();
+  const isCompleted = sessionData.status === "completed";
+
+  // Fetch profile, answers, and concept mastery in parallel
+  const [profileRes, answersRes, conceptsRes] = await Promise.all([
+    supabase
+      .from("exam_profiles")
+      .select("exam_name")
+      .eq("id", sessionData.exam_profile_id)
+      .single(),
+    supabase
+      .from("session_answers")
+      .select("question_id, selected_option, is_correct, was_revealed, time_to_answer_ms")
+      .eq("session_id", sessionData.id),
+    supabase
+      .from("concept_mastery")
+      .select("skill_domain, mastery_score")
+      .eq("user_id", user.id),
+  ]);
+
+  const profile = profileRes.data;
+  const rawAnswers = answersRes.data || [];
+  const concepts = conceptsRes.data || [];
+
+  const initialUserAttempts: Record<string, QuestionAttemptRecord> = {};
+  let initialScore = 0;
+  let initialTimeMs = 0;
+
+  for (const a of rawAnswers) {
+    initialUserAttempts[a.question_id] = {
+      selected: (a.selected_option as SelectedOption) || null,
+      isCorrect: a.is_correct,
+      wasRevealed: a.was_revealed,
+      timeMs: a.time_to_answer_ms ?? 0,
+    };
+    if (a.is_correct) initialScore += 1;
+    initialTimeMs += a.time_to_answer_ms ?? 0;
+  }
+
+  // If active, resume from the first unanswered question
+  let initialIndex = 0;
+  if (!isCompleted && questions.length > 0) {
+    const answeredIds = new Set(Object.keys(initialUserAttempts));
+    const firstUnanswered = questions.findIndex((q) => !answeredIds.has(q.question_id));
+    initialIndex = firstUnanswered === -1 ? Math.max(0, questions.length - 1) : firstUnanswered;
+  }
 
   let taxonomyDomains: string[] = [];
   let initialMastery: Record<string, number> = {};
@@ -98,16 +129,8 @@ export default async function SessionPage({ params, searchParams }: PageProps) {
     if (examSubjects) {
       taxonomyDomains = [...new Set(Object.values(examSubjects).flat())];
     }
-    
-    const { data: concepts } = await supabase
-      .from("concept_mastery")
-      .select("skill_domain, mastery_score")
-      .eq("user_id", user.id);
-      
-    if (concepts) {
-      for (const c of concepts) {
-        initialMastery[c.skill_domain] = c.mastery_score;
-      }
+    for (const c of concepts) {
+      initialMastery[c.skill_domain] = c.mastery_score;
     }
   }
 
@@ -128,6 +151,11 @@ export default async function SessionPage({ params, searchParams }: PageProps) {
       initialMastery={initialMastery}
       initialMode={initialMode}
       examName={profile?.exam_name}
+      isReviewMode={isCompleted}
+      initialUserAttempts={initialUserAttempts}
+      initialScore={initialScore}
+      initialTimeElapsed={Math.round(initialTimeMs / 1000)}
+      initialIndex={initialIndex}
     />
   );
 }

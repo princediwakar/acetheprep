@@ -3,8 +3,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, Target, TrendingUp, Zap, Clock, CheckCircle2, AlertCircle, BarChart3 } from "lucide-react";
+import { BookOpen, Target, TrendingUp, Zap, Clock, CheckCircle2, AlertCircle, BarChart3, ChevronRight } from "lucide-react";
 import type { AnalyticsPageData } from "@/app/analytics/page";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export function AnalyticsViewLoading() {
   return (
@@ -83,46 +85,117 @@ function SessionRow({ session }: { session: AnalyticsPageData["recentSessions"][
     month: "short",
     day: "numeric",
   });
-  const statusIcon =
-    session.status === "active" ? (
-      <Zap className="w-4 h-4 text-yellow-600" />
-    ) : session.status === "completed" ? (
-      <CheckCircle2 className="w-4 h-4 text-green-600" />
-    ) : (
-      <AlertCircle className="w-4 h-4 text-muted-foreground" />
-    );
-  
-  const statusBg = 
-    session.status === "active" ? "bg-yellow-500/10" :
-    session.status === "completed" ? "bg-green-500/10" :
-    "bg-muted";
 
-  const statusTextColor = 
-    session.status === "active" ? "text-yellow-700" :
-    session.status === "completed" ? "text-green-700" :
-    "text-muted-foreground";
+  const isCompleted = session.status === "completed";
+  const isActive = session.status === "active";
+
+  const intentLabel =
+    session.session_intent === "custom_mock"
+      ? "Mock Exam"
+      : session.session_intent === "tracked"
+        ? "Exam Simulation"
+        : session.session_intent === "diagnostic"
+          ? "Diagnostic Test"
+          : "Tutor Drill";
 
   const domainCount = session.target_domains?.length ?? 0;
+  const domainText =
+    domainCount === 0
+      ? "General Practice"
+      : domainCount === 1
+        ? session.target_domains[0]
+        : `${domainCount} domains`;
+
+  const totalQuestions = session.totalQuestions > 0 ? session.totalQuestions : session.answeredCount;
 
   return (
-    <div className="flex items-center gap-4 p-4 rounded-xl hover:bg-muted/40 transition-colors border border-transparent hover:border-border/60">
-      <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${statusBg}`}>
-        {statusIcon}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm font-bold">
-            {session.status === "active" ? "Active session" : "Session"}
-          </span>
-          <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md ${statusBg} ${statusTextColor}`}>
-            {session.status}
-          </span>
+    <Link
+      href={`/session/${session.id}`}
+      className="group block p-3.5 rounded-xl border border-border/70 bg-card hover:border-primary/40 hover:bg-muted/30 transition-all duration-200 shadow-sm"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div
+            className={cn(
+              "flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center",
+              isCompleted
+                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                : isActive
+                  ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                  : "bg-muted text-muted-foreground"
+            )}
+          >
+            {isCompleted ? (
+              <CheckCircle2 className="w-4 h-4" />
+            ) : isActive ? (
+              <Zap className="w-4 h-4" />
+            ) : (
+              <AlertCircle className="w-4 h-4" />
+            )}
+          </div>
+
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
+                {intentLabel}
+              </span>
+              <span
+                className={cn(
+                  "text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md",
+                  isCompleted
+                    ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                    : isActive
+                      ? "bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                      : "bg-muted text-muted-foreground"
+                )}
+              >
+                {session.status}
+              </span>
+            </div>
+
+            <div className="text-xs text-muted-foreground flex items-center gap-1.5 flex-wrap">
+              <span>{date}</span>
+              <span>&middot;</span>
+              <span className="truncate max-w-[180px]" title={domainText}>
+                {domainText}
+              </span>
+            </div>
+          </div>
         </div>
-        <div className="text-xs text-muted-foreground font-medium">
-          {date} &middot; {domainCount} domain{domainCount !== 1 ? "s" : ""}
+
+        {/* Right side metric & CTA */}
+        <div className="text-right flex flex-col items-end shrink-0">
+          {isCompleted ? (
+            <>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-sm font-black text-foreground">
+                  {session.correctCount}/{totalQuestions}
+                </span>
+                <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                  ({session.accuracy}%)
+                </span>
+              </div>
+              <span className="text-[11px] font-semibold text-primary inline-flex items-center gap-0.5 mt-1 group-hover:translate-x-0.5 transition-transform">
+                Review Solutions <ChevronRight className="w-3 h-3" />
+              </span>
+            </>
+          ) : isActive ? (
+            <>
+              <div className="text-xs font-semibold text-amber-600 dark:text-amber-400">
+                {session.answeredCount}/{totalQuestions} answered
+              </div>
+              <span className="text-[11px] font-semibold text-primary inline-flex items-center gap-0.5 mt-1 group-hover:translate-x-0.5 transition-transform">
+                Resume Test <ChevronRight className="w-3 h-3" />
+              </span>
+            </>
+          ) : (
+            <span className="text-[11px] font-semibold text-muted-foreground inline-flex items-center gap-0.5 mt-1">
+              View <ChevronRight className="w-3 h-3" />
+            </span>
+          )}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
