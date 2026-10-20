@@ -15,6 +15,12 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { DashboardPageData, SyllabusSubject, SyllabusDomain } from "@/app/dashboard/page";
 import { TUTOR_ROUTES, TUTOR_CONFIG } from "@/lib/constants/tutor";
 import { toast } from "sonner";
@@ -448,17 +454,33 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
                                   </Badge>
                                 )}
                               </div>
-                              <div className="flex items-center gap-2.5">
-                                <div className="h-1.5 bg-muted rounded-full overflow-hidden w-24 shrink-0">
-                                  <div
-                                    className={`h-full rounded-full transition-all duration-500 ${notStarted ? "bg-transparent" : barColor}`}
-                                    style={{ width: `${notStarted ? 0 : Math.max(pct, 4)}%` }}
-                                  />
-                                </div>
-                                <span className="text-xs tabular-nums text-muted-foreground whitespace-nowrap">
-                                  {notStarted ? "Not started · 0 Qs" : `${pct}% · ${domain.totalAttempted} Q${domain.totalAttempted !== 1 ? "s" : ""}`}
-                                </span>
-                              </div>
+                              <TooltipProvider delayDuration={200}>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div className="flex items-center gap-2.5 cursor-help group/metric">
+                                      <div className="h-1.5 bg-muted rounded-full overflow-hidden w-24 shrink-0">
+                                        <div
+                                          className={`h-full rounded-full transition-all duration-500 ${notStarted ? "bg-transparent" : barColor}`}
+                                          style={{ width: `${notStarted ? 0 : Math.max(pct, 4)}%` }}
+                                        />
+                                      </div>
+                                      <span className="text-xs tabular-nums text-muted-foreground whitespace-nowrap group-hover/metric:text-foreground transition-colors">
+                                        {notStarted ? "Not started · 0 Qs" : `${pct}% Mastery · ${domain.totalAttempted} Q${domain.totalAttempted !== 1 ? "s" : ""}`}
+                                      </span>
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="bg-popover text-popover-foreground border border-border shadow-lg max-w-xs text-xs space-y-1 p-2.5">
+                                    <p className="font-bold text-foreground">
+                                      {domain.name}: {notStarted ? "Not Started" : `${pct}% Mastery`}
+                                    </p>
+                                    <p className="text-muted-foreground text-[11px] leading-relaxed">
+                                      {notStarted
+                                        ? "No questions attempted yet. Practice to establish your baseline calibration and spaced repetition curve."
+                                        : `Calibrated via SM-2 spaced repetition based on accuracy and solving speed across ${domain.totalAttempted} questions.`}
+                                    </p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             </div>
                             
                             <Button 
