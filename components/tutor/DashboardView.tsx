@@ -82,7 +82,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
   function handleAlgorithmicReview() {
     setActiveConfig({
       title: "Daily Practice",
-      subtitle: "10-question mixed set optimized to boost your readiness score",
+      subtitle: "Adaptive practice set optimized to boost your readiness score",
       intent: "spaced_review",
     });
     setModalQuestionCount(10);

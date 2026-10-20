@@ -16,12 +16,12 @@ import { Check, HelpCircle, ShieldCheck, Sparkles, X } from "lucide-react";
 export const metadata: Metadata = {
   title: "Pricing & Plans | AceThePrep — Calibrated AI Test Prep",
   description:
-    "Simple, transparent pricing for competitive exams. Start free with 10-question practice sets or unlock 25Q practice sets and 50Q full mock tests with AceThePrep Pro.",
+    "Simple, transparent pricing for competitive exams. Start free with 10-question practice sets or unlock official sectional drills and full mock simulations with AceThePrep Pro.",
 };
 
 const COMPARISON_ROWS = [
   {
-    feature: "10-Question Practice Sets",
+    feature: "10-Question Quick Practice Sets",
     starter: true,
     pro: true,
     description: "Targeted quick drills across any subject domain",
@@ -39,16 +39,16 @@ const COMPARISON_ROWS = [
     description: "Calibrated diagnostic score based on accuracy and solving speed",
   },
   {
-    feature: "25-Question Sectional Practice",
+    feature: "Official Sectional Practice Drills",
     starter: false,
     pro: true,
-    description: "Realistic sectional stamina drills with timed pressure",
+    description: "Realistic sectional stamina drills matching official module lengths and timed pressure",
   },
   {
-    feature: "50-Question Full Mock Tests",
+    feature: "Official Full Mock Exam Simulations",
     starter: false,
     pro: true,
-    description: "Real test conditions with full solutions and score breakdown revealed when you finish",
+    description: "Real test conditions matching official question counts and timing for your exam, with full solutions revealed when you finish",
   },
   {
     feature: "Unlimited Daily AI Sessions",

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { SessionRow } from "@/types/tutor";
+import { getExamBlueprint } from "@/lib/constants/exam-blueprints";
 
 interface SessionHistoryRowProps {
   session: SessionRow;
@@ -34,9 +35,12 @@ export function SessionHistoryRow({ session, examName, onDiscard }: SessionHisto
   const totalQuestions =
     session.totalQuestions > 0 ? session.totalQuestions : session.answeredCount;
 
+  const bp = examName ? getExamBlueprint(examName) : null;
+  const isFullMock = bp ? totalQuestions >= bp.officialMockCount : totalQuestions >= 40;
+
   const intentLabel =
     session.session_intent === "custom_mock"
-      ? totalQuestions >= 50
+      ? isFullMock
         ? "Full Mock Test"
         : "Practice Set"
       : session.session_intent === "tracked"

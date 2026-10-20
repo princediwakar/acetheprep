@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { Sparkles, Timer, GraduationCap, Lock, Play } from "lucide-react";
+import { getQuestionCountOptions, type QuestionCountOption } from "@/lib/constants/exam-blueprints";
 
 export interface SessionConfig {
   title: string;
@@ -56,6 +57,12 @@ export function LaunchSessionDialog({
   onConfirmLaunch,
   onPromptUpgrade,
 }: LaunchSessionDialogProps) {
+  const isTopicPractice = Boolean(activeConfig?.domain);
+  const options = getQuestionCountOptions(examName, isTopicPractice);
+  const selectedPreset =
+    options.find((preset) => preset.count === modalQuestionCount) || options[0];
+  const effectiveCount = selectedPreset.count;
+
   return (
     <Dialog open={Boolean(activeConfig)} onOpenChange={(open) => !isLaunching && !open && onClose()}>
       <DialogContent className="sm:max-w-xl p-0 overflow-hidden gap-0 border-border bg-card shadow-2xl">
@@ -101,7 +108,7 @@ export function LaunchSessionDialog({
               </h3>
               <p className="text-sm text-muted-foreground min-h-[44px] flex items-center justify-center transition-all leading-relaxed">
                 {launchStep === 0 && "🧠 Checking topics you need to practice most..."}
-                {launchStep === 1 && `🎯 Selecting ${modalQuestionCount} practice questions for ${examName}...`}
+                {launchStep === 1 && `🎯 Selecting ${effectiveCount} practice questions for ${examName}...`}
                 {launchStep === 2 && "💡 Loading step-by-step solutions and explanations..."}
                 {launchStep >= 3 && "⚡ Ready! Setting up your test screen..."}
               </p>
@@ -113,7 +120,7 @@ export function LaunchSessionDialog({
               />
             </div>
             <p className="text-xs text-muted-foreground/80 font-mono">
-              {modalQuestionCount} Questions · Getting your session ready
+              {effectiveCount} Questions · Getting your session ready
             </p>
           </div>
         ) : (
@@ -126,12 +133,12 @@ export function LaunchSessionDialog({
                     Number of Questions
                   </span>
                   <span className="text-xs text-muted-foreground font-mono">
-                    ~{modalQuestionCount === 10 ? "15" : modalQuestionCount === 25 ? "35" : "75"} mins
+                    ~{selectedPreset.estimatedMinutes} mins
                   </span>
                 </div>
                 <div className="grid grid-cols-3 gap-2.5">
-                  {QUESTION_COUNT_OPTIONS.map((preset) => {
-                    const isSelected = modalQuestionCount === preset.count;
+                  {options.map((preset) => {
+                    const isSelected = effectiveCount === preset.count;
                     const isLocked = Boolean(preset.proOnly && !isPro);
                     return (
                       <button
@@ -249,15 +256,20 @@ export function LaunchSessionDialog({
                 type="button"
                 size="lg"
                 disabled={isLaunching}
-                onClick={onConfirmLaunch}
+                onClick={() => {
+                  if (modalQuestionCount !== effectiveCount) {
+                    onSetModalQuestionCount(effectiveCount);
+                  }
+                  onConfirmLaunch();
+                }}
                 className="font-semibold px-6 min-w-[210px] cursor-pointer"
               >
                 <Play className="w-4 h-4 mr-2" />
                 {modalMode === "exam"
-                  ? modalQuestionCount === 50
-                    ? "Start Full Mock Test (50Q)"
-                    : `Start Test (${modalQuestionCount}Q)`
-                  : `Start Study Session (${modalQuestionCount}Q)`}
+                  ? selectedPreset.isFullMock
+                    ? `Start Full Mock Test (${effectiveCount}Q)`
+                    : `Start Test (${effectiveCount}Q)`
+                  : `Start Study Session (${effectiveCount}Q)`}
               </Button>
             </div>
           </>

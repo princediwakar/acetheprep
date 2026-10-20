@@ -2,6 +2,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import type { SessionQuestion, DifficultyTier } from "@/types/tutor";
 import { getSubjectForDomain } from "@/lib/services/taxonomy";
+import { ALL_BANKS } from "@/lib/data/banks";
 
 export interface QuestionBankRow {
   id: string;
@@ -133,6 +134,36 @@ export async function fetchQuestionsFromBank(
         selectedIds.add(q.id);
         selectedQuestions.push(mapRowToSessionQuestion(q));
       }
+    }
+  }
+
+  // Safety Fallback: Supplement from compiled in-memory ALL_BANKS if database has fewer rows
+  if (selectedQuestions.length < totalNeeded) {
+    const staticCandidates = ALL_BANKS.filter((q) => q.exam_name === examName);
+    for (const q of staticCandidates) {
+      if (selectedQuestions.length >= totalNeeded) break;
+      const qTextPrefix = q.question_text.slice(0, 50);
+      const isAlreadyPicked = selectedQuestions.some(
+        (sq) => sq.question_text.slice(0, 50) === qTextPrefix
+      );
+      if (isAlreadyPicked) continue;
+
+      const fallbackId = `seed_${examName.toLowerCase().replace(/[^a-z0-9]/g, "_")}_${q.skill_domain.toLowerCase().replace(/[^a-z0-9]/g, "_")}_${selectedQuestions.length + 1}`;
+      if (answeredSet.has(fallbackId) || selectedIds.has(fallbackId)) continue;
+
+      selectedIds.add(fallbackId);
+      selectedQuestions.push({
+        question_id: fallbackId,
+        question_text: q.question_text,
+        options: q.options,
+        correct_option: q.correct_option,
+        explanation: q.explanation,
+        distractor_analysis: q.distractor_analysis || {},
+        skill_domain: q.skill_domain,
+        difficulty_tier: q.difficulty_tier,
+        time_estimate_seconds: q.time_estimate_seconds || 60,
+        misconception: q.misconception || "",
+      });
     }
   }
 

@@ -12,6 +12,7 @@ import { SessionActionDock } from "@/components/tutor/player/SessionActionDock";
 import { QuestionCard } from "@/components/tutor/player/QuestionCard";
 import { useSessionEngine } from "@/components/tutor/player/hooks/useSessionEngine";
 import type { SessionQuestion, SelectedOption } from "@/types/tutor";
+import { getExamBlueprint } from "@/lib/constants/exam-blueprints";
 
 export interface QuestionAttemptRecord {
   selected: SelectedOption | null;
@@ -90,7 +91,13 @@ export function SessionPlayer(props: SessionPlayerProps) {
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
-  const estimatedMinutes = Math.max(1, Math.round(questions.length * 1.5));
+  const bp = examName ? getExamBlueprint(examName) : null;
+  const estimatedMinutes =
+    bp && questions.length === bp.officialMockCount
+      ? bp.officialTimeMinutes
+      : bp && questions.length === bp.sectionTestCount
+        ? bp.sectionTimeMinutes
+        : Math.max(1, Math.round(questions.length * 1.5));
 
   // --- Start Screen ---
   if (!hasStarted) {

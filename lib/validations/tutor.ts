@@ -15,7 +15,7 @@ export const SessionStartSchema = z.object({
     .number()
     .int("Question count must be a whole number")
     .min(3, "Enter at least 3 questions")
-    .max(50, "Enter at most 50 questions")
+    .max(200, "Enter at most 200 questions")
     .default(10),
   focus_domains: z
     .array(z.string().min(1, "Domain name cannot be empty"))

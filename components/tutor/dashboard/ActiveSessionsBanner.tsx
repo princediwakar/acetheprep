@@ -84,7 +84,7 @@ export function ActiveSessionsBanner({ initialSessions }: ActiveSessionsBannerPr
           const totalQ = session.totalQuestions > 0 ? session.totalQuestions : session.answeredCount;
           const intentLabel =
             session.session_intent === "custom_mock"
-              ? totalQ >= 50
+              ? totalQ >= 40
                 ? "Full Mock Test"
                 : "Practice Set"
               : session.session_intent === "tracked"
