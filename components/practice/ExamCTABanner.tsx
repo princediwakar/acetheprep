@@ -34,20 +34,20 @@ export default function ExamCTABanner({ examName }: ExamCTABannerProps) {
           <p className="text-sm text-muted-foreground leading-relaxed">
             {daysRemaining !== null && daysRemaining > 0 ? (
               <>
-                Only <strong className="text-foreground">{daysRemaining} days</strong> remaining until {examName}{dateDisplay ? ` (${dateDisplay})` : ""}. Practice daily questions with step-by-step solutions to master the tricky traps before exam day.
+                Only <strong className="text-foreground">{daysRemaining} days</strong> remaining until {examName}{dateDisplay ? ` (${dateDisplay})` : ""}. Practice daily questions with step-by-step solutions to eliminate common mistakes before exam day.
               </>
             ) : (
-              `Start free practice sessions across all ${examName} subjects. Learn why tricky trap options fool students and build real exam confidence.`
+              `Start free practice sessions across all ${examName} subjects. Learn why tempting wrong options fool candidates and build real exam confidence.`
             )}
           </p>
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full md:w-auto">
           <Link
-            href="/setup"
+            href={`/setup?exam=${encodeURIComponent(examName)}`}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:scale-[0.98] transition-all"
           >
-            <span>Start Practicing Now</span>
+            <span>Start Free Preparation</span>
             <ArrowRight className="h-4 w-4 shrink-0" />
           </Link>
         </div>

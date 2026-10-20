@@ -108,7 +108,7 @@ export async function generateMetadata({
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${canonicalName} Most Failed Concepts — Real Student Telemetry`,
+      title: `${canonicalName} Most Failed Concepts — Real Student Performance Data`,
       description: `See the top conceptual traps and error rates in ${canonicalName}. Backed by real session analytics.`,
       url: canonicalUrl,
       images: [
@@ -148,7 +148,7 @@ export default async function MostFailedConceptsPage({ params }: PageProps) {
             Failed to load data
           </h1>
           <p className="text-sm text-muted-foreground max-w-sm">
-            Something went wrong while retrieving telemetry data. Please try again later.
+            Something went wrong while retrieving performance data. Please try again later.
           </p>
           <Link
             href="/insights"
@@ -165,7 +165,7 @@ export default async function MostFailedConceptsPage({ params }: PageProps) {
   const datasetSchema = insightsDatasetSchema({
     url: `${baseUrl}/insights/${examSlug}/most-failed-concepts`,
     examName,
-    reportType: "Most Failed Concepts Telemetry Dataset",
+    reportType: "Most Failed Concepts Performance Dataset",
     description: `Ranked list of concept domains by student failure rate for ${examName} exam preparation.`,
     datePublished: "2026-10-19",
   });
@@ -207,7 +207,7 @@ export default async function MostFailedConceptsPage({ params }: PageProps) {
 
         <div className="mb-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-rose-500/20 bg-rose-500/10 px-3 py-1 text-xs font-semibold text-rose-500 mb-3">
-            <span>Verified Telemetry</span>
+            <span>Verified Student Data</span>
             <span>•</span>
             <span>{examName}</span>
           </div>
@@ -229,10 +229,10 @@ export default async function MostFailedConceptsPage({ params }: PageProps) {
               Calibration Active
             </span>
             <h3 className="font-heading text-xl font-medium text-foreground mb-2">
-              Concept Telemetry in Progress
+              Concept Performance Data Aggregating
             </h3>
             <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-              Live failure-rate telemetry for {examName} is currently aggregating candidate practice sessions. You can start practicing {examName} questions directly from the syllabus catalog.
+              Live failure-rate data for {examName} is currently aggregating candidate practice sessions. You can start practicing {examName} questions directly from the syllabus catalog.
             </p>
             <Link
               href={`/practice/${examSlug}`}
@@ -323,7 +323,7 @@ export default async function MostFailedConceptsPage({ params }: PageProps) {
             href={`/insights/${examSlug}/hardest-topics`}
             className="font-semibold text-primary hover:underline"
           >
-            View Hardest Topics Telemetry &rarr;
+            View Hardest Topics Data &rarr;
           </Link>
         </div>
       </div>

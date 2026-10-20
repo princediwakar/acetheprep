@@ -2,11 +2,12 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import MaxWidthWrapper from "@/components/shared/MaxWidthWrapper";
 import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/useMobile";
-import { X, Check, Flame, Sparkles } from "lucide-react";
+import { X, Check, Flame, Sparkles, ArrowRight } from "lucide-react";
 
 interface ComparisonItem {
   dimension: string;
@@ -16,24 +17,24 @@ interface ComparisonItem {
 
 const COMPARISONS: ComparisonItem[] = [
   {
-    dimension: "Long-Term Retention",
-    oldWay: "Reread textbooks and notes for 8 hours, only to forget most key concepts within days.",
-    aceWay: "Spaced review intervals on Days 3, 7, and 14 lock key concepts into permanent memory.",
+    dimension: "Measuring Progress",
+    oldWay: "Rereading textbooks and summaries until they feel familiar, confusing recognition with real recall under stress.",
+    aceWay: "Active problem solving without notes, proving you can retrieve concepts and formulas from memory under the clock.",
   },
   {
-    dimension: "Practice Efficiency",
-    oldWay: "Solve 50 repetitive questions on comfortable topics, creating a false sense of confidence without fixing weak spots.",
-    aceWay: "Targeted Gap Isolation: Pinpoint exact weak topics so you spend study time only where it improves your score.",
+    dimension: "Learning From Mistakes",
+    oldWay: "Glancing at the answer key, nodding passively, and making the exact same error again under test-day pressure.",
+    aceWay: "Step-by-step breakdown of why wrong options seem appealing, helping you build genuine understanding.",
   },
   {
-    dimension: "Error Analysis",
-    oldWay: "Glance at the correct option letter, nod passively, and fall for the exact same trap on exam day.",
-    aceWay: "In-Depth Trap Breakdown: Shows you exactly why tempting wrong choices look right, so you never get tricked.",
+    dimension: "Study Efficiency",
+    oldWay: "Solving dozens of easy questions on topics you already know to feel productive without fixing weaknesses.",
+    aceWay: "Targeted practice focused on the specific 15% of high-yield concepts where you actually drop marks.",
   },
   {
-    dimension: "Mental Fatigue",
-    oldWay: "Draining 3-hour marathon tests every weekend that cause burnout rather than actionable insights.",
-    aceWay: "Focused 10-question practice sprints that give you instant, clear feedback with zero test fatigue.",
+    dimension: "Exam-Day Retention",
+    oldWay: "Draining 3-hour marathon mock tests that cause burnout while earlier chapters quietly fade from memory.",
+    aceWay: "Bite-sized 10-question practice sessions with smart review intervals that lock concepts permanently into memory.",
   },
 ];
 
@@ -49,10 +50,10 @@ export default function ReliefComparisonSection() {
             The Difference
           </span>
           <h2 className="mt-4 font-heading text-3xl md:text-4xl lg:text-5xl font-normal tracking-tight text-foreground leading-[1.15] text-balance">
-            Passive Cramming vs. Smart Targeted Practice
+            Passive Studying vs. Real Exam Readiness
           </h2>
           <p className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed text-balance">
-            Most students don&apos;t fail because they lacked commitment. They fail because passive rereading doesn&apos;t prepare you for tricky exam traps.
+            Why students can study 10+ hours a day, feel confident, and still struggle on exam day. Here is the difference between feeling prepared and actually being ready.
           </p>
         </div>
 
@@ -61,6 +62,20 @@ export default function ReliefComparisonSection() {
         ) : (
           <DesktopComparison />
         )}
+
+        {/* Conversion Action Footer */}
+        <div className="mt-14 text-center space-y-3">
+          <Link
+            href="/setup"
+            className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground shadow-md hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer"
+          >
+            <span>Start Free Prep</span>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          <p className="text-xs text-muted-foreground font-mono">
+            Takes 60 seconds to set up • No credit card required
+          </p>
+        </div>
       </MaxWidthWrapper>
     </section>
   );
@@ -78,9 +93,9 @@ function DesktopComparison() {
             </div>
             <div>
               <h3 className="font-heading text-xl font-medium text-foreground">
-                The Passive Cramming Treadmill
+                Passive Studying
               </h3>
-              <p className="text-xs text-muted-foreground">Traditional coaching rote practice</p>
+              <p className="text-xs text-muted-foreground">Reading textbooks & highlighting notes</p>
             </div>
           </div>
 
@@ -101,7 +116,7 @@ function DesktopComparison() {
 
         <div className="mt-8 pt-4 border-t border-border/50 text-xs font-mono text-muted-foreground flex items-center gap-1.5">
           <Flame className="h-3.5 w-3.5 text-muted-foreground/60" />
-          <span>Result: High anxiety, volatile exam-day recall</span>
+          <span>Result: High test anxiety, second-guessing under time pressure, repeat mistakes</span>
         </div>
       </div>
 
@@ -120,9 +135,9 @@ function DesktopComparison() {
             </div>
             <div>
               <h3 className="font-heading text-xl font-medium text-foreground">
-                The Calibrated Retrieval Engine
+                Active Preparation (AceThePrep)
               </h3>
-              <p className="text-xs text-primary font-medium">AceThePrep Cognitive Architecture</p>
+              <p className="text-xs text-primary font-medium">Active recall & targeted practice</p>
             </div>
           </div>
 
@@ -143,7 +158,7 @@ function DesktopComparison() {
 
         <div className="mt-8 pt-4 border-t border-border/50 text-xs font-mono text-primary font-semibold flex items-center gap-1.5">
           <Sparkles className="h-3.5 w-3.5 text-primary" />
-          <span>Result: 90%+ long-term retention with 50% less study time</span>
+          <span>Result: Confident problem solving, fast recall under pressure, permanent memory</span>
         </div>
       </div>
     </div>
@@ -169,7 +184,7 @@ function MobileComparison({
               : "text-muted-foreground hover:text-foreground",
           )}
         >
-          Passive Cramming
+          Passive Studying
         </button>
         <button
           onClick={() => setActiveTab("ace")}
@@ -180,7 +195,7 @@ function MobileComparison({
               : "text-muted-foreground hover:text-foreground",
           )}
         >
-          Calibrated Retrieval
+          Active Preparation
         </button>
       </div>
 
@@ -195,7 +210,7 @@ function MobileComparison({
               className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm space-y-5"
             >
               <h3 className="font-heading text-lg font-medium text-foreground">
-                The Passive Cramming Treadmill
+                Passive Studying
               </h3>
               {COMPARISONS.map((item, i) => (
                 <div key={i} className="space-y-1">
@@ -217,7 +232,7 @@ function MobileComparison({
               className="rounded-2xl border border-primary/40 bg-card p-6 shadow-sm space-y-5"
             >
               <h3 className="font-heading text-lg font-medium text-foreground">
-                The Calibrated Retrieval Engine
+                Active Preparation (AceThePrep)
               </h3>
               {COMPARISONS.map((item, i) => (
                 <div key={i} className="space-y-1">

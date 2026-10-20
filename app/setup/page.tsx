@@ -22,10 +22,21 @@ export const metadata: Metadata = {
   description: "Set up your personalized exam prep profile for AI-powered practice.",
 };
 
-export default function SetupPage() {
+import { Sparkles, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
+import { slugToExam } from "@/lib/slugs";
+
+export default async function SetupPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ exam?: string }>;
+}) {
+  const resolvedParams = searchParams ? await searchParams : {};
+  const rawExam = resolvedParams.exam ? decodeURIComponent(resolvedParams.exam).trim() : undefined;
+  const initialExam = rawExam ? (slugToExam(rawExam) || (TAXONOMY[rawExam] ? rawExam : undefined)) : undefined;
+
   return (
     <Suspense fallback={<SetupSkeleton />}>
-      <SetupPageContent />
+      <SetupPageContent initialExam={initialExam} />
     </Suspense>
   );
 }
@@ -34,11 +45,6 @@ function SetupSkeleton() {
   return (
     <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col justify-center px-4 py-12">
       <div className="w-full space-y-6">
-        {/* Step indicator pills */}
-        <div className="flex justify-center gap-2 mb-2">
-          <Skeleton className="h-2 w-20 rounded-full" />
-          <Skeleton className="h-2 w-20 rounded-full" />
-        </div>
         <div className="text-center space-y-2">
           <Skeleton className="h-8 w-56 mx-auto rounded-lg" />
           <Skeleton className="h-4 w-72 mx-auto rounded" />
@@ -55,24 +61,46 @@ function SetupSkeleton() {
   );
 }
 
-async function SetupPageContent() {
+async function SetupPageContent({ initialExam }: { initialExam?: string }) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
+    const returnUrl = initialExam ? `/setup?exam=${encodeURIComponent(initialExam)}` : "/setup";
     return (
       <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col items-center justify-center px-4 py-16 text-center">
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle className="text-xl">Welcome to AceThePrep</CardTitle>
-            <CardDescription>
-              Sign in to set up your personalized exam prep and start practicing.
+        <Card className="w-full rounded-2xl border border-border/80 bg-card p-4 sm:p-6 shadow-xl">
+          <CardHeader className="space-y-3 pb-6">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <Sparkles className="h-6 w-6" />
+            </div>
+            <CardTitle className="text-2xl font-normal font-heading">
+              {initialExam ? `Prepare for ${initialExam}` : "Welcome to AceThePrep"}
+            </CardTitle>
+            <CardDescription className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
+              {initialExam
+                ? `Sign in to generate your calibrated ${initialExam} syllabus, track your streak, and eliminate recurring mistakes under exam pressure.`
+                : "Sign in to generate your personalized syllabus, track your streak, and build speed under exam pressure."}
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex justify-center pb-6">
-            <SignInButton buttonText="Sign in with Google" />
+          <CardContent className="space-y-4 pb-4">
+            <SignInButton
+              buttonText="Continue with Google"
+              returnUrl={returnUrl}
+              className="w-full py-6 text-base font-semibold shadow-md cursor-pointer"
+            />
+            <div className="grid grid-cols-2 gap-2 pt-2 text-[11px] text-muted-foreground border-t border-border/60">
+              <span className="flex items-center justify-center gap-1">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                100% Free Access
+              </span>
+              <span className="flex items-center justify-center gap-1">
+                <Zap className="h-3.5 w-3.5 text-amber-500" />
+                60-Second Setup
+              </span>
+            </div>
           </CardContent>
         </Card>
       </main>
@@ -128,6 +156,25 @@ async function SetupPageContent() {
       assessments,
       isExisting: true,
       activeTargets: (profile as any).active_targets ?? [],
+    };
+  } else if (initialExam && TAXONOMY[initialExam]) {
+    // New user with exam context from query param: prefill with smart defaults (+90 days)
+    const subjects = TAXONOMY[initialExam] ?? {};
+    const assessments: Record<string, SelfAssessment> = {};
+    for (const subject of Object.keys(subjects)) {
+      assessments[subject] = "okay";
+    }
+
+    const defaultDate = new Date();
+    defaultDate.setDate(defaultDate.getDate() + 90);
+    const targetDateISO = defaultDate.toISOString().split("T")[0];
+
+    prefill = {
+      exam: initialExam,
+      targetDate: targetDateISO,
+      assessments,
+      isExisting: false,
+      activeTargets: [],
     };
   }
 

@@ -21,12 +21,12 @@ export default function SiteFooter({ className }: React.HTMLAttributes<HTMLEleme
       ],
     },
     {
-      title: "Hardest Topics & Traps",
+      title: "Hardest Topics & Mistakes",
       items: [
         { title: "JEE Main Hardest Topics", href: "/insights/jee-main/hardest-topics" },
-        { title: "NEET Tricky Concepts", href: "/insights/neet/most-failed-concepts" },
-        { title: "UPSC CSAT Trap Analysis", href: "/insights/upsc-cse/hardest-topics" },
-        { title: "CAT Arithmetic Traps", href: "/insights/cat/hardest-topics" },
+        { title: "NEET High-Yield Concepts", href: "/insights/neet/most-failed-concepts" },
+        { title: "UPSC CSAT Logic Analysis", href: "/insights/upsc-cse/hardest-topics" },
+        { title: "CAT Quantitative Pitfalls", href: "/insights/cat/hardest-topics" },
         { title: "GATE Common Errors", href: "/insights/gate/hardest-topics" },
         { title: "All Topic Insights", href: "/insights" },
       ],
@@ -80,12 +80,12 @@ export default function SiteFooter({ className }: React.HTMLAttributes<HTMLEleme
               {siteConfig.name}
             </h4>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              Cognitive-science retrieval practice platform. We track memory decay curves and deconstruct question distractors so you stop forgetting.
+              Adaptive practice platform built for competitive exams. Master common mistakes, build timed recall, and retain concepts with smart review intervals.
             </p>
             <div className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
               <span>100% Free</span>
               <span>•</span>
-              <span>Zero Cramming</span>
+              <span>Zero Guesswork</span>
             </div>
           </div>
         </div>

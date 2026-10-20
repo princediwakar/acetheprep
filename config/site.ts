@@ -12,7 +12,7 @@ export const siteConfig = {
   domain: "acetheprep.com",
   url: safeUrl,
   description:
-    "Free AI-powered exam preparation with adaptive spaced repetition, distractor analysis, and diagnostic baseline assessments for JEE Main, NEET, UPSC CSE, GMAT, and more.",
+    "Free adaptive exam preparation with active recall drills, step-by-step mistake breakdowns, and spaced reviews for SAT, GRE, GMAT Focus, CFA, JEE Main, and NEET.",
   author: "AceThePrep Engineering",
   links: {
     supportEmail: "support@acetheprep.com",

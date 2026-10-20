@@ -354,13 +354,13 @@ export default async function BlogPostPage({ params }: PageProps) {
         <div className="mt-16 rounded-2xl border border-primary/30 bg-gradient-to-br from-card via-card to-primary/5 p-8 shadow-sm">
           <div className="flex items-center gap-2 text-primary font-semibold text-sm mb-2">
             <Sparkles className="w-4 h-4" />
-            <span>Interactive Diagnostic Assessment</span>
+            <span>Personalized Exam Preparation</span>
           </div>
           <h3 className="text-xl font-bold text-foreground">
-            Diagnose your memory retention in 5 minutes
+            Master High-Yield Concepts Under Real Exam Timing
           </h3>
           <p className="mt-2 text-sm text-muted-foreground">
-            {siteConfig.name} uses cognitive science algorithms to pinpoint your high-decay topics before your upcoming competitive exam. Free diagnostic test with instant distractor feedback.
+            {siteConfig.name} uses cognitive science algorithms to pinpoint your weak areas before exam day. Practice under realistic time constraints with instant mistake explanations.
           </p>
 
           <div className="mt-6 flex flex-col sm:flex-row items-center gap-4">
@@ -368,7 +368,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               href="/setup"
               className="w-full sm:w-auto text-center rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow transition hover:opacity-90"
             >
-              Take 5-Question Diagnostic
+              Set Up Your Exam Free
             </Link>
             <Link
               href="/practice"

@@ -10,9 +10,9 @@ import taxonomyRaw from "@/lib/taxonomies.json";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Exam Difficulty Telemetry & Misconception Insights | AceThePrep",
+  title: "Hardest Exam Topics & Common Mistakes | AceThePrep",
   description:
-    "Data-driven competitive exam difficulty telemetry. Discover hardest topics and most-failed concepts across JEE Main, NEET, UPSC, and CAT — powered by cognitive practice analytics.",
+    "Discover the hardest exam topics and most frequent mistakes across competitive exams like SAT, GRE, GMAT, JEE Main, NEET, and CAT.",
 };
 
 const ALL_EXAMS = Object.keys(taxonomyRaw).filter((k) => k !== "_schema_version");
@@ -34,13 +34,13 @@ export default async function InsightsPage() {
         <div className="text-center mb-12 max-w-2xl mx-auto space-y-3">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
             <Activity className="h-3.5 w-3.5" />
-            Exam Analytics
+            Exam Topic Insights
           </span>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-foreground">
-            Hardest Exam Topics & Traps
+            Hardest Exam Topics & Common Mistakes
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Discover which topics students find most challenging across major exams, ranked by error rates and tricky distractor traps.
+            Discover where students drop marks most often across major competitive exams. Learn the core principles behind common mistakes so you can solve with confidence.
           </p>
         </div>
 
@@ -66,7 +66,7 @@ export default async function InsightsPage() {
                     {exam}
                   </h2>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Telemetry & distractor analytics
+                    Performance & mistake analytics
                   </p>
                 </div>
 
@@ -98,7 +98,7 @@ export default async function InsightsPage() {
         </div>
 
         <p className="text-xs text-muted-foreground text-center mt-12">
-          Telemetry is updated automatically as candidates complete practice sessions on AceThePrep.
+          Performance data is updated automatically as candidates complete practice sessions on AceThePrep.
         </p>
       </div>
     </div>

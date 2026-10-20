@@ -14,16 +14,16 @@ const taxonomy = taxonomyRaw as unknown as TaxonomyData;
 const baseUrl = siteConfig.url;
 
 export const metadata: Metadata = {
-  title: `Free Competitive Exam Practice Questions & Solutions | ${siteConfig.name}`,
+  title: `Free Competitive Exam Practice & Solutions | ${siteConfig.name}`,
   description:
-    "Practice authentic exam questions with real-time trap analysis and step-by-step solutions for GMAT Focus, CFA Level 1, GRE, SAT, IELTS, TOEFL, JEE Main, NEET, and more.",
+    "Practice authentic exam questions with step-by-step solutions and common mistake breakdowns for GMAT Focus, CFA Level 1, GRE, SAT, JEE Main, NEET, and CAT.",
   alternates: {
     canonical: `${baseUrl}/practice`,
   },
   openGraph: {
-    title: `Competitive Exam Practice Questions | ${siteConfig.name}`,
+    title: `Competitive Exam Practice & Solutions | ${siteConfig.name}`,
     description:
-      "Practice authentic exam questions with instant step-by-step solutions showing you exactly why wrong options are traps.",
+      "Practice authentic exam questions with step-by-step solutions showing you how to solve each problem and avoid common mistakes.",
     url: `${baseUrl}/practice`,
     type: "website",
   },
@@ -103,10 +103,10 @@ export default function PracticeHubPage() {
             <span>13 Supported Curricula</span>
           </div>
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground">
-            Exam Directory
+            Exam Practice Directory
           </h1>
           <p className="text-base sm:text-lg text-muted-foreground max-w-3xl leading-relaxed">
-            Select your exam to practice real questions. Every problem features step-by-step solutions showing you exactly why common wrong answers are traps.
+            Select your syllabus to practice authentic questions. Every problem features step-by-step solutions showing you how to solve efficiently and avoid common mistakes.
           </p>
         </div>
 

@@ -5,7 +5,6 @@ const PROTECTED_PREFIXES = [
   "/dashboard",
   "/analytics",
   "/history",
-  "/setup",
   "/create",
   "/session",
 ];
@@ -74,8 +73,9 @@ export async function proxy(request: NextRequest) {
 
   if (isProtected && !user) {
     const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/";
+    redirectUrl.pathname = "/setup";
     redirectUrl.search = "";
+    redirectUrl.searchParams.set("next", request.nextUrl.pathname + request.nextUrl.search);
     const redirectResponse = NextResponse.redirect(redirectUrl);
     response.cookies.getAll().forEach((cookie) => {
       redirectResponse.cookies.set(cookie.name, cookie.value, cookie);

@@ -124,14 +124,14 @@ export default async function BlogIndexPage() {
               Ready to test your memory retention?
             </h3>
             <p className="text-sm text-muted-foreground mt-1 max-w-xl">
-              Experience adaptive spaced repetition tailored to your target exam. Free 5-minute diagnostic test with instant distractor analysis.
+              Experience adaptive spaced repetition tailored to your target exam. Free 10-question practice sets with step-by-step mistake explanations.
             </p>
           </div>
           <Link
             href="/setup"
             className="inline-flex whitespace-nowrap items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow transition hover:opacity-90"
           >
-            Start Free Diagnostic
+            Set Up Your Exam Free
           </Link>
         </div>
       </div>

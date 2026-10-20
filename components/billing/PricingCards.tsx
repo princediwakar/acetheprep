@@ -60,7 +60,7 @@ export function PricingCards({ userEmail, isPro }: PricingCardsProps) {
             </Badge>
             <h3 className="text-2xl font-bold text-foreground">Starter</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              Perfect for initial diagnostic calibration and daily habit building.
+              Free forever for daily practice and building exam consistency.
             </p>
           </div>
 
@@ -72,11 +72,11 @@ export function PricingCards({ userEmail, isPro }: PricingCardsProps) {
           <ul className="space-y-3 text-sm text-foreground/90">
             <li className="flex items-center gap-2.5">
               <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span>10-Question Sprint Sessions</span>
+              <span>10-Question Practice Sets</span>
             </li>
             <li className="flex items-center gap-2.5">
               <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span>Step-by-Step Solutions & Trap Breakdown</span>
+              <span>Step-by-Step Solutions & Mistake Explanations</span>
             </li>
             <li className="flex items-center gap-2.5">
               <Check className="w-4 h-4 text-emerald-500 shrink-0" />
@@ -97,7 +97,7 @@ export function PricingCards({ userEmail, isPro }: PricingCardsProps) {
             className="w-full font-semibold rounded-xl"
             onClick={() => router.push(userEmail ? "/dashboard" : "/setup")}
           >
-            {userEmail ? "Go to Dashboard" : "Start Free Sprint"}
+            {userEmail ? "Go to Dashboard" : "Set Up Free Profile"}
           </Button>
         </div>
       </div>
@@ -189,7 +189,7 @@ export function PricingCards({ userEmail, isPro }: PricingCardsProps) {
             </Badge>
             <h3 className="text-2xl font-bold text-foreground">Monthly</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              Ideal for final 30-day sprint reviews and rapid score boosts.
+              Ideal for final 30-day intensive review and rapid score calibration.
             </p>
           </div>
 

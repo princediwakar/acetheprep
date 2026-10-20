@@ -16,19 +16,24 @@ export default function CTA() {
       <MaxWidthWrapper className="relative z-10 text-center space-y-6 max-w-3xl mx-auto">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
           <Sparkles className="h-3.5 w-3.5" />
-          Zero Cramming • 100% Free
+          Zero Guesswork • 100% Free
         </span>
 
         <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-foreground leading-[1.12] text-balance">
-          Calibrated retrieval practice that stops the forgetting curve.
+          Start your personalized exam prep today.
         </h2>
 
         <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-          No credit cards. No paywalls. Just pure cognitive science, distractor telemetry, and adaptive practice built for your target exam.
+          Set up your target exam, track your daily progress, and build permanent recall with adaptive practice. 100% free with zero paywalls.
         </p>
 
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <SignInButton buttonText="Get Started with Google" />
+          <SignInButton
+            buttonText="Get Started Free with Google"
+            returnUrl="/setup"
+            size="lg"
+            className="px-8 py-6 text-base shadow-lg cursor-pointer"
+          />
         </div>
 
         <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs font-mono text-muted-foreground">

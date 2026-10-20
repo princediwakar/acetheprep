@@ -16,21 +16,21 @@ import { Check, HelpCircle, ShieldCheck, Sparkles, X } from "lucide-react";
 export const metadata: Metadata = {
   title: "Pricing & Plans | AceThePrep — Calibrated AI Test Prep",
   description:
-    "Simple, transparent pricing for competitive exams. Start free with 10Q diagnostic sprints or unlock full 25Q and 50Q exam simulations with AceThePrep Pro.",
+    "Simple, transparent pricing for competitive exams. Start free with 10-question practice sets or unlock full 25Q and 50Q exam simulations with AceThePrep Pro.",
 };
 
 const COMPARISON_ROWS = [
   {
-    feature: "10-Question Sprint Sessions",
+    feature: "10-Question Practice Sets",
     starter: true,
     pro: true,
     description: "Targeted quick drills across any subject domain",
   },
   {
-    feature: "Step-by-Step Solutions & Trap Explanations",
+    feature: "Step-by-Step Solutions & Mistake Explanations",
     starter: true,
     pro: true,
-    description: "Clear explanations showing why correct answers work and why wrong options are traps",
+    description: "Clear explanations showing why correct answers work and why tempting wrong options fail",
   },
   {
     feature: "Baseline Readiness Index",
@@ -115,7 +115,7 @@ export default async function PricingPage() {
           Invest in Your Target Score, Not Generic Prep.
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Start free with 10-question diagnostic sprints. Upgrade to AceThePrep Pro when you are ready for full 25Q and 50Q exam simulations.
+          Start free with 10-question practice sets. Upgrade to AceThePrep Pro when you are ready for full 25Q and 50Q exam simulations.
         </p>
       </div>
 
@@ -197,17 +197,17 @@ export default async function PricingPage() {
       {/* Bottom CTA Banner */}
       <div className="max-w-4xl mx-auto mt-24 rounded-3xl bg-gradient-to-r from-primary/15 via-primary/5 to-transparent border border-primary/30 p-8 sm:p-12 text-center space-y-4">
         <h3 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-          Ready to diagnose your real exam readiness?
+          Ready to test your real exam readiness?
         </h3>
         <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
-          Take your first 10-question sprint session in seconds. Zero credit card required to start.
+          Take your first 10-question practice session in seconds. Zero credit card required to start.
         </p>
         <div className="pt-2">
           <Link
             href={user ? "/dashboard" : "/setup"}
             className="inline-flex items-center justify-center font-bold px-8 py-3.5 rounded-xl bg-primary text-primary-foreground shadow-md hover:bg-primary/90 transition-all text-sm"
           >
-            {user ? "Go to Your Dashboard" : "Start Free Diagnostic"}
+            {user ? "Go to Your Dashboard" : "Set Up Free Profile"}
           </Link>
         </div>
       </div>

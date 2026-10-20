@@ -89,7 +89,7 @@ export async function GET(request: Request) {
           type === "practice"
             ? "Verified Practice"
             : type === "insights"
-              ? "Telemetry Data"
+              ? "Student Performance Data"
               : type === "blog"
                 ? "Cognitive Science"
                 : "Adaptive Exam Engine"

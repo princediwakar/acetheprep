@@ -17,7 +17,7 @@ export const BILLING_PLANS: Record<"monthly" | "quarterly", PricingPlan> = {
   monthly: {
     id: "monthly",
     name: "Monthly Pro",
-    description: "Ideal for final sprint revisions and rapid score calibration.",
+    description: "Ideal for final intensive review and rapid score calibration.",
     priceUsd: 29,
     period: "month",
     billingLabel: "$29 / month",
@@ -25,7 +25,7 @@ export const BILLING_PLANS: Record<"monthly" | "quarterly", PricingPlan> = {
     features: [
       "Unlimited daily test sessions (No 10Q cap)",
       "Full 25Q Practice & 50Q Exam Simulations",
-      "Step-by-step solutions & trap explanations",
+      "Step-by-step solutions & mistake explanations",
       "Smart spaced repetition review schedule",
       "Calibrated exam readiness score forecast",
     ],
@@ -34,7 +34,7 @@ export const BILLING_PLANS: Record<"monthly" | "quarterly", PricingPlan> = {
     id: "quarterly",
     name: "3-Month Exam Season Pass",
     badge: "Most Popular",
-    description: "The complete preparation cycle from diagnostic to exam day.",
+    description: "The complete preparation cycle from initial syllabus setup to exam day.",
     priceUsd: 69,
     period: "quarter",
     billingLabel: "$69 / 3 months ($23/mo)",

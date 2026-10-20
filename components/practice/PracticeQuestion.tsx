@@ -5,6 +5,9 @@
 import { useState, useCallback } from "react";
 import { renderMathContent } from "@/lib/quiz-utils";
 import { Badge } from "@/components/ui/badge";
+import { useUser } from "@/hooks/useUser";
+import { SignInButton } from "@/components/SignInButton";
+import { Sparkles, TrendingUp } from "lucide-react";
 
 interface QuestionData {
   question_text: string;
@@ -32,6 +35,7 @@ const DIFFICULTY_COLORS: Record<string, string> = {
 };
 
 export default function PracticeQuestion({ question, index }: PracticeQuestionProps) {
+  const { user } = useUser();
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
 
@@ -125,7 +129,7 @@ export default function PracticeQuestion({ question, index }: PracticeQuestionPr
       {revealed && question.misconception && (
         <div className="mt-4 rounded-xl border border-amber-500/25 bg-amber-500/10 p-3.5 text-xs text-foreground/90">
           <span className="font-semibold text-amber-600 dark:text-amber-400 block mb-1">
-            Common Exam Trap:
+            Common Pitfall:
           </span>
           <p className="text-muted-foreground leading-relaxed">
             {question.misconception}
@@ -149,7 +153,7 @@ export default function PracticeQuestion({ question, index }: PracticeQuestionPr
       {revealed && question.distractor_analysis && (
         <div className="mt-4 space-y-2">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Why Other Options Are Traps
+            Why Other Options Are Incorrect
           </p>
           {OPTION_LABELS.map((label) => {
             const da = question.distractor_analysis!;
@@ -173,7 +177,7 @@ export default function PracticeQuestion({ question, index }: PracticeQuestionPr
                   Option {label}:
                 </span>
                 <span className="text-muted-foreground">
-                  TRAP — {analysis}
+                  INCORRECT — {analysis}
                 </span>
               </div>
             );
@@ -191,6 +195,28 @@ export default function PracticeQuestion({ question, index }: PracticeQuestionPr
           }`}
         >
           {isCorrect ? "Correct! Well done." : `Incorrect. The correct answer is Option ${question.correct_option}.`}
+        </div>
+      )}
+
+      {/* 1-Click Guest Progress Saving Banner */}
+      {revealed && !user && (
+        <div className="mt-5 rounded-2xl border border-primary/25 bg-primary/5 p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <div className="space-y-1">
+            <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Real-Time Progress Tracking</span>
+            </div>
+            <p className="text-sm font-semibold text-foreground">
+              Save your practice progress & streak
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Sign in with 1-click to track your mastery curve and review mistakes on your schedule.
+            </p>
+          </div>
+          <SignInButton
+            buttonText="Save Streak with Google"
+            className="w-full sm:w-auto shrink-0 shadow-sm cursor-pointer"
+          />
         </div>
       )}
     </div>

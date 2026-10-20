@@ -25,9 +25,9 @@ export const infos: InfoLdg[] = [
     ],
   },
   {
-    title: "Your Exam-Ready in 3 Steps",
+    title: "Achieve True Exam Readiness in 3 Steps",
     description:
-      "From messy notes to focused practice in seconds. No setup required.",
+      "From passive textbook notes to calibrated retrieval and distractor immunity in minutes.",
     image: "/_static/illustrations/feature.png",
     list: [
       {
@@ -158,7 +158,7 @@ export const studentTestimonials: TestimonialType[] = [
     job: "JEE Advanced AIR 342 (IIT Bombay)",
     image: "https://randomuser.me/api/portraits/men/32.jpg",
     review:
-      "The distractor explanations for JEE Physics mechanics are mind-blowing. Instead of just giving the standard textbook formula, AceThePrep showed me exactly which sign convention I was inverting.",
+      "The step-by-step explanations for JEE Physics mechanics are incredible. Instead of just giving a standard textbook formula, AceThePrep showed me exactly which sign convention I was inverting.",
     location: "Kota, India",
   },
   {
@@ -174,7 +174,7 @@ export const studentTestimonials: TestimonialType[] = [
     job: "UPSC CSE Prelims Cleared",
     image: "https://randomuser.me/api/portraits/men/44.jpg",
     review:
-      "CSAT Logical Reasoning was costing me 25 marks every attempt. The distractor analysis on syllogisms and assumption fallacies taught me to eliminate traps in 20 seconds.",
+      "CSAT Logical Reasoning was costing me 25 marks every attempt. The breakdowns on syllogisms and logical fallacies taught me to eliminate tempting wrong options in 20 seconds.",
     location: "New Delhi, India",
   },
   {
@@ -182,7 +182,7 @@ export const studentTestimonials: TestimonialType[] = [
     job: "CAT 99.4 Percentile (IIM Ahmedabad)",
     image: "https://randomuser.me/api/portraits/women/48.jpg",
     review:
-      "Instead of solving 50 questions on Time-Speed-Distance that I already knew, AceThePrep found the single relative-speed invariant I was missing. Saved 10 hours a week.",
+      "Instead of solving 50 questions on Time-Speed-Distance that I already knew, AceThePrep found the single relative-speed shortcut I was missing. Saved 10 hours a week.",
     location: "Mumbai, India",
   },
   {

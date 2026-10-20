@@ -4,9 +4,8 @@
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import MaxWidthWrapper from "@/components/shared/MaxWidthWrapper";
-import { CountUp } from "@/components/shared/CountUp";
 import Link from "next/link";
-import { ArrowRight, Activity } from "lucide-react";
+import { ArrowRight, BarChart3 } from "lucide-react";
 
 const CIRCUMFERENCE = 2 * Math.PI * 40; // ~251.33
 
@@ -21,26 +20,26 @@ interface GaugeData {
 
 const gaugeData: GaugeData[] = [
   {
-    exam: "JEE Main",
-    topic: "Rotational Dynamics & Sign Traps",
-    detail: "78% fail due to coordinate sign inversion in torque equations.",
-    value: 22,
+    exam: "Digital SAT",
+    topic: "Extraneous Roots & Signs",
+    detail: "74% of students forget to check candidate solutions in the original equation.",
+    value: 26,
     colorClass: "text-primary",
     strokeColor: "hsl(var(--primary))",
   },
   {
-    exam: "NEET",
-    topic: "Mendelian Genetics Ratios",
-    detail: "46% confuse phenotypic (3:1) with genotypic (1:2:1) distributions.",
-    value: 54,
+    exam: "GMAT Focus",
+    topic: "Absolute Values & Zero Boundary",
+    detail: "68% of students miss the zero boundary condition |x| = x when testing values.",
+    value: 32,
     colorClass: "text-amber-600 dark:text-amber-400",
     strokeColor: "#d97706",
   },
   {
-    exam: "UPSC CSE",
-    topic: "CSAT Syllogism Fallacies",
-    detail: "72% fall for undistributed middle term intuition traps.",
-    value: 28,
+    exam: "JEE Main",
+    topic: "Rotational Dynamics & Signs",
+    detail: "78% of students lose marks on sign conventions in torque equations.",
+    value: 22,
     colorClass: "text-primary",
     strokeColor: "hsl(var(--primary))",
   },
@@ -62,7 +61,7 @@ function GaugeCard({ exam, topic, detail, value, colorClass, strokeColor }: Gaug
             {exam}
           </span>
           <span className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">
-            Telemetry
+            Student Data
           </span>
         </div>
 
@@ -97,16 +96,16 @@ function GaugeCard({ exam, topic, detail, value, colorClass, strokeColor }: Gaug
               animate={
                 inView ? { strokeDashoffset: dashOffset } : { strokeDashoffset: CIRCUMFERENCE }
               }
-              transition={{ duration: 1.4, ease: "easeOut" }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
             />
           </svg>
           {/* Centered percentage */}
           <div className="absolute flex flex-col items-center">
             <span className={`font-mono text-2xl font-bold tracking-tight ${colorClass}`}>
-              <CountUp to={value} suffix="%" />
+              {value}%
             </span>
             <span className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground">
-              Peer Accuracy
+              Average Accuracy
             </span>
           </div>
         </div>
@@ -124,7 +123,7 @@ function GaugeCard({ exam, topic, detail, value, colorClass, strokeColor }: Gaug
           href={`/practice/${exam.toLowerCase().replace(/\s+/g, "-")}`}
           className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
         >
-          <span>Test your mastery on this topic</span>
+          <span>Practice this topic free</span>
           <ArrowRight className="h-3 w-3" />
         </Link>
       </div>
@@ -138,14 +137,14 @@ export default function PeerInsightsSection() {
       <MaxWidthWrapper>
         <div className="space-y-4 text-center mb-16 max-w-3xl mx-auto">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
-            <Activity className="h-3.5 w-3.5" />
-            Distractor Telemetry
+            <BarChart3 className="h-3.5 w-3.5" />
+            Common Pitfalls by Exam
           </span>
           <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-normal tracking-tight text-foreground leading-[1.15] text-balance">
-            Predict your blindspots before exam day exposes them.
+            Where most students lose marks on exam day.
           </h2>
           <p className="text-base md:text-lg text-muted-foreground leading-relaxed text-balance">
-            Real candidate telemetry across thousands of sessions. Know which traps trip up the majority of candidates so you don&apos;t repeat their mistakes.
+            Real performance data across thousands of practice sessions reveals the concepts that trip students up most. Learn where others stumble so you can avoid the same mistakes.
           </p>
         </div>
 
@@ -155,13 +154,19 @@ export default function PeerInsightsSection() {
           ))}
         </div>
 
-        <div className="mt-12 text-center">
+        <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
+          <Link
+            href="/setup"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3 text-xs sm:text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer"
+          >
+            <span>Set Up Your Exam Profile Free</span>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
           <Link
             href="/insights"
-            className="inline-flex items-center gap-2 rounded-xl border border-border/80 bg-card px-5 py-2.5 text-xs font-medium text-foreground shadow-sm transition-all hover:border-primary/40 hover:bg-accent"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl border border-border/80 bg-card px-5 py-3 text-xs font-medium text-foreground shadow-sm transition-all hover:border-primary/40 hover:bg-accent"
           >
-            <span>Explore all 10 exam track telemetry reports</span>
-            <ArrowRight className="h-3.5 w-3.5 text-primary" />
+            <span>View All Exam Topic Analyses</span>
           </Link>
         </div>
       </MaxWidthWrapper>

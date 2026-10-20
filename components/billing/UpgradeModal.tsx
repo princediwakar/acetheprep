@@ -110,7 +110,7 @@ export function UpgradeModal({
                   <span className="text-xs text-muted-foreground">/ 3 months</span>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-normal">
-                  Full 90-day cycle ($23/mo). Ideal for GMAT, CFA, and SAT sprint.
+                  Full 90-day cycle ($23/mo). Ideal for GMAT, CFA, and SAT candidates.
                 </p>
               </div>
             </div>

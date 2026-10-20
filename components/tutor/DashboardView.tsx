@@ -163,7 +163,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
   const [upgradeReason, setUpgradeReason] = useState<string | undefined>(undefined);
 
   const SESSION_SIZE_PRESETS = [
-    { count: 10, label: "10 Sprint", proOnly: false },
+    { count: 10, label: "10 Quick", proOnly: false },
     { count: 25, label: "25 Practice", proOnly: true },
     { count: 50, label: "50 Mock", proOnly: true },
   ] as const;

@@ -98,41 +98,77 @@ export function Step1RealityAnchor({
           </Select>
         </div>
 
-        {/* Date Picker */}
+        {/* Date Selection with Instant Horizon Chips */}
         {exam && (
-          <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
-            <Label htmlFor="target-date">When is your exam?</Label>
-            <input
-              id="target-date"
-              type="date"
-              min={getTodayISO()}
-              value={targetDate}
-              onChange={(e) => onTargetDateChange(e.target.value)}
-              className={cn(
-                "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm",
-                "transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium",
-                "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-                "disabled:cursor-not-allowed disabled:opacity-50",
-              )}
-            />
+          <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="target-date">Target Exam Horizon</Label>
+              {timeMode && <TimeModeBadge mode={timeMode} />}
+            </div>
 
-            {timeMode && (
-              <div className="pt-1">
-                <TimeModeBadge mode={timeMode} />
+            {/* Quick Presets */}
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { label: "1 Month", days: 30 },
+                { label: "3 Months (Recommended)", days: 90 },
+                { label: "6 Months", days: 180 },
+              ].map((preset) => {
+                const targetISO = (() => {
+                  const d = new Date();
+                  d.setDate(d.getDate() + preset.days);
+                  return d.toISOString().split("T")[0];
+                })();
+                const isSelected = targetDate === targetISO;
+
+                return (
+                  <button
+                    key={preset.days}
+                    type="button"
+                    onClick={() => onTargetDateChange(targetISO)}
+                    className={cn(
+                      "flex flex-col items-center justify-center rounded-xl border p-2.5 text-center text-xs transition-all cursor-pointer",
+                      isSelected
+                        ? "border-primary bg-primary/10 font-semibold text-primary shadow-sm"
+                        : "border-border/70 bg-secondary/30 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    )}
+                  >
+                    <span>{preset.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Custom Date Input */}
+            <div className="pt-1">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">Or exact date:</span>
+                <input
+                  id="target-date"
+                  type="date"
+                  min={getTodayISO()}
+                  value={targetDate}
+                  onChange={(e) => onTargetDateChange(e.target.value)}
+                  className={cn(
+                    "flex h-8 max-w-[180px] rounded-lg border border-input bg-transparent px-2.5 py-1 text-xs shadow-sm",
+                    "transition-colors file:border-0 file:bg-transparent file:text-xs file:font-medium",
+                    "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                    "disabled:cursor-not-allowed disabled:opacity-50"
+                  )}
+                />
               </div>
-            )}
+            </div>
           </div>
         )}
 
         {/* Self-Assessment */}
         {exam && subjects.length > 0 && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="space-y-3 pt-2 border-t border-border/50 animate-in fade-in slide-in-from-top-2 duration-300">
             <div>
               <Label className="text-sm font-medium">
-                Rate your current understanding
+                Baseline Knowledge Check
               </Label>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                Be honest — this helps us tailor difficulty to your actual level.
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Pre-calibrated to Okay. Adjust any subject where you feel Weak or Strong.
               </p>
             </div>
 

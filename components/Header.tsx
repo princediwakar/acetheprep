@@ -67,7 +67,10 @@ export const Header = memo(() => {
               onSignOut={handleSignOut}
             />
           ) : (
-            <SignInButton buttonText="Get Started" />
+            <SignInButton
+              buttonText="Get Started"
+              returnUrl={pathname !== "/" ? pathname : "/setup"}
+            />
           )}
         </div>
       </header>

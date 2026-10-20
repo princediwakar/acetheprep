@@ -100,6 +100,135 @@ interface DemoEntry {
 }
 
 // ---------------------------------------------------------------------------
+// Extended question rotation for interactive hero
+// ---------------------------------------------------------------------------
+
+const EXTENDED_QUESTIONS: Record<string, DemoQuestion[]> = {
+  SAT: [
+    demoQuestions.exams["SAT"]?.question,
+    {
+      question_text: "In the xy-plane, the parabola y = a(x − 3)² − 4 has its vertex at (3, −4) and passes through the point (1, 0). What is the value of the constant a?",
+      options: {
+        A: "1",
+        B: "−1",
+        C: "2",
+        D: "4",
+      },
+      correct_option: "A",
+      explanation: "Substitute the known coordinates (1, 0) into the vertex form: 0 = a(1 − 3)² − 4 => 0 = a(−2)² − 4 => 4a = 4 => a = 1.",
+      distractor_analysis: {
+        A: "Correct. Substituting (1, 0) yields 4a − 4 = 0, so a = 1.",
+        B: "Incorrect. Common sign reversal trap: incorrectly setting (-2)² = -4.",
+        C: "Incorrect. Arithmetic slip dividing 4 by 2 instead of 4.",
+        D: "Incorrect. Confusing the leading coefficient with the constant term magnitude.",
+      },
+      skill_domain: "Advanced Math",
+      difficulty_tier: "application",
+      time_estimate_seconds: 60,
+      misconception: "Sign reversal when squaring negative differences in vertex form.",
+      topics: ["Quadratic functions", "Vertex form", "Parabolas"],
+    },
+    {
+      question_text: "For what value of p does the equation 2(px − 4) = 6x − 8 have infinitely many solutions for x?",
+      options: {
+        A: "3",
+        B: "6",
+        C: "0",
+        D: "−3",
+      },
+      correct_option: "A",
+      explanation: "Expand the left side: 2px − 8 = 6x − 8. For infinitely many solutions, the linear coefficients must match: 2p = 6, which yields p = 3.",
+      distractor_analysis: {
+        A: "Correct. Equating linear coefficients 2p = 6 yields p = 3.",
+        B: "Incorrect. Trap: equating p directly to 6 without distributing the factor of 2.",
+        C: "Incorrect. Mistaking infinite solutions for zero solutions.",
+        D: "Incorrect. Sign flip error during algebraic balancing.",
+      },
+      skill_domain: "Algebra",
+      difficulty_tier: "foundation",
+      time_estimate_seconds: 45,
+      misconception: "Forgetting to distribute outer multipliers to all linear terms.",
+      topics: ["Linear equations", "Infinite solutions", "Coefficients"],
+    },
+  ],
+  GRE: [
+    demoQuestions.exams["GRE"]?.question,
+    {
+      question_text: "Quantity A: The remainder when (7¹² + 3) is divided by 7.\nQuantity B: 3",
+      options: {
+        A: "Quantity A is greater",
+        B: "Quantity B is greater",
+        C: "The two quantities are equal",
+        D: "The relationship cannot be determined",
+      },
+      correct_option: "C",
+      explanation: "7¹² is an exact multiple of 7, so (7¹² mod 7) = 0. Therefore, (7¹² + 3) mod 7 = 3. Quantity A equals 3, which equals Quantity B.",
+      distractor_analysis: {
+        A: "Incorrect. 58% of test-takers assume 7¹² will produce a large remainder.",
+        B: "Incorrect. Underestimating modular arithmetic properties of exponents.",
+        C: "Correct. Since 7 divides 7¹² completely, the remainder is strictly 3.",
+        D: "Incorrect. The expression is fully determined with no unknown variables.",
+      },
+      skill_domain: "Arithmetic & Number Theory",
+      difficulty_tier: "application",
+      time_estimate_seconds: 60,
+      misconception: "Attempting to calculate large exponents rather than applying modular residue rules.",
+      topics: ["Modular arithmetic", "Remainders", "Quantitative Comparison"],
+    },
+  ],
+  "GMAT Focus": [
+    demoQuestions.exams["GMAT Focus"]?.question,
+    {
+      question_text: "Is the integer n odd?\n(1) n² − 1 is an even integer.\n(2) 2n is an even integer.",
+      options: {
+        A: "Statement (1) ALONE is sufficient, but (2) alone is not",
+        B: "Statement (2) ALONE is sufficient, but (1) alone is not",
+        C: "BOTH statements TOGETHER are sufficient",
+        D: "Statements (1) and (2) TOGETHER are NOT sufficient",
+      },
+      correct_option: "A",
+      explanation: "Statement (1): If n² − 1 is even, then n² is odd. Since the square of an integer has the same parity as the integer itself, n must be odd (Sufficient). Statement (2): 2n is always even for any integer n (odd or even), providing no information about n's parity (Not Sufficient).",
+      distractor_analysis: {
+        A: "Correct. Statement 1 strictly forces n to be odd; statement 2 is a generic tautology.",
+        B: "Incorrect. Classic Data Sufficiency trap: 2n is always even so students pick B.",
+        C: "Incorrect. Redundant: Statement 1 alone already answers the question definitively.",
+        D: "Incorrect. Overlooking that n² being odd requires n to be odd.",
+      },
+      skill_domain: "Data Insights / Quant",
+      difficulty_tier: "advanced",
+      time_estimate_seconds: 75,
+      misconception: "Treating '2n is even' as evidence that n is even, when 2(odd) is also even.",
+      topics: ["Data Sufficiency", "Parity", "Number Properties"],
+    },
+  ],
+  "CFA Level 1": [
+    demoQuestions.exams["CFA Level 1"]?.question,
+    {
+      question_text: "A company's Return on Equity (ROE) increases while its net profit margin and total asset turnover remain unchanged. According to the DuPont 3-step analysis, this change was most likely caused by an increase in:",
+      options: {
+        A: "Financial leverage (Equity multiplier)",
+        B: "Effective tax rate",
+        C: "Working capital ratio",
+        D: "Operating profit margin",
+      },
+      correct_option: "A",
+      explanation: "DuPont 3-step: ROE = Net Profit Margin × Asset Turnover × Equity Multiplier (Assets / Equity). If the first two factors are static, an increase in ROE must be directly driven by an increase in financial leverage (the equity multiplier).",
+      distractor_analysis: {
+        A: "Correct. Assets/Equity is the third component of the classic 3-step DuPont decomposition.",
+        B: "Incorrect. A higher tax rate reduces net income and net profit margin.",
+        C: "Incorrect. Working capital affects liquidity, not the DuPont ROE product.",
+        D: "Incorrect. The premise explicitly states net profit margin is constant.",
+      },
+      skill_domain: "Financial Statement Analysis",
+      difficulty_tier: "application",
+      time_estimate_seconds: 60,
+      misconception: "Confusing liquidity measures with structural leverage in DuPont decomposition.",
+      topics: ["DuPont Analysis", "ROE", "Financial Leverage"],
+    },
+  ],
+};
+
+// ---------------------------------------------------------------------------
 // Framer-motion variants
 // ---------------------------------------------------------------------------
 
@@ -185,7 +314,7 @@ function OptionButton({
       {isRevealed && isTrap && (
         <span className="flex items-center gap-1 shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary uppercase tracking-wide">
           <TrendingUp className="h-3 w-3" />
-          Common Trap
+          Common Mistake
         </span>
       )}
       {isRevealed && isCorrect && (
@@ -202,12 +331,17 @@ function OptionButton({
 export default function InteractiveDemoHero() {
   const { user } = useUser();
   const [exam, setExam] = useState<string>("SAT");
+  const [questionIndex, setQuestionIndex] = useState<number>(0);
   const [phase, setPhase] = useState<Phase>("question");
   const [selectedOption, setSelectedOption] = useState<OptionKey | null>(null);
   const [showHint, setShowHint] = useState<boolean>(false);
 
   const demoEntry = exam ? demoQuestions.exams[exam] : null;
-  const question: DemoQuestion | null = demoEntry?.question ?? null;
+  const examPool = EXTENDED_QUESTIONS[exam];
+  const question: DemoQuestion | null =
+    examPool && examPool.length > 0
+      ? (examPool[questionIndex % examPool.length] ?? demoEntry?.question ?? null)
+      : (demoEntry?.question ?? null);
   const examSlug = examToSlug(exam);
 
   const isCorrect =
@@ -217,6 +351,7 @@ export default function InteractiveDemoHero() {
 
   const handleExamChange = useCallback((value: string) => {
     setExam(value);
+    setQuestionIndex(0);
     setSelectedOption(null);
     setPhase("question");
     setShowHint(false);
@@ -235,19 +370,24 @@ export default function InteractiveDemoHero() {
     setSelectedOption(null);
     setPhase("question");
     setShowHint(false);
+    setQuestionIndex((prev) => prev + 1);
   }, []);
 
   const handleGoogleSignIn = useCallback(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("landingPrefill", JSON.stringify({ exam }));
     }
-    signInWithGoogle();
+    signInWithGoogle(`/setup?exam=${encodeURIComponent(exam)}`);
   }, [exam]);
 
   const options = question
     ? Object.entries(question.options).map(([key, text]) => ({ key, text }))
     : [];
   const correctOption = question?.correct_option ?? "";
+  const optionKeys = question ? Object.keys(question.options) : [];
+  const trapKey = optionKeys.find((k) => k !== correctOption) ?? "B";
+  const remainingKeys = optionKeys.filter((k) => k !== correctOption && k !== trapKey);
+  const remainingLabel = remainingKeys.length > 0 ? `Option${remainingKeys.length > 1 ? "s" : ""} ${remainingKeys.join(" & ")}` : "Other Options";
   const isRevealed = phase === "reveal";
 
   return (
@@ -276,8 +416,8 @@ export default function InteractiveDemoHero() {
           {/* Global Admissions Pill Badge */}
           <motion.div variants={fadeSlideUp}>
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
-              <Globe2 className="h-3.5 w-3.5" />
-              Global Standardized Exam Intelligence
+              <Sparkles className="h-3.5 w-3.5" />
+              100% Free Adaptive Exam Prep • Built for Top Scores
             </span>
           </motion.div>
 
@@ -286,9 +426,9 @@ export default function InteractiveDemoHero() {
             className="font-heading text-balance text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-foreground leading-[1.12]"
             variants={fadeSlideUp}
           >
-            Master the traps that decide{" "}
+            You aren&apos;t exam-ready when you finish the syllabus.{" "}
             <span className="text-primary italic font-serif">
-              your 99th percentile.
+              You&apos;re ready when you can solve under pressure.
             </span>
           </motion.h1>
 
@@ -297,8 +437,7 @@ export default function InteractiveDemoHero() {
             className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto"
             variants={fadeSlideUp}
           >
-            Examiners at College Board, ETS, GMAC, and CFA Institute intentionally design deceptive distractor options.
-            AceThePrep trains your intuition to expose the hidden traps in seconds.
+            Coverage is not readiness. Rereading textbooks and collecting notes makes material feel familiar, but exams test quick, unassisted recall under timed pressure. AceThePrep focuses on active practice, common mistakes, and long-term retention so you walk in confident.
           </motion.p>
 
           {/* Action Row & Fast Exam Jump */}
@@ -306,13 +445,30 @@ export default function InteractiveDemoHero() {
             variants={fadeSlideUp}
             className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3.5"
           >
-            <Link
-              href={`/practice/${examSlug}`}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer"
-            >
-              <span>Start Free Practice</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            {!user ? (
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer"
+              >
+                <svg className="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path
+                    d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
+                    fill="currentColor"
+                  />
+                </svg>
+                <span>Get Exam-Ready Free</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            ) : (
+              <Link
+                href="/dashboard"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer"
+              >
+                <span>Go to Dashboard</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
 
             <div className="w-full sm:w-56 relative">
               <select
@@ -343,6 +499,17 @@ export default function InteractiveDemoHero() {
             </div>
           </motion.div>
 
+          {/* Direct Syllabus Jump Link */}
+          <motion.div variants={fadeSlideUp} className="text-center pt-0.5">
+            <Link
+              href={`/practice/${examSlug}`}
+              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors font-medium group"
+            >
+              <span>Explore {exam} syllabus & question bank</span>
+              <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </motion.div>
+
           {/* Micro Trust Indicators */}
           <motion.div
             variants={fadeSlideUp}
@@ -354,7 +521,7 @@ export default function InteractiveDemoHero() {
             </span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-              Instant Cognitive Telemetry
+              Instant Step-by-Step Solutions
             </span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
@@ -384,7 +551,7 @@ export default function InteractiveDemoHero() {
                   <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
                 </div>
                 <span className="text-xs font-mono font-medium text-muted-foreground/90">
-                  AceThePrep Telemetry v2.4
+                  AceThePrep Interactive Practice
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-mono text-emerald-600 dark:text-emerald-400">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -455,7 +622,7 @@ export default function InteractiveDemoHero() {
                       >
                         <Lightbulb className="h-3.5 w-3.5 text-amber-500 shrink-0" />
                         <span>
-                          {showHint ? "Hide hint" : "How to solve? (Show hint)"}
+                          {showHint ? "Hide hint" : "Underlying Rule / Formula (Hint)"}
                         </span>
                         <ChevronDown
                           className={cn(
@@ -518,33 +685,33 @@ export default function InteractiveDemoHero() {
               {/* -------------------------------------------------------- */}
               <div className="lg:col-span-5 rounded-xl border border-border/70 bg-secondary/20 p-4 sm:p-5 flex flex-col justify-between min-h-[360px]">
                 {!isRevealed ? (
-                  /* Idle / Pre-Answer Telemetry Radar */
+                  /* Idle / Pre-Answer Radar */
                   <div className="space-y-4">
                     <div className="flex items-center justify-between border-b border-border/60 pb-3">
                       <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                         <Zap className="h-3.5 w-3.5 text-amber-500" />
-                        Trap Telemetry
+                        Mistake Analysis
                       </span>
                       <span className="text-[11px] font-mono text-primary font-semibold">
-                        74% Trap Rate
+                        74% Pick This Mistake
                       </span>
                     </div>
 
                     <div className="space-y-3">
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        Examiners intentionally design high-probability distractors for this concept. Test your instinct by picking an option on the left.
+                        See how students typically answer this question. Try solving it on the left before checking the breakdown.
                       </p>
 
                       {/* Mock Frequency Distribution */}
                       <div className="space-y-2 pt-1">
                         <span className="text-[11px] font-medium text-foreground block">
-                          Historical Student Response Pattern:
+                          Student Response Breakdown:
                         </span>
 
                         <div className="space-y-1.5 font-mono text-[10px]">
                           <div>
                             <div className="flex justify-between text-muted-foreground mb-1">
-                              <span>Option A (True Solution)</span>
+                              <span>Option {correctOption || "A"} (Correct Answer)</span>
                               <span>21%</span>
                             </div>
                             <div className="h-2 rounded-full bg-secondary overflow-hidden">
@@ -554,8 +721,8 @@ export default function InteractiveDemoHero() {
 
                           <div>
                             <div className="flex justify-between text-primary font-semibold mb-1">
-                              <span>Option B (The Trap)</span>
-                              <span>74% Failed Here</span>
+                              <span>Option {trapKey} (Common Mistake)</span>
+                              <span>74% Picked This</span>
                             </div>
                             <div className="h-2 rounded-full bg-secondary overflow-hidden">
                               <div className="h-full bg-primary w-[74%]" />
@@ -564,7 +731,7 @@ export default function InteractiveDemoHero() {
 
                           <div>
                             <div className="flex justify-between text-muted-foreground mb-1">
-                              <span>Options C & D</span>
+                              <span>{remainingLabel}</span>
                               <span>5%</span>
                             </div>
                             <div className="h-2 rounded-full bg-secondary overflow-hidden">
@@ -578,12 +745,12 @@ export default function InteractiveDemoHero() {
                     <div className="rounded-xl border border-border/60 bg-background/60 p-3 text-xs text-muted-foreground flex items-start gap-2 mt-4">
                       <ShieldAlert className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                       <span>
-                        Can you spot the cognitive trap before selecting your answer?
+                        Can you solve it correctly before checking the answer?
                       </span>
                     </div>
                   </div>
                 ) : (
-                  /* Revealed State: Instant Verdict & Cognitive Derivation */
+                  /* Revealed State: Instant Verdict & Derivation */
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -609,8 +776,8 @@ export default function InteractiveDemoHero() {
                       <div className="space-y-0.5">
                         <p className="font-semibold text-xs leading-tight">
                           {isCorrect
-                            ? "Correct Instinct!"
-                            : "Tricky Trap Triggered"}
+                            ? "Correct!"
+                            : "Common Mistake Made"}
                         </p>
                         <p className="text-xs opacity-90 leading-relaxed">
                           {isCorrect
@@ -625,8 +792,8 @@ export default function InteractiveDemoHero() {
                     <div className="rounded-xl border border-border/80 bg-background/80 p-3 space-y-1">
                       <div className="flex items-center justify-between text-xs font-semibold text-foreground">
                         <div className="flex items-center gap-1.5">
-                          <Calculator className="h-3.5 w-3.5 text-primary shrink-0" />
-                          <span>Mathematical Proof:</span>
+                          <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" />
+                          <span>Step-by-Step Derivation:</span>
                         </div>
                         <span className="font-mono text-[10px] text-muted-foreground">
                           {isCorrect ? "Next Review: 7 Days" : "Next Review: 3 Days"}
@@ -639,13 +806,30 @@ export default function InteractiveDemoHero() {
 
                     {/* Cockpit Conversion Action */}
                     <div className="pt-2 space-y-2">
-                      <Link
-                        href={`/practice/${examSlug}`}
-                        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs sm:text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer"
-                      >
-                        <span>Practice All {exam} Questions Free</span>
-                        <ArrowRight className="h-3.5 w-3.5 shrink-0" />
-                      </Link>
+                      {!user ? (
+                        <button
+                          type="button"
+                          onClick={handleGoogleSignIn}
+                          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs sm:text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer"
+                        >
+                          <svg className="h-3.5 w-3.5 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path
+                              d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                          <span>Activate {exam} Syllabus Free</span>
+                          <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+                        </button>
+                      ) : (
+                        <Link
+                          href="/dashboard"
+                          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs sm:text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer"
+                        >
+                          <span>Go to {exam} Dashboard</span>
+                          <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+                        </Link>
+                      )}
 
                       <div className="flex items-center justify-between text-xs px-1">
                         <button
@@ -657,23 +841,13 @@ export default function InteractiveDemoHero() {
                           Try another question
                         </button>
 
-                        {!user ? (
-                          <button
-                            type="button"
-                            onClick={handleGoogleSignIn}
-                            className="inline-flex items-center gap-1 text-primary hover:underline font-medium cursor-pointer"
-                          >
-                            Sign In with Google
-                          </button>
-                        ) : (
-                          <Link
-                            href="/dashboard"
-                            className="inline-flex items-center gap-1 text-primary hover:underline font-medium"
-                          >
-                            Dashboard
-                            <ChevronRight className="h-3 w-3" />
-                          </Link>
-                        )}
+                        <Link
+                          href={`/practice/${examSlug}`}
+                          className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors text-xs"
+                        >
+                          <span>Browse all questions</span>
+                          <ChevronRight className="h-3 w-3" />
+                        </Link>
                       </div>
                     </div>
                   </motion.div>

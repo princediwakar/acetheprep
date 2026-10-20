@@ -112,12 +112,12 @@ export async function generateMetadata({
 
   return {
     title: `${canonicalName} Hardest Topics & Failure Rates | AceThePrep Insights`,
-    description: `Official difficulty telemetry for ${canonicalName}. Ranked list of topics by student error rates and time spent per question, derived from real practice sessions.`,
+    description: `Student performance data for ${canonicalName}. Ranked list of topics by student error rates and time spent per question, derived from real practice sessions.`,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${canonicalName} Hardest Topics — Real Student Telemetry`,
+      title: `${canonicalName} Hardest Topics — Real Student Performance Data`,
       description: `See the top conceptual traps and hardest topics in ${canonicalName}. Backed by real session analytics.`,
       url: canonicalUrl,
       images: [
@@ -157,7 +157,7 @@ export default async function HardestTopicsPage({ params }: PageProps) {
             Failed to load data
           </h1>
           <p className="text-sm text-muted-foreground max-w-sm">
-            Something went wrong while retrieving telemetry data. Please try again later.
+            Something went wrong while retrieving performance data. Please try again later.
           </p>
           <Link
             href="/insights"
@@ -174,7 +174,7 @@ export default async function HardestTopicsPage({ params }: PageProps) {
   const datasetSchema = insightsDatasetSchema({
     url: `${baseUrl}/insights/${examSlug}/hardest-topics`,
     examName,
-    reportType: "Hardest Topics Telemetry Dataset",
+    reportType: "Hardest Topics Performance Dataset",
     description: `Ranked list of concept domains by student error rate and average time spent for ${examName} exam preparation.`,
     datePublished: "2026-10-19",
   });
@@ -216,7 +216,7 @@ export default async function HardestTopicsPage({ params }: PageProps) {
 
         <div className="mb-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary mb-3">
-            <span>Verified Telemetry</span>
+            <span>Verified Student Data</span>
             <span>•</span>
             <span>{examName}</span>
           </div>
@@ -238,10 +238,10 @@ export default async function HardestTopicsPage({ params }: PageProps) {
               Calibration Active
             </span>
             <h3 className="font-heading text-xl font-medium text-foreground mb-2">
-              Telemetry Calibration in Progress
+              Performance Data Aggregating
             </h3>
             <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-              Live error-rate telemetry for {examName} is currently aggregating candidate practice sessions. You can start practicing {examName} questions directly from the syllabus catalog.
+              Live error-rate data for {examName} is currently aggregating candidate practice sessions. You can start practicing {examName} questions directly from the syllabus catalog.
             </p>
             <Link
               href={`/practice/${examSlug}`}

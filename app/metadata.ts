@@ -2,32 +2,35 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
 	title: {
-		default: "AceThePrep — Free AI-Powered Exam Prep for JEE, NEET, UPSC & More",
+		default: "AceThePrep — Real Exam Readiness | Free Adaptive Practice",
 		template: "%s | AceThePrep",
 	},
 	description:
-		"Free AI-powered exam preparation for JEE Main, NEET, UPSC, GMAT, CAT, and more. Adaptive spaced repetition, personalized assessments, and detailed distractor analysis. Start your free assessment in 5 minutes.",
+		"Coverage is not readiness. Master common mistakes, build fast recall under exam conditions, and lock concepts into long-term memory for SAT, GRE, GMAT, CFA, JEE, and NEET.",
 	keywords: [
+		"what makes someone exam ready",
+		"exam readiness",
 		"exam prep",
+		"Digital SAT prep",
+		"GRE preparation",
+		"GMAT Focus prep",
+		"CFA Level 1",
 		"JEE Main preparation",
 		"NEET preparation",
-		"UPSC preparation",
-		"AI tutor",
+		"active recall",
 		"spaced repetition",
-		"practice questions",
 		"free test prep",
-		"practice test",
 		"competitive exams",
 	],
 	openGraph: {
-		title: "AceThePrep — Free AI-Powered Exam Prep for JEE, NEET, UPSC & More",
+		title: "AceThePrep — Real Exam Readiness | Free Adaptive Practice",
 		description:
-			"Free AI-powered exam preparation with adaptive spaced repetition. Personalized assessments, distractor analysis, and 10 exam tracks including JEE, NEET, UPSC, and GMAT.",
-		url: process.env.NEXT_PUBLIC_BASE_URL,
+			"Coverage is not readiness. Master common mistakes, build fast recall under exam conditions, and lock concepts into long-term memory.",
+		url: process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com",
 		siteName: "AceThePrep",
 		images: [
 			{
-				url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/og?type=home`,
+				url: `${process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com"}/api/og?type=home`,
 				width: 1200,
 				height: 630,
 			},
@@ -37,11 +40,11 @@ export const metadata: Metadata = {
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "AceThePrep — Free AI-Powered Exam Prep",
+		title: "AceThePrep — Real Exam Readiness",
 		description:
-			"Free AI-powered exam preparation for JEE, NEET, UPSC, GMAT, CAT. Adaptive spaced repetition with personalized assessments.",
+			"Coverage is not readiness. Master common mistakes, build fast recall under exam conditions, and lock concepts into long-term memory.",
 		images: [
-			`${process.env.NEXT_PUBLIC_BASE_URL}/api/og?type=home`,
+			`${process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com"}/api/og?type=home`,
 		],
 	},
 };
