@@ -263,18 +263,18 @@ function OptionButton({
   onClick: () => void;
 }) {
   let borderClass =
-    "border-border/80 bg-background/80 hover:border-primary/40 hover:bg-secondary/40";
+    "border-border/80 bg-background/90 hover:border-blue-500/50 hover:bg-blue-50/30 dark:hover:bg-blue-950/20";
 
   if (isRevealed) {
     if (isSelected && isCorrect) {
       borderClass =
-        "border-emerald-500/70 bg-emerald-500/10 shadow-[0_0_0_1px_rgba(16,185,129,0.25)]";
+        "border-emerald-500/80 bg-emerald-500/10 shadow-[0_0_0_1px_rgba(16,185,129,0.3)]";
     } else if (isSelected && !isCorrect) {
       borderClass =
-        "border-primary/60 bg-primary/10 shadow-[0_0_0_1px_rgba(208,84,51,0.25)]";
+        "border-rose-500/80 bg-rose-500/10 shadow-[0_0_0_1px_rgba(244,63,94,0.3)]";
     } else if (isCorrect) {
       borderClass =
-        "border-emerald-500/40 bg-emerald-500/5";
+        "border-emerald-500/50 bg-emerald-500/5";
     }
   }
 
@@ -296,12 +296,12 @@ function OptionButton({
           className={cn(
             "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-semibold font-mono transition-colors",
             isRevealed && isSelected && isCorrect
-              ? "bg-emerald-500/25 text-emerald-700 dark:text-emerald-300"
+              ? "bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 font-bold"
               : isRevealed && isSelected && !isCorrect
-                ? "bg-primary/25 text-primary"
+                ? "bg-rose-500/25 text-rose-700 dark:text-rose-300 font-bold"
                 : isRevealed && isCorrect
                   ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-                  : "bg-muted text-muted-foreground group-hover:bg-accent group-hover:text-foreground",
+                  : "bg-muted text-muted-foreground group-hover:bg-blue-100 group-hover:text-blue-900 dark:group-hover:bg-blue-950 dark:group-hover:text-blue-200",
           )}
         >
           {letter}
@@ -312,7 +312,7 @@ function OptionButton({
       </div>
 
       {isRevealed && isTrap && (
-        <span className="flex items-center gap-1 shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary uppercase tracking-wide">
+        <span className="flex items-center gap-1 shrink-0 rounded-full bg-rose-500/15 border border-rose-500/25 px-2 py-0.5 text-[10px] font-semibold text-rose-700 dark:text-rose-300 uppercase tracking-wide">
           <TrendingUp className="h-3 w-3" />
           Common Mistake
         </span>
@@ -392,10 +392,10 @@ export default function InteractiveDemoHero() {
 
   return (
     <section className="relative overflow-hidden pt-8 pb-14 sm:pt-12 sm:pb-20 lg:pt-14 lg:pb-24">
-      {/* Ambient background glow */}
+      {/* McKinsey Ambient Background Aura */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-full max-w-6xl h-[480px] rounded-full bg-primary/10 blur-[130px] -z-10"
+        className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-full max-w-6xl h-[520px] rounded-full bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,rgba(0,102,255,0.14),rgba(5,28,44,0.03)_60%,transparent_80%)] dark:bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,rgba(0,102,255,0.22),transparent_80%)] blur-[90px] -z-10"
       />
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -415,8 +415,8 @@ export default function InteractiveDemoHero() {
         >
           {/* Global Admissions Pill Badge */}
           <motion.div variants={fadeSlideUp}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
-              <Sparkles className="h-3.5 w-3.5" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-blue-600/25 bg-blue-50/80 dark:bg-blue-950/40 dark:border-blue-500/30 px-4 py-1.5 text-xs font-semibold tracking-wider text-blue-700 dark:text-blue-300 uppercase shadow-xs">
+              <Sparkles className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
               100% Free Adaptive Exam Prep • Built for Top Scores
             </span>
           </motion.div>
@@ -427,7 +427,7 @@ export default function InteractiveDemoHero() {
             variants={fadeSlideUp}
           >
             You aren&apos;t exam-ready when you finish the syllabus.{" "}
-            <span className="text-primary italic font-serif">
+            <span className="text-blue-600 dark:text-blue-400 italic font-serif">
               You&apos;re ready when you can solve under pressure.
             </span>
           </motion.h1>
@@ -449,7 +449,7 @@ export default function InteractiveDemoHero() {
               <button
                 type="button"
                 onClick={handleGoogleSignIn}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#051C2C] hover:bg-[#092D47] dark:bg-blue-600 dark:hover:bg-blue-500 px-7 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-950/20 hover:shadow-blue-900/30 active:scale-[0.99] transition-all cursor-pointer"
               >
                 <svg className="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                   <path
@@ -462,10 +462,10 @@ export default function InteractiveDemoHero() {
               </button>
             ) : (
               <Link
-                href="/dashboard"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer"
+                href="/home"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#051C2C] hover:bg-[#092D47] dark:bg-blue-600 dark:hover:bg-blue-500 px-7 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-950/20 hover:shadow-blue-900/30 active:scale-[0.99] transition-all cursor-pointer"
               >
-                <span>Go to Dashboard</span>
+                <span>Go to Home</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
             )}
@@ -823,10 +823,10 @@ export default function InteractiveDemoHero() {
                         </button>
                       ) : (
                         <Link
-                          href="/dashboard"
+                          href="/home"
                           className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs sm:text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer"
                         >
-                          <span>Go to {exam} Dashboard</span>
+                          <span>Go to {exam} Home</span>
                           <ArrowRight className="h-3.5 w-3.5 shrink-0" />
                         </Link>
                       )}

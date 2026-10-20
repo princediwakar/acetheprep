@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { ThemeToggle } from "./ThemeToggleButton";
 import { Header } from "./Header";
 import { UserMenu } from "./UserMenu";
+import { BrandLogo } from "@/components/shared/BrandLogo";
 import type { SidebarData } from "@/app/layout";
 import {
   TrendingUp,
@@ -17,13 +18,13 @@ import {
   Menu,
   PanelLeftClose,
   PlusCircle,
-  Target,
+  Home,
   Calendar,
   Flame,
 } from "lucide-react";
 
 const mainItems = [
-  { title: "Dashboard", url: "/dashboard", icon: Target },
+  { title: "Home", url: "/home", icon: Home },
   { title: "Analytics", url: "/analytics", icon: TrendingUp },
   { title: "History", url: "/history", icon: History },
 ];
@@ -54,14 +55,14 @@ export function AppShell({ children, sidebarData }: { children: React.ReactNode;
   };
 
   const headerTitle =
-    pathname === "/dashboard" ? "Dashboard" :
+    pathname === "/home" || pathname === "/dashboard" ? "Home" :
     pathname === "/analytics" ? "Analytics" :
     pathname === "/history" ? "History" :
     pathname === "/setup" ? "Settings" :
     pathname === "/create" ? "Create a Quiz" :
     pathname === "/quizzes" ? "Public Quizzes" : "";
 
-  const showOnRoutes = ["/create", "/quizzes", "/dashboard", "/analytics", "/history", "/setup"];
+  const showOnRoutes = ["/create", "/quizzes", "/home", "/dashboard", "/analytics", "/history", "/setup"];
   const shouldShowSidebar = showOnRoutes.includes(pathname) && !!user;
   const isQuizPage = pathname.startsWith("/quiz/") || pathname.startsWith("/play/") || pathname.startsWith("/session/");
 
@@ -87,9 +88,7 @@ export function AppShell({ children, sidebarData }: { children: React.ReactNode;
       <aside className={`fixed left-0 top-0 h-screen w-64 border-r bg-background z-50 transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-4 h-full flex flex-col">
           <div className="mb-6">
-            <Link href="/" className="text-xl font-bold text-primary">
-              AceThePrep
-            </Link>
+            <BrandLogo />
             {sidebarData && (
               <div className="mt-2">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -111,10 +110,10 @@ export function AppShell({ children, sidebarData }: { children: React.ReactNode;
                   <Link
                     key={item.title}
                     href={item.url}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                       isActive
-                        ? "bg-primary text-black font-medium"
-                        : "hover:bg-accent text-foreground"
+                        ? "bg-muted text-foreground font-semibold"
+                        : "hover:bg-muted/60 text-muted-foreground hover:text-foreground font-medium"
                     }`}
                   >
                     <item.icon className="w-4 h-4" />

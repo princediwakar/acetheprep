@@ -23,25 +23,25 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
   return (
     <div className="space-y-6">
       <div className="space-y-1.5">
-        <h1 className="font-heading text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
           Your Practice & Quiz History
         </h1>
         <p className="text-sm text-muted-foreground">
-          Review your past exam simulations, mistake autopsies, and step-by-step solution derivations.
+          Review your past exam simulations, mistake breakdowns, and step-by-step explanations.
         </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6 flex flex-wrap h-auto w-full sm:w-auto justify-start gap-2 bg-transparent p-0 border-0">
+        <TabsList className="mb-6 inline-flex flex-wrap h-auto w-full sm:w-auto justify-start gap-1 bg-muted/60 p-1 rounded-xl border border-border">
           <TabsTrigger
             value="sessions"
-            className="rounded-full px-5 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border bg-muted/40 font-semibold text-xs sm:text-sm"
+            className="rounded-lg px-4 py-2 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm font-semibold text-xs sm:text-sm text-muted-foreground transition-all"
           >
             Exam & Practice Sessions ({examSessions.length})
           </TabsTrigger>
           <TabsTrigger
             value="quizzes"
-            className="rounded-full px-5 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border bg-muted/40 font-semibold text-xs sm:text-sm"
+            className="rounded-lg px-4 py-2 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm font-semibold text-xs sm:text-sm text-muted-foreground transition-all"
           >
             Community Quizzes
           </TabsTrigger>
@@ -55,10 +55,10 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
               </div>
               <h2 className="text-xl font-bold">No Practice Sessions Yet</h2>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                You haven&apos;t taken an exam simulation or tutor drill yet. Start one to build your test readiness and see detailed mistake autopsies.
+                You haven&apos;t taken an exam simulation or tutor drill yet. Start one to build your test readiness and review detailed explanations.
               </p>
               <Button asChild className="font-bold">
-                <Link href="/dashboard">Start a Practice Test</Link>
+                <Link href="/home">Start a Practice Test</Link>
               </Button>
             </div>
           ) : (
@@ -101,16 +101,7 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
                     <CardHeader className="p-5 pb-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-center gap-2.5">
-                          <div
-                            className={cn(
-                              "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
-                              isCompleted
-                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                                : isActive
-                                  ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                                  : "bg-muted text-muted-foreground"
-                            )}
-                          >
+                          <div className="w-8 h-8 rounded-lg bg-muted/60 border border-border/50 flex items-center justify-center shrink-0 text-muted-foreground">
                             {isCompleted ? (
                               <CheckCircle2 className="w-4 h-4" />
                             ) : isActive ? (
@@ -131,16 +122,7 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
                           </div>
                         </div>
 
-                        <span
-                          className={cn(
-                            "text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md shrink-0",
-                            isCompleted
-                              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                              : isActive
-                                ? "bg-amber-500/10 text-amber-700 dark:text-amber-400"
-                                : "bg-muted text-muted-foreground"
-                          )}
-                        >
+                        <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-md border border-border/60 bg-muted/40 text-muted-foreground shrink-0">
                           {session.status}
                         </span>
                       </div>
@@ -160,15 +142,15 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
                       <div className="flex items-center justify-between">
                         {isCompleted ? (
                           <div className="flex items-baseline gap-2">
-                            <span className="text-2xl font-black text-foreground">
+                            <span className="text-2xl font-black text-foreground tabular-nums">
                               {session.correctCount}/{totalQuestions}
                             </span>
-                            <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                            <span className="text-xs font-medium text-muted-foreground">
                               {session.accuracy}% accuracy
                             </span>
                           </div>
                         ) : isActive ? (
-                          <div className="text-sm font-semibold text-amber-600 dark:text-amber-400">
+                          <div className="text-sm font-medium text-muted-foreground">
                             {session.answeredCount} of {totalQuestions} answered
                           </div>
                         ) : (
@@ -176,22 +158,32 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
                         )}
                       </div>
 
-                      <Button asChild className="w-full font-bold flex items-center justify-center gap-1.5" size="lg">
-                        <Link href={`/session/${session.id}`}>
-                          {isCompleted ? (
-                            <>
-                              <Eye className="w-4 h-4 mr-1" />
-                              Review Solutions & Autopsy
-                            </>
-                          ) : (
-                            <>
-                              <Zap className="w-4 h-4 mr-1" />
-                              Resume Test
-                            </>
-                          )}
-                          <ChevronRight className="w-4 h-4" />
-                        </Link>
-                      </Button>
+                      {isCompleted ? (
+                        <Button
+                          asChild
+                          variant="outline"
+                          className="w-full font-semibold flex items-center justify-center gap-1.5 border-border hover:bg-accent hover:text-foreground"
+                          size="lg"
+                        >
+                          <Link href={`/session/${session.id}`}>
+                            <Eye className="w-4 h-4 mr-1 text-muted-foreground" />
+                            Review Solutions
+                            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                          </Link>
+                        </Button>
+                      ) : (
+                        <Button
+                          asChild
+                          className="w-full font-bold flex items-center justify-center gap-1.5 shadow-sm"
+                          size="lg"
+                        >
+                          <Link href={`/session/${session.id}`}>
+                            <Zap className="w-4 h-4 mr-1 fill-current" />
+                            Resume Test
+                            <ChevronRight className="w-4 h-4" />
+                          </Link>
+                        </Button>
+                      )}
                     </CardContent>
                   </Card>
                 );

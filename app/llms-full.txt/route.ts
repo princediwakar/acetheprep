@@ -1,6 +1,6 @@
 // Path: app/llms-full.txt/route.ts
 
-import { getAllTaxonomyEntries, examToSlug, subjectToSlug, domainToSlug } from "@/lib/slugs";
+import { getAllTaxonomyEntries, examToSlug, subjectToSlug, domainToSlug, GLOBAL_EXAM_PRIORITY } from "@/lib/slugs";
 import taxonomyRaw from "@/lib/taxonomies.json";
 import { siteConfig } from "@/config/site";
 import { getDomainKnowledge } from "@/lib/curriculum-knowledge";
@@ -9,7 +9,6 @@ type TaxonomyData = Record<string, Record<string, string[]>>;
 const taxonomy = taxonomyRaw as unknown as TaxonomyData;
 
 export async function GET() {
-  const entries = getAllTaxonomyEntries();
   const baseUrl = siteConfig.url;
 
   let body = `# ${siteConfig.name} — Complete Machine-Readable Curriculum & Knowledge Base
@@ -29,8 +28,18 @@ ${siteConfig.name} organizes competitive exam preparation across three scientifi
 
 `;
 
-  for (const [exam, subjects] of Object.entries(taxonomy)) {
-    if (exam === "_schema_version" || typeof subjects !== "object" || !subjects) continue;
+  // Sort exams strictly by global priority (SAT, GRE, GMAT Focus, CFA, IELTS, TOEFL first)
+  const examKeys = Object.keys(taxonomy).filter(
+    (k) => k !== "_schema_version" && typeof taxonomy[k] === "object" && taxonomy[k] !== null
+  );
+  examKeys.sort((a, b) => {
+    const rankA = GLOBAL_EXAM_PRIORITY.indexOf(a);
+    const rankB = GLOBAL_EXAM_PRIORITY.indexOf(b);
+    return (rankA === -1 ? 999 : rankA) - (rankB === -1 ? 999 : rankB);
+  });
+
+  for (const exam of examKeys) {
+    const subjects = taxonomy[exam];
     const examSlug = examToSlug(exam);
 
     body += `## Exam: ${exam}\n`;

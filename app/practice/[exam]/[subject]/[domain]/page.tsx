@@ -31,7 +31,9 @@ import {
   TrendingUp,
   ArrowRight,
   ShieldAlert,
+  Sparkles,
 } from "lucide-react";
+
 
 // ---- Types ----
 
@@ -67,8 +69,9 @@ export async function generateMetadata({
   const subjectName = resolution.canonicalSubject;
   const domainName = resolution.canonicalDomain;
 
-  const title = `${domainName} Practice Questions for ${examName} | ${siteConfig.name}`;
+  const title = `${domainName} Practice Questions (${examName})`;
   const description = `Free ${domainName} practice questions for ${examName} ${subjectName}. AI-generated diagnostic questions with cognitive-science distractor analysis. Test your retention now.`;
+
   const canonicalUrl = `${baseUrl}${resolution.canonicalPath}`;
   const markdownUrl = `${baseUrl}/api/knowledge/${examToSlug(examName)}/${subjectToSlug(subjectName)}/${domainToSlug(domainName)}`;
 
@@ -380,9 +383,33 @@ export default async function PracticePage({ params }: PracticePageProps) {
               <PracticeQuestion key={idx} question={q} index={idx} />
             ))}
           </div>
+
+          {/* Interactive Diagnostic Sprint CTA */}
+          <div className="mt-6 rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider mb-1">
+                <Sparkles className="h-3.5 w-3.5" />
+                Adaptive Retrieval Engine
+              </span>
+              <h3 className="text-base font-bold text-foreground">
+                Ready to test {domainName} under real exam conditions?
+              </h3>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Take an adaptive 10-question diagnostic with personalized mistake tracking and spaced repetition review.
+              </p>
+            </div>
+            <Link
+              href={`/setup?exam=${encodeURIComponent(examName)}`}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm hover:opacity-95 transition-opacity shrink-0"
+            >
+              Start {domainName} Diagnostic
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
 
         {/* Topological Cross-Links: Related Domains in Subject */}
+
         {siblingDomains.length > 0 && (
           <div className="mb-10 rounded-2xl border border-border bg-card/60 p-6">
             <div className="flex items-center justify-between mb-4">

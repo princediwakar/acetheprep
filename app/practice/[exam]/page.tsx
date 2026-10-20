@@ -5,10 +5,14 @@ import { Metadata } from "next";
 import Link from "next/link";
 import taxonomyRaw from "@/lib/taxonomies.json";
 import { examToSlug, slugToExam, subjectToSlug, domainToSlug } from "@/lib/slugs";
-import StructuredData, { breadcrumbSchema } from "@/components/seo/StructuredData";
+import StructuredData, {
+  breadcrumbSchema,
+  examCourseSchema,
+  educationalCredentialSchema,
+} from "@/components/seo/StructuredData";
 import ExamCTABanner from "@/components/practice/ExamCTABanner";
 import { siteConfig } from "@/config/site";
-import { ArrowLeft, BookOpen, Sparkles, ArrowRight, BarChart3 } from "lucide-react";
+import { ArrowLeft, BookOpen, Sparkles, ArrowRight, BarChart3, TrendingUp } from "lucide-react";
 
 interface PageProps {
   params: Promise<{ exam: string }>;
@@ -33,8 +37,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const examSlug = examToSlug(examName);
   const canonicalUrl = `${baseUrl}/practice/${examSlug}`;
 
-  const title = `Free ${examName} Practice Questions & Topic Tests | ${siteConfig.name}`;
+  const title = `Free ${examName} Practice Questions & Topic Tests`;
   const description = `Prepare for ${examName} with free topic-by-topic practice questions. Includes AI-powered distractor analysis explaining every student misconception.`;
+
 
   return {
     title,
@@ -89,16 +94,25 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
     { name: examName, url: `${baseUrl}/practice/${examSlug}` },
   ];
 
-  const subjectEntries = Object.entries(subjects);
-  const firstSubjectEntry = subjectEntries[0];
-  const firstSubjectName = firstSubjectEntry?.[0];
-  const firstDomainName = firstSubjectEntry?.[1]?.[0];
-  const firstSubjectSlug = firstSubjectName ? subjectToSlug(firstSubjectName) : "";
-  const firstDomainSlug = firstDomainName ? domainToSlug(firstDomainName) : "";
+  const subjectNames = Object.keys(subjects);
+  const courseLd = examCourseSchema({
+    examName,
+    description: `Comprehensive diagnostic question banks and spaced repetition practice for ${examName}.`,
+    url: `${baseUrl}/practice/${examSlug}`,
+    subjects: subjectNames,
+  });
+
+  const credentialLd = educationalCredentialSchema({
+    examName,
+    description: `Curriculum-aligned mastery drills and error analytics designed for ${examName} aspirants.`,
+    url: `${baseUrl}/practice/${examSlug}`,
+  });
 
   return (
     <div className="min-h-screen bg-background pt-28 pb-20 px-4 sm:px-6 lg:px-8">
       <StructuredData schema={breadcrumbSchema(breadcrumbs)} />
+      <StructuredData schema={courseLd} />
+      <StructuredData schema={credentialLd} />
 
       <div className="max-w-5xl mx-auto">
         {/* Navigation */}
@@ -123,7 +137,25 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
             Practice authentic {examName} questions organized by section, with step-by-step solutions showing you how to spot and eliminate tricky trap options.
           </p>
 
+          {/* Topological Cross-Links to Analytics & Insights */}
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <Link
+              href={`/insights/${examSlug}/hardest-topics`}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3.5 py-2 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-all"
+            >
+              <TrendingUp className="h-3.5 w-3.5" />
+              <span>View {examName} Hardest Topics Data</span>
+            </Link>
+            <Link
+              href={`/insights/${examSlug}/most-failed-concepts`}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-all"
+            >
+              <BarChart3 className="h-3.5 w-3.5 text-primary" />
+              <span>Most Failed Concepts Report</span>
+            </Link>
+          </div>
         </div>
+
 
         {/* Subjects & Topics Section */}
         <div className="mb-6 flex items-center justify-between">

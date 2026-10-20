@@ -204,10 +204,10 @@ export default async function PricingPage() {
         </p>
         <div className="pt-2">
           <Link
-            href={user ? "/dashboard" : "/setup"}
+            href={user ? "/home" : "/setup"}
             className="inline-flex items-center justify-center font-bold px-8 py-3.5 rounded-xl bg-primary text-primary-foreground shadow-md hover:bg-primary/90 transition-all text-sm"
           >
-            {user ? "Go to Your Dashboard" : "Set Up Free Profile"}
+            {user ? "Go to Home" : "Set Up Free Profile"}
           </Link>
         </div>
       </div>

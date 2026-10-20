@@ -464,7 +464,7 @@ export function SessionPlayer({
     );
   }
 
-  // --- Session Complete (Post-Exam Autopsy Screen) ---
+  // --- Session Complete (Post-Exam Review Screen) ---
   if (sessionComplete) {
     const pct = total > 0 ? Math.round((score / total) * 100) : 0;
     const incorrectCount = total - score;

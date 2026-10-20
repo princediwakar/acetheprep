@@ -190,6 +190,7 @@ export async function POST(request: NextRequest) {
         .update({ status: "completed", completed_at: nowIso })
         .eq("id", session_id);
 
+      revalidatePath("/home");
       revalidatePath("/dashboard");
       revalidatePath("/analytics");
 
@@ -574,6 +575,7 @@ export async function POST(request: NextRequest) {
 
     const isQuiet = sessionIntent === "quiet";
 
+    revalidatePath("/home");
     revalidatePath("/dashboard");
     revalidatePath("/analytics");
 

@@ -21,7 +21,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { DashboardPageData, SyllabusSubject, SyllabusDomain } from "@/app/dashboard/page";
+import type { DashboardPageData, SyllabusSubject, SyllabusDomain } from "@/app/home/page";
 import { TUTOR_ROUTES, TUTOR_CONFIG } from "@/lib/constants/tutor";
 import { UpgradeModal } from "@/components/billing/UpgradeModal";
 import { toast } from "sonner";
@@ -288,7 +288,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
         activeConfig.domain ? [activeConfig.domain] : undefined,
         modalQuestionCount
       );
-      router.push(`${TUTOR_ROUTES.SESSION(sessionId)}?mode=${modalMode}`);
+      router.push(`${TUTOR_ROUTES.SESSION(sessionId)}?mode=${modalMode}&autostart=true`);
     } catch (err: any) {
       toast.error(err.message || "Failed to start session");
       setIsLaunching(false);
@@ -527,7 +527,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
                             <Button 
                               size="sm" 
                               variant={isOverdue ? "default" : "outline"}
-                              className="shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+                              className="shrink-0 transition-opacity opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100"
                               onClick={() => handleDomainPractice(domain.name, subject.name)}
                             >
                               Practice

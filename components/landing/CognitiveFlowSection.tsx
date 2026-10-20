@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { HeaderSection } from "@/components/shared/HeaderSection";
 import MaxWidthWrapper from "@/components/shared/MaxWidthWrapper";
+import { cn } from "@/lib/utils";
 import { GitBranch, ShieldAlert, Cpu, ArrowRight } from "lucide-react";
 
 interface FlowStep {
@@ -55,17 +56,46 @@ export default function CognitiveFlowSection() {
         />
 
         <div className="mt-16 grid gap-6 md:grid-cols-3">
-          {FLOW_STEPS.map((step) => {
+          {FLOW_STEPS.map((step, idx) => {
             const Icon = step.icon;
+            const accentColors = [
+              {
+                iconBg: "bg-rose-500/10 text-rose-600 dark:text-rose-400",
+                metric: "text-rose-600 dark:text-rose-400",
+                stepNum: "text-rose-600 dark:text-rose-400",
+                hoverBorder: "hover:border-rose-500/40",
+              },
+              {
+                iconBg: "bg-blue-600/10 text-blue-600 dark:text-blue-400",
+                metric: "text-blue-600 dark:text-blue-400",
+                stepNum: "text-blue-600 dark:text-blue-400",
+                hoverBorder: "hover:border-blue-500/40",
+              },
+              {
+                iconBg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+                metric: "text-emerald-600 dark:text-emerald-400",
+                stepNum: "text-emerald-600 dark:text-emerald-400",
+                hoverBorder: "hover:border-emerald-500/40",
+              },
+            ][idx] ?? {
+              iconBg: "bg-blue-600/10 text-blue-600 dark:text-blue-400",
+              metric: "text-blue-600 dark:text-blue-400",
+              stepNum: "text-blue-600 dark:text-blue-400",
+              hoverBorder: "hover:border-blue-500/40",
+            };
+
             return (
               <div
                 key={step.title}
-                className="group relative flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-7 sm:p-8 transition-all hover:border-primary/40 hover:shadow-md"
+                className={cn(
+                  "group relative flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-7 sm:p-8 transition-all hover:shadow-md",
+                  accentColors.hoverBorder
+                )}
               >
                 <div>
                   {/* Step Meta Header */}
                   <div className="flex items-center justify-between pb-6 border-b border-border/60">
-                    <span className="font-mono text-xs font-semibold text-primary">
+                    <span className={cn("font-mono text-xs font-semibold", accentColors.stepNum)}>
                       {step.stepNumber}
                     </span>
                     <span className="rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
@@ -74,7 +104,7 @@ export default function CognitiveFlowSection() {
                   </div>
 
                   {/* Icon */}
-                  <div className="mt-6 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-105">
+                  <div className={cn("mt-6 flex h-11 w-11 items-center justify-center rounded-xl transition-transform group-hover:scale-105", accentColors.iconBg)}>
                     <Icon className="h-5 w-5" />
                   </div>
 
@@ -92,7 +122,7 @@ export default function CognitiveFlowSection() {
                 {/* Bottom Metric Tag */}
                 <div className="mt-6 pt-4 border-t border-border/50 flex items-center justify-between text-xs font-mono text-foreground/80">
                   <span className="text-muted-foreground">Target Outcome:</span>
-                  <span className="font-semibold text-primary">{step.metric}</span>
+                  <span className={cn("font-semibold", accentColors.metric)}>{step.metric}</span>
                 </div>
               </div>
             );
@@ -100,7 +130,7 @@ export default function CognitiveFlowSection() {
         </div>
 
         {/* In-situ Action Conversion Banner */}
-        <div className="mt-12 rounded-2xl border border-primary/20 bg-card/90 p-6 sm:p-8 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
+        <div className="mt-12 rounded-2xl border border-blue-600/20 bg-card/90 p-6 sm:p-8 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
           <div className="space-y-1 text-center sm:text-left">
             <h4 className="font-heading text-lg sm:text-xl font-medium text-foreground">
               Ready to start preparing?
@@ -112,7 +142,7 @@ export default function CognitiveFlowSection() {
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto shrink-0">
             <Link
               href="/setup"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-xs sm:text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#051C2C] hover:bg-[#092D47] dark:bg-blue-600 dark:hover:bg-blue-500 px-6 py-3 text-xs sm:text-sm font-semibold text-white shadow-md shadow-blue-950/20 hover:shadow-blue-900/30 active:scale-[0.99] transition-all cursor-pointer"
             >
               <span>Set Up Your Exam Free</span>
               <ArrowRight className="h-4 w-4" />

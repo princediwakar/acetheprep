@@ -9,7 +9,12 @@ export const metadata: Metadata = {
   title: "Create a Quiz | AceThePrep",
   description:
     "Paste your notes or upload a PDF. Get practice tests in seconds. No card-making, no setup—just study what you don't know.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
+
 
 export default function CreatePage() {
   return (

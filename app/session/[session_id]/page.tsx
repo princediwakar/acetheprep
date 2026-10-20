@@ -1,11 +1,21 @@
 // Path: app/session/[session_id]/page.tsx
 
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { SessionPlayer, type QuestionAttemptRecord } from "@/components/tutor/SessionPlayer";
 import { TUTOR_ERRORS } from "@/lib/constants/tutor";
 import type { SessionQuestion, SelectedOption } from "@/types/tutor";
 import taxonomy from "@/lib/taxonomies.json";
+
+export const metadata: Metadata = {
+  title: "Practice Session | AceThePrep",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
 
 interface SessionRow {
   id: string;
@@ -135,6 +145,7 @@ export default async function SessionPage({ params, searchParams }: PageProps) {
   }
 
   const queryMode = resolvedSearchParams.mode;
+  const autoStart = resolvedSearchParams.autostart === "true" || resolvedSearchParams.start === "true";
   const initialMode: "tutor" | "exam" =
     queryMode === "exam" || queryMode === "tutor"
       ? queryMode
@@ -156,6 +167,7 @@ export default async function SessionPage({ params, searchParams }: PageProps) {
       initialScore={initialScore}
       initialTimeElapsed={Math.round(initialTimeMs / 1000)}
       initialIndex={initialIndex}
+      autoStart={autoStart}
     />
   );
 }

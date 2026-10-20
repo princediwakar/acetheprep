@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { BarChart3, Brain, ArrowRight, Activity, Sparkles } from "lucide-react";
 import { getInsightsExams } from "@/lib/insights-queries";
-import { examToSlug } from "@/lib/slugs";
+import { examToSlug, GLOBAL_EXAM_PRIORITY } from "@/lib/slugs";
 import taxonomyRaw from "@/lib/taxonomies.json";
 
 export const revalidate = 3600;
@@ -12,8 +12,9 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Hardest Exam Topics & Common Mistakes | AceThePrep",
   description:
-    "Discover the hardest exam topics and most frequent mistakes across competitive exams like SAT, GRE, GMAT, JEE Main, NEET, and CAT.",
+    "Discover the hardest exam topics and most frequent mistakes across competitive exams like Digital SAT, GRE, GMAT Focus, CFA Level 1, IELTS, and TOEFL.",
 };
+
 
 const ALL_EXAMS = Object.keys(taxonomyRaw).filter((k) => k !== "_schema_version");
 
@@ -26,7 +27,12 @@ export default async function InsightsPage() {
     liveExams = [];
   }
 
-  const displayExams = liveExams.length > 0 ? liveExams : ALL_EXAMS;
+  const rawExams = liveExams.length > 0 ? liveExams : ALL_EXAMS;
+  const displayExams = [...rawExams].sort((a, b) => {
+    const rankA = GLOBAL_EXAM_PRIORITY.indexOf(a);
+    const rankB = GLOBAL_EXAM_PRIORITY.indexOf(b);
+    return (rankA === -1 ? 999 : rankA) - (rankB === -1 ? 999 : rankB);
+  });
 
   return (
     <div className="min-h-[calc(100vh-4rem)] px-4 py-8 sm:py-14 bg-background">

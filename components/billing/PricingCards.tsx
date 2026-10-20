@@ -28,7 +28,7 @@ export function PricingCards({ userEmail, isPro }: PricingCardsProps) {
     }
 
     if (isPro) {
-      router.push("/dashboard");
+      router.push("/home");
       return;
     }
 
@@ -95,9 +95,9 @@ export function PricingCards({ userEmail, isPro }: PricingCardsProps) {
             variant="outline"
             size="lg"
             className="w-full font-semibold rounded-xl"
-            onClick={() => router.push(userEmail ? "/dashboard" : "/setup")}
+            onClick={() => router.push(userEmail ? "/home" : "/setup")}
           >
-            {userEmail ? "Go to Dashboard" : "Set Up Free Profile"}
+            {userEmail ? "Go to Home" : "Set Up Free Profile"}
           </Button>
         </div>
       </div>

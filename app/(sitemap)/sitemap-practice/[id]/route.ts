@@ -1,6 +1,6 @@
 // Path: app/(sitemap)/sitemap-practice/[id]/route.ts
 
-import { getAllTaxonomyEntries, examToSlug, subjectToSlug } from "@/lib/slugs";
+import { getAllTaxonomyEntries, examToSlug, subjectToSlug, GLOBAL_EXAM_PRIORITY } from "@/lib/slugs";
 import { siteConfig } from "@/config/site";
 import taxonomyRaw from "@/lib/taxonomies.json";
 
@@ -48,10 +48,18 @@ export async function GET(
     Record<string, string[]>
   >;
 
-  // 2. Exam Hubs and Subject Directories
-  for (const [exam, subjects] of Object.entries(taxonomy)) {
-    if (exam === "_schema_version" || typeof subjects !== "object" || !subjects)
-      continue;
+  // 2. Exam Hubs and Subject Directories (Global tracks first)
+  const examKeys = Object.keys(taxonomy).filter(
+    (k) => k !== "_schema_version" && typeof taxonomy[k] === "object" && taxonomy[k] !== null
+  );
+  examKeys.sort((a, b) => {
+    const rankA = GLOBAL_EXAM_PRIORITY.indexOf(a);
+    const rankB = GLOBAL_EXAM_PRIORITY.indexOf(b);
+    return (rankA === -1 ? 999 : rankA) - (rankB === -1 ? 999 : rankB);
+  });
+
+  for (const exam of examKeys) {
+    const subjects = taxonomy[exam];
     const examSlug = examToSlug(exam);
 
     // Exam Portal

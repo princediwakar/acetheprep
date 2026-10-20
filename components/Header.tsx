@@ -11,6 +11,7 @@ import { signOut } from "@/lib/supabase/auth";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggleButton";
+import { BrandLogo } from "@/components/shared/BrandLogo";
 
 const QUIZ_ROUTES = ["/quiz/", "/play/", "/session/", "/edit/", "/create"];
 
@@ -35,12 +36,7 @@ export const Header = memo(() => {
     <div className="h-16 fixed top-0 left-0 right-0 z-[100] bg-background/85 backdrop-blur-md border-b border-border/80 transition-colors">
       <header className="flex justify-between items-center max-w-6xl px-4 py-3.5 mx-auto">
         <nav className="flex items-center space-x-7">
-          <Link href="/" className="flex items-center gap-1.5 hover:opacity-90 transition-opacity">
-            <span className="font-heading text-xl font-medium tracking-tight text-foreground">
-              AceThePrep
-            </span>
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-          </Link>
+          <BrandLogo />
           {!isQuizPage && (
             <div className="hidden sm:flex items-center space-x-6 text-sm font-medium text-muted-foreground">
               <Link href="/practice" className="hover:text-foreground transition-colors">

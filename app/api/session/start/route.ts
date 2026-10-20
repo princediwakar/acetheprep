@@ -91,12 +91,52 @@ async function generateAndCreateSession(
   const timeMode: TimeMode = (profile.time_mode as TimeMode) || getTimeMode(daysRemaining);
   const examYear = targetDate.getFullYear().toString();
 
-  // ----- Load Concepts -----
-  const { data: conceptRows } = await supabase
-    .from("concept_mastery")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("exam_profile_id", examProfileId);
+  // ----- Parallel Initial Fetch: Concepts, Recent Wrong Answers, and Recent Sessions (Deduplication History) -----
+  const [
+    { data: conceptRows },
+    { data: recentWrongAnswers },
+    { data: recentUserSessions },
+  ] = await Promise.all([
+    supabase
+      .from("concept_mastery")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("exam_profile_id", examProfileId),
+    supabase
+      .from("session_answers")
+      .select("question_id, skill_domain, session_id")
+      .eq("user_id", userId)
+      .eq("is_correct", false)
+      .eq("was_revealed", false)
+      .order("answered_at", { ascending: false })
+      .limit(30),
+    supabase
+      .from("sessions")
+      .select("questions_json")
+      .eq("user_id", userId)
+      .eq("exam_profile_id", examProfileId)
+      .order("created_at", { ascending: false })
+      .limit(8),
+  ]);
+
+  const previousQuestionStems: string[] = [];
+  if (recentUserSessions) {
+    for (const s of recentUserSessions) {
+      const qs = s.questions_json as any[];
+      if (Array.isArray(qs)) {
+        for (const q of qs) {
+          if (q?.question_text && typeof q.question_text === "string") {
+            const cleanStem = q.question_text.trim();
+            if (cleanStem && !previousQuestionStems.includes(cleanStem)) {
+              previousQuestionStems.push(cleanStem);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  const entropySeed = `${Date.now().toString(36)}_${crypto.randomUUID().slice(0, 8)}`;
 
   const concepts: ConceptMasteryRow[] = (conceptRows ?? []).map((row) => ({
     skill_domain: row.skill_domain,
@@ -179,16 +219,7 @@ async function generateAndCreateSession(
     });
   }
 
-  // ----- Recent Wrong Answers Enrichment -----
-  const { data: recentWrongAnswers } = await supabase
-    .from("session_answers")
-    .select("question_id, skill_domain, session_id")
-    .eq("user_id", userId)
-    .eq("is_correct", false)
-    .eq("was_revealed", false)
-    .order("answered_at", { ascending: false })
-    .limit(30);
-
+  // ----- Recent Wrong Answers Enrichment (Reusing Parallel Fetched Data) -----
   if (recentWrongAnswers && recentWrongAnswers.length > 0) {
     const sessionIds = [...new Set(recentWrongAnswers.map((a) => a.session_id))];
     const { data: wrongSessions } = await supabase
@@ -244,7 +275,7 @@ async function generateAndCreateSession(
   if (questionCount <= BATCH_SIZE) {
     // Single batch generation
     const difficultyDistribution = isDiagnostic
-      ? { easy: 1, medium: 2, hard: 2 }
+      ? { easy: 0, medium: 1, hard: 4 }
       : computeDifficultyDistribution(questionCount, timeMode);
 
     const userMessage = isDiagnostic
@@ -261,6 +292,8 @@ async function generateAndCreateSession(
           targetDomains,
           questionCount,
           difficultyDistribution,
+          previousQuestionStems,
+          entropySeed,
         });
 
     const maxTokens = questionCount * 600 + 1000;
@@ -338,6 +371,8 @@ async function generateAndCreateSession(
         targetDomains: batchDomains,
         questionCount: batchCount,
         difficultyDistribution,
+        previousQuestionStems,
+        entropySeed: `${entropySeed}_b${batchIdx}`,
       });
 
       const maxTokens = batchCount * 600 + 1000;
@@ -398,7 +433,23 @@ async function generateAndCreateSession(
     };
   }
 
-  // ----- Validate and Normalize Questions -----
+  // ----- Validate and Deduplicate Questions -----
+  function normalizeText(text: string): string {
+    return text.toLowerCase().replace(/[^a-z0-9]/g, " ").trim();
+  }
+
+  function calculateSimilarity(a: string, b: string): number {
+    const wordsA = new Set(normalizeText(a).split(/\s+/).filter((w) => w.length > 3));
+    const wordsB = new Set(normalizeText(b).split(/\s+/).filter((w) => w.length > 3));
+    if (wordsA.size === 0 || wordsB.size === 0) return 0;
+    let intersection = 0;
+    for (const word of wordsA) {
+      if (wordsB.has(word)) intersection++;
+    }
+    const union = new Set([...wordsA, ...wordsB]).size;
+    return union === 0 ? 0 : intersection / union;
+  }
+
   const validatedQuestions: SessionQuestion[] = [];
   const validDomainNames = new Set(targetDomainNames.map((d) => d.toLowerCase().trim()));
 
@@ -410,6 +461,24 @@ async function generateAndCreateSession(
       !(q as any).options ||
       !(q as any).correct_option
     ) {
+      continue;
+    }
+
+    const currentText = (q as any).question_text as string;
+
+    // Deduplication check: skip if near-duplicate of an already validated question in this session
+    const isDuplicateWithinSession = validatedQuestions.some(
+      (vq) => calculateSimilarity(vq.question_text, currentText) > 0.82
+    );
+    if (isDuplicateWithinSession) {
+      continue;
+    }
+
+    // Deduplication check: skip if duplicate of a question from recent past sessions
+    const isDuplicateFromHistory = previousQuestionStems.some(
+      (stem) => calculateSimilarity(stem, currentText) > 0.85
+    );
+    if (isDuplicateFromHistory && questionsArray.length > questionCount) {
       continue;
     }
 

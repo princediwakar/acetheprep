@@ -43,6 +43,21 @@ const EXAM_TRACKS: ExamTrack[] = [
     focus: "Reporting Standards, Duration Sensitivity & Corporate Governance",
   },
   {
+    slug: "ielts-academic",
+    name: "IELTS Academic",
+    badge: "UK, EU & Global Study",
+    subjects: ["Reading", "Listening"],
+    focus: "True-False-Not Given Traps, Main Idea Matching & Audio Cue Distractors",
+  },
+  {
+    slug: "toefl-ibt",
+    name: "TOEFL iBT",
+    badge: "US College English",
+    subjects: ["Reading", "Listening"],
+    focus: "Rhetorical Purpose, Sentence Insertion & Inference Distractors",
+  },
+
+  {
     slug: "jee-main",
     name: "JEE Main",
     badge: "Engineering",
@@ -142,7 +157,7 @@ export default function ExamTracksSection() {
 
                 <Link
                   href={`/setup?exam=${encodeURIComponent(track.name)}`}
-                  className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary/10 hover:bg-primary hover:text-primary-foreground text-primary py-2.5 text-xs font-semibold transition-all cursor-pointer"
+                  className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-600/10 hover:bg-[#051C2C] dark:hover:bg-blue-600 hover:text-white text-blue-700 dark:text-blue-300 py-2.5 text-xs font-semibold transition-all cursor-pointer"
                 >
                   <span>Start {track.name} Prep Free</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -155,7 +170,7 @@ export default function ExamTracksSection() {
         <div className="mt-12 text-center">
           <Link
             href="/practice"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary hover:underline"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 hover:underline"
           >
             <span>View All Exam Portals & Syllabi</span>
             <ArrowUpRight className="h-3.5 w-3.5" />

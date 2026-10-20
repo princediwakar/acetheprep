@@ -115,16 +115,7 @@ function SessionRow({ session }: { session: AnalyticsPageData["recentSessions"][
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <div
-            className={cn(
-              "flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center",
-              isCompleted
-                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                : isActive
-                  ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                  : "bg-muted text-muted-foreground"
-            )}
-          >
+          <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-muted/60 border border-border/50 flex items-center justify-center text-muted-foreground">
             {isCompleted ? (
               <CheckCircle2 className="w-4 h-4" />
             ) : isActive ? (
@@ -136,19 +127,10 @@ function SessionRow({ session }: { session: AnalyticsPageData["recentSessions"][
 
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
+              <span className="text-sm font-bold text-foreground transition-colors">
                 {intentLabel}
               </span>
-              <span
-                className={cn(
-                  "text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md",
-                  isCompleted
-                    ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                    : isActive
-                      ? "bg-amber-500/10 text-amber-700 dark:text-amber-400"
-                      : "bg-muted text-muted-foreground"
-                )}
-              >
+              <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-md border border-border/60 bg-muted/40 text-muted-foreground">
                 {session.status}
               </span>
             </div>
@@ -168,23 +150,23 @@ function SessionRow({ session }: { session: AnalyticsPageData["recentSessions"][
           {isCompleted ? (
             <>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-sm font-black text-foreground">
+                <span className="text-sm font-black text-foreground tabular-nums">
                   {session.correctCount}/{totalQuestions}
                 </span>
-                <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                <span className="text-xs font-medium text-muted-foreground">
                   ({session.accuracy}%)
                 </span>
               </div>
-              <span className="text-[11px] font-semibold text-primary inline-flex items-center gap-0.5 mt-1 group-hover:translate-x-0.5 transition-transform">
+              <span className="text-[11px] font-semibold text-foreground/80 inline-flex items-center gap-0.5 mt-1 group-hover:translate-x-0.5 transition-transform">
                 Review Solutions <ChevronRight className="w-3 h-3" />
               </span>
             </>
           ) : isActive ? (
             <>
-              <div className="text-xs font-semibold text-amber-600 dark:text-amber-400">
+              <div className="text-xs font-medium text-muted-foreground">
                 {session.answeredCount}/{totalQuestions} answered
               </div>
-              <span className="text-[11px] font-semibold text-primary inline-flex items-center gap-0.5 mt-1 group-hover:translate-x-0.5 transition-transform">
+              <span className="text-[11px] font-semibold text-foreground inline-flex items-center gap-0.5 mt-1 group-hover:translate-x-0.5 transition-transform">
                 Resume Test <ChevronRight className="w-3 h-3" />
               </span>
             </>

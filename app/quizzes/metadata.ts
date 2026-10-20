@@ -8,7 +8,12 @@ export const metadata: Metadata = {
   title: "Practice Tests | AceThePrep",
   description:
     "Explore practice tests on any topic. Find what you don't know before exam day.",
+  robots: {
+    index: false,
+    follow: false,
+  },
   keywords: [
+
     "practice tests",
     "exam prep",
     "practice questions",

@@ -29,26 +29,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const ogImageUrl = `${baseUrl}/api/og?type=quiz&title=${encodeURIComponent(quiz.title)}&topic=${encodeURIComponent(quiz.topic || "General")}`;
 
     return {
-      title: quiz.title,
-      description: `Take the ${quiz.title} quiz on ${quiz.topic || "various topics"}. Created by ${quiz.creator_name || "Unknown"}. ${quiz.description || "Test your knowledge now!"}`,
-      keywords: [quiz.title, quiz.topic, quiz.subject, quiz.difficulty, "quiz", "test", "knowledge"].filter(Boolean) as string[],
-      openGraph: {
-        title: quiz.title,
-        description: `Take the ${quiz.title} quiz on ${quiz.topic || "various topics"}. Created by ${quiz.creator_name || "Unknown"}.`,
-        url: `${baseUrl}/quiz/${slug}`,
-        images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${quiz.title} Quiz` }],
-      },
-      twitter: {
-        title: quiz.title,
-        description: `Take the ${quiz.title} quiz on ${quiz.topic || "various topics"}. Created by ${quiz.creator_name || "Unknown"}.`,
-        images: [ogImageUrl],
+      title: `Edit: ${quiz.title}`,
+      description: `Edit quiz settings and questions.`,
+      robots: {
+        index: false,
+        follow: false,
       },
     };
   } catch (error) {
     console.error("Error generating metadata for quiz:", error);
-    return { title: "Quiz", description: "Take quizzes and test your knowledge" };
+    return {
+      title: "Edit Quiz",
+      description: "Edit quiz",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
 }
+
 
 export default async function QuizEditPage({ params }: PageProps) {
   const supabase = await createClient();

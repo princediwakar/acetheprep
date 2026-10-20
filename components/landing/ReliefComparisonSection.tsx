@@ -46,7 +46,7 @@ export default function ReliefComparisonSection() {
     <section className="relative py-20 sm:py-28 border-t border-border/70">
       <MaxWidthWrapper>
         <div className="text-center mb-16 max-w-3xl mx-auto">
-          <span className="inline-block rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
+          <span className="inline-block rounded-full border border-blue-600/25 bg-blue-50/80 dark:bg-blue-950/40 dark:border-blue-500/30 px-3.5 py-1 text-xs font-semibold tracking-wider text-blue-700 dark:text-blue-300 uppercase shadow-xs">
             The Difference
           </span>
           <h2 className="mt-4 font-heading text-3xl md:text-4xl lg:text-5xl font-normal tracking-tight text-foreground leading-[1.15] text-balance">
@@ -67,7 +67,7 @@ export default function ReliefComparisonSection() {
         <div className="mt-14 text-center space-y-3">
           <Link
             href="/setup"
-            className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground shadow-md hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer"
+            className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#051C2C] hover:bg-[#092D47] dark:bg-blue-600 dark:hover:bg-blue-500 px-8 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-950/20 hover:shadow-blue-900/30 active:scale-[0.99] transition-all cursor-pointer"
           >
             <span>Start Free Prep</span>
             <ArrowRight className="h-4 w-4" />
@@ -121,34 +121,34 @@ function DesktopComparison() {
       </div>
 
       {/* The AceThePrep Way */}
-      <div className="rounded-2xl border border-primary/30 bg-card p-7 sm:p-8 shadow-sm flex flex-col justify-between relative overflow-hidden">
+      <div className="rounded-2xl border border-blue-600/30 bg-card p-7 sm:p-8 shadow-sm flex flex-col justify-between relative overflow-hidden">
         {/* Subtle accent glow */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-primary/10 blur-3xl"
+          className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-blue-600/10 blur-3xl"
         />
 
         <div>
           <div className="flex items-center gap-3 pb-6 border-b border-border/60">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600/15 text-blue-600 dark:text-blue-400">
               <Check className="h-4 w-4" />
             </div>
             <div>
               <h3 className="font-heading text-xl font-medium text-foreground">
                 Active Preparation (AceThePrep)
               </h3>
-              <p className="text-xs text-primary font-medium">Active recall & targeted practice</p>
+              <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">Active recall & targeted practice</p>
             </div>
           </div>
 
           <div className="mt-6 space-y-6">
             {COMPARISONS.map((item, i) => (
               <div key={i} className="space-y-1.5">
-                <span className="text-xs font-mono font-semibold uppercase tracking-wider text-primary/80">
+                <span className="text-xs font-mono font-semibold uppercase tracking-wider text-blue-600/80 dark:text-blue-400/80">
                   {item.dimension}
                 </span>
                 <p className="text-sm leading-relaxed text-foreground flex items-start gap-2.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-500 mt-2 shrink-0" />
                   <span>{item.aceWay}</span>
                 </p>
               </div>
@@ -156,8 +156,8 @@ function DesktopComparison() {
           </div>
         </div>
 
-        <div className="mt-8 pt-4 border-t border-border/50 text-xs font-mono text-primary font-semibold flex items-center gap-1.5">
-          <Sparkles className="h-3.5 w-3.5 text-primary" />
+        <div className="mt-8 pt-4 border-t border-border/50 text-xs font-mono text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1.5">
+          <Sparkles className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
           <span>Result: Confident problem solving, fast recall under pressure, permanent memory</span>
         </div>
       </div>

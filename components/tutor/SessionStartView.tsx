@@ -144,7 +144,7 @@ export function SessionStartView({
                     <span className="font-bold text-sm text-foreground">Exam Mode</span>
                   </div>
                   <p className="text-xs leading-relaxed text-muted-foreground">
-                    Timed, zero spoilers. Complete deconstruction autopsy at the end.
+                    Timed, zero spoilers. Full review and explanations at the end.
                   </p>
                 </button>
               </div>

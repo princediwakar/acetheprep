@@ -25,7 +25,7 @@ export default async function IndexPage() {
     .single();
 
   if (profile) {
-    redirect("/dashboard");
+    redirect("/home");
   }
 
   redirect("/setup");

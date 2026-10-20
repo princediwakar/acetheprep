@@ -1,5 +1,39 @@
 {
   "_schema_version": 1,
+  "SAT": {
+    "Reading and Writing": ["Craft and Structure", "Information and Ideas", "Standard English Conventions", "Expression of Ideas"],
+    "Mathematics": ["Algebra", "Advanced Math", "Problem-Solving and Data Analysis", "Geometry and Trigonometry"]
+  },
+  "GRE": {
+    "Verbal Reasoning": ["Text Completion", "Sentence Equivalence", "Reading Comprehension"],
+    "Quantitative Reasoning": ["Arithmetic", "Algebra", "Geometry", "Data Analysis"],
+    "Analytical Writing": ["Analyze an Issue"]
+  },
+  "GMAT Focus": {
+    "Quantitative Reasoning": ["Arithmetic", "Algebra"],
+    "Verbal Reasoning": ["Reading Comprehension", "Critical Reasoning"],
+    "Data Insights": ["Data Sufficiency", "Multi-Source Reasoning", "Table Analysis", "Graphics Interpretation", "Two-Part Analysis"]
+  },
+  "CFA Level 1": {
+    "Ethical & Professional Standards": ["Code of Ethics", "Standards of Professional Conduct", "Global Investment Performance Standards (GIPS)"],
+    "Quantitative Methods": ["Time Value of Money", "Statistical Concepts & Market Returns", "Probability Distributions", "Hypothesis Testing", "Simple Linear Regression"],
+    "Economics": ["Microeconomic Analysis", "Monetary and Fiscal Policy", "International Trade & Capital Flows", "Currency Exchange Rates"],
+    "Financial Statement Analysis": ["Financial Reporting Standards", "Income Statements", "Balance Sheets", "Cash Flow Statements", "Inventories & Long-Lived Assets", "Financial Analysis Techniques"],
+    "Corporate Issuers": ["Corporate Governance", "Working Capital & Liquidity", "Capital Structure", "Capital Investments"],
+    "Equity Investments": ["Market Organization & Structure", "Security Market Indexes", "Market Efficiency", "Equity Valuation"],
+    "Fixed Income": ["Fixed-Income Securities", "Fixed-Income Valuation", "Asset-Backed Securities", "Yield & Spread Analysis", "Credit Analysis"],
+    "Derivatives": ["Derivative Markets & Instruments", "Forward & Futures Contracts", "Option Basics", "Swaps"],
+    "Alternative Investments": ["Real Estate", "Private Equity", "Hedge Funds", "Commodities"],
+    "Portfolio Management": ["Portfolio Risk & Return", "Portfolio Planning & Construction", "Behavioral Biases"]
+  },
+  "IELTS Academic": {
+    "Reading": ["Inference and Implication", "True-False-Not Given", "Headings and Main Idea Matching", "Summary Completion", "Sentence Completion", "Academic Vocabulary in Context"],
+    "Listening": ["Multiple Choice Traps", "Form and Note Completion", "Map and Diagram Labelling", "Classification of Features", "Short Answer Comprehension"]
+  },
+  "TOEFL iBT": {
+    "Reading": ["Factual Information", "Inference and Rhetorical Purpose", "Vocabulary in Context", "Sentence Simplification", "Insert Text", "Prose Summary"],
+    "Listening": ["Gist-Content and Purpose", "Detail Identification", "Function and Speaker Stance", "Organization and Categorization", "Connecting Content"]
+  },
   "JEE Main": {
     "Physics": ["Kinematics", "Laws of Motion", "Work, Energy and Power", "Rotational Motion", "Thermodynamics", "Electrostatics", "Current Electricity", "Optics", "Modern Physics"],
     "Chemistry": ["Atomic Structure", "Chemical Bonding", "Thermodynamics", "Chemical Equilibrium", "Coordination Compounds", "Organic Chemistry Basics", "Hydrocarbons"],
@@ -15,20 +49,6 @@
     "General Studies II": ["Indian Constitution", "Governance", "Social Justice", "International Relations"],
     "General Studies III": ["Economy", "Environment and Ecology", "Science and Technology", "Security and Disaster Management"],
     "CSAT": ["Logical Reasoning", "Analytical Ability", "Decision Making", "Basic Numeracy", "Data Interpretation"]
-  },
-  "GMAT Focus": {
-    "Quantitative Reasoning": ["Arithmetic", "Algebra"],
-    "Verbal Reasoning": ["Reading Comprehension", "Critical Reasoning"],
-    "Data Insights": ["Data Sufficiency", "Multi-Source Reasoning", "Table Analysis", "Graphics Interpretation", "Two-Part Analysis"]
-  },
-  "SAT": {
-    "Reading and Writing": ["Craft and Structure", "Information and Ideas", "Standard English Conventions", "Expression of Ideas"],
-    "Mathematics": ["Algebra", "Advanced Math", "Problem-Solving and Data Analysis", "Geometry and Trigonometry"]
-  },
-  "GRE": {
-    "Verbal Reasoning": ["Text Completion", "Sentence Equivalence", "Reading Comprehension"],
-    "Quantitative Reasoning": ["Arithmetic", "Algebra", "Geometry", "Data Analysis"],
-    "Analytical Writing": ["Analyze an Issue"]
   },
   "CAT": {
     "Verbal Ability": ["Reading Comprehension", "Para-jumbles", "Para-completion", "Grammar"],
@@ -52,26 +72,5 @@
     "Business Laws": ["Indian Contract Act", "Sale of Goods Act", "Partnership Act"],
     "Business Mathematics": ["Ratio and Proportion", "Equations and Matrices", "Linear Inequalities"],
     "Business Economics": ["Theory of Demand and Supply", "Theory of Production and Cost", "Market Structures"]
-  },
-  "CFA Level 1": {
-    "Ethical & Professional Standards": ["Code of Ethics", "Standards of Professional Conduct", "Global Investment Performance Standards (GIPS)"],
-    "Quantitative Methods": ["Time Value of Money", "Statistical Concepts & Market Returns", "Probability Distributions", "Hypothesis Testing", "Simple Linear Regression"],
-    "Economics": ["Microeconomic Analysis", "Monetary and Fiscal Policy", "International Trade & Capital Flows", "Currency Exchange Rates"],
-    "Financial Statement Analysis": ["Financial Reporting Standards", "Income Statements", "Balance Sheets", "Cash Flow Statements", "Inventories & Long-Lived Assets", "Financial Analysis Techniques"],
-    "Corporate Issuers": ["Corporate Governance", "Working Capital & Liquidity", "Capital Structure", "Capital Investments"],
-    "Equity Investments": ["Market Organization & Structure", "Security Market Indexes", "Market Efficiency", "Equity Valuation"],
-    "Fixed Income": ["Fixed-Income Securities", "Fixed-Income Valuation", "Asset-Backed Securities", "Yield & Spread Analysis", "Credit Analysis"],
-    "Derivatives": ["Derivative Markets & Instruments", "Forward & Futures Contracts", "Option Basics", "Swaps"],
-    "Alternative Investments": ["Real Estate", "Private Equity", "Hedge Funds", "Commodities"],
-    "Portfolio Management": ["Portfolio Risk & Return", "Portfolio Planning & Construction", "Behavioral Biases"]
-  },
-  "IELTS Academic": {
-    "Reading": ["Inference and Implication", "True-False-Not Given", "Headings and Main Idea Matching", "Summary Completion", "Sentence Completion", "Academic Vocabulary in Context"],
-    "Listening": ["Multiple Choice Traps", "Form and Note Completion", "Map and Diagram Labelling", "Classification of Features", "Short Answer Comprehension"]
-  },
-  "TOEFL iBT": {
-    "Reading": ["Factual Information", "Inference and Rhetorical Purpose", "Vocabulary in Context", "Sentence Simplification", "Insert Text", "Prose Summary"],
-    "Listening": ["Gist-Content and Purpose", "Detail Identification", "Function and Speaker Stance", "Organization and Categorization", "Connecting Content"]
   }
 }
-

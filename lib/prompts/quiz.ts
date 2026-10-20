@@ -1,3 +1,5 @@
+import { QUIZ_CONFIG } from "@/lib/constants/quiz";
+
 // ----- Session-Based Variability Engine -----
 // Simplified approach using intelligent prompting instead of complex programmatic logic
 
@@ -190,9 +192,9 @@ CREATE A QUIZ: ${content}
 ${searchContext ? searchContext + '\n\n' : ''}
 REQUIREMENTS:
 - Generate exactly ${remaining} questions
-- Match the sophistication level implied by the request
-- If this is for a specific exam (GMAT, SAT, etc.), create questions that would genuinely help someone prepare
-- Use your expertise to determine what types of questions would be most valuable
+- Match the sophistication level implied by the request (Default: Difficult / High-Stakes Exam-Grade)
+- If this is for a specific exam (GMAT, SAT, JEE, etc.), create questions that genuinely mirror actual exam difficulty
+- UNIQUENESS MANDATE: Formulate original questions with non-standard scenarios and novel numerical values. Do not repeat standard textbook clichés.
 - Session ID: ${uniqueToken}
 
 Make this quiz something a serious student would find genuinely useful for their preparation.
@@ -202,7 +204,7 @@ Make this quiz something a serious student would find genuinely useful for their
 // Simplified variability system using pure prompt intelligence
 export async function getVariabilityInstructions(
   sessionFingerprint?: string,
-  difficulty: string = "Medium",
+  difficulty: string = QUIZ_CONFIG.DEFAULT_DIFFICULTY,
   userId?: string
 ): Promise<string> {
   const fingerprint = sessionFingerprint || await generateSessionFingerprint(Date.now().toString(), userId);

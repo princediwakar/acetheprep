@@ -27,11 +27,12 @@ interface PracticeDirectoryProps {
 }
 
 const TABS = [
-  { id: "all", label: "All Exams" },
-  { id: "global-grad-pro", label: "Graduate & Finance" },
-  { id: "study-abroad", label: "Study Abroad & SAT" },
-  { id: "national-competitive", label: "National Competitive" },
+  { id: "all", label: "All Curricula" },
+  { id: "study-abroad", label: "US & EU Admissions (SAT / TOEFL / IELTS)" },
+  { id: "global-grad-pro", label: "Graduate & Finance (GRE / GMAT / CFA)" },
+  { id: "national-competitive", label: "National Tracks" },
 ] as const;
+
 
 export function PracticeDirectory({ exams }: PracticeDirectoryProps) {
   const [activeTab, setActiveTab] = useState<string>("all");

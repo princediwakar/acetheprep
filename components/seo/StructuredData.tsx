@@ -156,6 +156,71 @@ export const learningResourceSchema = (params: {
   provider: { "@type": "Organization", name: siteConfig.name, url: baseUrl },
 });
 
+export const examCourseSchema = (params: {
+  examName: string;
+  description: string;
+  url: string;
+  subjects: string[];
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "Course",
+  name: `${params.examName} Preparation & Retrieval Practice Curriculum`,
+  description: params.description,
+  url: params.url,
+  provider: {
+    "@type": "Organization",
+    name: siteConfig.name,
+    sameAs: siteConfig.url,
+  },
+  educationalLevel: params.examName,
+  hasCourseInstance: {
+    "@type": "CourseInstance",
+    courseMode: "online",
+    courseWorkload: "Self-paced adaptive retrieval practice",
+  },
+  teaches: params.subjects,
+});
+
+export const educationalCredentialSchema = (params: {
+  examName: string;
+  description: string;
+  url: string;
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "EducationalOccupationalCredential",
+  name: `${params.examName} Readiness Assessment`,
+  description: params.description,
+  url: params.url,
+  credentialCategory: "Competitive Examination Readiness",
+  recognizedBy: {
+    "@type": "Organization",
+    name: siteConfig.name,
+    url: siteConfig.url,
+  },
+});
+
+export const subjectCourseSchema = (params: {
+  examName: string;
+  subjectName: string;
+  description: string;
+  url: string;
+  domains: string[];
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "Course",
+  name: `${params.examName} ${params.subjectName} Modules`,
+  description: params.description,
+  url: params.url,
+  provider: {
+    "@type": "Organization",
+    name: siteConfig.name,
+    sameAs: siteConfig.url,
+  },
+  educationalLevel: params.examName,
+  teaches: params.domains,
+});
+
+
 interface StructuredDataProps {
   schema: WithContext<any>;
 }

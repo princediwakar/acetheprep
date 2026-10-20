@@ -14,7 +14,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BILLING_PLANS } from "@/lib/constants/billing";
-import { createCheckoutSession } from "@/lib/actions/billing";
+import { createCheckoutSession, activateTestPro } from "@/lib/actions/billing";
+import { Copy, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface UpgradeModalProps {
@@ -32,6 +33,33 @@ export function UpgradeModal({
 }: UpgradeModalProps) {
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "quarterly">("quarterly");
   const [loading, setLoading] = useState(false);
+  const [testActivating, setTestActivating] = useState(false);
+
+  const isTestMode =
+    process.env.NEXT_PUBLIC_DODO_PAYMENTS_ENVIRONMENT === "test_mode" ||
+    process.env.NODE_ENV !== "production";
+
+  function copyToClipboard(text: string, label: string) {
+    navigator.clipboard.writeText(text);
+    toast.success(`Copied ${label} to clipboard!`);
+  }
+
+  async function handleTestActivate() {
+    setTestActivating(true);
+    try {
+      const res = await activateTestPro(selectedPlan);
+      if (res.error) {
+        toast.error(res.error);
+      } else {
+        toast.success("Test Pro activated successfully! Refreshing dashboard...");
+        onOpenChange(false);
+      }
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to activate test Pro.");
+    } finally {
+      setTestActivating(false);
+    }
+  }
 
   async function handleCheckout() {
     setLoading(true);
@@ -152,6 +180,57 @@ export function UpgradeModal({
               </div>
             ))}
           </div>
+
+          {/* Dodo Sandbox Test Mode Banner */}
+          {isTestMode && (
+            <div className="rounded-xl bg-amber-500/10 border border-amber-500/25 p-3.5 space-y-2 text-xs">
+              <div className="flex items-center justify-between font-semibold text-amber-500">
+                <span className="flex items-center gap-1.5">
+                  <Terminal className="w-3.5 h-3.5" />
+                  Dodo Sandbox Test Mode Active
+                </span>
+                <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400">
+                  Test Credentials
+                </span>
+              </div>
+              <p className="text-[11px] text-muted-foreground leading-normal">
+                To test live checkout without real charges, use these valid Dodo test cards (do not use real personal cards):
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                <div
+                  onClick={() => copyToClipboard("4242424242424242", "Global Test Card")}
+                  className="flex items-center justify-between p-2 rounded bg-background/60 border border-border/60 cursor-pointer hover:border-amber-500/50 transition-colors"
+                >
+                  <div>
+                    <span className="font-semibold block text-foreground">Global (US)</span>
+                    <span className="font-mono text-muted-foreground">4242 •••• 4242</span>
+                  </div>
+                  <Copy className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground" />
+                </div>
+                <div
+                  onClick={() => copyToClipboard("4576238912771450", "India Test Card")}
+                  className="flex items-center justify-between p-2 rounded bg-background/60 border border-border/60 cursor-pointer hover:border-amber-500/50 transition-colors"
+                >
+                  <div>
+                    <span className="font-semibold block text-foreground">India (IN)</span>
+                    <span className="font-mono text-muted-foreground">4576 •••• 1450</span>
+                  </div>
+                  <Copy className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-1 border-t border-amber-500/15 text-[11px] text-muted-foreground">
+                <span>Exp: <b className="text-foreground font-mono">06/32</b> • CVC: <b className="text-foreground font-mono">123</b></span>
+                <button
+                  type="button"
+                  disabled={testActivating}
+                  onClick={handleTestActivate}
+                  className="text-amber-500 hover:text-amber-400 font-semibold underline underline-offset-2 transition-colors disabled:opacity-50"
+                >
+                  {testActivating ? "Activating..." : "⚡ Quick 1-Click Dev Activate"}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}

@@ -11,10 +11,14 @@ import {
   slugToSubject,
   domainToSlug,
 } from "@/lib/slugs";
-import StructuredData, { breadcrumbSchema } from "@/components/seo/StructuredData";
+import StructuredData, {
+  breadcrumbSchema,
+  subjectCourseSchema,
+} from "@/components/seo/StructuredData";
 import ExamCTABanner from "@/components/practice/ExamCTABanner";
 import { siteConfig } from "@/config/site";
-import { ArrowLeft, BookOpen, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowLeft, BookOpen, Sparkles, ArrowRight, TrendingUp } from "lucide-react";
+
 
 interface PageProps {
   params: Promise<{ exam: string; subject: string }>;
@@ -50,8 +54,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const subjectSlug = subjectToSlug(subjectName);
   const canonicalUrl = `${baseUrl}/practice/${examSlug}/${subjectSlug}`;
 
-  const title = `Free ${examName} ${subjectName} Practice Questions | ${siteConfig.name}`;
+  const title = `Free ${examName} ${subjectName} Practice Questions`;
   const description = `Prepare for ${examName} ${subjectName} with free topic-by-topic practice tests. Includes AI-powered distractor analysis explaining every student trap.`;
+
 
   return {
     title,
@@ -98,9 +103,18 @@ export default async function SubjectPracticeHubPage({ params }: PageProps) {
     { name: subjectName, url: `${baseUrl}/practice/${examSlug}/${subjectSlug}` },
   ];
 
+  const courseLd = subjectCourseSchema({
+    examName,
+    subjectName,
+    description: `Targeted diagnostic question bank and trap deconstruction for ${examName} ${subjectName}.`,
+    url: `${baseUrl}/practice/${examSlug}/${subjectSlug}`,
+    domains,
+  });
+
   return (
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <StructuredData schema={breadcrumbSchema(breadcrumbs)} />
+      <StructuredData schema={courseLd} />
 
       <div className="max-w-5xl mx-auto">
         {/* Navigation */}
@@ -118,13 +132,24 @@ export default async function SubjectPracticeHubPage({ params }: PageProps) {
             <Sparkles className="w-3.5 h-3.5" />
             <span>{examName} Curriculum</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground">
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground font-heading">
             {subjectName} Topics for {examName}
           </h1>
           <p className="mt-3 text-lg text-muted-foreground max-w-2xl leading-relaxed">
             Choose a topic module below to start practicing. Every question deconstructs all wrong options so you understand why distractors are chosen.
           </p>
+
+          <div className="mt-5">
+            <Link
+              href={`/insights/${examSlug}/hardest-topics`}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
+            >
+              <TrendingUp className="h-3.5 w-3.5 text-amber-500" />
+              <span>See which {subjectName} topics have the highest student failure rate &rarr;</span>
+            </Link>
+          </div>
         </div>
+
 
         {/* Domain modules grid */}
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">

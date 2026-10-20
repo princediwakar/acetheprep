@@ -7,15 +7,15 @@ import { Sparkles, ShieldCheck, Zap } from "lucide-react";
 export default function CTA() {
   return (
     <section className="relative py-24 sm:py-32 border-t border-border/70 overflow-hidden">
-      {/* Warm ambient radial glow */}
+      {/* McKinsey Ambient Cobalt Glow */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl h-80 rounded-full bg-primary/10 blur-[110px] -z-10"
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-96 rounded-full bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,rgba(0,102,255,0.16),rgba(5,28,44,0.04)_60%,transparent_80%)] dark:bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,rgba(0,102,255,0.25),transparent_80%)] blur-[90px] -z-10"
       />
 
       <MaxWidthWrapper className="relative z-10 text-center space-y-6 max-w-3xl mx-auto">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
-          <Sparkles className="h-3.5 w-3.5" />
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-600/25 bg-blue-50/80 dark:bg-blue-950/40 dark:border-blue-500/30 px-3.5 py-1 text-xs font-semibold tracking-wider text-blue-700 dark:text-blue-300 uppercase shadow-xs">
+          <Sparkles className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
           Zero Guesswork • 100% Free
         </span>
 
@@ -32,17 +32,17 @@ export default function CTA() {
             buttonText="Get Started Free with Google"
             returnUrl="/setup"
             size="lg"
-            className="px-8 py-6 text-base shadow-lg cursor-pointer"
+            className="px-8 py-6 text-base bg-[#051C2C] hover:bg-[#092D47] dark:bg-blue-600 dark:hover:bg-blue-500 text-white shadow-xl shadow-blue-950/20 hover:shadow-blue-900/30 cursor-pointer"
           />
         </div>
 
         <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs font-mono text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+            <ShieldCheck className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
             100% Free Educational Engine
           </span>
           <span className="flex items-center gap-1.5">
-            <Zap className="h-3.5 w-3.5 text-primary" />
+            <Zap className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
             Instant Google Sign-In
           </span>
         </div>

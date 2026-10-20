@@ -87,7 +87,7 @@ export function QuizDetailsTab({ quiz, onQuizChange, onSave, isSaving }: QuizDet
       <div>
         <Label htmlFor="difficulty" className="text-muted-foreground">Difficulty</Label>
         <Select
-          value={quiz.difficulty || "Medium"}
+          value={quiz.difficulty || "Hard"}
           onValueChange={(value) => onQuizChange("difficulty", value)}
         >
           <SelectTrigger id="difficulty" className="mt-1">

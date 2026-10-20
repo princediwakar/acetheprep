@@ -131,6 +131,7 @@ export async function createExamProfile(
     return { error: "Failed to save your self-assessments. Please try again." };
   }
 
+  revalidatePath("/home");
   revalidatePath("/dashboard");
   revalidatePath("/setup");
 

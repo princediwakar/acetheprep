@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggleButton";
 import MaxWidthWrapper from "../shared/MaxWidthWrapper";
 import { siteConfig } from "@/config/site";
+import { BrandLogo } from "@/components/shared/BrandLogo";
 
 export default function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
   const footerSections = [
@@ -76,9 +77,7 @@ export default function SiteFooter({ className }: React.HTMLAttributes<HTMLEleme
           ))}
 
           <div className="col-span-full md:col-span-1">
-            <h4 className="font-heading text-base font-medium tracking-tight text-foreground">
-              {siteConfig.name}
-            </h4>
+            <BrandLogo size="sm" />
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
               Adaptive practice platform built for competitive exams. Master common mistakes, build timed recall, and retain concepts with smart review intervals.
             </p>

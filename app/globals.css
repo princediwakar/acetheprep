@@ -16,84 +16,84 @@ body {
 
 @layer base {
   :root {
-    /* Claude-inspired warm parchment & ink palette */
-    --background: 38 28% 97.5%; /* #FAF8F5 - Warm Ivory Parchment */
-    --foreground: 24 10% 12%; /* #1F1D1B - Deep Warm Charcoal */
-    --card: 38 25% 99%; /* #FDFCFB - Clean Warm White Card */
-    --card-foreground: 24 10% 12%; /* #1F1D1B */
-    --popover: 38 25% 99%; /* #FDFCFB */
-    --popover-foreground: 24 10% 12%;
-    --primary: 16 72% 48%; /* #D05433 - Warm Terracotta Ember */
-    --primary-foreground: 0 0% 100%; /* #FFFFFF */
-    --secondary: 35 25% 92%; /* #ECE9E2 - Soft Warm Stone */
-    --secondary-foreground: 24 10% 16%;
-    --muted: 35 15% 91%; /* #EAE6DE - Warm Muted Gray */
-    --muted-foreground: 25 8% 46%; /* #76716B */
-    --accent: 38 35% 93%; /* #F3EFE7 */
-    --accent-foreground: 24 10% 12%;
-    --destructive: 0 72% 51%; /* #DC2626 */
+    /* McKinsey Institutional Editorial System (Light Mode) */
+    --background: 210 20% 99%; /* #FBFBFC - Crisp Editorial Porcelain */
+    --foreground: 214 70% 10%; /* #051C2C - Deep McKinsey Midnight Navy */
+    --card: 0 0% 100%; /* #FFFFFF - Pure Card Surface */
+    --card-foreground: 214 70% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 214 70% 10%;
+    --primary: 214 70% 10%; /* #051C2C - Authoritative Midnight Navy Button */
+    --primary-foreground: 0 0% 100%; /* Crisp White Text */
+    --secondary: 214 25% 95%; /* #EFF3F8 - Subtle Ice Slate */
+    --secondary-foreground: 214 70% 10%;
+    --muted: 214 20% 95%; /* #EEF2F6 */
+    --muted-foreground: 215 18% 46%; /* #61738A - Clean Slate */
+    --accent: 214 25% 95%;
+    --accent-foreground: 214 70% 10%;
+    --destructive: 0 84% 60%; /* #EF4444 */
     --destructive-foreground: 0 0% 98%;
-    --border: 35 14% 87%; /* #E2DED6 - Hairline Warm Border */
-    --input: 35 14% 87%;
-    --ring: 16 72% 48%; /* #D05433 */
+    --border: 214 20% 89%; /* #DEE4EC - Precision Hairline Border */
+    --input: 214 20% 89%;
+    --ring: 217 100% 50%; /* #0066FF - Precision Cobalt Ring */
     --radius: 0.75rem;
 
     /* Sidebar tokens */
-    --sidebar-background: 38 28% 97.5%;
-    --sidebar-foreground: 24 10% 12%;
-    --sidebar-primary: 16 72% 48%;
+    --sidebar-background: 210 25% 98%; /* #F7F9FB */
+    --sidebar-foreground: 214 70% 10%;
+    --sidebar-primary: 214 70% 10%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 35 25% 92%;
-    --sidebar-accent-foreground: 24 10% 12%;
-    --sidebar-border: 35 14% 87%;
-    --sidebar-ring: 16 72% 48%;
+    --sidebar-accent: 214 22% 93%;
+    --sidebar-accent-foreground: 214 70% 10%;
+    --sidebar-border: 214 20% 89%;
+    --sidebar-ring: 217 100% 50%;
 
-    /* Charts */
-    --chart-1: 16 72% 48%; /* Terracotta */
-    --chart-2: 35 85% 45%; /* Warm Amber */
-    --chart-3: 155 55% 40%; /* Forest Sage */
-    --chart-4: 215 35% 45%; /* Slate Blue */
-    --chart-5: 28 65% 55%; /* Ochre */
+    /* Semantic Charts / Accents */
+    --chart-1: 214 70% 10%; /* McKinsey Midnight Navy */
+    --chart-2: 217 100% 50%; /* Precision Cobalt */
+    --chart-3: 160 84% 39%; /* Emerald */
+    --chart-4: 38 92% 50%; /* Amber */
+    --chart-5: 262 83% 58%; /* Violet */
   }
 
   .dark {
-    /* Claude-inspired warm obsidian dark mode */
-    --background: 24 9% 10%; /* #1A1816 - Warm Deep Espresso */
-    --foreground: 36 20% 94%; /* #F3EFEA - Warm Soft Cream */
-    --card: 24 8% 13%; /* #221F1C - Elevated Warm Obsidian */
-    --card-foreground: 36 20% 94%;
-    --popover: 24 8% 13%;
-    --popover-foreground: 36 20% 94%;
-    --primary: 16 78% 60%; /* #E27352 - Luminous Terracotta */
-    --primary-foreground: 24 10% 10%;
-    --secondary: 24 7% 18%; /* #2E2A27 */
-    --secondary-foreground: 36 20% 94%;
-    --muted: 24 7% 20%; /* #34302D */
-    --muted-foreground: 32 10% 64%; /* #A39E96 */
-    --accent: 24 7% 19%; /* #312D2A */
-    --accent-foreground: 36 20% 94%;
+    /* McKinsey Executive Obsidian Navy (Dark Mode) */
+    --background: 222 47% 7%; /* #0A111E - Deep Executive Midnight Obsidian */
+    --foreground: 210 40% 96%; /* #F1F5F9 - Restful Clean Alabaster */
+    --card: 222 40% 10%; /* #0F172A - Elevated Midnight Slate Card */
+    --card-foreground: 210 40% 96%;
+    --popover: 222 40% 10%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 217 100% 58%; /* #2B7FFF - Electric Cobalt Button */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 35% 15%; /* #192338 - Elevated Secondary */
+    --secondary-foreground: 210 40% 96%;
+    --muted: 222 35% 14%;
+    --muted-foreground: 215 20% 65%; /* #94A3B8 - Clean Muted Slate */
+    --accent: 222 35% 15%;
+    --accent-foreground: 210 40% 96%;
     --destructive: 0 75% 65%; /* #F87171 */
     --destructive-foreground: 0 0% 96%;
-    --border: 24 6% 22%; /* #393532 - Subtle Dark Border */
-    --input: 24 6% 22%;
-    --ring: 16 78% 60%;
+    --border: 222 30% 18%; /* #1E293B - Crisp Slate Hairline Border */
+    --input: 222 30% 18%;
+    --ring: 217 100% 58%;
 
     /* Sidebar tokens */
-    --sidebar-background: 24 9% 10%;
-    --sidebar-foreground: 36 20% 94%;
-    --sidebar-primary: 16 78% 60%;
-    --sidebar-primary-foreground: 24 10% 10%;
-    --sidebar-accent: 24 7% 18%;
-    --sidebar-accent-foreground: 36 20% 94%;
-    --sidebar-border: 24 6% 22%;
-    --sidebar-ring: 16 78% 60%;
+    --sidebar-background: 222 45% 8%; /* #0C1322 - Docked Executive Sidebar */
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 217 100% 58%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 35% 15%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 222 30% 17%;
+    --sidebar-ring: 217 100% 58%;
 
-    /* Charts */
-    --chart-1: 16 78% 60%;
-    --chart-2: 35 85% 60%;
-    --chart-3: 155 55% 55%;
-    --chart-4: 215 45% 65%;
-    --chart-5: 28 75% 65%;
+    /* Semantic Charts / Accents */
+    --chart-1: 217 100% 58%;
+    --chart-2: 160 84% 45%;
+    --chart-3: 38 92% 55%;
+    --chart-4: 262 83% 65%;
+    --chart-5: 199 89% 55%;
   }
 }
 

@@ -9,20 +9,20 @@ export interface ExamCategory {
 
 export const EXAM_CATEGORIES: ExamCategory[] = [
   {
-    id: "global-grad-pro",
-    name: "Global Graduate & Professional",
-    description: "High-stakes MBA, Finance, and Master's admissions",
-    exams: ["GMAT Focus", "CFA Level 1", "GRE"],
-  },
-  {
     id: "study-abroad",
-    name: "Study Abroad & College Admissions",
-    description: "Undergraduate entrance & language proficiency credentials",
+    name: "US & European University Admissions",
+    description: "Undergraduate entrance & language proficiency credentials (SAT, IELTS, TOEFL)",
     exams: ["SAT", "IELTS Academic", "TOEFL iBT"],
   },
   {
+    id: "global-grad-pro",
+    name: "Graduate, Business & Finance",
+    description: "High-stakes Master's, MBA, and Finance credentials (GRE, GMAT Focus, CFA)",
+    exams: ["GRE", "GMAT Focus", "CFA Level 1"],
+  },
+  {
     id: "national-competitive",
-    name: "National Competitive & Professional",
+    name: "National Competitive Tracks",
     description: "Engineering, Medical, Civil Services, Management & Law",
     exams: ["JEE Main", "NEET", "UPSC CSE", "CAT", "GATE", "CLAT", "CA Foundation"],
   },

@@ -11,6 +11,7 @@ import {
 } from "./prompts/quiz";
 import type { GeneratedQuiz } from "./schemas/quiz";
 import { searchDeepSeek, formatSearchContext } from "./deepseek-search";
+import { QUIZ_CONFIG } from "./constants/quiz";
 
 type AIProvider = "openai" | "deepseek";
 
@@ -233,7 +234,7 @@ async function generateSingleChunk(
 export async function createQuizWithAI(
   content: string,
   questionCount: number,
-  difficulty: string = "Medium",
+  difficulty: string = QUIZ_CONFIG.DEFAULT_DIFFICULTY,
   language: string = "Auto",
   maxAttempts: number = 3,
   userId?: string,

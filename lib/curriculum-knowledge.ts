@@ -182,6 +182,96 @@ const SUBJECT_ARCHETYPES: Record<
       "Remember that an agreement with a minor is a legal nullity from inception; contracts cannot be enforced through estoppel.",
     failureRate: 61,
   },
+  "Reading and Writing": {
+    principles: [
+      "Rely strictly on textual evidence provided within the stimulus; never import external historical or scientific background.",
+      "Verify grammatical boundaries: check for independent clause comma splices and semicolon requirements before picking transitions.",
+      "In rhetorical synthesis and craft questions, match the student goal explicitly declared in the prompt bullet points.",
+    ],
+    trapName: "External World Assumption & Boundary Comma Splices",
+    trapDesc:
+      "College Board crafts distractors using real-world plausibility or near-synonyms that contradict the specific text scope or introduce run-on sentences.",
+    whyStudentsFail:
+      "Test-takers select answers that feel intuitively true rather than confirming word-for-word textual or syntactical equivalence.",
+    prevention:
+      "Underline the precise question constraint (e.g. 'illustrate contrast', 'emphasize the findings') and eliminate options adding unsupported claims.",
+    failureRate: 64,
+  },
+  "Verbal Reasoning": {
+    principles: [
+      "Analyze sentence structure for pivotal transition markers ('albeit', 'nevertheless', 'paradoxically') that flip tone polarity.",
+      "In Critical Reasoning, isolate the conclusion from supporting premises; identify unstated assumptions bridging the gap.",
+      "Eliminate answer choices that shift scope from specific sample observations to absolute universal generalizations.",
+    ],
+    trapName: "Polarity Flip & Degree of Claim Distractors",
+    trapDesc:
+      "Distractors supply words that fit the topical vocabulary but reverse the positive/negative connotation dictated by grammatical pivot words.",
+    whyStudentsFail:
+      "Skimming vocabulary based on semantic association rather than parsing syntactic polarity markers.",
+    prevention:
+      "Substitute simple sign indicators (+ or -) in blank positions before reading answer options.",
+    failureRate: 69,
+  },
+  Reading: {
+    principles: [
+      "Distinguish clearly between 'FALSE' (text explicitly contradicts the statement) and 'NOT GIVEN' (the passage neither confirms nor denies the statement).",
+      "Scan for contextual paraphrases and synonyms rather than verbatim target keywords, which are often planted as distractors.",
+      "In Prose Summary and Heading Matching, eliminate options that represent minor subsidiary details rather than overarching section theses.",
+    ],
+    trapName: "Not Given vs False Conflation & Keyword Traps",
+    trapDesc:
+      "Distractors reuse verbatim phrasing from the text to make a statement that is either unsupported or logically inverted.",
+    whyStudentsFail:
+      "Assuming that if a statement cannot be proved True, it must be False, overlooking that the author gave zero corroborating information.",
+    prevention:
+      "Ask: 'Did the author actively disprove this, or simply not mention it?' If no explicit denial exists, the answer is strictly NOT GIVEN.",
+    failureRate: 66,
+  },
+  Listening: {
+    principles: [
+      "Anticipate the speaker's self-correction ('actually, let me change that...' or 'we used to, but now...').",
+      "Track numerical formats, currency units, and spelling conventions without exceeding word count limits.",
+      "Identify speaker stance, pragmatic tone, and rhetorical shifts beyond literal utterance meaning.",
+    ],
+    trapName: "Immediate Self-Correction & Pre-Emptive Distractor Cues",
+    trapDesc:
+      "The audio script mentions an initial number or option to trigger premature writing, before the speaker corrects themselves in the next sentence.",
+    whyStudentsFail:
+      "Writing down the first numerical or categorical datum heard instead of listening through the discourse boundary.",
+    prevention:
+      "Keep your pencil hovering for 3 seconds after hearing the initial target datum to confirm no conversational correction occurs.",
+    failureRate: 61,
+  },
+  "Financial Statement Analysis": {
+    principles: [
+      "Distinguish between IFRS and US GAAP accounting treatments (e.g., development costs capitalization, LIFO inventory method).",
+      "Trace the 3-step DuPont decomposition of ROE to isolate operational efficiency, asset utilization, and financial leverage.",
+      "Adjust operating cash flows (CFO) for capitalized interest, operating leases, and non-recurring accounts receivable securitizations.",
+    ],
+    trapName: "LIFO/FIFO Reserve Inversion & Lease Capitalization Errors",
+    trapDesc:
+      "Distractors calculate inventory or COGS without adjusting for LIFO reserve changes during rising price environments.",
+    whyStudentsFail:
+      "Confusing balance sheet inventory values with income statement cost of goods sold adjustments.",
+    prevention:
+      "Apply: COGS (FIFO) = COGS (LIFO) − ΔLIFO Reserve; audit the direction of price inflation before selecting metrics.",
+    failureRate: 67,
+  },
+  "Ethical & Professional Standards": {
+    principles: [
+      "The Code and Standards require adherence to whichever rule is stricter between local law and the CFA Institute Standards.",
+      "Differentiate between Material Nonpublic Information and the Mosaic Theory (piecing together non-material nonpublic and public information).",
+      "Fair dealing does not require equal execution; it mandates objective dissemination and priority of client transactions over personal accounts.",
+    ],
+    trapName: "The Stricter Standard & Mosaic Theory Boundaries",
+    trapDesc:
+      "Distractors argue that following permissive local law satisfies ethics, or that analyst research based on non-material clues violates insider trading.",
+    whyStudentsFail:
+      "Assuming local legal compliance suffices, forgetting Standard I(A) mandates the higher of local law or CFA Standards.",
+    prevention:
+      "Always ask: 'Is local law stricter or the CFA Standard?' Follow the strictly superior benchmark.",
+    failureRate: 70,
+  },
 };
 
 const DEFAULT_ARCHETYPE = {

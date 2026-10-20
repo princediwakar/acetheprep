@@ -1,10 +1,14 @@
 // Path: app/llms.txt/route.ts
 
 import { getAllTaxonomyEntries, examToSlug } from "@/lib/slugs";
+import { getAllBlogPosts } from "@/lib/mdx";
 import { siteConfig } from "@/config/site";
 
 export async function GET() {
-  const entries = getAllTaxonomyEntries();
+  const [entries, blogPosts] = await Promise.all([
+    Promise.resolve(getAllTaxonomyEntries()),
+    getAllBlogPosts(),
+  ]);
   const exams = [...new Set(entries.map((e) => e.exam))];
   const baseUrl = siteConfig.url;
 
@@ -25,6 +29,10 @@ ${exams.map((exam) => `- **${exam}**: ${baseUrl}/practice/${examToSlug(exam)}`).
 - **Cognitive Science Guides & Articles**: ${baseUrl}/blog
 - **Complete Machine-Readable Curriculum**: ${baseUrl}/llms-full.txt
 - **XML Sitemap Index**: ${baseUrl}/sitemap.xml
+
+## Authoritative Cognitive Science & Distractor Teardowns (${blogPosts.length} Guides)
+${blogPosts.map((post) => `- **${post.title}** (${post.examTag || post.category}): ${baseUrl}/blog/${post.slug}\n  ${post.description}`).join("\n")}
+
 
 ## Diagnostic & Practice Methodology
 1. **Zero-Latency Server-First Rendering**: Sub-100ms server-side pre-rendered pages with zero client fetch waterfall.

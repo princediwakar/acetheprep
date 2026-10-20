@@ -5,6 +5,7 @@ import { createQuizChunked } from '@/lib/ai';
 import { fetchDeepSeekPage } from '@/lib/deepseek-search';
 import { insertQuestions, insertQuestionGroup } from '@/lib/services/quiz-service';
 import { checkGenerationLimit, recordGeneration } from '@/lib/services/usage-service';
+import { QUIZ_CONFIG } from '@/lib/constants/quiz';
 
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest) {
 
         let content = body.content?.trim();
         const questionCount = body.question_count || 10;
-        const difficulty = body.difficulty || "Medium";
+        const difficulty = body.difficulty || QUIZ_CONFIG.DEFAULT_DIFFICULTY;
         const language = body.language || "Auto";
         const focusTopics = body.focus_topics;
 

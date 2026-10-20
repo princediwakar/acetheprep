@@ -1,7 +1,7 @@
 // Path: app/(sitemap)/sitemap-insights/[id]/route.ts
 import taxonomyData from "@/lib/taxonomies.json";
 import { siteConfig } from "@/config/site";
-import { examToSlug } from "@/lib/slugs";
+import { examToSlug, GLOBAL_EXAM_PRIORITY } from "@/lib/slugs";
 
 const baseUrl = siteConfig.url;
 const entriesPerSitemap = 50000;
@@ -30,9 +30,15 @@ function getAllInsightsEntries(): SitemapEntry[] {
     priority: 0.85,
   });
 
-  // Per-exam insight pages with canonical kebab-case slugs
-  for (const exam of Object.keys(taxonomy)) {
-    if (exam === "_schema_version") continue;
+  // Per-exam insight pages with canonical kebab-case slugs (Global first)
+  const examKeys = Object.keys(taxonomy).filter((k) => k !== "_schema_version");
+  examKeys.sort((a, b) => {
+    const rankA = GLOBAL_EXAM_PRIORITY.indexOf(a);
+    const rankB = GLOBAL_EXAM_PRIORITY.indexOf(b);
+    return (rankA === -1 ? 999 : rankA) - (rankB === -1 ? 999 : rankB);
+  });
+
+  for (const exam of examKeys) {
     const examSlug = examToSlug(exam);
 
     entries.push({

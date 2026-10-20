@@ -199,7 +199,7 @@ export function SetupForm({ prefill, examNames, examSubjects }: SetupFormProps) 
           <Sparkles className="h-3.5 w-3.5" />
           <span>Instant Syllabus Synthesis</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-heading font-normal tracking-tight text-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           {pageTitle}
         </h1>
         <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto">

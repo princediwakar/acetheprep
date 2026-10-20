@@ -20,7 +20,12 @@ for (const exam of EXAM_NAMES) {
 export const metadata: Metadata = {
   title: "Exam Profile Setup | AceThePrep",
   description: "Set up your personalized exam prep profile for AI-powered practice.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
+
 
 import { Sparkles, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
 import { slugToExam } from "@/lib/slugs";
@@ -76,7 +81,7 @@ async function SetupPageContent({ initialExam }: { initialExam?: string }) {
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
               <Sparkles className="h-6 w-6" />
             </div>
-            <CardTitle className="text-2xl font-normal font-heading">
+            <CardTitle className="text-2xl font-bold tracking-tight">
               {initialExam ? `Prepare for ${initialExam}` : "Welcome to AceThePrep"}
             </CardTitle>
             <CardDescription className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">

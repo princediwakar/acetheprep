@@ -72,12 +72,36 @@ for (const [exam, subjects] of Object.entries(taxonomy)) {
   }
 }
 
+export const GLOBAL_EXAM_PRIORITY = [
+  "SAT",
+  "GRE",
+  "GMAT Focus",
+  "CFA Level 1",
+  "IELTS Academic",
+  "TOEFL iBT",
+  "JEE Main",
+  "NEET",
+  "UPSC CSE",
+  "CAT",
+  "GATE",
+  "CLAT",
+  "CA Foundation",
+];
+
+// Sort entries strictly according to global priority
+const getExamRank = (examName: string) => {
+  const idx = GLOBAL_EXAM_PRIORITY.indexOf(examName);
+  return idx === -1 ? 999 : idx;
+};
+entries.sort((a, b) => getExamRank(a.exam) - getExamRank(b.exam));
+
 /**
  * Returns all taxonomy entries with their canonical names and slugs.
  */
 export function getAllTaxonomyEntries(): TaxonomyEntry[] {
   return entries;
 }
+
 
 /**
  * Maps raw exam name to kebab-case slug.

@@ -47,7 +47,7 @@ export async function createCheckoutSession(params: {
     const host = headerList.get("host") || "";
     const proto = headerList.get("x-forwarded-proto") || (host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https");
     const dynamicOrigin = host ? `${proto}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || "https://acetheprep.com");
-    const returnUrl = parsed.data.redirectUrl || `${dynamicOrigin}/dashboard?upgrade=success`;
+    const returnUrl = parsed.data.redirectUrl || `${dynamicOrigin}/home?upgrade=success`;
 
     const session = await dodo.checkoutSessions.create({
       product_cart: [
@@ -77,3 +77,58 @@ export async function createCheckoutSession(params: {
     return { error: message };
   }
 }
+
+/**
+ * Development & Test Mode bypass action:
+ * Instantly activates Pro membership for the authenticated user without requiring
+ * external gateway processing. Strictly guarded to test_mode or non-production environments.
+ */
+export async function activateTestPro(planType: "monthly" | "quarterly" = "quarterly") {
+  const isTestAllowed =
+    process.env.DODO_PAYMENTS_ENVIRONMENT === "test_mode" ||
+    process.env.NODE_ENV !== "production";
+
+  if (!isTestAllowed) {
+    return { error: "Test activation is only allowed in test mode or development environments." };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return { error: "Please sign in to activate test Pro." };
+  }
+
+  const { supabaseAdmin } = await import("@/lib/supabase/admin");
+  const { revalidatePath } = await import("next/cache");
+
+  const expiryDays = planType === "quarterly" ? 90 : 30;
+  const currentPeriodEnd = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000).toISOString();
+
+  const { error: upsertError } = await supabaseAdmin.from("subscriptions").upsert(
+    {
+      user_id: user.id,
+      dodo_subscription_id: `sub_simulated_test_${user.id.slice(0, 8)}`,
+      status: "active",
+      plan_type: planType,
+      product_id: BILLING_PLANS[planType].productId,
+      current_period_end: currentPeriodEnd,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "dodo_subscription_id" }
+  );
+
+  if (upsertError) {
+    console.error("[activateTestPro Error]:", upsertError);
+    return { error: "Failed to activate test Pro subscription in database." };
+  }
+
+  revalidatePath("/home");
+  revalidatePath("/pricing");
+
+  return { success: true };
+}
+

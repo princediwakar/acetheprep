@@ -58,6 +58,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         "test",
         "knowledge",
       ].filter(Boolean) as string[],
+      robots: {
+        index: false,
+        follow: false,
+      },
       openGraph: {
         title: quiz.title,
         description: `${quiz.description}`,
@@ -82,9 +86,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title: "Quiz",
       description: "Take quizzes and test your knowledge",
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 }
+
 
 export default async function QuizPage({ params }: PageProps) {
   const { slug } = await params;

@@ -6,7 +6,12 @@ import type { SessionRow } from "@/app/analytics/page";
 export const metadata = {
   title: "History | AceThePrep",
   description: "Review your past practice tests, exam simulations, and quiz results",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
+
 
 export default async function HistoryPage() {
   const supabase = await createClient();

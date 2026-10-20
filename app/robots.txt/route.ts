@@ -21,11 +21,16 @@ Allow: /api/og
 Allow: /api/knowledge/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Disallow: /home/
 Disallow: /dashboard/
 Disallow: /session/
 Disallow: /setup
 Disallow: /history/
 Disallow: /edit/
+Disallow: /analytics/
+Disallow: /create
+Disallow: /quiz/
+Disallow: /quizzes/
 Disallow: /api/
 
 # AI Crawlers & Generative Search Engines
@@ -37,8 +42,14 @@ Allow: /blog/
 Allow: /api/knowledge/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Disallow: /home/
 Disallow: /dashboard/
 Disallow: /session/
+Disallow: /setup
+Disallow: /history/
+Disallow: /edit/
+Disallow: /quiz/
+Disallow: /quizzes/
 Disallow: /api/
 
 User-agent: PerplexityBot
@@ -49,8 +60,14 @@ Allow: /blog/
 Allow: /api/knowledge/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Disallow: /home/
 Disallow: /dashboard/
 Disallow: /session/
+Disallow: /setup
+Disallow: /history/
+Disallow: /edit/
+Disallow: /quiz/
+Disallow: /quizzes/
 Disallow: /api/
 
 User-agent: ClaudeBot
@@ -61,8 +78,14 @@ Allow: /blog/
 Allow: /api/knowledge/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Disallow: /home/
 Disallow: /dashboard/
 Disallow: /session/
+Disallow: /setup
+Disallow: /history/
+Disallow: /edit/
+Disallow: /quiz/
+Disallow: /quizzes/
 Disallow: /api/
 
 User-agent: Google-Extended
@@ -73,6 +96,15 @@ Allow: /blog/
 Allow: /api/knowledge/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Disallow: /home/
+Disallow: /dashboard/
+Disallow: /session/
+Disallow: /setup
+Disallow: /history/
+Disallow: /edit/
+Disallow: /quiz/
+Disallow: /quizzes/
+Disallow: /api/
 
 User-agent: Applebot-Extended
 Allow: /
@@ -82,6 +114,15 @@ Allow: /blog/
 Allow: /api/knowledge/
 Allow: /llms.txt
 Allow: /llms-full.txt
+Disallow: /home/
+Disallow: /dashboard/
+Disallow: /session/
+Disallow: /setup
+Disallow: /history/
+Disallow: /edit/
+Disallow: /quiz/
+Disallow: /quizzes/
+Disallow: /api/
 
 Sitemap: ${baseUrl}/sitemap.xml
 `;
@@ -90,7 +131,7 @@ Sitemap: ${baseUrl}/sitemap.xml
     status: 200,
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "public, max-age=3600",
+      "Cache-Control": "public, max-age=3600, s-maxage=3600",
     },
   });
 }

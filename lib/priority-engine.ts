@@ -87,7 +87,7 @@ const DOMAIN_TO_SUBJECT: Record<string, string> = {
 
 // Default difficulty tier per domain (will be overridden by DB)
 const DEFAULT_DIFFICULTY_TIER: Record<string, DifficultyTier> = {
-  Kinematics: "foundation",
+  Kinematics: "application",
   "Laws of Motion": "application",
   "Work, Energy and Power": "application",
   "Rotational Motion": "advanced",
@@ -96,7 +96,7 @@ const DEFAULT_DIFFICULTY_TIER: Record<string, DifficultyTier> = {
   "Current Electricity": "application",
   Optics: "advanced",
   "Modern Physics": "advanced",
-  "Atomic Structure": "foundation",
+  "Atomic Structure": "application",
   "Chemical Bonding": "application",
   "Chemical Equilibrium": "advanced",
   "Coordination Compounds": "advanced",

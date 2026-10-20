@@ -22,12 +22,13 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = await getBlogPost(slug);
-  if (!post) return { title: `Article Not Found | ${siteConfig.name}` };
+  if (!post) return { title: "Article Not Found" };
 
   const url = `${baseUrl}/blog/${post.slug}`;
   return {
-    title: `${post.title} | ${siteConfig.name}`,
+    title: post.title,
     description: post.description,
+
     openGraph: {
       title: post.title,
       description: post.description,

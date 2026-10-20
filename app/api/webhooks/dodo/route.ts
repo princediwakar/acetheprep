@@ -21,13 +21,19 @@ export async function POST(req: NextRequest) {
         const data = payload.data;
         console.log(`[Dodo Webhook] Event received: ${eventType}`);
 
-        if (eventType === "payment.succeeded" || eventType === "subscription.active") {
+        if (
+          eventType === "payment.succeeded" ||
+          eventType === "subscription.active" ||
+          eventType === "subscription.renewed" ||
+          eventType === "subscription.updated"
+        ) {
           const metadata = data.metadata || {};
           const userId = metadata.user_id;
           const subscriptionId = data.subscription_id || data.payment_id;
           const customerId = data.customer?.customer_id;
           const productId = data.product_cart?.[0]?.product_id || data.product_id;
           const planType = metadata.plan_type || "monthly";
+          const currentPeriodEnd = data.next_billing_date || data.current_period_end || null;
 
           if (userId && subscriptionId) {
             const { error } = await supabaseAdmin.from("subscriptions").upsert(
@@ -38,6 +44,7 @@ export async function POST(req: NextRequest) {
                 status: "active",
                 plan_type: planType,
                 product_id: productId,
+                current_period_end: currentPeriodEnd,
                 updated_at: new Date().toISOString(),
               },
               { onConflict: "dodo_subscription_id" }
@@ -46,16 +53,25 @@ export async function POST(req: NextRequest) {
             if (error) {
               console.error("[Dodo Webhook] Error upserting subscription:", error);
             } else {
-              console.log(`[Dodo Webhook] Successfully activated subscription for user ${userId}`);
+              console.log(`[Dodo Webhook] Successfully activated/renewed subscription for user ${userId}`);
             }
           }
         } else if (
           eventType === "subscription.cancelled" ||
-          eventType === "subscription.expired"
+          eventType === "subscription.expired" ||
+          eventType === "subscription.on_hold" ||
+          eventType === "subscription.past_due"
         ) {
           const subscriptionId = data.subscription_id;
           if (subscriptionId) {
-            const newStatus = eventType === "subscription.cancelled" ? "cancelled" : "expired";
+            const newStatus =
+              eventType === "subscription.cancelled"
+                ? "cancelled"
+                : eventType === "subscription.expired"
+                ? "expired"
+                : eventType === "subscription.past_due"
+                ? "past_due"
+                : "inactive";
             const { error } = await supabaseAdmin
               .from("subscriptions")
               .update({

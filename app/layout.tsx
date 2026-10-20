@@ -20,14 +20,14 @@ const baseUrl =
 
 export const metadata: Metadata = {
     title: {
-        default: "AceThePrep — Free AI-Powered Exam Prep for JEE, NEET, UPSC & More",
+        default: "AceThePrep — Real Exam Readiness for SAT, GRE, GMAT, CFA & Global Exams",
         template: "%s | AceThePrep",
     },
-    description: "Free AI-powered exam preparation for JEE Main, NEET, UPSC, GMAT, CAT, and more. Adaptive spaced repetition, personalized assessments, and detailed distractor analysis.",
-    keywords: ["exam prep", "JEE Main", "NEET", "UPSC", "AI tutor", "spaced repetition", "practice questions", "free test prep", "competitive exams", "practice test"],
+    description: "Adaptive exam preparation for Digital SAT, GRE, GMAT Focus, CFA Level 1, IELTS, TOEFL, and global competitive exams. Master common mistakes, build recall under exam conditions, and stop memory decay.",
+    keywords: ["Digital SAT prep", "GRE preparation", "GMAT Focus prep", "CFA Level 1 exam", "IELTS practice", "TOEFL iBT", "exam readiness", "active recall", "spaced repetition", "distractor analysis", "adaptive test prep", "free practice questions"],
     openGraph: {
-        title: "AceThePrep — Free AI-Powered Exam Prep for JEE, NEET, UPSC & More",
-        description: "Free AI-powered exam preparation with adaptive spaced repetition. Personalized assessments, distractor analysis, and 10 exam tracks.",
+        title: "AceThePrep — Real Exam Readiness for SAT, GRE, GMAT, CFA & Global Exams",
+        description: "Adaptive exam preparation for Digital SAT, GRE, GMAT Focus, CFA Level 1, IELTS, and global exams. Master common mistakes with personalized distractor analysis.",
         url: baseUrl,
         siteName: "AceThePrep",
         images: [{ url: `${baseUrl}/api/og?type=home`, width: 1200, height: 630 }],
@@ -36,13 +36,14 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: "AceThePrep — Free AI-Powered Exam Prep",
-        description: "Free AI-powered exam preparation for JEE, NEET, UPSC, GMAT, CAT. Adaptive spaced repetition with personalized assessments.",
+        title: "AceThePrep — Real Exam Readiness for SAT, GRE, GMAT & CFA",
+        description: "Adaptive exam preparation for Digital SAT, GRE, GMAT Focus, CFA Level 1, IELTS, and TOEFL. Spaced repetition with instant mistake analysis.",
         images: [`${baseUrl}/api/og?type=home`],
     },
     icons: { icon: "/icon.ico" },
     metadataBase: new URL(baseUrl),
 };
+
 
 export const viewport: Viewport = {
     width: "device-width",

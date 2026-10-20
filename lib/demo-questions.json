@@ -300,6 +300,61 @@
         "misconception": "Failing to convert nominal stated annual rates into effective periodic yields accounting for monthly reinvestment compounding.",
         "topics": ["Time Value of Money", "Effective Annual Rate", "Compounding Frequency"]
       }
+    },
+    "IELTS Academic": {
+      "exam_name": "IELTS Academic",
+      "subject": "Reading",
+      "domain": "True-False-Not Given",
+      "question": {
+        "question_text": "Passage excerpt: 'While early researchers hypothesized that solar radiation was the primary driver of polar cloud ionization, subsequent satellite observations confirmed that atmospheric cosmic rays contribute significantly to cloud droplet condensation.' Question: Does the text affirm that solar radiation has been disproven as having any atmospheric impact?",
+        "options": {
+          "A": "TRUE",
+          "B": "FALSE",
+          "C": "NOT GIVEN",
+          "D": "CANNOT BE DETERMINED"
+        },
+        "correct_option": "C",
+        "explanation": "The text states that cosmic rays contribute significantly to cloud droplet condensation, but it never asserts that solar radiation has zero atmospheric impact. A claim not directly addressed or contradicted by the passage must strictly be classified as NOT GIVEN.",
+        "distractor_analysis": {
+          "A": "Incorrect. The passage never confirms that solar radiation has been completely disproven.",
+          "B": "Incorrect. The False Assumption Trap: Candidates assume that because cosmic rays are confirmed, solar radiation must be false. Over 62% of IELTS candidates conflate 'not mentioned' with 'false'.",
+          "C": "Correct. The text is silent on whether solar radiation has zero effect overall; it only clarifies the role of cosmic rays.",
+          "D": "Incorrect. IELTS Academic Reading utilizes strictly TRUE / FALSE / NOT GIVEN conventions."
+        },
+        "skill_domain": "True-False-Not Given",
+        "difficulty_tier": "application",
+        "time_estimate_seconds": 75,
+        "misconception": "Conflating 'NOT GIVEN' with 'FALSE' by bringing external world assumptions into textual verification.",
+        "topics": ["IELTS Reading", "True False Not Given", "Textual Evidence"]
+      }
+    },
+    "TOEFL iBT": {
+      "exam_name": "TOEFL iBT",
+      "subject": "Reading",
+      "domain": "Inference and Rhetorical Purpose",
+      "question": {
+        "question_text": "Passage excerpt: 'Geothermal vents host chemoautotrophic bacteria that synthesize ATP without solar photons. In describing these hydrothermal biomes, the author mentions the complete absence of photosystem II.' Why does the author mention 'the complete absence of photosystem II'?",
+        "options": {
+          "A": "To prove that geothermal ecosystems are deficient in essential proteins",
+          "B": "To emphasize that energy synthesis in vent communities operates independently of solar photosynthesis",
+          "C": "To argue that photosynthetic life evolved prior to chemosynthetic life",
+          "D": "To illustrate the extreme toxic vulnerability of deep ocean vent organisms"
+        },
+        "correct_option": "B",
+        "explanation": "Photosystem II is the primary light-harvesting complex in solar photosynthesis. The author notes its complete absence to emphasize that chemosynthesis at hydrothermal vents operates through non-solar sulfur and methane oxidation pathways.",
+        "distractor_analysis": {
+          "A": "Incorrect. The Deficiency Trap: The passage describes adaptation, not functional deficiency.",
+          "B": "Correct. Demonstrates that metabolic ATP generation occurs independently of sunlight.",
+          "C": "Incorrect. Chronological Anachronism: Evolutionary chronology is not asserted in the prompt.",
+          "D": "Incorrect. Focuses on toxicity, which is unsupported by the rhetorical context."
+        },
+        "skill_domain": "Inference and Rhetorical Purpose",
+        "difficulty_tier": "application",
+        "time_estimate_seconds": 90,
+        "misconception": "Selecting literal word matches that explain the biological mechanism rather than the author's rhetorical intent.",
+        "topics": ["Rhetorical Purpose", "Inference", "TOEFL Reading"]
+      }
     }
   }
 }
+

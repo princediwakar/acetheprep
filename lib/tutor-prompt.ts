@@ -11,6 +11,8 @@ export interface TutorPromptParams {
   targetDomains: TargetDomain[];
   questionCount: number;
   difficultyDistribution: { easy: number; medium: number; hard: number };
+  previousQuestionStems?: string[];
+  entropySeed?: string;
 }
 
 export interface TargetDomain {
@@ -42,9 +44,10 @@ export interface ConceptMasteryRow {
 const TUTOR_SYSTEM_PROMPT = `You are a ruthless, elite competitive exam tutor (JEE, NEET, UPSC, GMAT). You generate multiple-choice questions indistinguishable from real exam papers. 
 
 # QUALITY STANDARDS
-1. EXAM AUTHENTICITY: Stems must be unambiguous. standard conventions (SI, IUPAC) are mandatory. 
+1. EXAM AUTHENTICITY & RIGOR: Questions must be calibrated strictly to difficult, high-stakes competitive exam caliber (Advanced / Expert tier). Trivial recall and basic definitions are strictly forbidden. Require multi-step derivation, non-trivial calculation, or deep analytical reasoning.
 2. DISTRACTORS: No filler options. Every wrong answer must represent a calculable error, sign mistake, formula misapplication, or conceptual trap.
 3. DISTRACTOR ANALYSIS: The correct option's entry must prove the answer mathematically/logically. Wrong options must deconstruct the specific trap or error.
+4. UNIQUENESS MANDATE: Formulate novel problem contexts, non-standard parameterizations, and realistic multi-variable scenarios. Never recycle standard textbook question tropes.
 
 # OUTPUT INTERFACE
 Output ONLY raw JSON matching this schema. No markdown, no preambles.
@@ -88,25 +91,37 @@ export function buildTutorUserMessage(params: TutorPromptParams): string {
     targetDomains,
     questionCount,
     difficultyDistribution,
+    previousQuestionStems = [],
+    entropySeed = "",
   } = params;
 
   const domainLines = targetDomains
     .map((d) => formatDomainMasteryLine(d))
     .join("\n");
 
-  // Fix the delusion: align user requests with the system prompt's schema.
+  const exclusions = previousQuestionStems.length > 0
+    ? `\n\nPREVIOUS QUESTIONS TO EXCLUDE (DO NOT REPEAT OR GENERATE SIMILAR SETUPS TO ANY OF THESE):\n${previousQuestionStems
+        .slice(0, 25)
+        .map((s, idx) => `${idx + 1}. ${s.length > 140 ? s.slice(0, 140) + "..." : s}`)
+        .join("\n")}`
+    : "";
+
+  const seedDirective = entropySeed
+    ? `\nVARIATION FINGERPRINT: [${entropySeed}] — Formulate distinct problem contexts, non-standard parameterizations, or experimental setups. Avoid textbook clichés.`
+    : "";
+
   return `CONTEXT: ${examName} ${examYear} | Mode: ${timeMode} | ${daysRemaining} days remaining.
 
 TARGET DOMAINS & MASTERY:
 ${domainLines}
 
 EXECUTION DIRECTIVE:
-Generate exactly ${questionCount} questions with the following tier distribution:
-- ${difficultyDistribution.easy} "foundation" tier
-- ${difficultyDistribution.medium} "application" tier
-- ${difficultyDistribution.hard} "advanced" / "expert" tier
+Generate exactly ${questionCount} questions strictly at exam-grade difficulty:
+- ${difficultyDistribution.easy} "foundation" tier (Trivial recall forbidden)
+- ${difficultyDistribution.medium} "application" tier (Rigorous multi-step problem solving)
+- ${difficultyDistribution.hard} "advanced" / "expert" tier (Deceptive distractors, analytical synthesis, calculus/derivation)${exclusions}${seedDirective}
 
-CRITICAL: Do not repeat previous questions. Strictly use the exact TARGET DOMAIN names provided above for the \`skill_domain\` field.`;
+CRITICAL: Every question MUST BE COMPLETELY NOVEL and distinct from previous sessions. Strictly use the exact TARGET DOMAIN names provided above for the \`skill_domain\` field.`;
 }
 
 // ----- Domain Selection (SM-2 Queue) -----
@@ -208,26 +223,13 @@ CRITICAL: One question per stratum. Output raw JSON matching the schema. Do not 
 
 export function computeDifficultyDistribution(
   questionCount: number,
-  timeMode: TimeMode,
+  _timeMode?: TimeMode,
 ): { easy: number; medium: number; hard: number } {
-  switch (timeMode) {
-    case "foundation": {
-      const easy = Math.round(questionCount * 0.3);
-      const medium = Math.round(questionCount * 0.5);
-      const hard = questionCount - easy - medium;
-      return { easy, medium, hard };
-    }
-    case "acceleration": {
-      const easy = Math.round(questionCount * 0.15);
-      const medium = Math.round(questionCount * 0.5);
-      const hard = questionCount - easy - medium;
-      return { easy, medium, hard };
-    }
-    case "triage": {
-      const easy = Math.round(questionCount * 0.1);
-      const medium = Math.round(questionCount * 0.4);
-      const hard = questionCount - easy - medium;
-      return { easy, medium, hard };
-    }
-  }
+  // Calibrated strictly to Difficult / Competitive Exam standard.
+  // 0 easy/foundation questions (trivial recall forbidden).
+  // Advanced & Expert dominate (~75%), remainder is multi-step Application (~25%).
+  const easy = 0;
+  const medium = Math.floor(questionCount * 0.25);
+  const hard = Math.max(1, questionCount - medium);
+  return { easy, medium, hard };
 }

@@ -12,7 +12,12 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Analytics | AceThePrep",
   description: "Track your mastery, readiness, and progress over time",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
+
 
 interface ConceptRow {
   id: string;
