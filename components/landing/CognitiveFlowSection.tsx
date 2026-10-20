@@ -262,7 +262,7 @@ export default function CognitiveFlowSection() {
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto shrink-0">
             <Link
               href="/setup"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#051C2C] hover:bg-[#092D47] dark:bg-blue-600 dark:hover:bg-blue-500 px-6 py-3 text-xs sm:text-sm font-semibold text-white shadow-md shadow-blue-950/20 hover:shadow-blue-900/30 active:scale-[0.99] transition-all cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 px-6 py-3 text-xs sm:text-sm font-semibold text-white shadow-md shadow-blue-950/20 hover:shadow-blue-900/30 active:scale-[0.99] transition-all cursor-pointer"
             >
               <span>Set Up Your Exam Free</span>
               <ArrowRight className="h-4 w-4" />

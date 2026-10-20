@@ -23,7 +23,7 @@ body {
     --card-foreground: 214 70% 10%;
     --popover: 0 0% 100%;
     --popover-foreground: 214 70% 10%;
-    --primary: 214 70% 10%; /* #051C2C - Authoritative Midnight Navy Button */
+    --primary: 221 83% 53%; /* #2563EB - AceThePrep Electric Brand Blue Button */
     --primary-foreground: 0 0% 100%; /* Crisp White Text */
     --secondary: 214 25% 95%; /* #EFF3F8 - Subtle Ice Slate */
     --secondary-foreground: 214 70% 10%;
@@ -35,21 +35,21 @@ body {
     --destructive-foreground: 0 0% 98%;
     --border: 214 20% 89%; /* #DEE4EC - Precision Hairline Border */
     --input: 214 20% 89%;
-    --ring: 217 100% 50%; /* #0066FF - Precision Cobalt Ring */
+    --ring: 221 83% 53%; /* #2563EB - Precision Brand Blue Ring */
     --radius: 0.75rem;
 
     /* Sidebar tokens */
     --sidebar-background: 210 25% 98%; /* #F7F9FB */
     --sidebar-foreground: 214 70% 10%;
-    --sidebar-primary: 214 70% 10%;
+    --sidebar-primary: 221 83% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 214 22% 93%;
     --sidebar-accent-foreground: 214 70% 10%;
     --sidebar-border: 214 20% 89%;
-    --sidebar-ring: 217 100% 50%;
+    --sidebar-ring: 221 83% 53%;
 
     /* Semantic Charts / Accents */
-    --chart-1: 214 70% 10%; /* McKinsey Midnight Navy */
+    --chart-1: 221 83% 53%; /* AceThePrep Brand Blue */
     --chart-2: 217 100% 50%; /* Precision Cobalt */
     --chart-3: 160 84% 39%; /* Emerald */
     --chart-4: 38 92% 50%; /* Amber */
@@ -57,35 +57,35 @@ body {
   }
 
   .dark {
-    /* McKinsey Executive Obsidian Navy (Dark Mode) */
-    --background: 222 47% 7%; /* #0A111E - Deep Executive Midnight Obsidian */
-    --foreground: 210 40% 96%; /* #F1F5F9 - Restful Clean Alabaster */
-    --card: 222 40% 10%; /* #0F172A - Elevated Midnight Slate Card */
-    --card-foreground: 210 40% 96%;
-    --popover: 222 40% 10%;
-    --popover-foreground: 210 40% 96%;
+    /* Executive Charcoal / Graphite Neutral (Dark Mode - No Blue Tint, Not Pitch Black) */
+    --background: 240 5% 10%; /* #18181B - Restful Executive Charcoal Matte */
+    --foreground: 0 0% 98%; /* #FAFAFA - Crisp Clean Alabaster */
+    --card: 240 4% 14%; /* #232327 - Elevated Neutral Charcoal Card Surface */
+    --card-foreground: 0 0% 98%;
+    --popover: 240 4% 14%;
+    --popover-foreground: 0 0% 98%;
     --primary: 217 100% 58%; /* #2B7FFF - Electric Cobalt Button */
     --primary-foreground: 0 0% 100%;
-    --secondary: 222 35% 15%; /* #192338 - Elevated Secondary */
-    --secondary-foreground: 210 40% 96%;
-    --muted: 222 35% 14%;
-    --muted-foreground: 215 20% 65%; /* #94A3B8 - Clean Muted Slate */
-    --accent: 222 35% 15%;
-    --accent-foreground: 210 40% 96%;
+    --secondary: 240 4% 18%; /* #2C2C32 - Elevated Secondary */
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 4% 16%; /* #27272C */
+    --muted-foreground: 240 5% 65%; /* #A1A1AA - Clean Muted Slate */
+    --accent: 240 4% 18%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 75% 65%; /* #F87171 */
     --destructive-foreground: 0 0% 96%;
-    --border: 222 30% 18%; /* #1E293B - Crisp Slate Hairline Border */
-    --input: 222 30% 18%;
+    --border: 240 4% 20%; /* #323238 - Precision Hairline Border */
+    --input: 240 4% 20%;
     --ring: 217 100% 58%;
 
     /* Sidebar tokens */
-    --sidebar-background: 222 45% 8%; /* #0C1322 - Docked Executive Sidebar */
-    --sidebar-foreground: 210 40% 96%;
+    --sidebar-background: 240 5% 9%; /* #161619 - Anchored Neutral Dock */
+    --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 217 100% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 35% 15%;
-    --sidebar-accent-foreground: 210 40% 96%;
-    --sidebar-border: 222 30% 17%;
+    --sidebar-accent: 240 4% 16%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 4% 18%;
     --sidebar-ring: 217 100% 58%;
 
     /* Semantic Charts / Accents */

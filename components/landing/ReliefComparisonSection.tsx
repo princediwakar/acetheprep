@@ -69,7 +69,7 @@ export default function ReliefComparisonSection() {
         <div className="mt-14 text-center space-y-3">
           <Link
             href="/setup"
-            className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#051C2C] hover:bg-[#092D47] dark:bg-blue-600 dark:hover:bg-blue-500 px-8 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-950/20 hover:shadow-blue-900/30 active:scale-[0.99] transition-all cursor-pointer"
+            className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 px-8 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-950/20 hover:shadow-blue-900/30 active:scale-[0.99] transition-all cursor-pointer"
           >
             <span>Start Free Prep</span>
             <ArrowRight className="h-4 w-4" />

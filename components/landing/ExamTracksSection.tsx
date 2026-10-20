@@ -184,7 +184,7 @@ export default function ExamTracksSection() {
 
                 <Link
                   href={`/setup?exam=${encodeURIComponent(track.name)}`}
-                  className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-600/10 hover:bg-[#051C2C] dark:hover:bg-blue-600 hover:text-white text-blue-700 dark:text-blue-300 py-2.5 text-xs font-semibold transition-all cursor-pointer"
+                  className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-600/10 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white text-blue-700 dark:text-blue-300 py-2.5 text-xs font-semibold transition-all cursor-pointer"
                 >
                   <span>Start {track.name} Prep Free</span>
                   <ArrowRight className="h-3.5 w-3.5" />

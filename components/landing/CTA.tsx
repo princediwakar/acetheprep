@@ -32,7 +32,7 @@ export default function CTA() {
             buttonText="Get Started Free with Google"
             returnUrl="/setup"
             size="lg"
-            className="px-8 py-6 text-base bg-[#051C2C] hover:bg-[#092D47] dark:bg-blue-600 dark:hover:bg-blue-500 text-white shadow-xl shadow-blue-950/20 hover:shadow-blue-900/30 cursor-pointer"
+            className="px-8 py-6 text-base bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white shadow-xl shadow-blue-950/20 hover:shadow-blue-900/30 cursor-pointer"
           />
         </div>
 

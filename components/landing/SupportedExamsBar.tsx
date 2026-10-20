@@ -323,7 +323,7 @@ export default function SupportedExamsBar({
                 className={cn(
                   "whitespace-nowrap rounded-lg px-2.5 py-1 text-[11px] font-medium transition-all cursor-pointer",
                   isSelected
-                    ? "bg-[#051C2C] text-white dark:bg-blue-600 font-semibold shadow-xs"
+                    ? "bg-blue-600 text-white dark:bg-blue-600 font-semibold shadow-xs"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary/70",
                 )}
               >

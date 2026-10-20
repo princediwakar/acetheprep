@@ -447,7 +447,7 @@ export default function InteractiveDemoHero() {
               <button
                 type="button"
                 onClick={handleGoogleSignIn}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#051C2C] hover:bg-[#092D47] dark:bg-blue-600 dark:hover:bg-blue-500 px-7 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-950/20 hover:shadow-blue-900/30 active:scale-[0.99] transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 px-7 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-950/20 hover:shadow-blue-900/30 active:scale-[0.99] transition-all cursor-pointer"
               >
                 <svg className="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                   <path
@@ -461,7 +461,7 @@ export default function InteractiveDemoHero() {
             ) : (
               <Link
                 href="/home"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#051C2C] hover:bg-[#092D47] dark:bg-blue-600 dark:hover:bg-blue-500 px-7 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-950/20 hover:shadow-blue-900/30 active:scale-[0.99] transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 px-7 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-950/20 hover:shadow-blue-900/30 active:scale-[0.99] transition-all cursor-pointer"
               >
                 <span>Go to Home</span>
                 <ArrowRight className="h-4 w-4" />
