@@ -137,7 +137,7 @@ async function DashboardPageContent() {
       .eq("status", "completed"),
     supabase
       .from("concept_mastery")
-      .select("id")
+      .select("id", { count: "exact", head: true })
       .eq("user_id", user.id)
       .eq("exam_profile_id", profile.profile_id)
       .lt("next_review_at", new Date().toISOString()),

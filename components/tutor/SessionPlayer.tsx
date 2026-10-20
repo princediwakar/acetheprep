@@ -8,7 +8,25 @@ import { renderMathContent } from "@/lib/quiz-utils";
 import { TUTOR_CONFIG, TUTOR_ROUTES } from "@/lib/constants/tutor";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { Trophy, CheckCircle, XCircle, Eye, ChevronRight, ArrowLeft } from "lucide-react";
+import {
+  Trophy,
+  CheckCircle,
+  XCircle,
+  Eye,
+  ChevronRight,
+  ArrowLeft,
+  GraduationCap,
+  Timer,
+  Clock,
+  AlertTriangle,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  Play,
+  BookOpen,
+  Zap,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import type { SessionQuestion, SelectedOption } from "@/types/tutor";
 
 interface SessionPlayerProps {
@@ -17,6 +35,15 @@ interface SessionPlayerProps {
   examProfileId: string;
   taxonomyDomains?: string[];
   initialMastery?: Record<string, number>;
+  initialMode?: "tutor" | "exam";
+  examName?: string;
+}
+
+interface QuestionAttemptRecord {
+  selected: SelectedOption | null;
+  isCorrect: boolean;
+  wasRevealed: boolean;
+  timeMs: number;
 }
 
 const OPTION_LETTERS = ["A", "B", "C", "D"] as const;
@@ -28,9 +55,19 @@ const optionBadgeStyles: Record<string, string> = {
   D: "bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800",
 };
 
-export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDomains, initialMastery }: SessionPlayerProps) {
+export function SessionPlayer({
+  sessionId,
+  questions,
+  examProfileId,
+  taxonomyDomains,
+  initialMastery,
+  initialMode = "tutor",
+  examName,
+}: SessionPlayerProps) {
   const router = useRouter();
 
+  const [mode, setMode] = useState<"tutor" | "exam">(initialMode);
+  const [hasStarted, setHasStarted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<SelectedOption | null>(null);
   const [answerState, setAnswerState] = useState<"pending" | "answered">("pending");
@@ -47,6 +84,10 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
     share_token?: string;
   } | null>(null);
 
+  const [userAttempts, setUserAttempts] = useState<Record<string, QuestionAttemptRecord>>({});
+  const [reviewFilter, setReviewFilter] = useState<"all" | "incorrect" | "traps" | "correct">("all");
+  const [expandedQuestions, setExpandedQuestions] = useState<Record<string, boolean>>({});
+
   const timerStartRef = useRef<number>(Date.now());
   const questionStartRef = useRef<number>(Date.now());
   const [totalTimeElapsed, setTotalTimeElapsed] = useState(0);
@@ -56,6 +97,13 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
 
   const total = questions.length;
   const current = questions[currentIndex];
+
+  const handleStartTest = useCallback(() => {
+    timerStartRef.current = Date.now();
+    questionStartRef.current = Date.now();
+    setTotalTimeElapsed(0);
+    setHasStarted(true);
+  }, []);
 
   const nextDomain = useMemo(() => {
     if (!completeResult || !taxonomyDomains || !initialMastery) return null;
@@ -77,7 +125,7 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
   }, [completeResult, taxonomyDomains, initialMastery]);
 
   useEffect(() => {
-    if (sessionComplete) {
+    if (!hasStarted || sessionComplete) {
       if (intervalRef.current) clearInterval(intervalRef.current);
       return;
     }
@@ -87,7 +135,7 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [sessionComplete]);
+  }, [hasStarted, sessionComplete]);
 
   useEffect(() => {
     return () => {
@@ -127,13 +175,29 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
       setIsRevealed(revealed);
       const timeMs = Date.now() - questionStartRef.current;
       if (correct) setScore((prev) => prev + 1);
+
+      setUserAttempts((prev) => ({
+        ...prev,
+        [current.question_id]: {
+          selected: option,
+          isCorrect: correct,
+          wasRevealed: revealed,
+          timeMs,
+        },
+      }));
+
       recordAnswer(option, correct, revealed, timeMs);
-      const delay = revealed
-        ? TUTOR_CONFIG.REVEAL_ANSWER_COOLDOWN_MS
-        : TUTOR_CONFIG.NEXT_QUESTION_DELAY_MS;
-      nextTimerRef.current = setTimeout(() => setNextEnabled(true), delay);
+
+      if (mode === "exam") {
+        setNextEnabled(true);
+      } else {
+        const delay = revealed
+          ? TUTOR_CONFIG.REVEAL_ANSWER_COOLDOWN_MS
+          : TUTOR_CONFIG.NEXT_QUESTION_DELAY_MS;
+        nextTimerRef.current = setTimeout(() => setNextEnabled(true), delay);
+      }
     },
-    [recordAnswer]
+    [recordAnswer, current?.question_id, mode]
   );
 
   const handleOptionClick = useCallback(
@@ -222,8 +286,46 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
     }
   }, [nextDomain, examProfileId, router]);
 
+  const toggleQuestionExpand = useCallback((qId: string) => {
+    setExpandedQuestions((prev) => ({
+      ...prev,
+      [qId]: !prev[qId],
+    }));
+  }, []);
+
+  const trapsCaughtCount = useMemo(() => {
+    let count = 0;
+    for (const q of questions) {
+      const attempt = userAttempts[q.question_id];
+      if (attempt?.selected && !attempt.isCorrect && q.distractor_analysis?.[attempt.selected]) {
+        count++;
+      }
+    }
+    return count;
+  }, [questions, userAttempts]);
+
+  const filteredQuestions = useMemo(() => {
+    return questions.filter((q) => {
+      const attempt = userAttempts[q.question_id];
+      if (reviewFilter === "all") return true;
+      if (reviewFilter === "correct") return attempt?.isCorrect;
+      if (reviewFilter === "incorrect") return attempt ? !attempt.isCorrect : true;
+      if (reviewFilter === "traps") {
+        return attempt?.selected && !attempt.isCorrect && Boolean(q.distractor_analysis?.[attempt.selected]);
+      }
+      return true;
+    });
+  }, [questions, userAttempts, reviewFilter]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (!hasStarted) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleStartTest();
+        }
+        return;
+      }
       if (answerState === "answered") {
         if (e.key === "Enter" && nextEnabled) {
           e.preventDefault();
@@ -239,7 +341,7 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [answerState, nextEnabled, handleNext, handleOptionClick]);
+  }, [hasStarted, answerState, nextEnabled, handleNext, handleOptionClick, handleStartTest]);
 
   if (!questions.length) {
     return (
@@ -256,53 +358,158 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
     );
   }
 
-  if (sessionComplete) {
-    const pct = total > 0 ? Math.round((score / total) * 100) : 0;
+  // Pre-Test Briefing Cockpit (Simplified, Interactive Mode Switcher)
+  if (!hasStarted) {
+    const primaryDomain = questions[0]?.skill_domain || "Practice Session";
+    const estimatedMinutes = Math.max(10, Math.round(questions.length * 1.5));
 
     return (
-      <div className="max-w-2xl mx-auto p-6 space-y-8">
-        <div className="text-center space-y-4">
+      <div className="max-w-lg mx-auto px-4 py-16 sm:py-24 animate-in fade-in-50 duration-300">
+        <div className="border rounded-2xl bg-card p-6 sm:p-8 text-center space-y-6 shadow-sm">
+          {/* Metadata Badges */}
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            {examName && (
+              <Badge variant="outline" className="text-xs uppercase tracking-wider font-semibold text-primary border-primary/30 bg-primary/10">
+                {examName}
+              </Badge>
+            )}
+            <Badge variant="secondary" className="text-xs font-medium">
+              {primaryDomain}
+            </Badge>
+          </div>
+
+          {/* Title */}
+          <div className="space-y-1">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              {primaryDomain}
+            </h1>
+          </div>
+
+          {/* Interactive Mode Switcher */}
+          <div className="space-y-3">
+            <div className="inline-flex items-center p-1 bg-muted/80 rounded-xl border border-border/60 mx-auto shadow-inner">
+              <button
+                type="button"
+                onClick={() => setMode("exam")}
+                className={cn(
+                  "px-4 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all",
+                  mode === "exam"
+                    ? "bg-card text-foreground shadow-sm ring-1 ring-border/50"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <Timer className={cn("w-3.5 h-3.5", mode === "exam" ? "text-primary" : "text-muted-foreground")} />
+                Exam Mode
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("tutor")}
+                className={cn(
+                  "px-4 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all",
+                  mode === "tutor"
+                    ? "bg-card text-foreground shadow-sm ring-1 ring-border/50"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <GraduationCap className={cn("w-3.5 h-3.5", mode === "tutor" ? "text-primary" : "text-muted-foreground")} />
+                Tutor Drill
+              </button>
+            </div>
+
+            <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
+              {questions.length} Questions · ~{estimatedMinutes} mins ·{" "}
+              {mode === "exam"
+                ? "Timed simulation. Zero spoilers mid-test; complete autopsy matrix at the end."
+                : "Learning drill. Immediate feedback and distractor trap deconstruction after each question."}
+            </p>
+          </div>
+
+          {/* Action CTA */}
+          <div className="pt-1 space-y-3">
+            <Button
+              size="lg"
+              onClick={handleStartTest}
+              className="w-full h-12 text-base font-bold shadow-sm hover:shadow transition-all"
+            >
+              <Play className="mr-2 h-4 w-4 fill-current" />
+              Begin {mode === "exam" ? "Exam Simulation" : "Tutor Drill"}
+            </Button>
+            
+            <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+              <span>Press <kbd className="px-1.5 py-0.5 rounded bg-muted border font-mono font-bold text-foreground">Enter ↵</kbd> to begin</span>
+              <span>·</span>
+              <button
+                type="button"
+                onClick={handleBackToDashboard}
+                className="hover:text-foreground underline underline-offset-4 transition-colors"
+              >
+                Exit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- Session Complete (Post-Exam Autopsy Screen) ---
+  if (sessionComplete) {
+    const pct = total > 0 ? Math.round((score / total) * 100) : 0;
+    const incorrectCount = total - score;
+
+    return (
+      <div className="max-w-3xl mx-auto p-4 sm:p-6 space-y-8 animate-in fade-in duration-300">
+        <div className="text-center space-y-3">
           <div className="flex justify-center">
             <div className="bg-primary/10 rounded-full p-4">
-              <Trophy className="h-14 w-14 text-primary" />
+              <Trophy className="h-12 w-12 text-primary" />
             </div>
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight">Session Complete</h1>
+          <p className="text-sm text-muted-foreground">
+            {mode === "exam" ? "Exam Simulation submitted." : "Tutor Drill finished."} Review your cognitive performance below.
+          </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <div className="bg-muted/50 rounded-xl p-4">
+        {/* Metric Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+          <div className="bg-card border rounded-xl p-4 shadow-sm">
             <div className="text-2xl font-bold">{score}/{total}</div>
             <div className="text-xs text-muted-foreground mt-1">Score</div>
           </div>
-          <div className="bg-muted/50 rounded-xl p-4">
+          <div className="bg-card border rounded-xl p-4 shadow-sm">
             <div className="text-2xl font-bold">{pct}%</div>
             <div className="text-xs text-muted-foreground mt-1">Accuracy</div>
           </div>
-          <div className="bg-muted/50 rounded-xl p-4">
+          <div className="bg-card border rounded-xl p-4 shadow-sm">
             <div className="text-2xl font-bold">
               {totalTimeElapsed < 60
                 ? `${totalTimeElapsed}s`
                 : `${Math.floor(totalTimeElapsed / 60)}m ${totalTimeElapsed % 60}s`}
             </div>
-            <div className="text-xs text-muted-foreground mt-1">Time</div>
+            <div className="text-xs text-muted-foreground mt-1">Total Time</div>
+          </div>
+          <div className="bg-card border rounded-xl p-4 shadow-sm border-amber-500/20 bg-amber-500/5">
+            <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">{trapsCaughtCount}</div>
+            <div className="text-xs text-muted-foreground mt-1">Traps Caught</div>
           </div>
         </div>
 
+        {/* Readiness updates */}
         {completeResult && (
-          <div className="space-y-3 border rounded-lg p-4 bg-muted/20">
+          <div className="space-y-3 border rounded-xl p-4 bg-muted/20">
             {typeof completeResult.readiness_index === "number" && (
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Readiness Index</span>
-                <span className="font-semibold">{completeResult.readiness_index}%</span>
+                <span className="text-muted-foreground">Overall Readiness Index</span>
+                <span className="font-bold text-primary">{completeResult.readiness_index}%</span>
               </div>
             )}
             {completeResult.mastery_updates && completeResult.mastery_updates.length > 0 && (
-              <div className="space-y-1">
-                <span className="text-sm text-muted-foreground">Mastery Updates</span>
+              <div className="space-y-1.5 pt-2 border-t border-border/50">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Mastery Updates</span>
                 {completeResult.mastery_updates.map((m) => (
                   <div key={m.skill_domain} className="flex justify-between text-sm">
-                    <span>{m.skill_domain}</span>
+                    <span className="text-muted-foreground">{m.skill_domain}</span>
                     <span className="font-semibold">{Math.round(m.mastery_score * 100)}%</span>
                   </div>
                 ))}
@@ -311,44 +518,174 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
           </div>
         )}
 
-        {!completeResult ? (
-          <Button
-            className="w-full text-lg py-6"
-            size="lg"
-            onClick={handleComplete}
-            disabled={completing}
-          >
-            {completing ? "Completing..." : "Complete Session"}
-            <ChevronRight className="ml-2 h-5 w-5" />
-          </Button>
-        ) : (
-          <div className="grid gap-3">
-            {nextDomain && (
-              <Button
-                className="w-full text-lg py-6"
-                size="lg"
-                onClick={handleStartNextTopic}
-                disabled={startingNext}
+        {/* Interactive Post-Exam Deconstruction Matrix */}
+        <div className="space-y-4 pt-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3">
+            <div>
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-primary" />
+                Cognitive Autopsy & Solutions
+              </h2>
+              <p className="text-xs text-muted-foreground">Deconstruct misconceptions and verify step-by-step logic.</p>
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="flex items-center gap-1 bg-muted/70 p-1 rounded-lg text-xs self-start">
+              <button
+                type="button"
+                onClick={() => setReviewFilter("all")}
+                className={cn("px-2.5 py-1 rounded-md font-semibold transition-all", reviewFilter === "all" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
               >
-                {startingNext ? "Starting..." : `Practice Next Topic: ${nextDomain}`}
-                <ChevronRight className="ml-2 h-5 w-5" />
-              </Button>
-            )}
-            <Button
-              className="w-full text-lg py-6"
-              size="lg"
-              variant={nextDomain ? "outline" : "default"}
-              onClick={handleBackToDashboard}
-            >
-              <ArrowLeft className="mr-2 h-5 w-5" />
-              Back to Dashboard
-            </Button>
+                All ({total})
+              </button>
+              <button
+                type="button"
+                onClick={() => setReviewFilter("incorrect")}
+                className={cn("px-2.5 py-1 rounded-md font-semibold transition-all", reviewFilter === "incorrect" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+              >
+                Mistakes ({incorrectCount})
+              </button>
+              <button
+                type="button"
+                onClick={() => setReviewFilter("traps")}
+                className={cn("px-2.5 py-1 rounded-md font-semibold transition-all", reviewFilter === "traps" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+              >
+                Traps ({trapsCaughtCount})
+              </button>
+              <button
+                type="button"
+                onClick={() => setReviewFilter("correct")}
+                className={cn("px-2.5 py-1 rounded-md font-semibold transition-all", reviewFilter === "correct" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+              >
+                Correct ({score})
+              </button>
+            </div>
           </div>
-        )}
+
+          <div className="space-y-4">
+            {filteredQuestions.map((q) => {
+              const attempt = userAttempts[q.question_id];
+              const isTrap = attempt?.selected && !attempt.isCorrect && Boolean(q.distractor_analysis?.[attempt.selected]);
+              const isExpanded = expandedQuestions[q.question_id] ?? true;
+
+              return (
+                <div key={q.question_id} className="border rounded-xl bg-card p-4 sm:p-5 space-y-4 shadow-sm transition-all">
+                  <div className="flex items-center justify-between cursor-pointer" onClick={() => toggleQuestionExpand(q.question_id)}>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-sm text-foreground">Question {questions.indexOf(q) + 1}</span>
+                      <Badge variant="outline" className="text-xs">{q.skill_domain}</Badge>
+                      {attempt?.isCorrect ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                          <CheckCircle className="w-3.5 h-3.5" /> Correct
+                        </span>
+                      ) : isTrap ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">
+                          <AlertTriangle className="w-3.5 h-3.5" /> Trap Triggered
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full">
+                          <XCircle className="w-3.5 h-3.5" /> Incorrect
+                        </span>
+                      )}
+                    </div>
+                    <button type="button" className="text-muted-foreground hover:text-foreground">
+                      {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    </button>
+                  </div>
+
+                  {isExpanded && (
+                    <div className="space-y-4 pt-2 border-t">
+                      <div className="text-sm font-medium leading-relaxed text-foreground">
+                        {renderMathContent(q.question_text)}
+                      </div>
+
+                      {/* Options Grid */}
+                      <div className="grid gap-2">
+                        {OPTION_LETTERS.filter((k) => k in q.options).map((key) => {
+                          const isUserChoice = attempt?.selected === key;
+                          const isCorrectChoice = key === q.correct_option;
+
+                          let optionClass = "border-border bg-background/50 text-muted-foreground";
+                          if (isCorrectChoice) {
+                            optionClass = "border-emerald-500 bg-emerald-500/10 text-foreground font-medium";
+                          } else if (isUserChoice && !isCorrectChoice) {
+                            optionClass = "border-rose-500 bg-rose-500/10 text-foreground font-medium";
+                          }
+
+                          return (
+                            <div key={key} className={cn("p-3 rounded-lg border text-sm flex items-start gap-3", optionClass)}>
+                              <span className={cn(
+                                "flex-shrink-0 w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold",
+                                isCorrectChoice ? "bg-emerald-500 text-white border-emerald-500" : isUserChoice ? "bg-rose-500 text-white border-rose-500" : optionBadgeStyles[key]
+                              )}>
+                                {key}
+                              </span>
+                              <div className="flex-1 break-words pt-0.5">{renderMathContent(q.options[key])}</div>
+                              {isCorrectChoice && <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 self-center">Correct Answer</span>}
+                              {isUserChoice && !isCorrectChoice && <span className="text-xs font-bold text-rose-600 dark:text-rose-400 self-center">Your Answer</span>}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Deconstruction Box */}
+                      {attempt?.selected && !attempt.isCorrect && q.distractor_analysis?.[attempt.selected] && (
+                        <div className="rounded-lg p-3.5 bg-amber-500/10 border border-amber-500/25 space-y-1">
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+                            <AlertTriangle className="w-3.5 h-3.5" /> Deconstruction of Your Choice (Option {attempt.selected})
+                          </h4>
+                          <p className="text-xs text-foreground/90 leading-relaxed">
+                            {renderMathContent(q.distractor_analysis[attempt.selected])}
+                          </p>
+                        </div>
+                      )}
+
+                      {q.explanation && (
+                        <div className="rounded-lg p-3.5 bg-muted/40 border space-y-1">
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Solution Derivation</h4>
+                          <div className="text-xs text-foreground/90 leading-relaxed">{renderMathContent(q.explanation)}</div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Complete / Actions Bar */}
+        <div className="pt-4 border-t space-y-3">
+          {!completeResult ? (
+            <Button className="w-full text-base py-6 font-bold" size="lg" onClick={handleComplete} disabled={completing}>
+              {completing ? "Recording mastery..." : "Complete & Save Session"}
+              <ChevronRight className="ml-2 h-5 w-5" />
+            </Button>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {nextDomain && (
+                <Button className="w-full text-base py-5" size="lg" onClick={handleStartNextTopic} disabled={startingNext}>
+                  {startingNext ? "Starting..." : `Practice Next Topic: ${nextDomain}`}
+                  <ChevronRight className="ml-2 h-5 w-5" />
+                </Button>
+              )}
+              <Button
+                className="w-full text-base py-5"
+                size="lg"
+                variant={nextDomain ? "outline" : "default"}
+                onClick={handleBackToDashboard}
+              >
+                <ArrowLeft className="mr-2 h-5 w-5" />
+                Back to Dashboard
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
 
+  // --- Active Question Screen ---
   const optionEntries = OPTION_LETTERS.filter((key) => key in current.options).map((key) => ({
     key,
     value: current.options[key],
@@ -357,26 +694,64 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
   const correctLetter = current.correct_option;
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <div className="space-y-2">
-        <div className="flex justify-between text-sm text-muted-foreground">
-          <span>
-            Question {currentIndex + 1} of {total}
-          </span>
-          <span>Score: {score}</span>
+    <div className="max-w-2xl mx-auto p-4 sm:p-6 space-y-6">
+      {/* Top Header: Progress & Mode Switcher */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-foreground">
+              Question {currentIndex + 1} <span className="text-muted-foreground font-normal">of {total}</span>
+            </span>
+            <Badge variant="outline" className="text-xs">{current.skill_domain}</Badge>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            {/* Ambient Mode Status Chip */}
+            <span
+              className={cn(
+                "px-2.5 py-1 rounded-md text-xs font-semibold border flex items-center gap-1.5 shadow-sm",
+                mode === "exam"
+                  ? "bg-primary/10 text-primary border-primary/20"
+                  : "bg-muted/80 text-foreground border-border"
+              )}
+            >
+              {mode === "exam" ? (
+                <>
+                  <Timer className="w-3.5 h-3.5 text-primary" />
+                  Exam Mode
+                </>
+              ) : (
+                <>
+                  <GraduationCap className="w-3.5 h-3.5 text-primary" />
+                  Tutor Drill
+                </>
+              )}
+            </span>
+
+            {/* Session Elapsed Stopwatch */}
+            <div className="flex items-center gap-1.5 text-xs font-mono text-muted-foreground tabular-nums bg-muted/40 px-2.5 py-1 rounded-md border border-border/50">
+              <Clock className="w-3.5 h-3.5" />
+              {totalTimeElapsed < 60
+                ? `${totalTimeElapsed}s`
+                : `${Math.floor(totalTimeElapsed / 60)}m ${totalTimeElapsed % 60}s`}
+            </div>
+          </div>
         </div>
-        <div className="w-full bg-muted rounded-full h-2">
+
+        <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
           <div
-            className="bg-primary h-2 rounded-full transition-all duration-300"
+            className="bg-primary h-1.5 rounded-full transition-all duration-300"
             style={{ width: `${((currentIndex + 1) / total) * 100}%` }}
           />
         </div>
       </div>
 
+      {/* Question Text */}
       <div className="text-lg font-medium leading-relaxed text-foreground">
         {renderMathContent(current.question_text)}
       </div>
 
+      {/* Options List */}
       <div className="space-y-3">
         {optionEntries.map(({ key, value }) => {
           const isSelected = selectedOption === key;
@@ -386,14 +761,23 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
           let bgClass = "";
 
           if (answerState === "answered") {
-            if (isCorrectOption) {
-              borderClass = "border-green-500";
-              bgClass = "bg-green-500/10";
-            } else if (isSelected && !isCorrectOption) {
-              borderClass = "border-red-500";
-              bgClass = "bg-red-500/10";
+            if (mode === "tutor") {
+              if (isCorrectOption) {
+                borderClass = "border-green-500";
+                bgClass = "bg-green-500/10";
+              } else if (isSelected && !isCorrectOption) {
+                borderClass = "border-red-500";
+                bgClass = "bg-red-500/10";
+              } else {
+                bgClass = "opacity-50";
+              }
             } else {
-              bgClass = "opacity-50";
+              // Exam Mode: Neutral clean highlight, ZERO green/red spoilers
+              if (isSelected) {
+                borderClass = "border-primary ring-2 ring-primary/20 bg-primary/10";
+              } else {
+                bgClass = "opacity-70";
+              }
             }
           }
 
@@ -415,17 +799,18 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
                 className={cn(
                   "flex-shrink-0 w-7 h-7 rounded-full border flex items-center justify-center text-sm font-semibold",
                   optionBadgeStyles[key],
-                  answerState === "answered" && isCorrectOption && "bg-green-500 text-white border-green-500",
-                  answerState === "answered" && isSelected && !isCorrectOption && "bg-red-500 text-white border-red-500"
+                  mode === "tutor" && answerState === "answered" && isCorrectOption && "bg-green-500 text-white border-green-500",
+                  mode === "tutor" && answerState === "answered" && isSelected && !isCorrectOption && "bg-red-500 text-white border-red-500",
+                  mode === "exam" && isSelected && "bg-primary text-primary-foreground border-primary"
                 )}
               >
                 {key}
               </span>
               <span className="break-words pt-0.5">{renderMathContent(value)}</span>
-              {answerState === "answered" && isCorrectOption && (
+              {mode === "tutor" && answerState === "answered" && isCorrectOption && (
                 <CheckCircle className="flex-shrink-0 ml-auto h-5 w-5 text-green-600 dark:text-green-400" />
               )}
-              {answerState === "answered" && isSelected && !isCorrectOption && (
+              {mode === "tutor" && answerState === "answered" && isSelected && !isCorrectOption && (
                 <XCircle className="flex-shrink-0 ml-auto h-5 w-5 text-red-600 dark:text-red-400" />
               )}
             </button>
@@ -433,7 +818,8 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
         })}
       </div>
 
-      {answerState === "pending" && (
+      {/* Tutor Reveal Helper */}
+      {answerState === "pending" && mode === "tutor" && (
         <Button
           variant="ghost"
           size="sm"
@@ -445,52 +831,62 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
         </Button>
       )}
 
+      {/* Answer Feedback Card */}
       {answerState === "answered" && (
-        <div className="space-y-4 border rounded-lg p-5 bg-muted/20 animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <div>
-            {isRevealed ? (
-              <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold text-sm">
-                <Eye className="h-4 w-4" />
-                Answer Revealed
+        <div className="space-y-4 border rounded-xl p-5 bg-card shadow-sm animate-in fade-in duration-200">
+          {mode === "tutor" ? (
+            <>
+              <div>
+                {isRevealed ? (
+                  <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold text-sm">
+                    <Eye className="h-4 w-4" />
+                    Answer Revealed
+                  </div>
+                ) : isCorrect ? (
+                  <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold text-sm">
+                    <CheckCircle className="h-4 w-4" />
+                    Correct
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-semibold text-sm">
+                    <XCircle className="h-4 w-4" />
+                    Incorrect
+                  </div>
+                )}
               </div>
-            ) : isCorrect ? (
-              <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold text-sm">
-                <CheckCircle className="h-4 w-4" />
-                Correct
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-semibold text-sm">
-                <XCircle className="h-4 w-4" />
-                Incorrect
-              </div>
-            )}
-          </div>
 
-          {selectedOption && current.distractor_analysis?.[selectedOption] && (
-            <div>
-              <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
-                Explanation
-              </h4>
-              <div className="text-sm text-foreground/90 leading-relaxed">
-                {renderMathContent(current.distractor_analysis[selectedOption])}
-              </div>
-            </div>
-          )}
+              {selectedOption && current.distractor_analysis?.[selectedOption] && (
+                <div>
+                  <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+                    Explanation
+                  </h4>
+                  <div className="text-sm text-foreground/90 leading-relaxed">
+                    {renderMathContent(current.distractor_analysis[selectedOption])}
+                  </div>
+                </div>
+              )}
 
-          {isCorrect && !isRevealed && current.misconception && (
-            <div className="border-t pt-3 mt-3">
-              <h4 className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400 mb-1">
-                Common Trap
-              </h4>
-              <div className="text-sm text-foreground/90 leading-relaxed">
-                {current.misconception}
-              </div>
+              {isCorrect && !isRevealed && current.misconception && (
+                <div className="border-t pt-3 mt-3">
+                  <h4 className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400 mb-1">
+                    Common Trap
+                  </h4>
+                  <div className="text-sm text-foreground/90 leading-relaxed">
+                    {current.misconception}
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>Answer locked in Exam Mode. Full analysis available at completion.</span>
+              <span className="font-semibold text-primary">Press Enter or click Next</span>
             </div>
           )}
 
           <div className="pt-2">
             <Button
-              className="w-full"
+              className="w-full h-12 text-base font-semibold"
               disabled={!nextEnabled}
               onClick={handleNext}
               size="lg"
@@ -498,22 +894,15 @@ export function SessionPlayer({ sessionId, questions, examProfileId, taxonomyDom
               {nextEnabled
                 ? currentIndex + 1 < total
                   ? "Next Question"
-                  : "View Results"
+                  : "Submit & View Autopsy"
                 : currentIndex + 1 < total
                   ? `Next question in a moment...`
                   : `Results in a moment...`}
-              {nextEnabled && <ChevronRight className="ml-1 h-4 w-4" />}
+              {nextEnabled && <ChevronRight className="ml-1 h-5 w-5" />}
             </Button>
           </div>
         </div>
       )}
-
-      <div className="text-xs text-muted-foreground text-center">
-        Time elapsed:{" "}
-        {totalTimeElapsed < 60
-          ? `${totalTimeElapsed}s`
-          : `${Math.floor(totalTimeElapsed / 60)}m ${totalTimeElapsed % 60}s`}
-      </div>
     </div>
   );
 }

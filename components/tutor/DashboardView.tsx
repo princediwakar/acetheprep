@@ -8,9 +8,17 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import type { DashboardPageData, SyllabusSubject, SyllabusDomain } from "@/app/dashboard/page";
 import { TUTOR_ROUTES, TUTOR_CONFIG } from "@/lib/constants/tutor";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import {
   Zap,
   CheckCircle2,
@@ -23,6 +31,9 @@ import {
   Lock,
   BookOpen,
   SlidersHorizontal,
+  Timer,
+  GraduationCap,
+  Sparkles,
 } from "lucide-react";
 
 export function DashboardViewLoading() {
@@ -111,12 +122,34 @@ export function DashboardViewError({ message }: { message: string }) {
   );
 }
 
+interface SessionConfig {
+  title: string;
+  subtitle: string;
+  intent: "spaced_review" | "custom_mock";
+  domain?: string;
+  subjectName?: string;
+}
+
 export function DashboardView({ data }: { data: DashboardPageData }) {
   const router = useRouter();
 
-  const [algoReviewLoading, setAlgoReviewLoading] = useState(false);
-  const [linearNextLoading, setLinearNextLoading] = useState(false);
-  const [domainLoading, setDomainLoading] = useState<string | null>(null);
+  const [activeConfig, setActiveConfig] = useState<SessionConfig | null>(null);
+  const [modalMode, setModalMode] = useState<"exam" | "tutor">("exam"); // Default to Exam Mode
+  const [modalQuestionCount, setModalQuestionCount] = useState<number>(10);
+  const [isLaunching, setIsLaunching] = useState(false);
+  const [launchStep, setLaunchStep] = useState(0);
+
+  useEffect(() => {
+    if (!isLaunching) {
+      setLaunchStep(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setLaunchStep((prev) => (prev < 3 ? prev + 1 : prev));
+    }, 5500);
+    return () => clearInterval(interval);
+  }, [isLaunching]);
+
   const [isLinearMode, setIsLinearMode] = useState(false);
   const [sessionQuestionCount, setSessionQuestionCount] = useState<number>(10);
 
@@ -136,6 +169,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
       const parsed = parseInt(savedCount, 10);
       if ([10, 25, 50].includes(parsed)) {
         setSessionQuestionCount(parsed);
+        setModalQuestionCount(parsed);
       }
     }
   }, []);
@@ -147,10 +181,11 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
 
   const handleSelectSessionSize = useCallback((count: number) => {
     setSessionQuestionCount(count);
+    setModalQuestionCount(count);
     localStorage.setItem("acetheprep_session_count", String(count));
   }, []);
 
-  async function startSession(intent: string, focusDomains?: string[], count: number = sessionQuestionCount) {
+  async function startSession(intent: string, focusDomains?: string[], count: number = modalQuestionCount) {
     const body: Record<string, unknown> = {
       exam_profile_id: data.profileId,
       session_intent: intent,
@@ -175,28 +210,26 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
     return json.session_id as string;
   }
 
-  async function handleAlgorithmicReview() {
-    setAlgoReviewLoading(true);
-    try {
-      const sessionId = await startSession("spaced_review");
-      router.push(TUTOR_ROUTES.SESSION(sessionId));
-    } catch (err: any) {
-      toast.error(err.message || "Failed to start review session");
-    } finally {
-      setAlgoReviewLoading(false);
-    }
+  function handleAlgorithmicReview() {
+    setActiveConfig({
+      title: "AI Spaced Review",
+      subtitle: "Targeting your weakest and overdue topics across all subjects",
+      intent: "spaced_review",
+    });
+    setModalQuestionCount(sessionQuestionCount);
+    setModalMode("exam");
   }
 
-  async function handleDomainPractice(domain: string) {
-    setDomainLoading(domain);
-    try {
-      const sessionId = await startSession("custom_mock", [domain]);
-      router.push(TUTOR_ROUTES.SESSION(sessionId));
-    } catch (err: any) {
-      toast.error(err.message || "Failed to start custom session");
-    } finally {
-      setDomainLoading(null);
-    }
+  function handleDomainPractice(domain: string, subjectName?: string) {
+    setActiveConfig({
+      title: domain,
+      subtitle: subjectName ? `Targeted practice in ${subjectName}` : `Targeted topic practice`,
+      intent: "custom_mock",
+      domain,
+      subjectName,
+    });
+    setModalQuestionCount(sessionQuestionCount);
+    setModalMode("exam");
   }
 
   // Find next topic in linear sequence
@@ -211,19 +244,34 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
     if (nextLinearDomain) break;
   }
 
-  async function handleLinearNext() {
+  function handleLinearNext() {
     if (!nextLinearDomain) {
       toast.success("You have mastered all topics!");
       return;
     }
-    setLinearNextLoading(true);
+    setActiveConfig({
+      title: nextLinearDomain.name,
+      subtitle: "Next up in curriculum sequence",
+      intent: "custom_mock",
+      domain: nextLinearDomain.name,
+    });
+    setModalQuestionCount(sessionQuestionCount);
+    setModalMode("exam");
+  }
+
+  async function handleConfirmLaunch() {
+    if (!activeConfig) return;
+    setIsLaunching(true);
     try {
-      const sessionId = await startSession("custom_mock", [nextLinearDomain.name]);
-      router.push(TUTOR_ROUTES.SESSION(sessionId));
+      const sessionId = await startSession(
+        activeConfig.intent,
+        activeConfig.domain ? [activeConfig.domain] : undefined,
+        modalQuestionCount
+      );
+      router.push(`${TUTOR_ROUTES.SESSION(sessionId)}?mode=${modalMode}`);
     } catch (err: any) {
       toast.error(err.message || "Failed to start session");
-    } finally {
-      setLinearNextLoading(false);
+      setIsLaunching(false);
     }
   }
 
@@ -296,13 +344,8 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
               size="lg"
               className="w-full"
               onClick={handleAlgorithmicReview}
-              disabled={algoReviewLoading || linearNextLoading}
             >
-              {algoReviewLoading ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Starting {sessionQuestionCount}Q...</>
-              ) : (
-                <><Play className="mr-2 h-4 w-4" /> Start Spaced Review ({sessionQuestionCount}Q)</>
-              )}
+              <Play className="mr-2 h-4 w-4" /> Start Spaced Review ({sessionQuestionCount}Q)
             </Button>
           </CardContent>
         </Card>
@@ -325,13 +368,9 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
               variant="secondary"
               className="w-full"
               onClick={handleLinearNext}
-              disabled={!nextLinearDomain || algoReviewLoading || linearNextLoading}
+              disabled={!nextLinearDomain}
             >
-              {linearNextLoading ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Starting {sessionQuestionCount}Q...</>
-              ) : (
-                <><Play className="mr-2 h-4 w-4" /> Practice {nextLinearDomain?.name || "Next"} ({sessionQuestionCount}Q)</>
-              )}
+              <Play className="mr-2 h-4 w-4" /> Practice {nextLinearDomain?.name || "Next"} ({sessionQuestionCount}Q)
             </Button>
           </CardContent>
         </Card>
@@ -425,15 +464,10 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
                             <Button 
                               size="sm" 
                               variant={isOverdue ? "default" : "outline"}
-                              className={`shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity ${domainLoading === domain.name ? "opacity-100" : ""}`}
-                              onClick={() => handleDomainPractice(domain.name)}
-                              disabled={domainLoading === domain.name}
+                              className="shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+                              onClick={() => handleDomainPractice(domain.name, subject.name)}
                             >
-                              {domainLoading === domain.name ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                "Practice"
-                              )}
+                              Practice
                             </Button>
                           </div>
                         </div>
@@ -446,6 +480,200 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
           })}
         </div>
       </div>
+
+      {/* Quiz / Test Overview Dialog */}
+      <Dialog open={Boolean(activeConfig)} onOpenChange={(open) => !isLaunching && !open && setActiveConfig(null)}>
+        <DialogContent className="sm:max-w-xl p-0 overflow-hidden gap-0 border-border bg-card shadow-2xl">
+          {/* Header */}
+          <div className="p-6 pb-4 border-b bg-muted/20 space-y-2">
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-xs uppercase tracking-wider font-semibold text-primary border-primary/30 bg-primary/10">
+                {data.examName}
+              </Badge>
+              {activeConfig?.subjectName && (
+                <Badge variant="secondary" className="text-xs font-medium">
+                  {activeConfig.subjectName}
+                </Badge>
+              )}
+            </div>
+            <DialogTitle className="text-2xl font-bold tracking-tight">
+              {activeConfig?.title}
+            </DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground">
+              {activeConfig?.subtitle}
+            </DialogDescription>
+          </div>
+
+          {isLaunching ? (
+            <div className="p-8 py-12 flex flex-col items-center text-center space-y-6 animate-in fade-in-50 duration-300">
+              <div className="relative">
+                <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-primary animate-pulse" />
+                </div>
+              </div>
+              <div className="space-y-2 max-w-md">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <Badge variant="outline" className="text-xs uppercase tracking-wider font-semibold text-primary border-primary/30 bg-primary/10">
+                    {data.examName}
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {modalMode === "exam" ? "Exam Simulation" : "Tutor Drill"}
+                  </Badge>
+                </div>
+                <h3 className="font-extrabold text-xl text-foreground">
+                  Synthesizing {activeConfig?.title}
+                </h3>
+                <p className="text-sm text-muted-foreground min-h-[44px] flex items-center justify-center transition-all leading-relaxed">
+                  {launchStep === 0 && "🧠 Analyzing recent performance & syllabus mastery curve..."}
+                  {launchStep === 1 && `🎯 Generating ${modalQuestionCount} high-distractor questions for ${data.examName}...`}
+                  {launchStep === 2 && "🔬 Calibrating cognitive autopsy matrix & trap rationale..."}
+                  {launchStep >= 3 && "⚡ Finalizing test payload and pre-flight cockpit..."}
+                </p>
+              </div>
+              <div className="w-full max-w-xs bg-muted/60 h-2 rounded-full overflow-hidden">
+                <div
+                  className="bg-primary h-2 rounded-full transition-all duration-700"
+                  style={{ width: `${Math.min(96, (launchStep + 1) * 25 + 5)}%` }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground/80 font-mono">
+                {modalQuestionCount} Questions · Preparing briefing screen
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="p-6 space-y-6">
+                {/* Section 1: Number of Questions */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Number of Questions
+                    </span>
+                    <span className="text-xs text-muted-foreground font-mono">
+                      ~{modalQuestionCount === 10 ? "15" : modalQuestionCount === 25 ? "35" : "75"} mins
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2.5">
+                    {SESSION_SIZE_PRESETS.map((preset) => {
+                      const isSelected = modalQuestionCount === preset.count;
+                      return (
+                        <button
+                          key={preset.count}
+                          type="button"
+                          disabled={isLaunching}
+                          onClick={() => {
+                            setModalQuestionCount(preset.count);
+                            handleSelectSessionSize(preset.count);
+                          }}
+                          className={cn(
+                            "p-3 rounded-xl border text-center transition-all flex flex-col items-center gap-1",
+                            isSelected
+                              ? "border-primary bg-primary/10 ring-2 ring-primary/20 text-foreground font-semibold shadow-sm"
+                              : "border-border hover:border-border/80 bg-background/50 text-muted-foreground"
+                          )}
+                        >
+                          <span className="text-sm">{preset.label}</span>
+                          <span className="text-[11px] text-muted-foreground font-normal">
+                            {preset.count === 10 ? "Quick Drill" : preset.count === 25 ? "Standard" : "Full Simulation"}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Section 2: Feedback Mode Selection */}
+                <div className="space-y-2.5">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Feedback Mode
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Exam Mode (Default) */}
+                    <button
+                      type="button"
+                      disabled={isLaunching}
+                      onClick={() => setModalMode("exam")}
+                      className={cn(
+                        "p-4 rounded-xl border text-left transition-all flex flex-col justify-between relative",
+                        modalMode === "exam"
+                          ? "border-primary bg-primary/10 ring-2 ring-primary/20 text-foreground shadow-sm"
+                          : "border-border hover:border-border/80 bg-background/50 text-muted-foreground"
+                      )}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <Timer className={cn("w-4 h-4", modalMode === "exam" ? "text-primary" : "text-muted-foreground")} />
+                            <span className="font-bold text-sm text-foreground">Exam Mode</span>
+                          </div>
+                          <Badge variant="outline" className="text-[10px] uppercase font-bold text-primary border-primary/30 bg-primary/10 h-4 px-1.5">
+                            Default
+                          </Badge>
+                        </div>
+                        <p className="text-xs leading-relaxed text-muted-foreground">
+                          Real exam conditions. Zero spoilers or explanations mid-test with instant question flow. Full cognitive autopsy matrix & trap deconstruction revealed upon completion.
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* Tutor Mode */}
+                    <button
+                      type="button"
+                      disabled={isLaunching}
+                      onClick={() => setModalMode("tutor")}
+                      className={cn(
+                        "p-4 rounded-xl border text-left transition-all flex flex-col justify-between relative",
+                        modalMode === "tutor"
+                          ? "border-primary bg-primary/10 ring-2 ring-primary/20 text-foreground shadow-sm"
+                          : "border-border hover:border-border/80 bg-background/50 text-muted-foreground"
+                      )}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <GraduationCap className={cn("w-4 h-4", modalMode === "tutor" ? "text-primary" : "text-muted-foreground")} />
+                            <span className="font-bold text-sm text-foreground">Tutor Drill</span>
+                          </div>
+                          <Badge variant="outline" className="text-[10px] uppercase font-medium text-muted-foreground border-border h-4 px-1.5">
+                            Learning
+                          </Badge>
+                        </div>
+                        <p className="text-xs leading-relaxed text-muted-foreground">
+                          Immediate feedback after every question. Explains why distractors are traps, pinpoints misconceptions, and repairs mental models on the spot.
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer CTA */}
+              <div className="p-6 pt-3 bg-muted/20 border-t flex items-center justify-between gap-3">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  disabled={isLaunching}
+                  onClick={() => setActiveConfig(null)}
+                  className="text-muted-foreground"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  size="lg"
+                  disabled={isLaunching}
+                  onClick={handleConfirmLaunch}
+                  className="font-semibold px-6 min-w-[210px]"
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  Start {modalMode === "exam" ? "Exam Simulation" : "Tutor Drill"} ({modalQuestionCount}Q)
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

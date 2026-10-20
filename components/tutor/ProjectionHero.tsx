@@ -18,6 +18,7 @@ interface PredictionBand {
 
 export interface ProjectionHeroProps {
   prediction: PredictionBand | null;
+  examName?: string;
 }
 
 function getBandColor(width: number) {
@@ -37,7 +38,7 @@ function getCalibrationBadge(source: string) {
 const STORAGE_KEY = "acetheprep_projection_hidden";
 const LEGACY_STORAGE_KEY = "gibbi_projection_hidden";
 
-export function ProjectionHero({ prediction }: ProjectionHeroProps) {
+export function ProjectionHero({ prediction, examName }: ProjectionHeroProps) {
   const [hidden, setHidden] = useState(() => {
     if (typeof window === "undefined") return false;
     return (localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY)) === "true";
@@ -62,9 +63,8 @@ export function ProjectionHero({ prediction }: ProjectionHeroProps) {
                 No projection yet
               </h3>
               <p className="text-xs text-slate-500 mt-1">
-                Complete a tracked session to see your projected JEE percentile
-                band. Uses public NTA data until you&apos;ve built enough practice
-                history.
+                Complete a session to see your projected {examName || "exam"} percentile
+                band. Calibration sharpens with each completed session.
               </p>
             </div>
           </div>
@@ -112,7 +112,7 @@ export function ProjectionHero({ prediction }: ProjectionHeroProps) {
           {/* Hero Metric */}
           <div className="text-center">
             <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">
-              Projected JEE Main Percentile
+              Projected {examName ? `${examName} ` : ""}Percentile
             </p>
             <div className="flex items-baseline justify-center gap-1 mb-3">
               <span className="text-5xl font-bold tracking-tight text-white">

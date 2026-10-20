@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { TUTOR_ROUTES } from "@/lib/constants/tutor";
 import { toast } from "sonner";
-import { Play, BookOpen, Clock, AlertCircle, Eye, EyeOff, Info } from "lucide-react";
+import { Play, BookOpen, Clock, AlertCircle, GraduationCap, Timer, Sparkles } from "lucide-react";
 
 interface SessionStartViewProps {
   profileId: string;
@@ -27,11 +27,11 @@ export function SessionStartView({
   const router = useRouter();
   const [isStarting, setIsStarting] = useState(false);
   const [startError, setStartError] = useState<string | null>(null);
-  const [sessionIntent, setSessionIntent] = useState<"tracked" | "quiet">("tracked");
+  const [sessionMode, setSessionMode] = useState<"tutor" | "exam">("tutor");
 
-  async function handleStartSession(intent: "tracked" | "quiet") {
+  async function handleStartSession(mode: "tutor" | "exam") {
     if (hasActiveSession && activeSessionId) {
-      router.push(TUTOR_ROUTES.SESSION(activeSessionId));
+      router.push(`${TUTOR_ROUTES.SESSION(activeSessionId)}?mode=${mode}`);
       return;
     }
 
@@ -42,7 +42,10 @@ export function SessionStartView({
       const res = await fetch(`${TUTOR_ROUTES.API_SESSION_START}?stream=false`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ exam_profile_id: profileId, session_intent: intent }),
+        body: JSON.stringify({
+          exam_profile_id: profileId,
+          session_intent: mode === "exam" ? "tracked" : "spaced_review",
+        }),
       });
 
       if (!res.ok) {
@@ -51,7 +54,7 @@ export function SessionStartView({
       }
 
       const { session_id } = await res.json();
-      router.push(TUTOR_ROUTES.SESSION(session_id));
+      router.push(`${TUTOR_ROUTES.SESSION(session_id)}?mode=${mode}`);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Something went wrong. Please try again.";
@@ -72,22 +75,22 @@ export function SessionStartView({
   return (
     <div className="max-w-lg mx-auto space-y-6 px-4 py-12">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Practice</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Practice Session</h2>
         <p className="text-muted-foreground">
-          10 personalized questions based on your recent mistakes.
+          Targeted practice calibrating your mastery in {examName}.
         </p>
       </div>
 
-      <Card className="border-2">
+      <Card className="border-2 shadow-sm">
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <BookOpen className="w-4 h-4" />
+            <BookOpen className="w-4 h-4 text-primary" />
             {examName}
           </CardTitle>
           <CardDescription>
             {hasActiveSession
               ? "You have an active session in progress"
-              : "Choose session type — both feed your model"}
+              : "Select your cognitive objective"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -101,46 +104,50 @@ export function SessionStartView({
           </div>
 
           {!hasActiveSession && (
-            <div className="space-y-3 p-4 rounded-lg border border-white/10 bg-white/5">
-              <p className="text-sm font-medium text-white mb-2 flex items-center gap-2">
-                <Info className="w-4 h-4 text-slate-400" />
-                Session Type
+            <div className="space-y-3 p-4 rounded-xl border border-border/70 bg-card">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                Session Feedback Mode
               </p>
               <div className="grid grid-cols-2 gap-3">
-                <Button
-                  variant={sessionIntent === "tracked" ? "default" : "outline"}
-                  className="h-20 flex-col gap-2 text-left"
-                  onClick={() => setSessionIntent("tracked")}
+                <button
+                  type="button"
+                  onClick={() => setSessionMode("tutor")}
                   disabled={isStarting}
+                  className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between ${
+                    sessionMode === "tutor"
+                      ? "border-primary bg-primary/10 ring-2 ring-primary/20 text-foreground"
+                      : "border-border hover:border-border/80 bg-background/50 text-muted-foreground"
+                  }`}
                 >
-                  <div className="flex items-center gap-2">
-                    <Eye className="w-5 h-5" />
-                    <span className="font-medium">Tracked</span>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <GraduationCap className={`w-5 h-5 ${sessionMode === "tutor" ? "text-primary" : "text-muted-foreground"}`} />
+                    <span className="font-bold text-sm text-foreground">Tutor Drill</span>
                   </div>
-                  <p className="text-xs text-slate-400 leading-tight">
-                    Updates your visible projection
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    Instant feedback & distractor trap deconstruction after each question.
                   </p>
-                </Button>
-                <Button
-                  variant={sessionIntent === "quiet" ? "default" : "outline"}
-                  className="h-20 flex-col gap-2 text-left"
-                  onClick={() => setSessionIntent("quiet")}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSessionMode("exam")}
                   disabled={isStarting}
+                  className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between ${
+                    sessionMode === "exam"
+                      ? "border-primary bg-primary/10 ring-2 ring-primary/20 text-foreground"
+                      : "border-border hover:border-border/80 bg-background/50 text-muted-foreground"
+                  }`}
                 >
-                  <div className="flex items-center gap-2">
-                    <EyeOff className="w-5 h-5" />
-                    <span className="font-medium">Quiet</span>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <Timer className={`w-5 h-5 ${sessionMode === "exam" ? "text-primary" : "text-muted-foreground"}`} />
+                    <span className="font-bold text-sm text-foreground">Exam Mode</span>
                   </div>
-                  <p className="text-xs text-slate-400 leading-tight">
-                    Model learns, projection hidden
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    Timed, zero spoilers. Complete deconstruction autopsy at the end.
                   </p>
-                </Button>
+                </button>
               </div>
-              <p className="text-xs text-slate-500 text-center">
-                {sessionIntent === "tracked"
-                  ? "Your projected percentile band will update after this session."
-                  : "This drill won't move your visible projection today, but it still helps AceThePrep understand your baseline."}
-              </p>
             </div>
           )}
 
@@ -154,13 +161,13 @@ export function SessionStartView({
           <Button
             size="lg"
             className="w-full h-14 text-base font-semibold"
-            onClick={() => handleStartSession(sessionIntent)}
+            onClick={() => handleStartSession(sessionMode)}
             disabled={isStarting}
           >
             {isStarting ? (
               <span className="flex items-center gap-2">
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                Starting...
+                Starting Session...
               </span>
             ) : hasActiveSession ? (
               <span className="flex items-center gap-2">
@@ -170,7 +177,7 @@ export function SessionStartView({
             ) : (
               <span className="flex items-center gap-2">
                 <Play className="w-5 h-5" />
-                Start {sessionIntent === "tracked" ? "Tracked" : "Quiet"} Practice
+                Start {sessionMode === "tutor" ? "Tutor Drill" : "Exam Simulation"}
               </span>
             )}
           </Button>

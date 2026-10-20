@@ -13,15 +13,18 @@ interface SessionRow {
   exam_profile_id: string;
   questions_json: SessionQuestion[];
   status: string;
+  session_intent?: string;
   created_at: string;
 }
 
 interface PageProps {
   params: Promise<{ session_id: string }>;
+  searchParams?: Promise<{ mode?: string }>;
 }
 
-export default async function SessionPage({ params }: PageProps) {
+export default async function SessionPage({ params, searchParams }: PageProps) {
   const { session_id } = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : {};
 
   const supabase = await createClient();
 
@@ -41,7 +44,7 @@ export default async function SessionPage({ params }: PageProps) {
 
   const { data: session, error: sessionError } = await supabase
     .from("sessions")
-    .select("id, user_id, exam_profile_id, questions_json, status, created_at")
+    .select("id, user_id, exam_profile_id, questions_json, status, session_intent, created_at")
     .eq("id", session_id)
     .single();
 
@@ -108,6 +111,14 @@ export default async function SessionPage({ params }: PageProps) {
     }
   }
 
+  const queryMode = resolvedSearchParams.mode;
+  const initialMode: "tutor" | "exam" =
+    queryMode === "exam" || queryMode === "tutor"
+      ? queryMode
+      : sessionData.session_intent === "custom_mock" || sessionData.session_intent === "diagnostic"
+        ? "exam"
+        : "tutor";
+
   return (
     <SessionPlayer
       sessionId={sessionData.id}
@@ -115,6 +126,8 @@ export default async function SessionPage({ params }: PageProps) {
       examProfileId={sessionData.exam_profile_id}
       taxonomyDomains={taxonomyDomains}
       initialMastery={initialMastery}
+      initialMode={initialMode}
+      examName={profile?.exam_name}
     />
   );
 }
