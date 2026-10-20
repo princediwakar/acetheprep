@@ -43,12 +43,14 @@ export function SessionStartScreen({
 
         <div className="rounded-xl border border-border bg-secondary/40 p-4 text-left space-y-2 text-xs">
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Primary Domain:</span>
+            <span className="text-muted-foreground">Topic:</span>
             <span className="font-semibold text-foreground">{skillDomain}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Simulation Standard:</span>
-            <span className="font-mono text-primary font-semibold">Official Bluebook & ETS Toolset</span>
+            <span className="text-muted-foreground">Format:</span>
+            <span className="font-semibold text-foreground">
+              {mode === "exam" ? "Test Mode (Timed)" : "Study Mode (Instant Feedback)"}
+            </span>
           </div>
         </div>
 
@@ -59,7 +61,7 @@ export function SessionStartScreen({
             className="w-full h-12 text-sm font-semibold shadow-md active:scale-[0.99] cursor-pointer"
           >
             <Play className="mr-2 h-4 w-4 fill-current" />
-            Begin {mode === "exam" ? "Exam Simulation" : "Tutor Drill"}
+            Begin {mode === "exam" ? "Test" : "Study Session"}
           </Button>
 
           <button

@@ -39,7 +39,7 @@ export function SessionProctorHeader({
           {examName || "Exam Practice"} &middot; {skillDomain}
         </span>
         <span className="hidden sm:inline-flex items-center gap-1 rounded-md bg-secondary/80 px-2 py-0.5 text-[10px] font-mono text-muted-foreground border border-border">
-          {mode === "exam" ? "Exam Simulation" : "Tutor Drill"}
+          {mode === "exam" ? "Test Mode" : "Study Mode"}
         </span>
       </div>
 

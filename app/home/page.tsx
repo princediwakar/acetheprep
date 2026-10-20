@@ -7,7 +7,7 @@ import { TUTOR_ROUTES } from "@/lib/constants/tutor";
 import { calculateWeightedReadinessIndex, getTimeMode } from "@/lib/sm2";
 import { computeStreak } from "@/lib/utils";
 import { DashboardView, DashboardViewLoading } from "@/components/tutor/DashboardView";
-import type { ExamProfile, TimeMode } from "@/types/tutor";
+import type { ExamProfile, TimeMode, SessionRow } from "@/types/tutor";
 import type { ProjectionHeroProps } from "@/components/tutor/ProjectionHero";
 import { marksToPercentile, getColdStartBand, computeCompositePercentile } from "@/lib/predictor/nta-priors";
 import { getUserSubscriptionStatus, syncCheckoutSession } from "@/lib/billing";
@@ -60,6 +60,7 @@ export interface DashboardPageData {
   weakestOverdueDomain: string | null;
   prediction: ProjectionHeroProps["prediction"];
   isPro?: boolean;
+  activeSessions: SessionRow[];
 }
 
 export default async function HomePage({
@@ -134,6 +135,7 @@ async function HomePageContent({
     conceptsRes,
     questionResultsRes,
     completedSessionsRes,
+    activeSessionsRes,
     overdueCountRes,
     predictionRes,
     subscriptionStatus,
@@ -156,6 +158,14 @@ async function HomePageContent({
       .eq("user_id", user.id)
       .eq("exam_profile_id", profile.profile_id)
       .eq("status", "completed"),
+    supabase
+      .from("sessions")
+      .select("id, status, created_at, completed_at, target_domains, session_intent, questions_json")
+      .eq("user_id", user.id)
+      .eq("exam_profile_id", profile.profile_id)
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(5),
     supabase
       .from("concept_mastery")
       .select("id", { count: "exact", head: true })
@@ -180,6 +190,54 @@ async function HomePageContent({
   ]);
   const concepts = (conceptsRes.data || []) as ConceptRow[];
   const questionResults = (questionResultsRes.data || []) as { answered_at: string }[];
+
+  const activeSessionsRaw = (activeSessionsRes.data || []) as {
+    id: string;
+    status: string;
+    created_at: string;
+    completed_at: string | null;
+    target_domains: string[] | null;
+    session_intent?: string;
+    questions_json?: unknown;
+  }[];
+
+  const activeSessionIds = activeSessionsRaw.map((s) => s.id);
+  const activeSessionStatsMap: Record<string, { answered: number; correct: number }> = {};
+
+  if (activeSessionIds.length > 0) {
+    const { data: answersData } = await supabase
+      .from("session_answers")
+      .select("session_id, is_correct")
+      .in("session_id", activeSessionIds);
+
+    for (const a of answersData || []) {
+      if (!activeSessionStatsMap[a.session_id]) {
+        activeSessionStatsMap[a.session_id] = { answered: 0, correct: 0 };
+      }
+      activeSessionStatsMap[a.session_id].answered += 1;
+      if (a.is_correct) {
+        activeSessionStatsMap[a.session_id].correct += 1;
+      }
+    }
+  }
+
+  const activeSessions: SessionRow[] = activeSessionsRaw.map((s) => {
+    const totalQ = Array.isArray(s.questions_json) ? s.questions_json.length : 0;
+    const stats = activeSessionStatsMap[s.id] || { answered: 0, correct: 0 };
+    const accuracy = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0;
+    return {
+      id: s.id,
+      status: s.status,
+      created_at: s.created_at,
+      completed_at: s.completed_at,
+      target_domains: s.target_domains || [],
+      session_intent: s.session_intent,
+      totalQuestions: totalQ,
+      answeredCount: stats.answered,
+      correctCount: stats.correct,
+      accuracy,
+    };
+  });
 
   const overdueDomainCount = overdueCountRes.count ?? 0;
 
@@ -302,6 +360,7 @@ async function HomePageContent({
           };
         })(),
     isPro: subscriptionStatus.isPro,
+    activeSessions,
   };
 
   return <DashboardView data={data} />;

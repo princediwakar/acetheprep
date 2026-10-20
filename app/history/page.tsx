@@ -1,11 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { HistoryTabsView } from "@/components/tutor/HistoryTabsView";
-import type { SessionRow } from "@/app/analytics/page";
+import type { SessionRow } from "@/types/tutor";
 
 export const metadata = {
   title: "History | AceThePrep",
-  description: "Review your past practice tests, exam simulations, and quiz results",
+  description: "Review your past practice sessions, mock tests, and quiz results",
   robots: {
     index: false,
     follow: false,

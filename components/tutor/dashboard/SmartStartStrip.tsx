@@ -24,14 +24,14 @@ export function SmartStartStrip({
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Zap className="w-5 h-5 text-yellow-500" />
-              <h3 className="font-semibold text-lg">AI Pick</h3>
+              <h3 className="font-semibold text-lg">Daily Practice</h3>
             </div>
             <p className="text-sm text-muted-foreground">
-              Spaced repetition algorithm. Targets your weakest and overdue topics across all subjects.
+              10-question mixed set optimized to boost your readiness score and target weak spots.
             </p>
           </div>
           <Button size="lg" className="w-full cursor-pointer" onClick={onAlgorithmicReview}>
-            <Play className="mr-2 h-4 w-4" /> Start Spaced Review
+            <Play className="mr-2 h-4 w-4" /> Start Daily Practice
           </Button>
         </CardContent>
       </Card>
@@ -46,7 +46,7 @@ export function SmartStartStrip({
             <p className="text-sm text-muted-foreground">
               {nextLinearDomain
                 ? `Next up in curriculum sequence: ${nextLinearDomain.name}.`
-                : "You've mastered all topics! Keep up the spaced reviews."}
+                : "You've mastered all topics! Keep up your daily practice."}
             </p>
           </div>
           <Button

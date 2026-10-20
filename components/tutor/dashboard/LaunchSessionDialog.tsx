@@ -22,9 +22,9 @@ export interface SessionConfig {
 }
 
 export const QUESTION_COUNT_OPTIONS = [
-  { count: 10, label: "10 Quick", proOnly: false },
-  { count: 25, label: "25 Practice", proOnly: true },
-  { count: 50, label: "50 Mock", proOnly: true },
+  { count: 10, label: "10 Questions", sublabel: "Quick Practice", proOnly: false },
+  { count: 25, label: "25 Questions", sublabel: "Standard Set", proOnly: true },
+  { count: 50, label: "50 Questions", sublabel: "Full Mock Test", proOnly: true },
 ] as const;
 
 interface LaunchSessionDialogProps {
@@ -93,17 +93,17 @@ export function LaunchSessionDialog({
                   {examName}
                 </Badge>
                 <Badge variant="secondary" className="text-xs">
-                  {modalMode === "exam" ? "Exam Simulation" : "Tutor Drill"}
+                  {modalMode === "exam" ? "Test Mode" : "Study Mode"}
                 </Badge>
               </div>
               <h3 className="font-extrabold text-xl text-foreground">
-                Synthesizing {activeConfig?.title}
+                Preparing {activeConfig?.title}
               </h3>
               <p className="text-sm text-muted-foreground min-h-[44px] flex items-center justify-center transition-all leading-relaxed">
-                {launchStep === 0 && "🧠 Analyzing recent performance & syllabus mastery curve..."}
-                {launchStep === 1 && `🎯 Generating ${modalQuestionCount} high-distractor questions for ${examName}...`}
-                {launchStep === 2 && "🔬 Verifying questions and detailed trap explanations..."}
-                {launchStep >= 3 && "⚡ Finalizing test payload and pre-flight cockpit..."}
+                {launchStep === 0 && "🧠 Checking topics you need to practice most..."}
+                {launchStep === 1 && `🎯 Selecting ${modalQuestionCount} practice questions for ${examName}...`}
+                {launchStep === 2 && "💡 Loading step-by-step solutions and explanations..."}
+                {launchStep >= 3 && "⚡ Ready! Setting up your test screen..."}
               </p>
             </div>
             <div className="w-full max-w-xs bg-muted/60 h-2 rounded-full overflow-hidden">
@@ -113,7 +113,7 @@ export function LaunchSessionDialog({
               />
             </div>
             <p className="text-xs text-muted-foreground/80 font-mono">
-              {modalQuestionCount} Questions · Preparing briefing screen
+              {modalQuestionCount} Questions · Getting your session ready
             </p>
           </div>
         ) : (
@@ -158,12 +158,12 @@ export function LaunchSessionDialog({
                             Pro
                           </Badge>
                         )}
-                        <span className="text-sm flex items-center gap-1">
+                        <span className="text-sm flex items-center gap-1 font-semibold text-foreground">
                           {isLocked && <Lock className="w-3 h-3 text-muted-foreground" />}
                           {preset.label}
                         </span>
                         <span className="text-[11px] text-muted-foreground font-normal">
-                          {preset.count === 10 ? "Quick Drill" : preset.count === 25 ? "Standard" : "Full Simulation"}
+                          {preset.sublabel}
                         </span>
                       </button>
                     );
@@ -192,14 +192,14 @@ export function LaunchSessionDialog({
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <Timer className={cn("w-4 h-4", modalMode === "exam" ? "text-primary" : "text-muted-foreground")} />
-                          <span className="font-bold text-sm text-foreground">Exam Mode</span>
+                          <span className="font-bold text-sm text-foreground">Test Mode</span>
                         </div>
                         <Badge variant="outline" className="text-[10px] uppercase font-bold text-primary border-primary/30 bg-primary/10 h-4 px-1.5">
-                          Default
+                          Timed
                         </Badge>
                       </div>
                       <p className="text-xs leading-relaxed text-muted-foreground">
-                        Real exam conditions. Zero spoilers during the test with timed question flow. Complete question breakdown, step-by-step solutions, and trap analysis revealed upon completion.
+                        Real test conditions. Timed questions with all answers, solutions, and explanations revealed at the end.
                       </p>
                     </div>
                   </button>
@@ -219,14 +219,14 @@ export function LaunchSessionDialog({
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <GraduationCap className={cn("w-4 h-4", modalMode === "tutor" ? "text-primary" : "text-muted-foreground")} />
-                          <span className="font-bold text-sm text-foreground">Tutor Drill</span>
+                          <span className="font-bold text-sm text-foreground">Study Mode</span>
                         </div>
                         <Badge variant="outline" className="text-[10px] uppercase font-medium text-muted-foreground border-border h-4 px-1.5">
-                          Learning
+                          Instant Feedback
                         </Badge>
                       </div>
                       <p className="text-xs leading-relaxed text-muted-foreground">
-                        Immediate feedback after every question. Explains why distractors are traps, pinpoints misconceptions, and repairs mental models on the spot.
+                        Learn as you go. See step-by-step explanations, answers, and common mistakes immediately after each question.
                       </p>
                     </div>
                   </button>
@@ -253,7 +253,11 @@ export function LaunchSessionDialog({
                 className="font-semibold px-6 min-w-[210px] cursor-pointer"
               >
                 <Play className="w-4 h-4 mr-2" />
-                Start {modalMode === "exam" ? "Exam Simulation" : "Tutor Drill"} ({modalQuestionCount}Q)
+                {modalMode === "exam"
+                  ? modalQuestionCount === 50
+                    ? "Start Full Mock Test (50Q)"
+                    : `Start Test (${modalQuestionCount}Q)`
+                  : `Start Study Session (${modalQuestionCount}Q)`}
               </Button>
             </div>
           </>

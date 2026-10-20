@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { Zap } from "lucide-react";
 import { DashboardViewLoading, DashboardViewError } from "@/components/tutor/dashboard/DashboardLoading";
 import { SmartStartStrip } from "@/components/tutor/dashboard/SmartStartStrip";
+import { ActiveSessionsBanner } from "@/components/tutor/dashboard/ActiveSessionsBanner";
 import { SyllabusMap } from "@/components/tutor/dashboard/SyllabusMap";
 import { LaunchSessionDialog, type SessionConfig } from "@/components/tutor/dashboard/LaunchSessionDialog";
 
@@ -80,8 +81,8 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
 
   function handleAlgorithmicReview() {
     setActiveConfig({
-      title: "AI Spaced Review",
-      subtitle: "Targeting your weakest and overdue topics across all subjects",
+      title: "Daily Practice",
+      subtitle: "10-question mixed set optimized to boost your readiness score",
       intent: "spaced_review",
     });
     setModalQuestionCount(10);
@@ -154,7 +155,7 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
               variant="outline"
               size="sm"
               onClick={() => {
-                setUpgradeReason("Upgrade to AceThePrep Pro for unlimited daily sessions, full 50Q mock simulations, and detailed step-by-step solutions.");
+                setUpgradeReason("Upgrade to AceThePrep Pro for unlimited daily sessions, full 50Q mock tests, and detailed step-by-step solutions.");
                 setShowUpgradeModal(true);
               }}
               className="h-8 px-2.5 text-xs font-bold border-primary/30 text-primary hover:bg-primary/10 gap-1 rounded-lg shadow-2xs cursor-pointer"
@@ -176,6 +177,11 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
           </div>
         </div>
       </HeaderPortal>
+
+      {/* Active In-Progress Sessions Banner */}
+      {data.activeSessions && data.activeSessions.length > 0 && (
+        <ActiveSessionsBanner initialSessions={data.activeSessions} />
+      )}
 
       {/* Section 2: Smart Start Strip */}
       <SmartStartStrip

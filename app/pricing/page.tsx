@@ -16,7 +16,7 @@ import { Check, HelpCircle, ShieldCheck, Sparkles, X } from "lucide-react";
 export const metadata: Metadata = {
   title: "Pricing & Plans | AceThePrep — Calibrated AI Test Prep",
   description:
-    "Simple, transparent pricing for competitive exams. Start free with 10-question practice sets or unlock full 25Q and 50Q exam simulations with AceThePrep Pro.",
+    "Simple, transparent pricing for competitive exams. Start free with 10-question practice sets or unlock 25Q practice sets and 50Q full mock tests with AceThePrep Pro.",
 };
 
 const COMPARISON_ROWS = [
@@ -45,10 +45,10 @@ const COMPARISON_ROWS = [
     description: "Realistic sectional stamina drills with timed pressure",
   },
   {
-    feature: "50-Question Full Mock Simulations",
+    feature: "50-Question Full Mock Tests",
     starter: false,
     pro: true,
-    description: "Real test conditions with full solutions and score breakdown revealed upon completion",
+    description: "Real test conditions with full solutions and score breakdown revealed when you finish",
   },
   {
     feature: "Unlimited Daily AI Sessions",
@@ -115,7 +115,7 @@ export default async function PricingPage() {
           Invest in Your Target Score, Not Generic Prep.
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Start free with 10-question practice sets. Upgrade to AceThePrep Pro when you are ready for full 25Q and 50Q exam simulations.
+          Start free with 10-question practice sets. Upgrade to AceThePrep Pro when you are ready for full 25Q practice sets and 50Q mock tests.
         </p>
       </div>
 

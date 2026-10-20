@@ -132,8 +132,8 @@ export function SyllabusMap({
                                   </p>
                                   <p className="text-muted-foreground text-[11px] leading-relaxed">
                                     {notStarted
-                                      ? "No questions attempted yet. Practice to establish your baseline calibration and spaced repetition curve."
-                                      : `Calibrated via SM-2 spaced repetition based on accuracy and solving speed across ${domain.totalAttempted} questions.`}
+                                      ? "No questions attempted yet. Practice to establish your baseline calibration and retention curve."
+                                      : `Calibrated based on accuracy and solving speed across ${domain.totalAttempted} questions.`}
                                   </p>
                                 </TooltipContent>
                               </Tooltip>

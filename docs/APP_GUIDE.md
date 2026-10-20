@@ -388,12 +388,11 @@ Files: `app/history/page.tsx`, `components/tutor/HistoryTabsView.tsx`, `componen
 
 ---
 
-### 5.5 Analytics & Mastery Timeline (`/analytics`)
-Files: `app/analytics/page.tsx`, `components/tutor/AnalyticsView.tsx`
+### 5.5 Analytics Redirection (`/analytics`)
+Files: `app/analytics/page.tsx`
 
-- **High-Level KPI Cards**: Overall readiness score, practice streak counter, total questions answered, and completed session tally.
-- **Syllabus Mastery Breakdown**: Visual progress bars and accuracy metrics per domain.
-- **Recent Session Timeline**: Complete history of drills with date timestamps and performance metrics.
+- To prevent UI clutter and eliminate duplicate database queries, metrics (Readiness Index, Day Streak, Questions Answered) and the Syllabus Mastery Map are unified directly on the **Home** dashboard (`/home`).
+- `/analytics` automatically redirects directly to `/home`. Active/unfinished sessions are elevated directly to the Home dashboard via `ActiveSessionsBanner`.
 
 ---
 

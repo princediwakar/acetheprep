@@ -90,7 +90,7 @@ export function SessionStartView({
           <CardDescription>
             {hasActiveSession
               ? "You have an active session in progress"
-              : "Select your cognitive objective"}
+              : "Choose how you want to practice today"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -122,10 +122,10 @@ export function SessionStartView({
                 >
                   <div className="flex items-center gap-2 mb-1.5">
                     <GraduationCap className={`w-5 h-5 ${sessionMode === "tutor" ? "text-primary" : "text-muted-foreground"}`} />
-                    <span className="font-bold text-sm text-foreground">Tutor Drill</span>
+                    <span className="font-bold text-sm text-foreground">Study Mode</span>
                   </div>
                   <p className="text-xs leading-relaxed text-muted-foreground">
-                    Instant feedback & distractor trap deconstruction after each question.
+                    Instant feedback, step-by-step explanations, and tips after each question.
                   </p>
                 </button>
 
@@ -141,10 +141,10 @@ export function SessionStartView({
                 >
                   <div className="flex items-center gap-2 mb-1.5">
                     <Timer className={`w-5 h-5 ${sessionMode === "exam" ? "text-primary" : "text-muted-foreground"}`} />
-                    <span className="font-bold text-sm text-foreground">Exam Mode</span>
+                    <span className="font-bold text-sm text-foreground">Test Mode</span>
                   </div>
                   <p className="text-xs leading-relaxed text-muted-foreground">
-                    Timed, zero spoilers. Full review and explanations at the end.
+                    Timed test conditions. Review all answers, scores, and explanations at the end.
                   </p>
                 </button>
               </div>
@@ -177,7 +177,7 @@ export function SessionStartView({
             ) : (
               <span className="flex items-center gap-2">
                 <Play className="w-5 h-5" />
-                Start {sessionMode === "tutor" ? "Tutor Drill" : "Exam Simulation"}
+                Start {sessionMode === "tutor" ? "Study Session" : "Test"}
               </span>
             )}
           </Button>

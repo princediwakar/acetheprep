@@ -28,7 +28,7 @@ interface UpgradeModalProps {
 export function UpgradeModal({
   open,
   onOpenChange,
-  reason = "Unlock 25Q and 50Q full mock simulations and unlimited daily practice.",
+  reason = "Unlock 25Q practice sets, 50Q full mock tests, and unlimited daily practice.",
   examName,
 }: UpgradeModalProps) {
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "quarterly">("quarterly");

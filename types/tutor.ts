@@ -57,6 +57,19 @@ export interface SessionQuestion {
   misconception: string;
 }
 
+export interface SessionRow {
+  id: string;
+  status: string;
+  created_at: string;
+  completed_at: string | null;
+  target_domains: string[];
+  session_intent?: string;
+  totalQuestions: number;
+  answeredCount: number;
+  correctCount: number;
+  accuracy: number;
+}
+
 export interface TutorSession {
   id: string;
   user_id: string;

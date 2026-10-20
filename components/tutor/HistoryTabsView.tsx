@@ -11,7 +11,7 @@ import { QuizHistory } from "@/components/quiz-results/QuizHistory";
 import { discardSessionAction } from "@/lib/actions/tutor";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import type { SessionRow } from "@/app/analytics/page";
+import type { SessionRow } from "@/types/tutor";
 import { HeaderPortal } from "@/components/shared/HeaderPortal";
 import { SessionHistoryRow } from "./SessionHistoryRow";
 
@@ -84,10 +84,10 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
       {/* Page Title Row */}
       <div className="pb-1 border-b border-border/40">
         <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-          Practice & Quiz History
+          Test & Practice History
         </h1>
         <p className="text-xs text-muted-foreground mt-0.5">
-          Review past simulations, answer records, and mistake breakdowns.
+          Review your past tests, practice sessions, and mistake breakdowns.
         </p>
       </div>
 
@@ -97,7 +97,7 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
             value="sessions"
             className="rounded-lg px-4 py-1.5 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm font-semibold text-xs sm:text-sm text-muted-foreground transition-all"
           >
-            Exam & Practice Sessions ({sessions.length})
+            Sessions & Tests ({sessions.length})
           </TabsTrigger>
           <TabsTrigger
             value="quizzes"
@@ -115,10 +115,10 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
               </div>
               <h2 className="text-xl font-bold">No Practice Sessions Yet</h2>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                You haven&apos;t taken an exam simulation or tutor drill yet. Start one to build your test readiness and review detailed explanations.
+                You haven&apos;t taken a practice session or test yet. Start one to build your test readiness and review detailed explanations.
               </p>
               <Button asChild className="font-bold">
-                <Link href="/home">Start a Practice Test</Link>
+                <Link href="/home">Start Practicing</Link>
               </Button>
             </div>
           ) : (

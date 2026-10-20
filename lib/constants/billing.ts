@@ -24,7 +24,7 @@ export const BILLING_PLANS: Record<"monthly" | "quarterly", PricingPlan> = {
     productId: process.env.NEXT_PUBLIC_DODO_PRODUCT_MONTHLY || "pdt_monthly_pro",
     features: [
       "Unlimited daily test sessions (No 10Q cap)",
-      "Full 25Q Practice & 50Q Exam Simulations",
+      "Full 25Q Practice Sets & 50Q Mock Tests",
       "Step-by-step solutions & mistake explanations",
       "Smart spaced repetition review schedule",
       "Calibrated exam readiness score forecast",

@@ -12,7 +12,6 @@ import { UserMenu } from "./UserMenu";
 import { BrandLogo } from "@/components/shared/BrandLogo";
 import type { SidebarData } from "@/app/layout";
 import {
-  TrendingUp,
   History,
   Compass,
   Menu,
@@ -25,7 +24,6 @@ import {
 
 const mainItems = [
   { title: "Home", url: "/home", icon: Home },
-  { title: "Analytics", url: "/analytics", icon: TrendingUp },
   { title: "History", url: "/history", icon: History },
 ];
 
@@ -56,13 +54,12 @@ export function AppShell({ children, sidebarData }: { children: React.ReactNode;
 
   const headerTitle =
     pathname === "/home" || pathname === "/dashboard" ? "Home" :
-    pathname === "/analytics" ? "Analytics" :
     pathname === "/history" ? "History" :
     pathname === "/setup" ? "Settings" :
     pathname === "/create" ? "Create a Quiz" :
     pathname === "/quizzes" ? "Public Quizzes" : "";
 
-  const showOnRoutes = ["/create", "/quizzes", "/home", "/dashboard", "/analytics", "/history", "/setup"];
+  const showOnRoutes = ["/create", "/quizzes", "/home", "/dashboard", "/history", "/setup"];
   const shouldShowSidebar = showOnRoutes.includes(pathname) && !!user;
   const isQuizPage = pathname.startsWith("/quiz/") || pathname.startsWith("/play/") || pathname.startsWith("/session/");
 

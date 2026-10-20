@@ -13,7 +13,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { SessionRow } from "@/app/analytics/page";
+import type { SessionRow } from "@/types/tutor";
 
 interface SessionHistoryRowProps {
   session: SessionRow;
@@ -31,14 +31,19 @@ export function SessionHistoryRow({ session, examName, onDiscard }: SessionHisto
   const isCompleted = session.status === "completed";
   const isActive = session.status === "active";
 
+  const totalQuestions =
+    session.totalQuestions > 0 ? session.totalQuestions : session.answeredCount;
+
   const intentLabel =
     session.session_intent === "custom_mock"
-      ? "Mock Exam"
+      ? totalQuestions >= 50
+        ? "Full Mock Test"
+        : "Practice Set"
       : session.session_intent === "tracked"
-        ? "Exam Simulation"
+        ? "Timed Test"
         : session.session_intent === "diagnostic"
           ? "Diagnostic Test"
-          : "Tutor Drill";
+          : "Study Session";
 
   const domainCount = session.target_domains?.length ?? 0;
   const domainText =
@@ -47,9 +52,6 @@ export function SessionHistoryRow({ session, examName, onDiscard }: SessionHisto
       : domainCount === 1
         ? session.target_domains[0]
         : `${domainCount} domains`;
-
-  const totalQuestions =
-    session.totalQuestions > 0 ? session.totalQuestions : session.answeredCount;
 
   const accuracyColor =
     session.accuracy >= 80
