@@ -2,6 +2,7 @@
 "use server";
 
 import { z } from "zod";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { dodo } from "@/lib/dodo";
 import { BILLING_PLANS } from "@/lib/constants/billing";
@@ -42,8 +43,11 @@ export async function createCheckoutSession(params: {
   }
 
   try {
-    const origin = process.env.NEXT_PUBLIC_APP_URL || "https://acetheprep.com";
-    const returnUrl = parsed.data.redirectUrl || `${origin}/dashboard?upgrade=success`;
+    const headerList = await headers();
+    const host = headerList.get("host") || "";
+    const proto = headerList.get("x-forwarded-proto") || (host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https");
+    const dynamicOrigin = host ? `${proto}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || "https://acetheprep.com");
+    const returnUrl = parsed.data.redirectUrl || `${dynamicOrigin}/dashboard?upgrade=success`;
 
     const session = await dodo.checkoutSessions.create({
       product_cart: [

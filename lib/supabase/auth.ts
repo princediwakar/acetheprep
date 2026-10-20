@@ -2,7 +2,10 @@ import { supabase } from "@/lib/supabase/client";
 import { signOutAction } from "@/lib/actions/auth";
 
 export async function signInWithGoogle(returnUrl?: string) {
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const origin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
   const callbackUrl = new URL("/api/auth/callback", origin);
 
   if (returnUrl) {
