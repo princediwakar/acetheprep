@@ -448,15 +448,15 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
                                   </Badge>
                                 )}
                               </div>
-                              <div className="flex items-center gap-2">
-                                <div className="h-1.5 bg-muted rounded-full overflow-hidden flex-1 max-w-[120px]">
+                              <div className="flex items-center gap-2.5">
+                                <div className="h-1.5 bg-muted rounded-full overflow-hidden w-24 shrink-0">
                                   <div
                                     className={`h-full rounded-full transition-all duration-500 ${notStarted ? "bg-transparent" : barColor}`}
-                                    style={{ width: `${Math.max(pct, 2)}%` }}
+                                    style={{ width: `${notStarted ? 0 : Math.max(pct, 4)}%` }}
                                   />
                                 </div>
-                                <span className="text-xs tabular-nums text-muted-foreground w-8">
-                                  {notStarted ? "0%" : `${pct}%`}
+                                <span className="text-xs tabular-nums text-muted-foreground whitespace-nowrap">
+                                  {notStarted ? "Not started · 0 Qs" : `${pct}% · ${domain.totalAttempted} Q${domain.totalAttempted !== 1 ? "s" : ""}`}
                                 </span>
                               </div>
                             </div>
