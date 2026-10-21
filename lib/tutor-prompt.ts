@@ -61,9 +61,9 @@ interface Response {
     passage?: string; // Authentic multi-paragraph reading passage (300-500 words) for RC
     passage_id?: string; // Unique shared identifier if multiple questions reference the same passage
     question_text: string; // The question stem alone
-    options: { A: string; B: string; C: string; D: string };
-    correct_option: "A" | "B" | "C" | "D";
-    distractor_analysis: { A: string; B: string; C: string; D: string };
+    options: { A: string; B: string; C: string; D: string; E?: string };
+    correct_option: "A" | "B" | "C" | "D" | "E";
+    distractor_analysis: { A: string; B: string; C: string; D: string; E?: string };
     skill_domain: string; // MUST perfectly match a provided Target Domain
     difficulty_tier: "foundation" | "application" | "advanced" | "expert";
     time_estimate_seconds: number;
@@ -123,6 +123,19 @@ export function buildTutorUserMessage(params: TutorPromptParams): string {
     ? `\n\nREADING COMPREHENSION DIRECTIVE:\nFor Reading Comprehension items, provide a full authentic passage (350–500 words) in the "passage" field. Group multiple questions under the same passage by assigning them the identical "passage_id" and identical "passage" text. In "question_text", provide ONLY the specific question prompt.`
     : "";
 
+  const isGMAT = /gmat/i.test(examName);
+  const gmatDirective = isGMAT
+    ? `\n\nGMAT FOCUS 2026 SPECIFICATION MANDATE:
+1. 5-CHOICE REQUIREMENT: Every single question MUST provide exactly 5 answer options (A, B, C, D, E) and corresponding distractor_analysis for all 5 choices (A through E).
+2. DATA SUFFICIENCY STEM FORMAT: For any "Data Sufficiency" questions, the options MUST adhere strictly to official GMAC canonical text:
+   - A: Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.
+   - B: Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.
+   - C: BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.
+   - D: EACH statement ALONE is sufficient.
+   - E: Statements (1) and (2) TOGETHER are NOT sufficient.
+3. CRITICAL REASONING & TRAP LABELS: Formulate authentic GMAT reasoning structures (Premise, Unstated Assumption, Conclusion). In "misconception", classify the specific trap (e.g., "C-Trap in DS", "Reverse Causality", "Out of Scope", "Extreme Quantifier").`
+    : "";
+
   return `CONTEXT: ${examName} ${examYear} | Mode: ${timeMode} | ${daysRemaining} days remaining.
 
 TARGET DOMAINS & MASTERY:
@@ -132,7 +145,7 @@ EXECUTION DIRECTIVE:
 Generate exactly ${questionCount} questions strictly at exam-grade difficulty:
 - ${difficultyDistribution.easy} "foundation" tier (Trivial recall forbidden)
 - ${difficultyDistribution.medium} "application" tier (Rigorous multi-step problem solving)
-- ${difficultyDistribution.hard} "advanced" / "expert" tier (Deceptive distractors, analytical synthesis, calculus/derivation)${exclusions}${seedDirective}${rcDirective}
+- ${difficultyDistribution.hard} "advanced" / "expert" tier (Deceptive distractors, analytical synthesis, calculus/derivation)${exclusions}${seedDirective}${rcDirective}${gmatDirective}
 
 CRITICAL: Every question MUST BE COMPLETELY NOVEL and distinct from previous sessions. Strictly use the exact TARGET DOMAIN names provided above for the \`skill_domain\` field.`;
 }
@@ -219,6 +232,11 @@ export function buildDiagnosticUserMessage(
     .map((s) => `- ${s.name}: ${s.domains.join(", ")}`)
     .join("\n");
 
+  const isGMAT = /gmat/i.test(examName);
+  const conventionLine = isGMAT
+    ? "3. Provide exactly 5 options (A, B, C, D, E) and distractor_analysis for each, adhering to GMAC question standards."
+    : "3. Use the standard conventions for the exam (SI, IUPAC where applicable).";
+
   return `CONTEXT: ${examName} ${examYear} | Mode: Diagnostic (5 questions)
 
 DIAGNOSTIC STRATA:
@@ -228,7 +246,7 @@ EXECUTION DIRECTIVE:
 Generate exactly 5 questions — one per stratum listed above. Each question must:
 1. Test fundamental, cross-cutting understanding of the stratum's domain cluster. Do NOT target a single topic within the cluster.
 2. Require connecting concepts across at least two domains in the cluster to reach the correct answer.
-3. Use the standard conventions for the exam (SI, IUPAC where applicable).
+${conventionLine}
 4. Include plausible distractors derived from common errors within that stratum.
 
 CRITICAL: One question per stratum. Output raw JSON matching the schema. Do not repeat questions.`;

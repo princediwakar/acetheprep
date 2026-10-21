@@ -42,7 +42,7 @@ interface MasteryUpsertRow {
 
 // ----- Diagnostic Strata -----
 
-const DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
+const JEE_DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
   {
     name: "Foundational Math",
     domains: [
@@ -92,12 +92,75 @@ const DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
   },
 ];
 
-// Reverse lookup: domain name → stratum name
-const DOMAIN_TO_STRATUM: Record<string, string> = (() => {
+const GMAT_DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
+  {
+    name: "Quantitative Reasoning",
+    domains: [
+      "Arithmetic",
+      "Algebra",
+      "Number Properties",
+      "Word Problems (Rates & Work)",
+      "Word Problems (Overlapping Sets)",
+      "Counting & Probability",
+      "Applied Statistics",
+    ],
+  },
+  {
+    name: "Verbal: Critical Reasoning",
+    domains: [
+      "Critical Reasoning",
+      "CR: Assumption & Flaw",
+      "CR: Strengthen & Weaken",
+      "CR: Inference & Conclusion",
+      "CR: Boldface & Method of Reasoning",
+    ],
+  },
+  {
+    name: "Verbal: Reading Comprehension",
+    domains: [
+      "Reading Comprehension",
+      "RC: Main Idea & Primary Purpose",
+      "RC: Inference & Specific Detail",
+      "RC: Structure, Tone & Organization",
+    ],
+  },
+  {
+    name: "Data Sufficiency Logic",
+    domains: [
+      "Data Sufficiency",
+      "DS: Value Questions (Unique Solution)",
+      "DS: Yes/No Questions (Invariant Answer)",
+      "DS: Number Properties & Inequalities",
+    ],
+  },
+  {
+    name: "Integrated Data Reasoning",
+    domains: [
+      "Two-Part Analysis",
+      "Two-Part Analysis: Quantitative",
+      "Two-Part Analysis: Logical",
+      "Table Analysis",
+      "Graphics Interpretation",
+      "Multi-Source Reasoning",
+    ],
+  },
+];
+
+const JEE_DOMAIN_TO_STRATUM: Record<string, string> = (() => {
   const map: Record<string, string> = {};
-  for (const stratum of DIAGNOSTIC_STRATA) {
+  for (const stratum of JEE_DIAGNOSTIC_STRATA) {
     for (const domain of stratum.domains) {
-      map[domain] = stratum.name;
+      map[domain.toLowerCase()] = stratum.name;
+    }
+  }
+  return map;
+})();
+
+const GMAT_DOMAIN_TO_STRATUM: Record<string, string> = (() => {
+  const map: Record<string, string> = {};
+  for (const stratum of GMAT_DIAGNOSTIC_STRATA) {
+    for (const domain of stratum.domains) {
+      map[domain.toLowerCase()] = stratum.name;
     }
   }
   return map;
@@ -105,12 +168,34 @@ const DOMAIN_TO_STRATUM: Record<string, string> = (() => {
 
 // ----- Exported Accessors -----
 
-export function getDiagnosticStrata(): DiagnosticStrata[] {
-  return DIAGNOSTIC_STRATA;
+export function getDiagnosticStrata(examName?: string): DiagnosticStrata[] {
+  if (examName && /gmat/i.test(examName)) {
+    return GMAT_DIAGNOSTIC_STRATA;
+  }
+  return JEE_DIAGNOSTIC_STRATA;
 }
 
-export function getStratumForDomain(domain: string): string | null {
-  return DOMAIN_TO_STRATUM[domain] ?? null;
+export function getStratumForDomain(domain: string, examName?: string): string | null {
+  const norm = domain.trim().toLowerCase();
+  const isGMAT = examName && /gmat/i.test(examName);
+
+  if (isGMAT) {
+    if (GMAT_DOMAIN_TO_STRATUM[norm]) return GMAT_DOMAIN_TO_STRATUM[norm];
+    // Heuristic fallbacks for GMAT
+    if (norm.startsWith("cr:") || norm.includes("critical reasoning")) return "Verbal: Critical Reasoning";
+    if (norm.startsWith("rc:") || norm.includes("reading comprehension")) return "Verbal: Reading Comprehension";
+    if (norm.startsWith("ds:") || norm.includes("data sufficiency")) return "Data Sufficiency Logic";
+    if (norm.includes("table") || norm.includes("graphics") || norm.includes("multi-source") || norm.includes("two-part")) {
+      return "Integrated Data Reasoning";
+    }
+    if (norm.includes("arithmetic") || norm.includes("algebra") || norm.includes("number") || norm.includes("probability") || norm.includes("statistics") || norm.includes("word problem")) {
+      return "Quantitative Reasoning";
+    }
+    return null;
+  }
+
+  // Default to JEE mapping, fallback to checking both
+  return JEE_DOMAIN_TO_STRATUM[norm] ?? GMAT_DOMAIN_TO_STRATUM[norm] ?? null;
 }
 
 // ----- Scoring Constants -----
@@ -179,7 +264,7 @@ export async function seedDiagnosticPriors(
   const stratumScore = new Map<string, number>();
 
   for (const qr of questionResults) {
-    const stratumName = getStratumForDomain(qr.skill_domain);
+    const stratumName = getStratumForDomain(qr.skill_domain, examName);
     if (!stratumName) continue;
 
     let score: number;
@@ -204,7 +289,7 @@ export async function seedDiagnosticPriors(
   const finalScores: Record<string, number> = {};
 
   for (const domain of taxonomyDomains) {
-    const stratumName = getStratumForDomain(domain);
+    const stratumName = getStratumForDomain(domain, examName);
     const stratumScoreValue = stratumName
       ? stratumScore.get(stratumName) ?? null
       : null;

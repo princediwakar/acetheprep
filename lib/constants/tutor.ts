@@ -93,6 +93,17 @@ export const PREREQUISITE_WEIGHTS: Record<string, number> = {
   'Chemical Bonding': 1.1,
   'Coordination Compounds': 0.9,
   'Complex Numbers': 1.0,
+  // GMAT Focus
+  'Data Sufficiency': 1.5,
+  'Critical Reasoning': 1.4,
+  'Reading Comprehension': 1.3,
+  Arithmetic: 1.3,
+  'Number Properties': 1.4,
+  'Word Problems': 1.2,
+  'Two-Part Analysis': 1.2,
+  'Table Analysis': 1.1,
+  'Graphics Interpretation': 1.1,
+  'Multi-Source Reasoning': 1.1,
 };
 
 export const TUTOR_AI_CONFIG = {

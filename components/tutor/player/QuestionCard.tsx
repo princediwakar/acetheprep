@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { CheckCircle, XCircle, AlertTriangle, BookOpen, HelpCircle, ArrowRight } from "lucide-react";
 import type { SessionQuestion, SelectedOption } from "@/types/tutor";
 
-const OPTION_LETTERS = ["A", "B", "C", "D"] as const;
+const OPTION_LETTERS = ["A", "B", "C", "D", "E"] as const;
 
 interface QuestionCardProps {
   current: SessionQuestion;

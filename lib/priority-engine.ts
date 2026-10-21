@@ -139,6 +139,103 @@ const JEE_EXAM_WEIGHTS: Record<string, number> = {
   "Probability and Statistics": 0.06,
 };
 
+// GMAT Focus exam section question weights (calibrated to official GMAC question distributions)
+const GMAT_EXAM_WEIGHTS: Record<string, number> = {
+  // Quantitative Reasoning (21 Qs)
+  Arithmetic: 0.13,
+  Algebra: 0.10,
+  "Number Properties": 0.12,
+  "Word Problems (Rates & Work)": 0.08,
+  "Word Problems (Overlapping Sets)": 0.08,
+  "Counting & Probability": 0.07,
+  "Applied Statistics": 0.06,
+
+  // Verbal Reasoning (23 Qs)
+  "Reading Comprehension": 0.14,
+  "Critical Reasoning": 0.12,
+  "CR: Assumption & Flaw": 0.08,
+  "CR: Strengthen & Weaken": 0.08,
+  "CR: Inference & Conclusion": 0.07,
+  "CR: Boldface & Method of Reasoning": 0.05,
+  "RC: Main Idea & Primary Purpose": 0.08,
+  "RC: Inference & Specific Detail": 0.09,
+  "RC: Structure, Tone & Organization": 0.06,
+
+  // Data Insights (20 Qs)
+  "Data Sufficiency": 0.16,
+  "DS: Value Questions (Unique Solution)": 0.08,
+  "DS: Yes/No Questions (Invariant Answer)": 0.08,
+  "DS: Number Properties & Inequalities": 0.07,
+  "Two-Part Analysis": 0.12,
+  "Two-Part Analysis: Quantitative": 0.07,
+  "Two-Part Analysis: Logical": 0.06,
+  "Table Analysis": 0.10,
+  "Graphics Interpretation": 0.09,
+  "Multi-Source Reasoning": 0.07,
+};
+
+const GMAT_DOMAIN_TO_SUBJECT: Record<string, string> = {
+  Arithmetic: "Quantitative Reasoning",
+  Algebra: "Quantitative Reasoning",
+  "Number Properties": "Quantitative Reasoning",
+  "Word Problems (Rates & Work)": "Quantitative Reasoning",
+  "Word Problems (Overlapping Sets)": "Quantitative Reasoning",
+  "Counting & Probability": "Quantitative Reasoning",
+  "Applied Statistics": "Quantitative Reasoning",
+
+  "Reading Comprehension": "Verbal Reasoning",
+  "Critical Reasoning": "Verbal Reasoning",
+  "CR: Assumption & Flaw": "Verbal Reasoning",
+  "CR: Strengthen & Weaken": "Verbal Reasoning",
+  "CR: Inference & Conclusion": "Verbal Reasoning",
+  "CR: Boldface & Method of Reasoning": "Verbal Reasoning",
+  "RC: Main Idea & Primary Purpose": "Verbal Reasoning",
+  "RC: Inference & Specific Detail": "Verbal Reasoning",
+  "RC: Structure, Tone & Organization": "Verbal Reasoning",
+
+  "Data Sufficiency": "Data Insights",
+  "DS: Value Questions (Unique Solution)": "Data Insights",
+  "DS: Yes/No Questions (Invariant Answer)": "Data Insights",
+  "DS: Number Properties & Inequalities": "Data Insights",
+  "Two-Part Analysis": "Data Insights",
+  "Two-Part Analysis: Quantitative": "Data Insights",
+  "Two-Part Analysis: Logical": "Data Insights",
+  "Table Analysis": "Data Insights",
+  "Graphics Interpretation": "Data Insights",
+  "Multi-Source Reasoning": "Data Insights",
+};
+
+const GMAT_DEFAULT_DIFFICULTY_TIER: Record<string, DifficultyTier> = {
+  Arithmetic: "application",
+  Algebra: "advanced",
+  "Number Properties": "advanced",
+  "Word Problems (Rates & Work)": "application",
+  "Word Problems (Overlapping Sets)": "application",
+  "Counting & Probability": "advanced",
+  "Applied Statistics": "application",
+
+  "Reading Comprehension": "advanced",
+  "Critical Reasoning": "advanced",
+  "CR: Assumption & Flaw": "advanced",
+  "CR: Strengthen & Weaken": "advanced",
+  "CR: Inference & Conclusion": "advanced",
+  "CR: Boldface & Method of Reasoning": "expert",
+  "RC: Main Idea & Primary Purpose": "application",
+  "RC: Inference & Specific Detail": "advanced",
+  "RC: Structure, Tone & Organization": "advanced",
+
+  "Data Sufficiency": "advanced",
+  "DS: Value Questions (Unique Solution)": "advanced",
+  "DS: Yes/No Questions (Invariant Answer)": "advanced",
+  "DS: Number Properties & Inequalities": "expert",
+  "Two-Part Analysis": "advanced",
+  "Two-Part Analysis: Quantitative": "advanced",
+  "Two-Part Analysis: Logical": "advanced",
+  "Table Analysis": "application",
+  "Graphics Interpretation": "application",
+  "Multi-Source Reasoning": "expert",
+};
+
 // Forgetting curve parameters by time mode
 const FORGETTING_PARAMS = {
   foundation: { halfLifeDays: 30, steepness: 0.8 },
@@ -262,16 +359,17 @@ async function getExamTopicWeights(examName: string): Promise<ExamTopicWeight[]>
     console.warn("[PriorityEngine] Failed to load exam_topic_weights:", error);
   }
 
-  // Build defaults from taxonomy + JEE_EXAM_WEIGHTS
+  // Build defaults from taxonomy + exam-specific weights
+  const isGMAT = /gmat/i.test(examName);
   const domains = getDomainsForExam(examName);
   return domains.map((domain) => ({
     id: crypto.randomUUID(),
     exam_name: examName,
-    subject: DOMAIN_TO_SUBJECT[domain] || "General",
+    subject: (isGMAT ? GMAT_DOMAIN_TO_SUBJECT[domain] : DOMAIN_TO_SUBJECT[domain]) || "General",
     topic: domain,
     skill_domain: domain,
-    difficulty_tier: DEFAULT_DIFFICULTY_TIER[domain] || "application",
-    exam_weight: JEE_EXAM_WEIGHTS[domain] || 0.05,
+    difficulty_tier: (isGMAT ? GMAT_DEFAULT_DIFFICULTY_TIER[domain] : DEFAULT_DIFFICULTY_TIER[domain]) || "application",
+    exam_weight: (isGMAT ? GMAT_EXAM_WEIGHTS[domain] : JEE_EXAM_WEIGHTS[domain]) || 0.08,
     question_frequency_10yr: 0,
     c_tier_cap: null,
     estimated_minutes_to_mastery: null,
@@ -283,6 +381,7 @@ async function getExamTopicWeights(examName: string): Promise<ExamTopicWeight[]>
  * Returns topics sorted by priority score (highest first)
  */
 export async function computePriorityScores(input: PriorityInput): Promise<PriorityOutput[]> {
+  const isGMAT = /gmat/i.test(input.examName);
   const domains = getDomainsForExam(input.examName);
 
   // Load empirical C_tier caps
@@ -305,7 +404,7 @@ export async function computePriorityScores(input: PriorityInput): Promise<Prior
     if (!weightInfo) continue;
 
     const examWeight = weightInfo.exam_weight;
-    const difficultyTier = weightInfo.difficulty_tier || DEFAULT_DIFFICULTY_TIER[domain] || "application";
+    const difficultyTier = weightInfo.difficulty_tier || (isGMAT ? GMAT_DEFAULT_DIFFICULTY_TIER[domain] : DEFAULT_DIFFICULTY_TIER[domain]) || "application";
     const cTierCap = weightInfo.c_tier_cap ?? cTierCaps[difficultyTier] ?? DEFAULT_C_TIER[difficultyTier];
 
     // Component 1: Knowledge Gap (0-1)
@@ -345,7 +444,7 @@ export async function computePriorityScores(input: PriorityInput): Promise<Prior
         denominator,
       },
       difficultyTier,
-      subject: DOMAIN_TO_SUBJECT[domain] || "General",
+      subject: (isGMAT ? GMAT_DOMAIN_TO_SUBJECT[domain] : DOMAIN_TO_SUBJECT[domain]) || "General",
     });
   }
 

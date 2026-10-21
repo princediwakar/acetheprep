@@ -15,6 +15,7 @@ import { SmartStartStrip } from "@/components/tutor/dashboard/SmartStartStrip";
 import { ActiveSessionsBanner } from "@/components/tutor/dashboard/ActiveSessionsBanner";
 import { SyllabusMap } from "@/components/tutor/dashboard/SyllabusMap";
 import { LaunchSessionDialog, type SessionConfig } from "@/components/tutor/dashboard/LaunchSessionDialog";
+import { ProjectionHero } from "@/components/tutor/ProjectionHero";
 
 export { DashboardViewLoading, DashboardViewError };
 
@@ -181,6 +182,11 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
       {/* Active In-Progress Sessions Banner */}
       {data.activeSessions && data.activeSessions.length > 0 && (
         <ActiveSessionsBanner initialSessions={data.activeSessions} />
+      )}
+
+      {/* Score Prediction Hero */}
+      {data.prediction && (
+        <ProjectionHero prediction={data.prediction} examName={data.examName} />
       )}
 
       {/* Section 2: Smart Start Strip */}

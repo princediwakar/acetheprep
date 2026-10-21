@@ -359,7 +359,7 @@ export async function generateAndCreateSession(
       ? buildDiagnosticUserMessage({
           examName: profile.exam_name,
           examYear,
-          strata: getDiagnosticStrata(),
+          strata: getDiagnosticStrata(profile.exam_name),
         })
       : buildTutorUserMessage({
           examName: profile.exam_name,

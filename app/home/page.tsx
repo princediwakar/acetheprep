@@ -10,6 +10,7 @@ import { DashboardView, DashboardViewLoading } from "@/components/tutor/Dashboar
 import type { ExamProfile, TimeMode, SessionRow } from "@/types/tutor";
 import type { ProjectionHeroProps } from "@/components/tutor/ProjectionHero";
 import { marksToPercentile, getColdStartBand, computeCompositePercentile } from "@/lib/predictor/nta-priors";
+import { computeGMATPrediction } from "@/lib/predictor/gmat-score-engine";
 import { getUserSubscriptionStatus, syncCheckoutSession } from "@/lib/billing";
 import taxonomy from "@/lib/taxonomies.json";
 
@@ -305,6 +306,87 @@ async function HomePageContent({
   const streak = computeStreak(questionResults);
   const sessionsCompleted = completedSessionsRes.count ?? 0;
 
+  const isGMAT = /gmat/i.test(profile.exam_name);
+
+  let prediction: ProjectionHeroProps["prediction"] = null;
+
+  if (isGMAT) {
+    const quantDomains = examSubjects?.["Quantitative Reasoning"] ?? [];
+    const verbalDomains = examSubjects?.["Verbal Reasoning"] ?? [];
+    const diDomains = examSubjects?.["Data Insights"] ?? [];
+
+    const getSectionMastery = (domains: string[]) => {
+      let sum = 0;
+      let count = 0;
+      for (const d of domains) {
+        if (domainAttempted[d] && domainAttempted[d] > 0) {
+          sum += masteryMap[d] ?? 0;
+          count++;
+        }
+      }
+      return count > 0 ? sum / count : 0.4;
+    };
+
+    const gmatPred = computeGMATPrediction({
+      quantMastery: getSectionMastery(quantDomains),
+      verbalMastery: getSectionMastery(verbalDomains),
+      diMastery: getSectionMastery(diDomains),
+      totalTrackedSessions: sessionsCompleted,
+      quantDomainsTracked: quantDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+      verbalDomainsTracked: verbalDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+      diDomainsTracked: diDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+    });
+
+    prediction = {
+      overallPercentile: gmatPred.overallPercentile,
+      overallBandLower: gmatPred.scoreBandLower,
+      overallBandUpper: gmatPred.scoreBandUpper,
+      overallBandWidth: gmatPred.scoreBandWidth,
+      calibrationSource: gmatPred.calibrationSource,
+      disclaimer: gmatPred.disclaimer,
+      isFrozen: false,
+      totalTrackedSessions: gmatPred.totalTrackedSessions,
+      metricLabel: "Projected GMAT Focus Score (205–805)",
+      displayValue: `${gmatPred.scoreBandLower}–${gmatPred.scoreBandUpper}`,
+      secondaryLabel: `~${gmatPred.overallPercentile}th %ile`,
+    };
+  } else if (predictionRes.data) {
+    const lower = predictionRes.data.band_lower;
+    const upper = predictionRes.data.band_upper;
+    const sessions = predictionRes.data.sessions_used ?? 0;
+    prediction = {
+      overallPercentile: predictionRes.data.predicted_percentile ?? 0,
+      overallBandLower: lower,
+      overallBandUpper: upper,
+      overallBandWidth: Math.round((upper - lower) * 100) / 100,
+      calibrationSource: predictionRes.data.calibration_source ?? "public_nta",
+      disclaimer: sessions >= 20
+        ? "Fully calibrated to your personal practice history."
+        : sessions > 0
+          ? `Prediction blends public NTA data with your ${sessions} tracked session${sessions > 1 ? "s" : ""}. Band sharpens with each session.`
+          : "Based on public NTA normalization tables (2025–2026 cycles). Your band sharpens with every tracked session.",
+      isFrozen: predictionRes.data.is_frozen ?? false,
+      totalTrackedSessions: sessions,
+    };
+  } else {
+    // Cold-start: generate band from public NTA priors (zero tracked sessions)
+    const p = marksToPercentile("Physics", 50);
+    const c = marksToPercentile("Chemistry", 50);
+    const m = marksToPercentile("Mathematics", 50);
+    const overall = computeCompositePercentile({ Physics: p, Chemistry: c, Mathematics: m });
+    const band = getColdStartBand("Physics", overall);
+    prediction = {
+      overallPercentile: overall,
+      overallBandLower: band.lower,
+      overallBandUpper: band.upper,
+      overallBandWidth: band.width,
+      calibrationSource: "public_nta",
+      disclaimer: "Based on public NTA normalization tables (2025–2026 cycles). Your band sharpens with every tracked session.",
+      isFrozen: false,
+      totalTrackedSessions: 0,
+    };
+  }
+
   const data: DashboardPageData = {
     readinessIndex,
     daysRemaining,
@@ -321,44 +403,7 @@ async function HomePageContent({
     activeTargets: profile.active_targets ?? [],
     overdueDomainCount,
     weakestOverdueDomain,
-    prediction: predictionRes.data
-      ? (() => {
-          const lower = predictionRes.data.band_lower;
-          const upper = predictionRes.data.band_upper;
-          const sessions = predictionRes.data.sessions_used ?? 0;
-          return {
-            overallPercentile: predictionRes.data.predicted_percentile ?? 0,
-            overallBandLower: lower,
-            overallBandUpper: upper,
-            overallBandWidth: Math.round((upper - lower) * 100) / 100,
-            calibrationSource: predictionRes.data.calibration_source ?? "public_nta",
-            disclaimer: sessions >= 20
-              ? "Fully calibrated to your personal practice history."
-              : sessions > 0
-                ? `Prediction blends public NTA data with your ${sessions} tracked session${sessions > 1 ? "s" : ""}. Band sharpens with each session.`
-                : "Based on public NTA normalization tables (2025–2026 cycles). Your band sharpens with every tracked session.",
-            isFrozen: predictionRes.data.is_frozen ?? false,
-            totalTrackedSessions: sessions,
-          };
-        })()
-      : (() => {
-          // Cold-start: generate band from public NTA priors (zero tracked sessions)
-          const p = marksToPercentile("Physics", 50);
-          const c = marksToPercentile("Chemistry", 50);
-          const m = marksToPercentile("Mathematics", 50);
-          const overall = computeCompositePercentile({ Physics: p, Chemistry: c, Mathematics: m });
-          const band = getColdStartBand("Physics", overall);
-          return {
-            overallPercentile: overall,
-            overallBandLower: band.lower,
-            overallBandUpper: band.upper,
-            overallBandWidth: band.width,
-            calibrationSource: "public_nta",
-            disclaimer: "Based on public NTA normalization tables (2025–2026 cycles). Your band sharpens with every tracked session.",
-            isFrozen: false,
-            totalTrackedSessions: 0,
-          };
-        })(),
+    prediction,
     isPro: subscriptionStatus.isPro,
     activeSessions,
   };

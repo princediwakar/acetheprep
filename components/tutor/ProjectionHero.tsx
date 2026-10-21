@@ -14,6 +14,9 @@ interface PredictionBand {
   disclaimer: string;
   isFrozen: boolean;
   totalTrackedSessions: number;
+  metricLabel?: string;
+  displayValue?: string;
+  secondaryLabel?: string;
 }
 
 export interface ProjectionHeroProps {
@@ -22,15 +25,17 @@ export interface ProjectionHeroProps {
 }
 
 function getBandColor(width: number) {
-  if (width <= 4) return "border-emerald-500/30 bg-emerald-500/10 text-emerald-400";
-  if (width <= 8) return "border-amber-500/30 bg-amber-500/10 text-amber-400";
+  if (width <= 4 || width <= 30) return "border-emerald-500/30 bg-emerald-500/10 text-emerald-400";
+  if (width <= 8 || width <= 70) return "border-amber-500/30 bg-amber-500/10 text-amber-400";
   return "border-rose-500/30 bg-rose-500/10 text-rose-400";
 }
 
 function getCalibrationBadge(source: string) {
   switch (source) {
+    case "fully_calibrated":
     case "proprietary": return "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
     case "blended": return "bg-amber-500/20 text-amber-400 border-amber-500/30";
+    case "gmac_focus_tables": return "bg-indigo-500/20 text-indigo-400 border-indigo-500/30";
     default: return "bg-slate-500/20 text-slate-400 border-slate-500/30";
   }
 }
@@ -112,11 +117,11 @@ export function ProjectionHero({ prediction, examName }: ProjectionHeroProps) {
           {/* Hero Metric */}
           <div className="text-center">
             <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">
-              Projected {examName ? `${examName} ` : ""}Percentile
+              {prediction.metricLabel || `Projected ${examName ? `${examName} ` : ""}Percentile`}
             </p>
             <div className="flex items-baseline justify-center gap-1 mb-3">
               <span className="text-5xl font-bold tracking-tight text-white">
-                {prediction.overallBandLower}–{prediction.overallBandUpper}
+                {prediction.displayValue || `${prediction.overallBandLower}–${prediction.overallBandUpper}`}
               </span>
             </div>
 
@@ -126,9 +131,16 @@ export function ProjectionHero({ prediction, examName }: ProjectionHeroProps) {
                 <span className="font-medium">
                   ±{Math.round(prediction.overallBandWidth / 2)} pts
                 </span>
-                <span className="text-xs opacity-60">
-                  (width: {prediction.overallBandWidth})
-                </span>
+                {prediction.secondaryLabel && (
+                  <span className="text-xs opacity-90 font-mono">
+                    {prediction.secondaryLabel}
+                  </span>
+                )}
+                {!prediction.secondaryLabel && (
+                  <span className="text-xs opacity-60">
+                    (width: {prediction.overallBandWidth})
+                  </span>
+                )}
               </div>
             </div>
 
@@ -137,9 +149,13 @@ export function ProjectionHero({ prediction, examName }: ProjectionHeroProps) {
               <span>
                 {prediction.totalTrackedSessions} tracked session{prediction.totalTrackedSessions !== 1 ? "s" : ""}
               </span>
-              {prediction.calibrationSource !== "proprietary" && (
+              {prediction.calibrationSource !== "proprietary" && prediction.calibrationSource !== "fully_calibrated" && (
                 <span className={`px-2 py-0.5 rounded-full border text-xs font-medium ${getCalibrationBadge(prediction.calibrationSource)}`}>
-                  {prediction.calibrationSource === "public_nta" ? "NTA Prior" : "Blended"}
+                  {prediction.calibrationSource === "public_nta"
+                    ? "NTA Prior"
+                    : prediction.calibrationSource === "gmac_focus_tables"
+                    ? "GMAC Norms"
+                    : "Blended"}
                 </span>
               )}
             </div>

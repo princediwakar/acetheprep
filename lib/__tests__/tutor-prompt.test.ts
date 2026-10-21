@@ -103,4 +103,37 @@ describe("buildTutorUserMessage — Uniqueness and Negative Constraints", () => 
       "Must instruct LLM to group questions under the same passage_id"
     );
   });
+
+  it("injects GMAT FOCUS 2026 5-CHOICE DIRECTIVE when exam is GMAT Focus", () => {
+    const dsDomain: TargetDomain = {
+      skillDomain: "Data Sufficiency",
+      masteryScore: 0.5,
+      recentErrors: [],
+      isOverdue: true,
+      lastSeenAt: null,
+    };
+
+    const message = buildTutorUserMessage({
+      examName: "GMAT Focus",
+      examYear: "2026",
+      timeMode: "acceleration",
+      daysRemaining: 68,
+      targetDomains: [dsDomain],
+      questionCount: 5,
+      difficultyDistribution: { easy: 0, medium: 1, hard: 4 },
+    });
+
+    assert.ok(
+      message.includes("GMAT FOCUS 2026 SPECIFICATION MANDATE:"),
+      "Must include GMAT Focus specification mandate"
+    );
+    assert.ok(
+      message.includes("5-CHOICE REQUIREMENT: Every single question MUST provide exactly 5 answer options (A, B, C, D, E)"),
+      "Must enforce 5 options"
+    );
+    assert.ok(
+      message.includes("DATA SUFFICIENCY STEM FORMAT"),
+      "Must enforce canonical GMAC DS stems"
+    );
+  });
 });

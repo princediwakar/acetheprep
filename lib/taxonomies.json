@@ -10,9 +10,39 @@
     "Analytical Writing": ["Analyze an Issue"]
   },
   "GMAT Focus": {
-    "Quantitative Reasoning": ["Arithmetic", "Algebra"],
-    "Verbal Reasoning": ["Reading Comprehension", "Critical Reasoning"],
-    "Data Insights": ["Data Sufficiency", "Multi-Source Reasoning", "Table Analysis", "Graphics Interpretation", "Two-Part Analysis"]
+    "Quantitative Reasoning": [
+      "Arithmetic",
+      "Algebra",
+      "Number Properties",
+      "Inequalities & Absolute Values",
+      "Word Problems (Rates & Work)",
+      "Word Problems (Overlapping Sets)",
+      "Counting & Probability",
+      "Applied Statistics"
+    ],
+    "Verbal Reasoning": [
+      "Critical Reasoning",
+      "Reading Comprehension",
+      "CR: Assumption & Flaw",
+      "CR: Strengthen & Weaken",
+      "CR: Inference & Conclusion",
+      "CR: Boldface & Method of Reasoning",
+      "RC: Main Idea & Primary Purpose",
+      "RC: Inference & Specific Detail",
+      "RC: Structure, Tone & Organization"
+    ],
+    "Data Insights": [
+      "Data Sufficiency",
+      "Two-Part Analysis",
+      "Table Analysis",
+      "Graphics Interpretation",
+      "Multi-Source Reasoning",
+      "DS: Value Questions (Unique Solution)",
+      "DS: Yes/No Questions (Invariant Answer)",
+      "DS: Number Properties & Inequalities",
+      "Two-Part Analysis: Quantitative",
+      "Two-Part Analysis: Logical"
+    ]
   },
   "CFA Level 1": {
     "Ethical & Professional Standards": ["Code of Ethics", "Standards of Professional Conduct", "Global Investment Performance Standards (GIPS)"],
