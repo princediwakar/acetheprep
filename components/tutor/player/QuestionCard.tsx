@@ -18,10 +18,39 @@ import {
   Volume2,
   Eye,
   EyeOff,
+  PenTool,
+  Sparkles,
+  Send,
+  Loader2,
+  FileText,
+  AlertCircle,
 } from "lucide-react";
 import type { SessionQuestion, SelectedOption } from "@/types/tutor";
 
 const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F"] as const;
+
+interface WritingEvaluationData {
+  exam: "IELTS" | "TOEFL";
+  overallBand?: number;
+  scaledScore?: number;
+  taskAchievementBand?: number;
+  coherenceCohesionBand?: number;
+  lexicalResourceBand?: number;
+  grammaticalAccuracyBand?: number;
+  developmentScore?: number;
+  organizationScore?: number;
+  languageUseScore?: number;
+  wordCount: number;
+  wordCountPenalty?: boolean;
+  strengths: string[];
+  criticalShortfalls: string[];
+  detailedFeedback: string;
+  sentenceCorrections: Array<{
+    original: string;
+    improved: string;
+    rationale: string;
+  }>;
+}
 
 interface QuestionCardProps {
   current: SessionQuestion;
@@ -30,6 +59,8 @@ interface QuestionCardProps {
   answerState: "pending" | "answered";
   isCorrect: boolean | null;
   onOptionClick: (option: SelectedOption) => void;
+  onTextSubmit?: (text: string, isCorrectText?: boolean) => void;
+  examName?: string;
 }
 
 export function QuestionCard({
@@ -39,16 +70,35 @@ export function QuestionCard({
   answerState,
   isCorrect,
   onOptionClick,
+  onTextSubmit,
+  examName,
 }: QuestionCardProps) {
   const { passage, prompt, isAudioTranscript } = extractPassageContent(current.question_text, current.passage);
   const isAudio = Boolean(isAudioTranscript || current.subject === "Listening" || current.skill_domain?.toLowerCase().includes("listening"));
 
-  // Sync mobile tab and stop active audio without useEffect
+  // Check if current question is a subjective Writing task
+  const isWritingTask = Boolean(
+    current.subject === "Writing" ||
+    current.skill_domain?.toLowerCase().includes("writing") ||
+    current.skill_domain?.toLowerCase().includes("task 1") ||
+    current.skill_domain?.toLowerCase().includes("task 2") ||
+    current.skill_domain?.toLowerCase().includes("academic discussion") ||
+    current.skill_domain?.toLowerCase().includes("integrated writing")
+  );
+
+  // Sync state without useEffect
   const [prevQuestionId, setPrevQuestionId] = useState(current.question_id);
   const [mobileTab, setMobileTab] = useState<"passage" | "question">("passage");
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
   const [audioSpeed, setAudioSpeed] = useState<number>(1.0);
+
+  // Free-text and AI evaluation state
+  const [essayText, setEssayText] = useState("");
+  const [shortAnswerText, setShortAnswerText] = useState("");
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [writingEvaluation, setWritingEvaluation] = useState<WritingEvaluationData | null>(null);
+  const [semanticFeedback, setSemanticFeedback] = useState<string | null>(null);
 
   if (current.question_id !== prevQuestionId) {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -58,6 +108,11 @@ export function QuestionCard({
     setMobileTab("passage");
     setIsPlayingAudio(false);
     setShowTranscript(false);
+    setEssayText("");
+    setShortAnswerText("");
+    setIsEvaluating(false);
+    setWritingEvaluation(null);
+    setSemanticFeedback(null);
   }
 
   const togglePlayAudio = () => {
@@ -104,13 +159,95 @@ export function QuestionCard({
   const wordCount = passage ? passage.split(/\s+/).filter(Boolean).length : 0;
   const passageParagraphs = passage ? passage.split(/\n\n+/).filter(Boolean) : [];
 
+  const targetWordCount = current.skill_domain?.toLowerCase().includes("task 2")
+    ? 250
+    : current.skill_domain?.toLowerCase().includes("discussion")
+      ? 100
+      : 150;
+
+  const currentEssayWords = essayText.trim().split(/\s+/).filter(Boolean).length;
+  const isIeltsExam = Boolean(
+    (examName && /ielts/i.test(examName)) || /ielts/i.test(current.skill_domain)
+  );
+
+  const handleWritingSubmit = async () => {
+    if (!essayText.trim() || isEvaluating) return;
+    setIsEvaluating(true);
+    try {
+      const taskType = isIeltsExam
+        ? (current.skill_domain.toLowerCase().includes("task 1") ? "task_1" : "task_2")
+        : (current.skill_domain.toLowerCase().includes("integrated") ? "integrated" : "academic_discussion");
+
+      const res = await fetch("/api/tutor/evaluate-writing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          exam: isIeltsExam ? "IELTS" : "TOEFL",
+          taskType,
+          taskPrompt: prompt,
+          studentText: essayText,
+          supplementalContext: passage,
+          questionId: current.question_id,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.evaluation) {
+        setWritingEvaluation(data.evaluation);
+        const passed = isIeltsExam
+          ? (data.evaluation.overallBand >= 6.0)
+          : (data.evaluation.scaledScore >= 20);
+        if (onTextSubmit) {
+          onTextSubmit(essayText, passed);
+        } else {
+          onOptionClick("A" as SelectedOption);
+        }
+      }
+    } catch (err) {
+      console.error("[QuestionCard] Essay evaluation error:", err);
+    } finally {
+      setIsEvaluating(false);
+    }
+  };
+
+  const handleShortAnswerSubmit = async () => {
+    if (!shortAnswerText.trim() || isEvaluating) return;
+    setIsEvaluating(true);
+    try {
+      const res = await fetch("/api/tutor/evaluate-semantic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          questionStem: prompt,
+          canonicalAnswer: current.correct_option,
+          studentAnswer: shortAnswerText,
+          passageSnippet: passage,
+        }),
+      });
+
+      const data = await res.json();
+      const isCorrectAnswer = data.evaluation?.isCorrect ?? false;
+      setSemanticFeedback(data.evaluation?.feedback || (isCorrectAnswer ? "Correct match." : "Incorrect."));
+      if (onTextSubmit) {
+        onTextSubmit(shortAnswerText, isCorrectAnswer);
+      } else {
+        onOptionClick((isCorrectAnswer ? current.correct_option : "B") as SelectedOption);
+      }
+    } catch (err) {
+      console.error("[QuestionCard] Semantic evaluation error:", err);
+    } finally {
+      setIsEvaluating(false);
+    }
+  };
+
   // Question stem & interactive options block
   const renderQuestionStemAndOptions = () => (
     <div className="space-y-6">
       {/* Header: Domain & Difficulty */}
       <div className="space-y-3">
         <div className="flex items-center justify-between text-xs text-muted-foreground font-mono border-b border-border/80 pb-2.5">
-          <span className="font-semibold text-foreground/80 tracking-wide">
+          <span className="font-semibold text-foreground/80 tracking-wide flex items-center gap-1.5">
+            {isWritingTask && <PenTool className="h-3.5 w-3.5 text-primary" />}
             {current.skill_domain || "Problem Solving"}
           </span>
           <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground bg-secondary/70 border border-border px-2 py-0.5 rounded">
@@ -123,81 +260,282 @@ export function QuestionCard({
         </div>
       </div>
 
-      {/* Option Cards */}
-      <div className="space-y-3">
-        {optionEntries.map(({ key, value }) => {
-          const isSelected = selectedOption === key;
-          const isCorrectOption = key === current.correct_option;
-
-          let borderClasses = "border-border/80 bg-card hover:border-primary/50 hover:bg-secondary/20";
-
-          if (mode === "tutor") {
-            if (answerState === "answered") {
-              if (isCorrectOption) {
-                borderClasses = "border-emerald-600 bg-emerald-50/40 dark:bg-emerald-950/30 ring-1 ring-emerald-600";
-              } else if (isSelected && !isCorrectOption) {
-                borderClasses = "border-rose-600 bg-rose-50/40 dark:bg-rose-950/30 ring-1 ring-rose-600";
-              }
-            } else if (isSelected) {
-              borderClasses = "border-primary bg-primary/5 ring-1 ring-primary";
-            }
-          } else {
-            if (isSelected) {
-              borderClasses = "border-primary bg-primary/10 ring-2 ring-primary/30";
-            }
-          }
-
-          return (
-            <div
-              key={key}
-              onClick={() => onOptionClick(key as SelectedOption)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  onOptionClick(key as SelectedOption);
-                }
-              }}
+      {/* Case 1: Writing Task (Authentic Essay Editor + AI Assessment) */}
+      {isWritingTask ? (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between text-xs font-mono">
+            <span className="text-muted-foreground">Word Count Telemetry:</span>
+            <span
               className={cn(
-                "w-full flex items-center justify-between gap-3.5 rounded-xl border p-4 text-left transition-all relative overflow-hidden select-none",
-                borderClasses,
-                !answerState || answerState === "pending" || mode === "exam"
-                  ? "cursor-pointer active:scale-[0.995]"
-                  : "cursor-default",
+                "px-2.5 py-1 rounded-md font-semibold text-xs border transition-colors",
+                currentEssayWords >= targetWordCount
+                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                  : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30"
               )}
             >
-              <div className="flex items-center gap-3.5 min-w-0">
-                <span
-                  className={cn(
-                    "h-7 w-7 shrink-0 rounded-full border flex items-center justify-center text-xs font-mono font-semibold transition-colors",
-                    mode === "tutor" && answerState === "answered" && isCorrectOption
-                      ? "bg-emerald-600 text-white border-emerald-600 font-bold"
-                      : mode === "tutor" && answerState === "answered" && isSelected && !isCorrectOption
-                        ? "bg-rose-600 text-white border-rose-600 font-bold"
-                        : isSelected
-                          ? "bg-primary text-primary-foreground border-primary font-bold"
-                          : "border-border text-foreground/80",
-                  )}
-                >
-                  {key}
-                </span>
+              {currentEssayWords} / {targetWordCount} min words
+              {currentEssayWords < targetWordCount && " (Penalty applies)"}
+            </span>
+          </div>
 
-                <span className="text-sm font-medium text-foreground leading-snug break-words">
-                  {renderMathContent(value)}
-                </span>
+          <textarea
+            value={essayText}
+            onChange={(e) => setEssayText(e.target.value)}
+            disabled={answerState === "answered" || isEvaluating}
+            placeholder="Type your academic response here..."
+            className="w-full min-h-[220px] p-4 rounded-xl border border-border bg-card font-sans text-sm sm:text-base leading-relaxed focus:outline-hidden focus:ring-2 focus:ring-primary/40 resize-y disabled:opacity-80"
+          />
+
+          {answerState !== "answered" && (
+            <button
+              type="button"
+              onClick={handleWritingSubmit}
+              disabled={isEvaluating || currentEssayWords < 15}
+              className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-semibold text-xs bg-primary text-primary-foreground hover:bg-primary/90 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-xs"
+            >
+              {isEvaluating ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Examiner Analyzing Rubrics & Syntax...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4" />
+                  Submit Essay for AI Examination
+                </>
+              )}
+            </button>
+          )}
+
+          {/* AI Writing Evaluation Score Card */}
+          {writingEvaluation && (
+            <div className="rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm animate-in fade-in duration-200">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-primary/10 border border-primary/20">
+                <div>
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                    {isIeltsExam ? "Official Cambridge IELTS Band" : "Official ETS TOEFL Scaled Score"}
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-heading font-bold text-foreground">
+                    {isIeltsExam
+                      ? `Band ${writingEvaluation.overallBand ?? "6.5"}`
+                      : `${writingEvaluation.scaledScore ?? 23} / 30`}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5 text-[11px] font-mono">
+                  {isIeltsExam ? (
+                    <>
+                      <span className="px-2 py-1 rounded bg-background border border-border">
+                        TA/TR: {writingEvaluation.taskAchievementBand ?? "6.5"}
+                      </span>
+                      <span className="px-2 py-1 rounded bg-background border border-border">
+                        CC: {writingEvaluation.coherenceCohesionBand ?? "6.5"}
+                      </span>
+                      <span className="px-2 py-1 rounded bg-background border border-border">
+                        LR: {writingEvaluation.lexicalResourceBand ?? "6.5"}
+                      </span>
+                      <span className="px-2 py-1 rounded bg-background border border-border">
+                        GRA: {writingEvaluation.grammaticalAccuracyBand ?? "6.5"}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="px-2 py-1 rounded bg-background border border-border">
+                        Dev: {writingEvaluation.developmentScore ?? "3.5"}/5
+                      </span>
+                      <span className="px-2 py-1 rounded bg-background border border-border">
+                        Org: {writingEvaluation.organizationScore ?? "3.5"}/5
+                      </span>
+                      <span className="px-2 py-1 rounded bg-background border border-border">
+                        Lang: {writingEvaluation.languageUseScore ?? "3.5"}/5
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
 
-              {mode === "tutor" && answerState === "answered" && isCorrectOption && (
-                <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0" />
+              {writingEvaluation.detailedFeedback && (
+                <div className="p-3.5 rounded-lg bg-secondary/40 border border-border/80 text-xs text-foreground/90 leading-relaxed">
+                  <span className="font-semibold text-foreground block mb-1">
+                    Senior Examiner Synthesis:
+                  </span>
+                  {writingEvaluation.detailedFeedback}
+                </div>
               )}
-              {mode === "tutor" && answerState === "answered" && isSelected && !isCorrectOption && (
-                <XCircle className="h-5 w-5 text-rose-600 shrink-0" />
+
+              {/* Strengths & Shortfalls */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                {writingEvaluation.strengths?.length > 0 && (
+                  <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 space-y-1.5">
+                    <span className="font-semibold text-emerald-700 dark:text-emerald-400 block">
+                      Demonstrated Strengths:
+                    </span>
+                    <ul className="list-disc list-inside space-y-1 text-foreground/90">
+                      {writingEvaluation.strengths.map((s, idx) => (
+                        <li key={idx}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {writingEvaluation.criticalShortfalls?.length > 0 && (
+                  <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 space-y-1.5">
+                    <span className="font-semibold text-rose-700 dark:text-rose-400 block">
+                      Critical Areas for Improvement:
+                    </span>
+                    <ul className="list-disc list-inside space-y-1 text-foreground/90">
+                      {writingEvaluation.criticalShortfalls.map((s, idx) => (
+                        <li key={idx}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              {/* Sentence Corrections Breakdown */}
+              {writingEvaluation.sentenceCorrections?.length > 0 && (
+                <div className="space-y-3 pt-3 border-t border-border/70">
+                  <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-primary" />
+                    Examiner Sentence Corrections & Academic Upgrades
+                  </div>
+                  <div className="space-y-2.5">
+                    {writingEvaluation.sentenceCorrections.map((corr, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-lg border border-border bg-secondary/20 space-y-1.5 text-xs"
+                      >
+                        <div className="text-muted-foreground line-through decoration-rose-500/70">
+                          &ldquo;{corr.original}&rdquo;
+                        </div>
+                        <div className="text-emerald-600 dark:text-emerald-400 font-medium">
+                          &rarr; &ldquo;{corr.improved}&rdquo;
+                        </div>
+                        <div className="text-[11px] text-muted-foreground/90 font-mono bg-background/60 p-1.5 rounded border border-border/40">
+                          <span className="font-semibold text-foreground/80">Grammar & Lexis:</span>{" "}
+                          {corr.rationale}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
-          );
-        })}
-      </div>
+          )}
+        </div>
+      ) : optionEntries.length === 0 ? (
+        /* Case 2: Open-ended short answer completion (without multiple choice letters) */
+        <div className="space-y-4">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={shortAnswerText}
+              onChange={(e) => setShortAnswerText(e.target.value)}
+              disabled={answerState === "answered" || isEvaluating}
+              placeholder="Enter your exact answer..."
+              className="flex-1 px-4 py-2.5 rounded-xl border border-border bg-card font-mono text-sm focus:outline-hidden focus:ring-2 focus:ring-primary/40"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && shortAnswerText.trim()) {
+                  handleShortAnswerSubmit();
+                }
+              }}
+            />
+            {answerState !== "answered" && (
+              <button
+                type="button"
+                onClick={handleShortAnswerSubmit}
+                disabled={isEvaluating || !shortAnswerText.trim()}
+                className="px-5 py-2.5 rounded-xl font-semibold text-xs bg-primary text-primary-foreground hover:bg-primary/90 transition-all cursor-pointer disabled:opacity-50"
+              >
+                {isEvaluating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              </button>
+            )}
+          </div>
+
+          {semanticFeedback && (
+            <div className="p-3.5 rounded-lg bg-secondary/40 border border-border/80 text-xs text-foreground/90 leading-relaxed font-mono">
+              <span className="font-semibold text-foreground block mb-0.5">Semantic Match Result:</span>
+              {semanticFeedback}
+            </div>
+          )}
+        </div>
+      ) : (
+        /* Case 3: Standard Option Cards (Deterministic A, B, C, D...) */
+        <div className="space-y-3">
+          {optionEntries.map(({ key, value }) => {
+            const isSelected = selectedOption === key;
+            const isCorrectOption = key === current.correct_option;
+
+            let borderClasses = "border-border/80 bg-card hover:border-primary/50 hover:bg-secondary/20";
+
+            if (mode === "tutor") {
+              if (answerState === "answered") {
+                if (isCorrectOption) {
+                  borderClasses = "border-emerald-600 bg-emerald-50/40 dark:bg-emerald-950/30 ring-1 ring-emerald-600";
+                } else if (isSelected && !isCorrectOption) {
+                  borderClasses = "border-rose-600 bg-rose-50/40 dark:bg-rose-950/30 ring-1 ring-rose-600";
+                }
+              } else if (isSelected) {
+                borderClasses = "border-primary bg-primary/5 ring-1 ring-primary";
+              }
+            } else {
+              if (isSelected) {
+                borderClasses = "border-primary bg-primary/10 ring-2 ring-primary/30";
+              }
+            }
+
+            return (
+              <div
+                key={key}
+                onClick={() => onOptionClick(key as SelectedOption)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onOptionClick(key as SelectedOption);
+                  }
+                }}
+                className={cn(
+                  "w-full flex items-center justify-between gap-3.5 rounded-xl border p-4 text-left transition-all relative overflow-hidden select-none",
+                  borderClasses,
+                  !answerState || answerState === "pending" || mode === "exam"
+                    ? "cursor-pointer active:scale-[0.995]"
+                    : "cursor-default"
+                )}
+              >
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <span
+                    className={cn(
+                      "h-7 w-7 shrink-0 rounded-full border flex items-center justify-center text-xs font-mono font-semibold transition-colors",
+                      mode === "tutor" && answerState === "answered" && isCorrectOption
+                        ? "bg-emerald-600 text-white border-emerald-600 font-bold"
+                        : mode === "tutor" && answerState === "answered" && isSelected && !isCorrectOption
+                          ? "bg-rose-600 text-white border-rose-600 font-bold"
+                          : isSelected
+                            ? "bg-primary text-primary-foreground border-primary font-bold"
+                            : "border-border text-foreground/80"
+                    )}
+                  >
+                    {key}
+                  </span>
+
+                  <span className="text-sm font-medium text-foreground leading-snug break-words">
+                    {renderMathContent(value)}
+                  </span>
+                </div>
+
+                {mode === "tutor" && answerState === "answered" && isCorrectOption && (
+                  <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0" />
+                )}
+                {mode === "tutor" && answerState === "answered" && isSelected && !isCorrectOption && (
+                  <XCircle className="h-5 w-5 text-rose-600 shrink-0" />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Tutor Mode Examiner Diagnostic Breakdown (Post-Answer) */}
       {mode === "tutor" && answerState === "answered" && (

@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { BILLING_PLANS } from "@/lib/constants/billing";
 import { createCheckoutSession } from "@/lib/actions/billing";
 import { cn } from "@/lib/utils";
+import { CompactPaymentTrust } from "./PaymentTrustBadge";
 
 interface PricingCardsProps {
   userEmail?: string | null;
@@ -173,10 +174,7 @@ export function PricingCards({ userEmail, isPro }: PricingCardsProps) {
               </>
             )}
           </Button>
-          <div className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground text-center">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-            <span>Cards, Apple Pay & UPI via Dodo Payments</span>
-          </div>
+          <CompactPaymentTrust />
         </div>
       </div>
 

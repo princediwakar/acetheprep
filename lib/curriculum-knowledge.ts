@@ -92,36 +92,6 @@ const SUBJECT_ARCHETYPES: Record<
       "Circle the exact genotype requested before multiplying probabilities or drawing Punnett squares.",
     failureRate: 59,
   },
-  "General Studies I": {
-    principles: [
-      "Distinguish primary proximate causes from underlying structural economic and societal triggers in historical developments.",
-      "Analyze geographical phenomena through geomorphological processes, pressure belts, and Coriolis force mechanics.",
-      "Verify historical chronology and statutory lineages rather than relying on thematic associations.",
-    ],
-    trapName: "Chronological Anachronism & Extreme Quantifiers",
-    trapDesc:
-      "Distractors pair an authentic historical figure with an institution or reform enacted decades later, or insert 'solely' / 'exclusively'.",
-    whyStudentsFail:
-      "Broad thematic familiarity without precise chronological anchors across administrative reigns.",
-    prevention:
-      "Reject options featuring absolute categorical words ('only', 'all', 'never') unless verified by statutory text.",
-    failureRate: 64,
-  },
-  CSAT: {
-    principles: [
-      "Categorical propositions must distribute the middle term at least once to produce a deductively valid conclusion.",
-      "Never import real-world factual assumptions into pure logical syllogisms or critical reasoning prompts.",
-      "Identify the logical quantifier hierarchy: 'All' implies 'Some', but 'Some' never implies 'All'.",
-    ],
-    trapName: "The Undistributed Middle & Real-World Bias",
-    trapDesc:
-      "Distractors offer conclusions that sound practically reasonable in daily life but commit formal logical fallacies.",
-    whyStudentsFail:
-      "Letting personal opinions on public policy override formal deductive syllogistic rules.",
-    prevention:
-      "Convert premise statements into formal Venn diagrams or symbolic notation before assessing validity.",
-    failureRate: 67,
-  },
   "Data Insights": {
     principles: [
       "In Data Sufficiency, evaluate each statement in complete isolation before even considering their combination.",
@@ -151,36 +121,6 @@ const SUBJECT_ARCHETYPES: Record<
     prevention:
       "Always test negative numbers, non-integer fractions, and zero before choosing Quantity A or B.",
     failureRate: 65,
-  },
-  "Legal Reasoning": {
-    principles: [
-      "The legal principle stated in the prompt is absolute truth, even if it contradicts actual statutory law or moral intuition.",
-      "Strict liability applies without proof of fault, negligence, or intent unless a recognized exception is strictly satisfied.",
-      "Distinguish proximate cause from remote antecedent conditions in tortious damage.",
-    ],
-    trapName: "Moral Intuition vs Strict Legal Principle",
-    trapDesc:
-      "Distractors appeal to emotional justice, common sense, or everyday definitions of 'natural acts' that fail legal scrutiny.",
-    whyStudentsFail:
-      "Applying personal ideas of fairness instead of the cold, mechanical application of the provided legal rule.",
-    prevention:
-      "Break the principle into required elements [A + B + C]; match fact-pattern elements with surgical neutrality.",
-    failureRate: 63,
-  },
-  "Business Laws": {
-    principles: [
-      "Agreements with minors are void ab initio; the doctrine of estoppel does not apply against a minor under contract law.",
-      "Past consideration is valid in English law only under specific exceptions, but recognized under the Indian Contract Act.",
-      "Differentiate between conditions (vital to the contract) and warranties (collateral terms yielding damages only).",
-    ],
-    trapName: "Fraud Estoppel Misconception",
-    trapDesc:
-      "Distractors claim that a minor who fraudulently misrepresents their age is legally bound by estoppel or contract enforcement.",
-    whyStudentsFail:
-      "Assuming general commercial equity overrides the absolute statutory protection granted to minors.",
-    prevention:
-      "Remember that an agreement with a minor is a legal nullity from inception; contracts cannot be enforced through estoppel.",
-    failureRate: 61,
   },
   "Reading and Writing": {
     principles: [

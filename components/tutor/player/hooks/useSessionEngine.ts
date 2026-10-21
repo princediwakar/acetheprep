@@ -146,7 +146,7 @@ export function useSessionEngine({
   }, []);
 
   const recordAnswer = useCallback(
-    async (option: SelectedOption | null, correct: boolean, revealed: boolean, timeMs: number) => {
+    async (option: SelectedOption | null, correct: boolean, revealed: boolean, timeMs: number, freeText?: string) => {
       if (submittingRef.current) return;
       submittingRef.current = true;
       try {
@@ -157,6 +157,7 @@ export function useSessionEngine({
             session_id: sessionId,
             question_id: current.question_id,
             selected_option: option,
+            free_text_answer: freeText,
             time_to_answer_ms: timeMs,
             was_revealed: revealed,
           }),
@@ -171,7 +172,7 @@ export function useSessionEngine({
   );
 
   const lockInAnswer = useCallback(
-    (option: SelectedOption | null, correct: boolean, revealed: boolean) => {
+    (option: SelectedOption | null, correct: boolean, revealed: boolean, freeText?: string) => {
       setAnswerState("answered");
       setIsCorrect(correct);
       setIsRevealed(revealed);
@@ -188,7 +189,7 @@ export function useSessionEngine({
         },
       }));
 
-      recordAnswer(option, correct, revealed, timeMs);
+      recordAnswer(option, correct, revealed, timeMs, freeText);
       setNextEnabled(true);
     },
     [recordAnswer, current?.question_id, getQuestionDurationMs],
@@ -208,6 +209,14 @@ export function useSessionEngine({
       lockInAnswer(option, correct, false);
     },
     [mode, answerState, current, lockInAnswer],
+  );
+
+  const handleTextSubmit = useCallback(
+    (freeText: string, isCorrectText: boolean = true) => {
+      if (answerState === "answered") return;
+      lockInAnswer(null, isCorrectText, false, freeText);
+    },
+    [answerState, lockInAnswer],
   );
 
   // Single helper to hydrate question state when navigating
@@ -377,6 +386,7 @@ export function useSessionEngine({
     handleDiscardSession,
     handleFinishEarly,
     handleOptionClick,
+    handleTextSubmit,
     handleNext,
     handlePrev,
     handleSkipQuestion,

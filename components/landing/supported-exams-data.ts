@@ -1,13 +1,13 @@
 // Path: components/landing/supported-exams-data.ts
 
-export type ExamCategoryFilter = "all" | "study-abroad" | "global-grad-pro" | "national-competitive";
+export type ExamCategoryFilter = "all" | "study-abroad" | "global-grad-pro";
 
 export interface ExamMeta {
   id: string; // Exact key matching lib/taxonomies.json and lib/demo-questions.json
   shortName: string;
   fullName: string;
   authority: string;
-  category: "study-abroad" | "global-grad-pro" | "national-competitive";
+  category: "study-abroad" | "global-grad-pro";
   tagline: string;
   badge: string;
 }
@@ -67,70 +67,5 @@ export const ALL_SUPPORTED_EXAMS: ExamMeta[] = [
     category: "study-abroad",
     tagline: "Sentence Insertion & Rhetoric",
     badge: "Language",
-  },
-
-  // National Competitive
-  {
-    id: "JEE Main",
-    shortName: "JEE Main",
-    fullName: "Joint Entrance Examination",
-    authority: "NTA",
-    category: "national-competitive",
-    tagline: "Calculus & Optics Traps",
-    badge: "Engineering",
-  },
-  {
-    id: "NEET",
-    shortName: "NEET",
-    fullName: "National Eligibility Entrance Test",
-    authority: "NTA",
-    category: "national-competitive",
-    tagline: "Genetics & NCERT Nuances",
-    badge: "Medical",
-  },
-  {
-    id: "CAT",
-    shortName: "CAT",
-    fullName: "Common Admission Test",
-    authority: "IIMs",
-    category: "national-competitive",
-    tagline: "Speed-Distance & DILR",
-    badge: "Management",
-  },
-  {
-    id: "GATE",
-    shortName: "GATE",
-    fullName: "Graduate Aptitude Test in Engineering",
-    authority: "IISc & IITs",
-    category: "national-competitive",
-    tagline: "Eigenvectors & Systems",
-    badge: "Technical",
-  },
-  {
-    id: "UPSC CSE",
-    shortName: "UPSC CSE",
-    fullName: "Civil Services Examination",
-    authority: "UPSC",
-    category: "national-competitive",
-    tagline: "CSAT Syllogisms & Logic",
-    badge: "Civil Services",
-  },
-  {
-    id: "CLAT",
-    shortName: "CLAT",
-    fullName: "Common Law Admission Test",
-    authority: "Consortium of NLUs",
-    category: "national-competitive",
-    tagline: "Strict Liability & Torts",
-    badge: "Law",
-  },
-  {
-    id: "CA Foundation",
-    shortName: "CA Foundation",
-    fullName: "Chartered Accountancy Foundation",
-    authority: "ICAI",
-    category: "national-competitive",
-    tagline: "Contract Act & Annuities",
-    badge: "Accounting",
   },
 ];

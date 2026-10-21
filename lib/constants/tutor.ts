@@ -80,19 +80,21 @@ export const TUTOR_CONFIG = {
 } as const;
 
 export const PREREQUISITE_WEIGHTS: Record<string, number> = {
-  Calculus: 1.5,
-  Algebra: 1.3,
-  Trigonometry: 1.2,
-  'Laws of Motion': 1.3,
-  Kinematics: 1.2,
-  'Work, Energy and Power': 1.2,
-  Thermodynamics: 1.1,
-  Electrostatics: 1.1,
-  'Modern Physics': 1.0,
-  'Atomic Structure': 1.1,
-  'Chemical Bonding': 1.1,
-  'Coordination Compounds': 0.9,
-  'Complex Numbers': 1.0,
+  // Digital SAT
+  'Craft and Structure': 1.4,
+  'Information and Ideas': 1.4,
+  'Standard English Conventions': 1.3,
+  'Expression of Ideas': 1.2,
+  'Advanced Math': 1.4,
+  'Problem-Solving and Data Analysis': 1.3,
+  'Geometry and Trigonometry': 1.2,
+  // CFA Level 1
+  'Code of Ethics': 1.5,
+  'Standards of Professional Conduct': 1.5,
+  'Financial Analysis Techniques': 1.4,
+  'Time Value of Money': 1.4,
+  'Fixed-Income Valuation': 1.3,
+  'Equity Valuation': 1.3,
   // GMAT Focus
   'Data Sufficiency': 1.5,
   'Critical Reasoning': 1.4,

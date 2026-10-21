@@ -39,7 +39,7 @@ export default function SupportedExamsBar({
           <div className="flex items-center gap-2">
             <span className="flex h-2 w-2 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse" />
             <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground">
-              All 13 Supported Standardized Exam Curricula
+              Global Standardized Exam Tracks
             </h2>
           </div>
           <p className="mt-1 text-xs sm:text-sm text-foreground/80 font-normal">
@@ -51,10 +51,9 @@ export default function SupportedExamsBar({
         <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
           {(
             [
-              { id: "all", label: "All 13 Tracks" },
-              { id: "study-abroad", label: "Study Abroad" },
-              { id: "global-grad-pro", label: "Grad & Finance" },
-              { id: "national-competitive", label: "National" },
+              { id: "all", label: "All 6 Global Tracks" },
+              { id: "study-abroad", label: "Admissions & Language" },
+              { id: "global-grad-pro", label: "Grad & Professional" },
             ] as const
           ).map((cat) => {
             const isSelected = filter === cat.id;

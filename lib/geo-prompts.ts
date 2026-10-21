@@ -11,7 +11,7 @@ const PRACTICE_SYSTEM_PROMPT = `You are an elite exam question writer creating p
 2. DISTRACTORS: Every wrong answer must represent a specific, calculable student error (sign mistake, formula misapplication, conceptual trap). No filler.
 3. EXPLANATIONS: Prove the correct answer. Deconstruct each distractor — explain exactly what error leads to each wrong choice.
 4. SELF-CONTAINED: Explanations must be complete and standalone — assume the reader found this page via Google search and has no other context.
-5. READING COMPREHENSION & PASSAGES: For Reading Comprehension domains, provide an authentic, multi-paragraph passage (300 to 500 words for CAT/GMAT/GRE/CLAT; 150 to 300 words for UPSC) in the "passage" field. For questions testing the same passage, assign the identical "passage_id". Put only the question stem in "question_text".
+5. READING COMPREHENSION & PASSAGES: For Reading Comprehension domains, provide an authentic, multi-paragraph passage (300 to 500 words for GMAT/GRE/SAT/IELTS/TOEFL) in the "passage" field. For questions testing the same passage, assign the identical "passage_id". Put only the question stem in "question_text".
 
 # OUTPUT INTERFACE
 Output ONLY raw JSON matching this schema. No markdown, no preambles.

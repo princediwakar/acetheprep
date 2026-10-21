@@ -7,9 +7,9 @@ const taxonomy = taxonomyRaw as unknown as TaxonomyData;
 /**
  * Normalizes any string to a clean, lowercase kebab-case slug.
  * Removes punctuation, normalizes spaces, replaces commas/ampersands.
- * Example: "Work, Energy and Power" -> "work-energy-and-power"
- * Example: "General Studies I" -> "general-studies-i"
- * Example: "UPSC CSE" -> "upsc-cse"
+ * Example: "Linear equations in two variables" -> "linear-equations-in-two-variables"
+ * Example: "Financial Statement Analysis" -> "financial-statement-analysis"
+ * Example: "CFA Level 1" -> "cfa-level-1"
  */
 export function slugify(str: string): string {
   return str
@@ -79,13 +79,6 @@ export const GLOBAL_EXAM_PRIORITY = [
   "CFA Level 1",
   "IELTS Academic",
   "TOEFL iBT",
-  "JEE Main",
-  "NEET",
-  "CAT",
-  "GATE",
-  "UPSC CSE",
-  "CLAT",
-  "CA Foundation",
 ];
 
 // Sort entries strictly according to global priority

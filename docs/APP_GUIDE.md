@@ -7,13 +7,11 @@
 Rather than treating practice tests as static PDFs or uncalibrated rote question banks, AceThePrep models each student's memory state using spaced repetition, diagnoses deep cognitive traps through distractor analysis, dynamically selects high-yield questions using a priority engine, and forecasts calibrated percentile bands backed by empirical testing data.
 
 ### Supported Curricula & Exam Taxonomies
-AceThePrep provides structured, multi-tier syllabus taxonomies covering 13 major competitive tracks:
-- **STEM & Engineering/Medical**: JEE Main (Physics, Chemistry, Mathematics), NEET (Physics, Chemistry, Biology), GATE (Engineering Math, Core Engineering, General Aptitude).
-- **Graduate & Business School Admissions**: GMAT Focus (Quantitative Reasoning, Verbal Reasoning, Data Insights), GRE (Verbal, Quant, Analytical Writing), CAT (Verbal Ability, DILR, QA).
-- **Undergraduate & College Admissions**: SAT (Reading & Writing, Mathematics).
-- **Civil Services & Law**: UPSC CSE (GS I, II, III, CSAT), CLAT (English, Current Affairs, Legal Reasoning, Logical Reasoning, Quantitative Techniques).
-- **Professional Finance & Accounting**: CFA Level 1 (10 Topic Areas), CA Foundation (Accounting, Business Laws, Math, Economics).
-- **Language Proficiency**: IELTS Academic (Reading, Listening), TOEFL iBT (Reading, Listening).
+AceThePrep provides structured, multi-tier syllabus taxonomies covering 6 premier global standardized exams:
+- **Undergraduate & College Admissions**: Digital SAT (Reading & Writing, Mathematics).
+- **Graduate & Business School Admissions**: GMAT Focus (Quantitative Reasoning, Verbal Reasoning, Data Insights), GRE General (Verbal Reasoning, Quantitative Reasoning).
+- **Professional Finance**: CFA Level 1 (Ethical and Professional Standards, Quantitative Methods, Economics, Financial Statement Analysis, Corporate Issuers, Equity Investments, Fixed Income, Derivatives, Alternative Investments, Portfolio Management).
+- **Language Proficiency & Global Mobility**: IELTS Academic (Reading, Listening), TOEFL iBT (Reading, Listening).
 
 ---
 
@@ -116,7 +114,7 @@ To maximize exam marks per unit of study time, topics are selected via an optimi
 
 $$\text{Priority Score} = \frac{\text{Exam Weight} \times \text{Knowledge Gap} \times \text{Forgetting Risk}}{\min(\text{Estimated Minutes to Mastery}, \; C_{\text{tier}})}$$
 
-- **Exam Weight ($W$)**: Historical question frequency extracted from past 10-year official exam papers (e.g., JEE Main 10-year topic frequency weights in `exam_topic_weights`).
+- **Exam Weight ($W$)**: Historical question frequency extracted from official exam blueprints (e.g., SAT / CFA topic frequency weights in `exam_topic_weights`).
 - **Knowledge Gap ($G$)**: $1 - \text{MasteryScore}$.
 - **Forgetting Risk ($R$)**:
   $$R = 1 - \exp\left(-\frac{\ln(2) \times \text{DaysSinceReview}}{\text{HalfLife}}\right) \times \text{ProximityFactor}$$

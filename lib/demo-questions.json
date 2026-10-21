@@ -2,139 +2,66 @@
   "_generated_at": "2026-10-20T00:00:00.000Z",
   "_note": "Authentic diagnostic questions with cognitive-science distractor analysis for all 10 exam tracks.",
   "exams": {
-    "JEE Main": {
-      "exam_name": "JEE Main",
-      "subject": "Physics",
-      "domain": "Optics",
+    "SAT": {
+      "exam_name": "SAT",
+      "subject": "Mathematics",
+      "domain": "Advanced Math",
       "question": {
-        "question_text": "A convex lens has radii of curvature R₁ = 15 cm and R₂ = 10 cm. The refractive index of the lens material is n = 1.5. Using the lens maker's formula, the focal length of this lens in air is:",
+        "question_text": "What is the complete solution set for the equation √(x + 2) = x?",
         "options": {
-          "A": "12 cm",
-          "B": "60 cm",
-          "C": "30 cm",
-          "D": "7.5 cm"
+          "A": "{2}",
+          "B": "{2, -1}",
+          "C": "{-1}",
+          "D": "No real solution"
         },
         "correct_option": "A",
-        "explanation": "By Cartesian sign convention for a biconvex lens: R₁ = +15 cm (first surface center is to the right) and R₂ = −10 cm (second surface center is to the left). Using 1/f = (n − 1)(1/R₁ − 1/R₂): 1/f = (1.5 − 1)(1/15 − 1/(−10)) = 0.5 × (1/15 + 1/10) = 0.5 × (5/30) = 1/12 cm⁻¹. Therefore, f = 12 cm.",
+        "explanation": "Squaring both sides of √(x + 2) = x yields x + 2 = x², which rearranges to x² − x − 2 = 0. Factoring gives (x − 2)(x + 1) = 0, yielding candidate roots x = 2 and x = −1. Testing x = 2: √(2 + 2) = √4 = 2 (Valid). Testing x = −1: √(−1 + 2) = √1 = 1 ≠ −1 (Extraneous root, as the principal square root is non-negative). Thus, the only true solution is x = 2.",
         "distractor_analysis": {
-          "A": "Correct. Proper application of Cartesian sign convention — R₂ is negative for the second curved surface of a convex lens.",
-          "B": "Incorrect. This is the classic trap: using R₂ = +10 cm instead of −10 cm. Calculation yields 0.5 × (1/15 − 1/10) = −1/60, giving magnitude 60 cm. 73% of aspirants fall for this.",
-          "C": "Incorrect. Results from computing (1/R₁ − 1/R₂) without multiplying by the refractivity factor (n − 1) = 0.5.",
-          "D": "Incorrect. Arises from simply adding radii in parallel or series arithmetic without using the lens maker's equation."
+          "A": "Correct. Only x = 2 satisfies the original radical equation after checking for extraneous roots.",
+          "B": "Incorrect. The #1 SAT Algebra Trap: 74% of students factor the quadratic correctly to {2, -1} but fail to substitute back into the radical to eliminate extraneous roots.",
+          "C": "Incorrect. Only captures the invalid extraneous root.",
+          "D": "Incorrect. Rejection of real solutions due to arithmetic confusion."
         },
-        "skill_domain": "Optics",
+        "skill_domain": "Advanced Math",
         "difficulty_tier": "application",
-        "time_estimate_seconds": 120,
-        "misconception": "Missing the Cartesian sign convention in the lens maker's formula — R₂ is negative for a convex lens's rear surface.",
-        "topics": ["Lens maker's formula", "Sign convention", "Ray Optics"]
-      }
-    },
-    "NEET": {
-      "exam_name": "NEET",
-      "subject": "Biology",
-      "domain": "Genetics and Evolution",
-      "question": {
-        "question_text": "In a monohybrid cross between two heterozygous tall pea plants (Tt × Tt), what is the probability of obtaining a homozygous tall offspring among the progeny?",
-        "options": {
-          "A": "1/4 (25%)",
-          "B": "1/2 (50%)",
-          "C": "3/4 (75%)",
-          "D": "1/3 (33.3%)"
-        },
-        "correct_option": "A",
-        "explanation": "In a cross of Tt × Tt, the Punnett square produces: 1 TT (homozygous tall), 2 Tt (heterozygous tall), and 1 tt (homozygous dwarf). The genotypic ratio is 1:2:1. Therefore, the probability of obtaining homozygous tall (TT) is 1 out of 4, or 1/4 (25%).",
-        "distractor_analysis": {
-          "A": "Correct. TT represents exactly 1 of the 4 equal probability gamete combinations.",
-          "B": "Incorrect. 1/2 is the probability of heterozygous tall (Tt), not homozygous tall (TT).",
-          "C": "Incorrect. The most common trap: 3/4 is the phenotypic ratio of all tall plants (TT + Tt), not homozygous tall specifically.",
-          "D": "Incorrect. 1/3 is the conditional probability of TT given that the plant is tall, rather than the overall cross probability."
-        },
-        "skill_domain": "Genetics and Evolution",
-        "difficulty_tier": "foundation",
         "time_estimate_seconds": 60,
-        "misconception": "Confusing genotypic ratio (1:2:1) with phenotypic ratio (3:1) in Mendelian inheritance.",
-        "topics": ["Mendelian genetics", "Monohybrid cross", "Genotypic vs Phenotypic ratio"]
+        "misconception": "Forgetting that squaring both sides of an equation introduces false extraneous solutions.",
+        "topics": [
+          "Radical Equations",
+          "Extraneous Roots",
+          "Quadratic Factoring"
+        ]
       }
     },
-    "UPSC CSE": {
-      "exam_name": "UPSC CSE",
-      "subject": "CSAT",
-      "domain": "Logical Reasoning",
+    "GRE": {
+      "exam_name": "GRE",
+      "subject": "Quantitative Reasoning",
+      "domain": "Algebra",
       "question": {
-        "question_text": "Consider the following premises:\n1. All effective administrators are diligent planners.\n2. Some diligent planners are not risk-averse.\n\nConclusion: Some effective administrators are not risk-averse.\n\nWhich of the following evaluations of the argument is logically sound?",
+        "question_text": "Quantity A: (x + y)²\nQuantity B: x² + y²\n\nGiven condition: x and y are non-zero real numbers.",
         "options": {
-          "A": "The conclusion is logically valid and follows necessarily from the premises.",
-          "B": "The conclusion is invalid because it commits the fallacy of the undistributed middle term.",
-          "C": "The conclusion is valid provided all diligent planners are effective administrators.",
-          "D": "The conclusion is invalid because no administrator can avoid taking risks."
+          "A": "Quantity A is greater.",
+          "B": "Quantity B is greater.",
+          "C": "The two quantities are equal.",
+          "D": "The relationship cannot be determined from the information given."
         },
-        "correct_option": "B",
-        "explanation": "The middle term 'diligent planners' is not distributed in either premise. In premise 1, 'diligent planners' is the predicate of an affirmative universal proposition (undistributed). In premise 2, 'diligent planners' is the subject of a particular proposition (undistributed). Because the middle term never refers to all members of its class, no valid link can be forged between 'effective administrators' and 'risk-averse'.",
+        "correct_option": "D",
+        "explanation": "Expanding Quantity A: (x + y)² = x² + 2xy + y². Subtracting (x² + y²) from both quantities compares 2xy with 0. If x and y have the same sign (both positive or both negative), xy > 0, so 2xy > 0 and Quantity A is greater. But if x and y have opposite signs (e.g., x = 2, y = -3), xy = -6 < 0, so 2xy < 0 and Quantity B is greater. Because the outcome depends on the signs of x and y, the relationship cannot be determined.",
         "distractor_analysis": {
-          "A": "Incorrect. Common intuition trap: students conflate real-world plausibility with formal deductive validity.",
-          "B": "Correct. In formal categorical syllogisms, a middle term must be distributed at least once to warrant deductive validity.",
-          "C": "Incorrect. Reversing the universal premise still does not establish that the non-risk-averse subset overlaps with administrators.",
-          "D": "Incorrect. Rejects the conclusion based on external real-world assertions rather than evaluating formal premise logic."
+          "A": "Incorrect. Assumes x and y must be positive, causing 2xy > 0. 61% of test-takers make this implicit assumption.",
+          "B": "Incorrect. Only true when x and y have opposite signs.",
+          "C": "Incorrect. Would require 2xy = 0, which contradicts that x and y are non-zero.",
+          "D": "Correct. Opposite signs make Quantity B larger; same signs make Quantity A larger."
         },
-        "skill_domain": "Logical Reasoning",
-        "difficulty_tier": "application",
-        "time_estimate_seconds": 90,
-        "misconception": "Assuming that intuitive plausibility equals logical necessity — the fallacy of the undistributed middle.",
-        "topics": ["Syllogisms", "Categorical logic", "Deductive reasoning"]
-      }
-    },
-    "CAT": {
-      "exam_name": "CAT",
-      "subject": "Quantitative Ability",
-      "domain": "Arithmetic",
-      "question": {
-        "question_text": "An executive drives from City A to City B at an average speed of 60 km/h, and immediately returns along the identical route from City B to City A at an average speed of 40 km/h. What is the executive's average speed for the entire round trip?",
-        "options": {
-          "A": "50 km/h",
-          "B": "48 km/h",
-          "C": "45 km/h",
-          "D": "52 km/h"
-        },
-        "correct_option": "B",
-        "explanation": "Average speed is defined as Total Distance / Total Time. Let the distance between City A and City B be D km. Time taken going = D/60; time taken returning = D/40. Total time = D/60 + D/40 = (2D + 3D)/120 = 5D/120 = D/24. Total distance = 2D. Average Speed = 2D / (D/24) = 48 km/h. Alternatively, for equal distances, the average speed is the harmonic mean: 2 × 60 × 40 / (60 + 40) = 4800 / 100 = 48 km/h.",
-        "distractor_analysis": {
-          "A": "Incorrect. The classic arithmetic average trap: (60 + 40) / 2 = 50 km/h. 82% of students choose this because they ignore that more time is spent traveling at the slower speed.",
-          "B": "Correct. Harmonic mean of speeds for equal distances: 2 × v₁ × v₂ / (v₁ + v₂) = 48 km/h.",
-          "C": "Incorrect. Result of geometric mean calculation √(60 × 40) ≈ 48.99 rounded down arbitrarily.",
-          "D": "Incorrect. Caused by weighting speeds by the wrong directional factor."
-        },
-        "skill_domain": "Arithmetic",
+        "skill_domain": "Algebra",
         "difficulty_tier": "foundation",
         "time_estimate_seconds": 75,
-        "misconception": "Using simple arithmetic average instead of time-weighted or harmonic mean for round trips with equal distance.",
-        "topics": ["Time Speed and Distance", "Harmonic Mean", "Average Speed"]
-      }
-    },
-    "GATE": {
-      "exam_name": "GATE",
-      "subject": "Engineering Mathematics",
-      "domain": "Linear Algebra",
-      "question": {
-        "question_text": "A real 2 × 2 matrix M has a trace equal to 8 and a determinant equal to 12. The eigenvalues of matrix M are:",
-        "options": {
-          "A": "6 and 2",
-          "B": "4 and 4",
-          "C": "8 and 12",
-          "D": "-6 and -2"
-        },
-        "correct_option": "A",
-        "explanation": "For any n × n matrix, the sum of eigenvalues equals the trace, and the product of eigenvalues equals the determinant. For a 2 × 2 matrix, the characteristic equation is λ² − Trace(M)λ + Det(M) = 0. Here, λ² − 8λ + 12 = 0. Factoring: (λ − 6)(λ − 2) = 0, so λ₁ = 6 and λ₂ = 2.",
-        "distractor_analysis": {
-          "A": "Correct. Sum is 6 + 2 = 8 (Trace) and product is 6 × 2 = 12 (Determinant).",
-          "B": "Incorrect. Sum is 4 + 4 = 8, but product is 16 ≠ 12. Students pick this thinking eigenvalues are equal.",
-          "C": "Incorrect. Conflates the matrix invariants (Trace and Determinant) with the eigenvalues themselves.",
-          "D": "Incorrect. Arises from sign reversal error in the characteristic polynomial formula."
-        },
-        "skill_domain": "Linear Algebra",
-        "difficulty_tier": "application",
-        "time_estimate_seconds": 60,
-        "misconception": "Attempting tedious row reduction instead of using eigenvalue trace and determinant invariant properties.",
-        "topics": ["Eigenvalues and Eigenvectors", "Matrix Trace", "Characteristic Equation"]
+        "misconception": "Implicitly assuming variables are positive unless explicitly instructed otherwise.",
+        "topics": [
+          "Quantitative Comparisons",
+          "Algebraic Identities",
+          "Negative Number Traps"
+        ]
       }
     },
     "GMAT Focus": {
@@ -163,115 +90,11 @@
         "difficulty_tier": "application",
         "time_estimate_seconds": 90,
         "misconception": "Overlooking zero as a non-positive, non-negative boundary number in absolute value equations.",
-        "topics": ["Data Sufficiency", "Absolute Value", "Zero Property Traps"]
-      }
-    },
-    "GRE": {
-      "exam_name": "GRE",
-      "subject": "Quantitative Reasoning",
-      "domain": "Algebra",
-      "question": {
-        "question_text": "Quantity A: (x + y)²\nQuantity B: x² + y²\n\nGiven condition: x and y are non-zero real numbers.",
-        "options": {
-          "A": "Quantity A is greater.",
-          "B": "Quantity B is greater.",
-          "C": "The two quantities are equal.",
-          "D": "The relationship cannot be determined from the information given."
-        },
-        "correct_option": "D",
-        "explanation": "Expanding Quantity A: (x + y)² = x² + 2xy + y². Subtracting (x² + y²) from both quantities compares 2xy with 0. If x and y have the same sign (both positive or both negative), xy > 0, so 2xy > 0 and Quantity A is greater. But if x and y have opposite signs (e.g., x = 2, y = -3), xy = -6 < 0, so 2xy < 0 and Quantity B is greater. Because the outcome depends on the signs of x and y, the relationship cannot be determined.",
-        "distractor_analysis": {
-          "A": "Incorrect. Assumes x and y must be positive, causing 2xy > 0. 61% of test-takers make this implicit assumption.",
-          "B": "Incorrect. Only true when x and y have opposite signs.",
-          "C": "Incorrect. Would require 2xy = 0, which contradicts that x and y are non-zero.",
-          "D": "Correct. Opposite signs make Quantity B larger; same signs make Quantity A larger."
-        },
-        "skill_domain": "Algebra",
-        "difficulty_tier": "foundation",
-        "time_estimate_seconds": 75,
-        "misconception": "Implicitly assuming variables are positive unless explicitly instructed otherwise.",
-        "topics": ["Quantitative Comparisons", "Algebraic Identities", "Negative Number Traps"]
-      }
-    },
-    "SAT": {
-      "exam_name": "SAT",
-      "subject": "Mathematics",
-      "domain": "Advanced Math",
-      "question": {
-        "question_text": "What is the complete solution set for the equation √(x + 2) = x?",
-        "options": {
-          "A": "{2}",
-          "B": "{2, -1}",
-          "C": "{-1}",
-          "D": "No real solution"
-        },
-        "correct_option": "A",
-        "explanation": "Squaring both sides of √(x + 2) = x yields x + 2 = x², which rearranges to x² − x − 2 = 0. Factoring gives (x − 2)(x + 1) = 0, yielding candidate roots x = 2 and x = −1. Testing x = 2: √(2 + 2) = √4 = 2 (Valid). Testing x = −1: √(−1 + 2) = √1 = 1 ≠ −1 (Extraneous root, as the principal square root is non-negative). Thus, the only true solution is x = 2.",
-        "distractor_analysis": {
-          "A": "Correct. Only x = 2 satisfies the original radical equation after checking for extraneous roots.",
-          "B": "Incorrect. The #1 SAT Algebra Trap: 74% of students factor the quadratic correctly to {2, -1} but fail to substitute back into the radical to eliminate extraneous roots.",
-          "C": "Incorrect. Only captures the invalid extraneous root.",
-          "D": "Incorrect. Rejection of real solutions due to arithmetic confusion."
-        },
-        "skill_domain": "Advanced Math",
-        "difficulty_tier": "application",
-        "time_estimate_seconds": 60,
-        "misconception": "Forgetting that squaring both sides of an equation introduces false extraneous solutions.",
-        "topics": ["Radical Equations", "Extraneous Roots", "Quadratic Factoring"]
-      }
-    },
-    "CLAT": {
-      "exam_name": "CLAT",
-      "subject": "Legal Reasoning",
-      "domain": "Legal Principles",
-      "question": {
-        "question_text": "Principle: A person who brings and keeps on their land anything likely to do mischief if it escapes is strictly liable for all damages caused by its escape, except if the escape was caused solely by an 'Act of God' (a violent, unprecedented natural disaster that could not be anticipated or guarded against by human foresight).\n\nFacts: Arvind constructed a commercial water storage tank on his land. During the monsoon, the region experienced heavy rainfall that was unusually intense but had been recorded twice in the preceding 15 years. The reservoir wall breached, flooding Vikram's adjacent nursery and destroying $15,000 worth of exotic plants. Arvind pleads Act of God. Is Arvind strictly liable?",
-        "options": {
-          "A": "No, because heavy monsoon rain is a natural event entirely beyond human control.",
-          "B": "Yes, because the rainfall was not of unprecedented magnitude and therefore does not legally constitute an Act of God.",
-          "C": "No, because Vikram did not prove Arvind was negligent in the construction or maintenance of the reservoir.",
-          "D": "Yes, but Arvind's liability is capped at nominal damages because he had no intention to cause injury."
-        },
-        "correct_option": "B",
-        "explanation": "Under the rule in Rylands v. Fletcher, strict liability applies when a dangerous non-natural accumulation escapes. The defense of 'Act of God' requires the natural event to be so unprecedented that human prudence cannot reasonably anticipate it (Nichols v. Marsland). Because rains of this intensity had occurred twice in the last 15 years, it was foreseeable. Therefore, the defense fails and Arvind is strictly liable.",
-        "distractor_analysis": {
-          "A": "Incorrect. Common sense trap: students confuse everyday 'natural acts' with the stringent legal threshold of an 'Act of God'.",
-          "B": "Correct. To qualify as an Act of God in law, the natural event must be unprecedented and extraordinary, not merely heavy.",
-          "C": "Incorrect. The Negligence trap: Strict liability does NOT require proof of negligence or lack of reasonable care.",
-          "D": "Incorrect. Mens rea (intention) is completely irrelevant in strict tort liability."
-        },
-        "skill_domain": "Legal Principles",
-        "difficulty_tier": "application",
-        "time_estimate_seconds": 90,
-        "misconception": "Confusing everyday definitions of natural weather with the legal test for Act of God, or confusing strict liability with negligence.",
-        "topics": ["Law of Torts", "Strict Liability", "Act of God Defense"]
-      }
-    },
-    "CA Foundation": {
-      "exam_name": "CA Foundation",
-      "subject": "Business Laws",
-      "domain": "Indian Contract Act",
-      "question": {
-        "question_text": "Kunal, aged 17, fraudulently represented to a private financier that he was 22 years old and thereby secured a business loan of ₹50,000. Kunal spent the entire sum purchasing an expensive smartphone and gaming console. When the financier sued Kunal to recover the loan amount with interest, Kunal pleaded minority. What is the legal position under the Indian Contract Act, 1872?",
-        "options": {
-          "A": "The financier can enforce the contract because a minor who commits fraud cannot take advantage of his own wrongdoing.",
-          "B": "The contract is void ab initio; the rule of estoppel does not apply against a minor, and money cannot be recovered under contract.",
-          "C": "The court will enforce the contract on the grounds of unjust enrichment under Section 68 of the Contract Act.",
-          "D": "Kunal is liable to repay the loan upon attaining majority at age 18."
-        },
-        "correct_option": "B",
-        "explanation": "As established in the landmark Privy Council ruling Mohori Bibee v. Dharmodas Ghose (1903), an agreement entered into with a minor is void ab initio (void from the very beginning). Furthermore, under Section 115 of the Indian Evidence Act, the doctrine of estoppel does not apply against a minor — a minor cannot be precluded from pleading his minority even if he fraudulently misrepresented his age. Section 68 only applies to necessaries of life, which luxury electronics are not.",
-        "distractor_analysis": {
-          "A": "Incorrect. The #1 CA Law Trap: 76% of students apply general commercial equity thinking fraud removes minority protection. In law, estoppel never applies against a minor.",
-          "B": "Correct. A minor's agreement is void ab initio, and the plea of minority remains absolute against contract enforcement.",
-          "C": "Incorrect. Section 68 applies exclusively to reimbursement for necessaries supplied suited to the minor's condition in life.",
-          "D": "Incorrect. A void ab initio agreement cannot be validated or ratified upon attaining majority."
-        },
-        "skill_domain": "Indian Contract Act",
-        "difficulty_tier": "application",
-        "time_estimate_seconds": 90,
-        "misconception": "Believing that fraudulent misrepresentation by a minor creates an enforceable contractual liability or estoppel.",
-        "topics": ["Capacity to Contract", "Minor's Agreement", "Doctrine of Estoppel"]
+        "topics": [
+          "Data Sufficiency",
+          "Absolute Value",
+          "Zero Property Traps"
+        ]
       }
     },
     "CFA Level 1": {
@@ -298,7 +121,11 @@
         "difficulty_tier": "foundation",
         "time_estimate_seconds": 60,
         "misconception": "Failing to convert nominal stated annual rates into effective periodic yields accounting for monthly reinvestment compounding.",
-        "topics": ["Time Value of Money", "Effective Annual Rate", "Compounding Frequency"]
+        "topics": [
+          "Time Value of Money",
+          "Effective Annual Rate",
+          "Compounding Frequency"
+        ]
       }
     },
     "IELTS Academic": {
@@ -325,7 +152,11 @@
         "difficulty_tier": "application",
         "time_estimate_seconds": 75,
         "misconception": "Conflating 'NOT GIVEN' with 'FALSE' by bringing external world assumptions into textual verification.",
-        "topics": ["IELTS Reading", "True False Not Given", "Textual Evidence"]
+        "topics": [
+          "IELTS Reading",
+          "True False Not Given",
+          "Textual Evidence"
+        ]
       }
     },
     "TOEFL iBT": {
@@ -352,9 +183,12 @@
         "difficulty_tier": "application",
         "time_estimate_seconds": 90,
         "misconception": "Selecting literal word matches that explain the biological mechanism rather than the author's rhetorical intent.",
-        "topics": ["Rhetorical Purpose", "Inference", "TOEFL Reading"]
+        "topics": [
+          "Rhetorical Purpose",
+          "Inference",
+          "TOEFL Reading"
+        ]
       }
     }
   }
 }
-

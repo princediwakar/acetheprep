@@ -10,18 +10,18 @@ export const metadata: Metadata = {
     template: "%s | AceThePrep",
   },
   description:
-    "Free exam practice questions with AI-generated explanations and distractor analysis. Prepare for JEE, NEET, UPSC, GMAT, SAT, GRE, CAT, GATE, CLAT, and CA Foundation.",
+    "Free exam practice questions with AI-generated explanations and distractor analysis. Prepare for SAT, GRE, GMAT Focus, CFA Level 1, IELTS Academic, and TOEFL iBT.",
   keywords: [
     "practice questions",
     "exam preparation",
     "free test prep",
     "AI-generated questions",
-    "JEE practice",
-    "NEET practice",
-    "UPSC practice",
-    "GMAT practice",
     "SAT practice",
     "GRE practice",
+    "GMAT practice",
+    "CFA Level 1 practice",
+    "IELTS practice",
+    "TOEFL practice",
   ],
   openGraph: {
     title: "Practice Questions | AceThePrep",

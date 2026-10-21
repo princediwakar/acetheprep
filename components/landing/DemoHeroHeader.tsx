@@ -86,22 +86,13 @@ export function DemoHeroHeader({
             aria-label="Select target curriculum"
             className="w-full appearance-none rounded-xl border border-border bg-card py-3.5 pl-4 pr-9 text-xs font-medium text-foreground transition-colors hover:bg-secondary focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
           >
-            <optgroup label="US & EU Standardized Admissions">
+            <optgroup label="Global Standardized Exams">
               <option value="SAT">Digital SAT (College Board)</option>
               <option value="GRE">GRE General (ETS)</option>
               <option value="GMAT Focus">GMAT Focus (GMAC)</option>
               <option value="CFA Level 1">CFA Level 1 (CFA Inst.)</option>
               <option value="IELTS Academic">IELTS Academic</option>
               <option value="TOEFL iBT">TOEFL iBT</option>
-            </optgroup>
-            <optgroup label="Competitive Curricula">
-              <option value="JEE Main">JEE Main</option>
-              <option value="NEET">NEET</option>
-              <option value="CAT">CAT (IIM)</option>
-              <option value="GATE">GATE</option>
-              <option value="UPSC CSE">UPSC CSE</option>
-              <option value="CLAT">CLAT Law</option>
-              <option value="CA Foundation">CA Foundation</option>
             </optgroup>
           </select>
           <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />

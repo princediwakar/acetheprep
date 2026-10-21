@@ -12,7 +12,7 @@ export const siteConfig = {
   domain: "acetheprep.com",
   url: safeUrl,
   description:
-    "Free adaptive exam preparation with active recall drills, step-by-step mistake breakdowns, and spaced reviews for SAT, GRE, GMAT Focus, CFA, JEE Main, and NEET.",
+    "Free adaptive exam preparation with active recall drills, step-by-step mistake breakdowns, and spaced reviews for Digital SAT, GRE General, GMAT Focus, CFA Level 1, IELTS Academic, and TOEFL iBT.",
   author: "AceThePrep Engineering",
   links: {
     supportEmail: "support@acetheprep.com",

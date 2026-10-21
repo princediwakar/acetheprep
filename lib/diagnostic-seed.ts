@@ -42,52 +42,108 @@ interface MasteryUpsertRow {
 
 // ----- Diagnostic Strata -----
 
-const JEE_DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
+const SAT_DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
   {
-    name: "Foundational Math",
+    name: "Reading & Writing: Rhetoric & Structure",
+    domains: [
+      "Craft and Structure",
+      "Information and Ideas",
+    ],
+  },
+  {
+    name: "Reading & Writing: Conventions & Expression",
+    domains: [
+      "Standard English Conventions",
+      "Expression of Ideas",
+    ],
+  },
+  {
+    name: "Math: Algebra & Equations",
     domains: [
       "Algebra",
-      "Trigonometry",
-      "Calculus",
-      "Complex Numbers",
-      "Matrices and Determinants",
+      "Advanced Math",
     ],
   },
   {
-    name: "Mechanics Core",
+    name: "Math: Problem Solving & Data Analysis",
     domains: [
-      "Kinematics",
-      "Laws of Motion",
-      "Work, Energy and Power",
-      "Rotational Motion",
-      "Gravitation",
+      "Problem-Solving and Data Analysis",
     ],
   },
   {
-    name: "Conceptual Reasoning",
+    name: "Math: Geometry & Trigonometry",
     domains: [
-      "Electrostatics",
-      "Current Electricity",
-      "Magnetism and Matter",
-      "Thermodynamics",
+      "Geometry and Trigonometry",
+    ],
+  },
+];
+
+const CFA_DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
+  {
+    name: "Ethical & Professional Standards",
+    domains: [
+      "Code of Ethics",
+      "Standards of Professional Conduct",
+      "Global Investment Performance Standards (GIPS)",
     ],
   },
   {
-    name: "Symbolic Manipulation",
+    name: "Quantitative Methods & Economics",
     domains: [
-      "Atomic Structure",
-      "Chemical Bonding",
-      "Equilibrium",
-      "Redox Reactions",
+      "Time Value of Money",
+      "Statistical Concepts & Market Returns",
+      "Probability Distributions",
+      "Hypothesis Testing",
+      "Simple Linear Regression",
+      "Microeconomic Analysis",
+      "Monetary and Fiscal Policy",
+      "International Trade & Capital Flows",
+      "Currency Exchange Rates",
     ],
   },
   {
-    name: "Integrative Thinking",
+    name: "Financial Statement Analysis",
     domains: [
-      "Modern Physics",
-      "Coordination Compounds",
-      "Organic Chemistry",
-      "Biomolecules",
+      "Financial Reporting Standards",
+      "Income Statements",
+      "Balance Sheets",
+      "Cash Flow Statements",
+      "Inventories & Long-Lived Assets",
+      "Financial Analysis Techniques",
+    ],
+  },
+  {
+    name: "Corporate Issuers & Equity",
+    domains: [
+      "Corporate Governance",
+      "Working Capital & Liquidity",
+      "Capital Structure",
+      "Capital Investments",
+      "Market Organization & Structure",
+      "Security Market Indexes",
+      "Market Efficiency",
+      "Equity Valuation",
+    ],
+  },
+  {
+    name: "Fixed Income, Derivatives & Alternatives",
+    domains: [
+      "Fixed-Income Securities",
+      "Fixed-Income Valuation",
+      "Asset-Backed Securities",
+      "Yield & Spread Analysis",
+      "Credit Analysis",
+      "Derivative Markets & Instruments",
+      "Forward & Futures Contracts",
+      "Option Basics",
+      "Swaps",
+      "Real Estate",
+      "Private Equity",
+      "Hedge Funds",
+      "Commodities",
+      "Portfolio Risk & Return",
+      "Portfolio Planning & Construction",
+      "Behavioral Biases",
     ],
   },
 ];
@@ -310,9 +366,19 @@ const TOEFL_DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
   },
 ];
 
-const JEE_DOMAIN_TO_STRATUM: Record<string, string> = (() => {
+const SAT_DOMAIN_TO_STRATUM: Record<string, string> = (() => {
   const map: Record<string, string> = {};
-  for (const stratum of JEE_DIAGNOSTIC_STRATA) {
+  for (const stratum of SAT_DIAGNOSTIC_STRATA) {
+    for (const domain of stratum.domains) {
+      map[domain.toLowerCase()] = stratum.name;
+    }
+  }
+  return map;
+})();
+
+const CFA_DOMAIN_TO_STRATUM: Record<string, string> = (() => {
+  const map: Record<string, string> = {};
+  for (const stratum of CFA_DIAGNOSTIC_STRATA) {
     for (const domain of stratum.domains) {
       map[domain.toLowerCase()] = stratum.name;
     }
@@ -363,11 +429,17 @@ const TOEFL_DOMAIN_TO_STRATUM: Record<string, string> = (() => {
 // ----- Exported Accessors -----
 
 export function getDiagnosticStrata(examName?: string): DiagnosticStrata[] {
+  if (examName && /sat/i.test(examName)) {
+    return SAT_DIAGNOSTIC_STRATA;
+  }
   if (examName && /gre/i.test(examName)) {
     return GRE_DIAGNOSTIC_STRATA;
   }
   if (examName && /gmat/i.test(examName)) {
     return GMAT_DIAGNOSTIC_STRATA;
+  }
+  if (examName && /cfa/i.test(examName)) {
+    return CFA_DIAGNOSTIC_STRATA;
   }
   if (examName && /ielts/i.test(examName)) {
     return IELTS_DIAGNOSTIC_STRATA;
@@ -375,7 +447,7 @@ export function getDiagnosticStrata(examName?: string): DiagnosticStrata[] {
   if (examName && /toefl/i.test(examName)) {
     return TOEFL_DIAGNOSTIC_STRATA;
   }
-  return JEE_DIAGNOSTIC_STRATA;
+  return SAT_DIAGNOSTIC_STRATA;
 }
 
 export function getStratumForDomain(domain: string, examName?: string): string | null {
@@ -455,8 +527,29 @@ export function getStratumForDomain(domain: string, examName?: string): string |
     return null;
   }
 
-  // Default to JEE mapping, fallback to checking others
-  return JEE_DOMAIN_TO_STRATUM[norm] ?? GMAT_DOMAIN_TO_STRATUM[norm] ?? GRE_DOMAIN_TO_STRATUM[norm] ?? IELTS_DOMAIN_TO_STRATUM[norm] ?? TOEFL_DOMAIN_TO_STRATUM[norm] ?? null;
+  const isSAT = examName && /sat/i.test(examName);
+  if (isSAT) {
+    if (SAT_DOMAIN_TO_STRATUM[norm]) return SAT_DOMAIN_TO_STRATUM[norm];
+    if (norm.includes("craft") || norm.includes("information") || norm.includes("reading")) return "Reading & Writing: Rhetoric & Structure";
+    if (norm.includes("convention") || norm.includes("expression") || norm.includes("grammar") || norm.includes("writing")) return "Reading & Writing: Conventions & Expression";
+    if (norm.includes("algebra") || norm.includes("advanced math")) return "Math: Algebra & Equations";
+    if (norm.includes("problem-solving") || norm.includes("data analysis") || norm.includes("statistics")) return "Math: Problem Solving & Data Analysis";
+    if (norm.includes("geometry") || norm.includes("trigonometry")) return "Math: Geometry & Trigonometry";
+    return "Math: Algebra & Equations";
+  }
+
+  const isCFA = examName && /cfa/i.test(examName);
+  if (isCFA) {
+    if (CFA_DOMAIN_TO_STRATUM[norm]) return CFA_DOMAIN_TO_STRATUM[norm];
+    if (norm.includes("ethic") || norm.includes("conduct") || norm.includes("gips")) return "Ethical & Professional Standards";
+    if (norm.includes("quant") || norm.includes("time value") || norm.includes("stat") || norm.includes("econ")) return "Quantitative Methods & Economics";
+    if (norm.includes("statement") || norm.includes("reporting") || norm.includes("financial analysis") || norm.includes("balance") || norm.includes("income")) return "Financial Statement Analysis";
+    if (norm.includes("equity") || norm.includes("corporate") || norm.includes("governance") || norm.includes("capital")) return "Corporate Issuers & Equity";
+    return "Fixed Income, Derivatives & Alternatives";
+  }
+
+  // Fallback to checking all global domain maps
+  return SAT_DOMAIN_TO_STRATUM[norm] ?? GMAT_DOMAIN_TO_STRATUM[norm] ?? GRE_DOMAIN_TO_STRATUM[norm] ?? CFA_DOMAIN_TO_STRATUM[norm] ?? IELTS_DOMAIN_TO_STRATUM[norm] ?? TOEFL_DOMAIN_TO_STRATUM[norm] ?? null;
 }
 
 // ----- Scoring Constants -----

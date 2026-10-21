@@ -28,7 +28,7 @@ describe("computeDifficultyDistribution — Exam-Grade Calibration", () => {
 
 describe("buildTutorUserMessage — Uniqueness and Negative Constraints", () => {
   const dummyDomain: TargetDomain = {
-    skillDomain: "Kinematics",
+    skillDomain: "Linear equations in two variables",
     masteryScore: 0.5,
     recentErrors: [],
     isOverdue: false,
@@ -42,7 +42,7 @@ describe("buildTutorUserMessage — Uniqueness and Negative Constraints", () => 
     ];
 
     const message = buildTutorUserMessage({
-      examName: "JEE Main",
+      examName: "SAT",
       examYear: "2025",
       timeMode: "triage",
       daysRemaining: 30,

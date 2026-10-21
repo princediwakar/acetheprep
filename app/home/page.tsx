@@ -9,7 +9,8 @@ import { computeStreak } from "@/lib/utils";
 import { DashboardView, DashboardViewLoading } from "@/components/tutor/DashboardView";
 import type { ExamProfile, TimeMode, SessionRow } from "@/types/tutor";
 import type { ProjectionHeroProps } from "@/components/tutor/ProjectionHero";
-import { marksToPercentile, getColdStartBand, computeCompositePercentile } from "@/lib/predictor/nta-priors";
+import { computeSATPrediction } from "@/lib/predictor/sat-score-engine";
+import { computeCFAPrediction } from "@/lib/predictor/cfa-score-engine";
 import { computeGMATPrediction } from "@/lib/predictor/gmat-score-engine";
 import { computeGREPrediction } from "@/lib/predictor/gre-score-engine";
 import { computeIELTSPrediction } from "@/lib/predictor/ielts-score-engine";
@@ -313,6 +314,8 @@ async function HomePageContent({
   const isGRE = /gre/i.test(profile.exam_name);
   const isIELTS = /ielts/i.test(profile.exam_name);
   const isTOEFL = /toefl/i.test(profile.exam_name);
+  const isSAT = /sat/i.test(profile.exam_name);
+  const isCFA = /cfa/i.test(profile.exam_name);
 
   let prediction: ProjectionHeroProps["prediction"] = null;
 
@@ -445,6 +448,54 @@ async function HomePageContent({
       displayValue: `${gmatPred.scoreBandLower}–${gmatPred.scoreBandUpper}`,
       secondaryLabel: `~${gmatPred.overallPercentile}th %ile`,
     };
+  } else if (isSAT) {
+    const rwDomains = examSubjects?.["Reading and Writing"] ?? [];
+    const mathDomains = examSubjects?.["Mathematics"] ?? [];
+
+    const satPred = computeSATPrediction({
+      rwMastery: getSectionMastery(rwDomains, 0.50),
+      mathMastery: getSectionMastery(mathDomains, 0.50),
+      totalTrackedSessions: sessionsCompleted,
+      rwDomainsTracked: rwDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+      mathDomainsTracked: mathDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+    });
+
+    prediction = {
+      overallPercentile: satPred.overallPercentile,
+      overallBandLower: satPred.scoreBandLower,
+      overallBandUpper: satPred.scoreBandUpper,
+      overallBandWidth: satPred.scoreBandWidth,
+      calibrationSource: satPred.calibrationSource,
+      disclaimer: satPred.disclaimer,
+      isFrozen: false,
+      totalTrackedSessions: satPred.totalTrackedSessions,
+      metricLabel: "Projected Digital SAT Score (400–1600)",
+      displayValue: `${satPred.scoreBandLower}–${satPred.scoreBandUpper}`,
+      secondaryLabel: `~${satPred.overallPercentile}th %ile`,
+    };
+  } else if (isCFA) {
+    const allDomains = Object.values(examSubjects ?? {}).flat();
+    const ethicsDomains = examSubjects?.["Ethical & Professional Standards"] ?? [];
+
+    const cfaPred = computeCFAPrediction({
+      overallMastery: getSectionMastery(allDomains, 0.50),
+      ethicsMastery: getSectionMastery(ethicsDomains, 0.50),
+      totalTrackedSessions: sessionsCompleted,
+    });
+
+    prediction = {
+      overallPercentile: cfaPred.overallPercentile,
+      overallBandLower: cfaPred.bandLower,
+      overallBandUpper: cfaPred.bandUpper,
+      overallBandWidth: cfaPred.bandWidth,
+      calibrationSource: cfaPred.calibrationSource,
+      disclaimer: cfaPred.disclaimer,
+      isFrozen: false,
+      totalTrackedSessions: cfaPred.totalTrackedSessions,
+      metricLabel: "CFA Level 1 Exam Readiness",
+      displayValue: `${cfaPred.readinessPercentage}% (${cfaPred.statusLabel})`,
+      secondaryLabel: `${cfaPred.mpsConfidence}% MPS Confidence`,
+    };
   } else if (predictionRes.data) {
     const lower = predictionRes.data.band_lower;
     const upper = predictionRes.data.band_upper;
@@ -454,29 +505,24 @@ async function HomePageContent({
       overallBandLower: lower,
       overallBandUpper: upper,
       overallBandWidth: Math.round((upper - lower) * 100) / 100,
-      calibrationSource: predictionRes.data.calibration_source ?? "public_nta",
+      calibrationSource: predictionRes.data.calibration_source ?? "standardized_prior",
       disclaimer: sessions >= 20
         ? "Fully calibrated to your personal practice history."
         : sessions > 0
-          ? `Prediction blends public NTA data with your ${sessions} tracked session${sessions > 1 ? "s" : ""}. Band sharpens with each session.`
-          : "Based on public NTA normalization tables (2025–2026 cycles). Your band sharpens with every tracked session.",
+          ? `Prediction blends standardized baseline with your ${sessions} tracked session${sessions > 1 ? "s" : ""}. Band sharpens with each session.`
+          : "Based on standardized psychometric baseline models. Your band sharpens with every tracked session.",
       isFrozen: predictionRes.data.is_frozen ?? false,
       totalTrackedSessions: sessions,
     };
   } else {
-    // Cold-start: generate band from public NTA priors (zero tracked sessions)
-    const p = marksToPercentile("Physics", 50);
-    const c = marksToPercentile("Chemistry", 50);
-    const m = marksToPercentile("Mathematics", 50);
-    const overall = computeCompositePercentile({ Physics: p, Chemistry: c, Mathematics: m });
-    const band = getColdStartBand("Physics", overall);
+    // Psychometric baseline fallback
     prediction = {
-      overallPercentile: overall,
-      overallBandLower: band.lower,
-      overallBandUpper: band.upper,
-      overallBandWidth: band.width,
-      calibrationSource: "public_nta",
-      disclaimer: "Based on public NTA normalization tables (2025–2026 cycles). Your band sharpens with every tracked session.",
+      overallPercentile: 50,
+      overallBandLower: 40,
+      overallBandUpper: 60,
+      overallBandWidth: 20,
+      calibrationSource: "standardized_prior",
+      disclaimer: "Based on standardized psychometric baseline models. Your band sharpens with every tracked session.",
       isFrozen: false,
       totalTrackedSessions: 0,
     };

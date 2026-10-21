@@ -4,6 +4,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getUserSubscriptionStatus } from "@/lib/billing";
 import { PricingCards } from "@/components/billing/PricingCards";
+import { FullPaymentTrustBanner } from "@/components/billing/PaymentTrustBadge";
 import { Badge } from "@/components/ui/badge";
 import {
   Accordion,
@@ -85,7 +86,7 @@ const FAQS = [
   },
   {
     q: "Which exams does AceThePrep support?",
-    a: "We provide dedicated taxonomies and calibrated distractor engines for Digital SAT, GRE General, GMAT Focus, CFA Level 1, IELTS Academic, TOEFL iBT, JEE Main, NEET, CAT, GATE, UPSC CSE, CLAT, and CA Foundation.",
+    a: "We provide dedicated taxonomies and calibrated distractor engines for Digital SAT, GRE General, GMAT Focus, CFA Level 1, IELTS Academic, and TOEFL iBT.",
   },
   {
     q: "What makes AceThePrep different from traditional question banks?",
@@ -121,6 +122,11 @@ export default async function PricingPage() {
 
       {/* Pricing Cards */}
       <PricingCards userEmail={user?.email} isPro={subscriptionStatus.isPro} />
+
+      {/* Institutional Trust & Security Banner */}
+      <div className="max-w-4xl mx-auto mt-12">
+        <FullPaymentTrustBanner />
+      </div>
 
       {/* Comparison Matrix */}
       <div className="max-w-4xl mx-auto mt-24 space-y-8">

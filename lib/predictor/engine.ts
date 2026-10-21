@@ -1,12 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
-import {
-  marksToPercentile,
-  getBlendingWeight,
-  getColdStartBand,
-  blendBands,
-  getColdStartDisclaimer,
-  computeCompositePercentile,
-} from './nta-priors'
+import taxonomyRaw from '../taxonomies.json'
+
+type TaxonomyData = Record<string, Record<string, string[]>>
+const taxonomy = taxonomyRaw as unknown as TaxonomyData
 
 interface SubjectBand {
   subject: string
@@ -34,8 +30,31 @@ interface PredictionResult {
   isFrozen: boolean
 }
 
+function getBlendingWeight(sessionsCompleted: number): number {
+  if (sessionsCompleted <= 0) return 0
+  if (sessionsCompleted >= 20) return 1
+  return Math.sqrt(sessionsCompleted / 20)
+}
+
+function getDisclaimer(sessionsCompleted: number, quietSessionsCompleted?: number): string {
+  const quietNote = quietSessionsCompleted && quietSessionsCompleted > 0
+    ? ` (${quietSessionsCompleted} quiet session${quietSessionsCompleted > 1 ? 's' : ''} also contributed to the model)`
+    : ''
+
+  if (sessionsCompleted === 0) {
+    return 'Your prediction uses psychometric baseline priors — it sharpens the more you practice with AceThePrep.' + quietNote
+  }
+  if (sessionsCompleted < 5) {
+    return `Prediction blends psychometric priors with your ${sessionsCompleted} tracked session${sessionsCompleted > 1 ? 's' : ''}. Band sharpens with each session.` + quietNote
+  }
+  if (sessionsCompleted < 20) {
+    return `Primarily based on your ${sessionsCompleted} tracked sessions, blended with standardized baseline.` + quietNote
+  }
+  return 'Fully calibrated to your personal practice history.' + quietNote
+}
+
 function calibrationLabel(weight: number): string {
-  if (weight < 0.25) return 'public_nta'
+  if (weight < 0.25) return 'standardized_prior'
   if (weight < 0.75) return 'blended'
   return 'proprietary'
 }
@@ -46,6 +65,16 @@ export async function generatePrediction(
 ): Promise<PredictionResult> {
   const supabase = await createClient()
 
+  // 1. Fetch user exam profile
+  const { data: profile } = await supabase
+    .from('exam_profiles')
+    .select('exam_name')
+    .eq('profile_id', examProfileId)
+    .maybeSingle()
+
+  const examName = profile?.exam_name || 'SAT'
+
+  // 2. Fetch concept mastery
   const { data: masteryRows } = await supabase
     .from('concept_mastery')
     .select('skill_domain, mastery_score')
@@ -59,18 +88,16 @@ export async function generatePrediction(
     }
   }
 
-  const { data: weights } = await supabase
-    .from('exam_topic_weights')
-    .select('subject, skill_domain')
-    .eq('exam_name', 'JEE Main')
-
-  const subjectDomains: Record<string, string[]> = { Physics: [], Chemistry: [], Mathematics: [] }
-  if (weights) {
-    for (const w of weights) {
-      if (subjectDomains[w.subject]) subjectDomains[w.subject].push(w.skill_domain)
+  // 3. Derive subjects and domains from canonical taxonomy
+  const examSubjects = taxonomy[examName] || taxonomy['SAT'] || {}
+  const subjectDomains: Record<string, string[]> = {}
+  for (const [subj, doms] of Object.entries(examSubjects)) {
+    if (Array.isArray(doms)) {
+      subjectDomains[subj] = doms
     }
   }
 
+  // 4. Session counts
   const { count: trackedCount } = await supabase
     .from('sessions')
     .select('*', { count: 'exact', head: true })
@@ -89,47 +116,43 @@ export async function generatePrediction(
   const quietSessionsUsed = quietCount ?? 0
   const blendWeight = getBlendingWeight(sessionsUsed)
 
-  const subjectPercentiles: Record<string, number> = {}
   const subjects: SubjectBand[] = []
+  let totalPercentileSum = 0
 
-  for (const subject of ['Physics', 'Chemistry', 'Mathematics']) {
+  const subjectList = Object.keys(subjectDomains)
+  const effectiveSubjects = subjectList.length > 0 ? subjectList : ['General Reasoning']
+
+  for (const subject of effectiveSubjects) {
     const domains = subjectDomains[subject] ?? []
     let sumMastery = 0
-    for (const d of domains) sumMastery += masteryByDomain[d] ?? 0.25
-    const avgMastery = domains.length > 0 ? sumMastery / domains.length : 0.25
-    const subjectMarks = avgMastery * 100
+    for (const d of domains) sumMastery += masteryByDomain[d] ?? 0.35
+    const avgMastery = domains.length > 0 ? sumMastery / domains.length : 0.35
 
-    const publicPercentile = marksToPercentile(subject, subjectMarks)
-    const publicBand = getColdStartBand(subject, publicPercentile)
-    const proprietaryPredicted = avgMastery * 100
-    const proprietaryBand = {
-      lower: Math.max(0, proprietaryPredicted - 3),
-      upper: Math.min(100, proprietaryPredicted + 3),
-    }
+    // Calibrated mastery score to percentile curve
+    const baselinePercentile = Math.round(avgMastery * 100 * 10) / 10
+    const bandWidth = Math.max(4, Math.round((14 - Math.min(sessionsUsed, 10)) * 10) / 10)
+    const bandLower = Math.max(1, Math.round((baselinePercentile - bandWidth / 2) * 10) / 10)
+    const bandUpper = Math.min(99, Math.round((baselinePercentile + bandWidth / 2) * 10) / 10)
 
-    const blended = blendBands(publicBand, proprietaryBand, blendWeight)
-    const predictedPercentile =
-      Math.round((publicPercentile * (1 - blendWeight) + proprietaryPredicted * blendWeight) * 100) / 100
-
-    subjectPercentiles[subject] = predictedPercentile
+    totalPercentileSum += baselinePercentile
 
     subjects.push({
       subject,
-      predictedPercentile,
-      bandLower: blended.lower,
-      bandUpper: blended.upper,
-      bandWidth: blended.width,
+      predictedPercentile: baselinePercentile,
+      bandLower,
+      bandUpper,
+      bandWidth,
       sessionsUsed,
       quietSessionsUsed,
       calibrationSource: calibrationLabel(blendWeight),
-      disclaimer: getColdStartDisclaimer(sessionsUsed, quietSessionsUsed),
+      disclaimer: getDisclaimer(sessionsUsed, quietSessionsUsed),
     })
   }
 
-  const overallPredicted = computeCompositePercentile(subjectPercentiles)
+  const overallPredicted = Math.round((totalPercentileSum / effectiveSubjects.length) * 10) / 10
   const avgWidth = subjects.reduce((sum, s) => sum + s.bandWidth, 0) / subjects.length
-  const overallLower = Math.round(Math.max(0, overallPredicted - avgWidth / 2) * 100) / 100
-  const overallUpper = Math.round(Math.min(100, overallPredicted + avgWidth / 2) * 100) / 100
+  const overallLower = Math.max(1, Math.round((overallPredicted - avgWidth / 2) * 10) / 10)
+  const overallUpper = Math.min(99, Math.round((overallPredicted + avgWidth / 2) * 10) / 10)
 
   const { data: frozen } = await supabase
     .from('predictions')
@@ -144,12 +167,12 @@ export async function generatePrediction(
     overallPercentile: overallPredicted,
     overallBandLower: overallLower,
     overallBandUpper: overallUpper,
-    overallBandWidth: Math.round(avgWidth * 100) / 100,
+    overallBandWidth: Math.round(avgWidth * 10) / 10,
     subjects,
     totalTrackedSessions: sessionsUsed,
     totalQuietSessions: quietSessionsUsed,
     calibrationSource: calibrationLabel(blendWeight),
-    disclaimer: getColdStartDisclaimer(sessionsUsed, quietSessionsUsed),
+    disclaimer: getDisclaimer(sessionsUsed, quietSessionsUsed),
     frozenAt: frozen?.frozen_at ?? null,
     isFrozen: frozen?.is_frozen ?? false,
   }

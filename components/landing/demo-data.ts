@@ -19,13 +19,6 @@ export const EXAM_MODULE_NAMES: Record<string, string> = {
   "CFA Level 1": "CFA Level 1 • Financial Statement Analysis",
   "IELTS Academic": "IELTS Academic • Reading Academic Module",
   "TOEFL iBT": "TOEFL iBT • Reading Comprehension & Structure",
-  "JEE Main": "JEE Main • Paper 1 (Physics & Mathematics)",
-  NEET: "NEET-UG • Physics & Biological Sciences",
-  CAT: "CAT • Quantitative Aptitude & Data Interpretation",
-  GATE: "GATE • Linear Algebra & Engineering Mathematics",
-  "UPSC CSE": "UPSC CSE • General Studies Paper II (CSAT)",
-  CLAT: "CLAT • Legal Reasoning & Applied Logic",
-  "CA Foundation": "CA Foundation • Business Laws & Regulatory Framework",
 };
 
 // Conceptual hints for users looking for deeper insights
@@ -42,20 +35,6 @@ export const EXAM_HINTS: Record<string, string> = {
     "In IELTS Reading, 'False' means the passage contradicts the claim; 'Not Given' means the passage neither confirms nor denies it. Never extrapolate external real-world knowledge beyond the text.",
   "TOEFL iBT":
     "In TOEFL Sentence Insertion, verify cohesive pronoun references ('this result', 'such factors') and transition contrasts ('however', 'consequently') around the insertion point.",
-  "JEE Main":
-    "Lens Maker's Formula: 1/f = (n − 1)(1/R₁ − 1/R₂). Cartesian sign convention: front surface is convex (R₁ = +15 cm), rear surface is curved inward relative to incident ray (R₂ = −10 cm).",
-  NEET:
-    "In a monohybrid cross of heterozygotes (Tt × Tt), distinguish between genotypic ratio (1 TT : 2 Tt : 1 tt) and phenotypic ratio (3 tall : 1 dwarf).",
-  CAT:
-    "For equal round-trip distances, Average Speed is the Harmonic Mean: 2·v₁·v₂ / (v₁ + v₂), or Total Distance / Total Time. Never take the simple arithmetic mean.",
-  GATE:
-    "For any 2×2 matrix: Sum of Eigenvalues = Trace(M), and Product of Eigenvalues = Det(M). Form characteristic equation: λ² − Trace(M)λ + Det(M) = 0.",
-  "UPSC CSE":
-    "In formal categorical syllogisms, a middle term ('diligent planners') must be distributed in at least one premise to warrant a valid deductive link between extremes.",
-  CLAT:
-    "Under the rule of strict liability (Rylands v. Fletcher), an 'Act of God' requires an unprecedented, extraordinary natural disaster that human foresight could not anticipate.",
-  "CA Foundation":
-    "Under Mohori Bibee v. Dharmodas Ghose, a minor's agreement is void ab initio. The doctrine of estoppel never applies against a minor under the Indian Contract Act.",
 };
 
 export type Phase = "question" | "reveal";

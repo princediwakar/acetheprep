@@ -32,6 +32,7 @@ export const SessionAnswerSchema = z.object({
   selected_option: z
     .enum(ANSWER_OPTIONS)
     .nullable(),
+  free_text_answer: z.string().optional(),
   time_to_answer_ms: z
     .number()
     .int("Response time must be a whole number of milliseconds")

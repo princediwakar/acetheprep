@@ -372,7 +372,7 @@ async function main() {
     console.log("  npx tsx scripts/seed-question-bank.ts --curated");
     console.log("  npx tsx scripts/seed-question-bank.ts --demo");
     console.log("  npx tsx scripts/seed-question-bank.ts --import-practice");
-    console.log("  npx tsx scripts/seed-question-bank.ts --exam \"JEE Main\" --count 5");
+    console.log("  npx tsx scripts/seed-question-bank.ts --exam \"SAT\" --count 5");
     console.log("  npx tsx scripts/seed-question-bank.ts --generate-all --count 3");
     console.log("  Add --dry-run to preview actions without database writes.");
   }

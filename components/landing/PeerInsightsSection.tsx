@@ -36,12 +36,12 @@ const gaugeData: GaugeData[] = [
     strokeColor: "#d97706",
   },
   {
-    exam: "JEE Main",
-    topic: "Rotational Dynamics & Signs",
-    detail: "78% of students lose marks on sign conventions in torque equations.",
-    value: 22,
-    colorClass: "text-primary",
-    strokeColor: "hsl(var(--primary))",
+    exam: "CFA Level 1",
+    topic: "Modified Duration & Convexity",
+    detail: "72% of candidates miss price error approximation for large yield shocks.",
+    value: 28,
+    colorClass: "text-emerald-600 dark:text-emerald-400",
+    strokeColor: "#059669",
   },
 ];
 

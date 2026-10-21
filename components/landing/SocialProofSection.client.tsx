@@ -12,10 +12,10 @@ import { CountUp } from "@/components/shared/CountUp";
 // ---------------------------------------------------------------------------
 
 const STATS = [
-  { to: 50000, suffix: "+", label: "Aspirants Prepared", detail: "Across all 13 tracks" },
-  { to: 2, suffix: "M+", label: "Retrieval Drills", detail: "Active recall completions" },
-  { to: 13, suffix: "", label: "High-Yield Tracks", detail: "SAT, GRE, GMAT, CFA, IELTS & more" },
-  { to: 94, suffix: "%", label: "Confidence Lift", detail: "Reduced exam-day anxiety" },
+  { to: 6, suffix: " Global Tracks", label: "Official Curricula", detail: "College Board, ETS, GMAC, CFA Inst." },
+  { to: 100, suffix: "%", label: "Distractor Coverage", detail: "Every wrong option diagnosed" },
+  { to: 3, suffix: " Gates", label: "SM-2 Recall Intervals", detail: "1-day, 3-day & 7-day memory retention" },
+  { to: 0, suffix: "ms", label: "Perceived Latency", detail: "Zero-lag Bluebook & Desmos engine" },
 ] as const;
 
 // ---------------------------------------------------------------------------
@@ -99,8 +99,11 @@ function TestimonialCard({
       </div>
 
       <div className="mt-5 pt-3 border-t border-border/50 flex items-center justify-between text-[11px] font-mono text-muted-foreground">
-        <span>Verified Aspirant</span>
-        <span className="text-emerald-600 dark:text-emerald-400 font-medium">100% Organic</span>
+        <span className="flex items-center gap-1.5 text-foreground/80 font-medium">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          Score Verified
+        </span>
+        <span className="text-muted-foreground">Official Blueprint Aligned</span>
       </div>
     </motion.div>
   );

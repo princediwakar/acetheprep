@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 
-const SUBJECTS = ["Physics", "Chemistry", "Mathematics"];
+const SUBJECTS = ["Math", "Reading & Writing"];
 
 interface SubjectPrediction {
   subject: string;
@@ -77,7 +77,7 @@ export default function PredictorPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phone: phone.replace(/\s/g, ""),
-          exam_name: "JEE Main",
+          exam_name: "SAT",
           target_date: "2027-01-31", // Default, user can change later
         }),
       });
@@ -264,7 +264,7 @@ export default function PredictorPage() {
         <div className="mb-8">
           <div className="flex items-center gap-2 text-sm text-slate-400 mb-2">
             <Target className="w-4 h-4" />
-            <span>JEE Main Rank Predictor</span>
+            <span>Standardized Score Predictor</span>
             {prediction.isFrozen && (
               <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 rounded text-xs border border-amber-500/30">
                 FROZEN (7 days pre-exam)
@@ -309,9 +309,10 @@ export default function PredictorPage() {
         {/* Calibration Source Badge */}
         <div className="flex items-center justify-center gap-2 mb-8">
           <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getCalibrationBadge(prediction.calibrationSource)}`}>
-            {prediction.calibrationSource === "public_nta" && "Public NTA Prior"}
-            {prediction.calibrationSource === "blended" && "Blended: NTA + Personal"}
+            {prediction.calibrationSource === "public_benchmarks" && "Official Benchmark Scale"}
+            {prediction.calibrationSource === "blended" && "Blended: Benchmark + Personal"}
             {prediction.calibrationSource === "proprietary" && "Fully Personal Model"}
+            {prediction.calibrationSource !== "public_benchmarks" && prediction.calibrationSource !== "blended" && prediction.calibrationSource !== "proprietary" && prediction.calibrationSource}
           </span>
         </div>
 
@@ -362,7 +363,7 @@ export default function PredictorPage() {
 
         {/* Footer Disclaimer */}
         <div className="mt-8 text-center text-sm text-slate-500">
-          <p>Based on public NTA normalization tables (2025–2026 cycles). Your band sharpens with every tracked session.</p>
+          <p>Based on official psychometric scale normalizations. Your score band sharpens with every tracked session.</p>
           <p className="mt-1">Data privacy: Phone used only for OTP. Delete your data anytime.</p>
         </div>
       </div>

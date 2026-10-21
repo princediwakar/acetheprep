@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { SessionAnswerSchema } from "@/lib/validations/tutor";
 import { enqueueComeback } from "@/lib/comeback-queue";
+import { evaluateSemanticAnswer } from "@/lib/services/ai-evaluator";
 import type { SessionQuestion } from "@/types/tutor";
 
 export async function POST(req: NextRequest) {
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { session_id, question_id, selected_option, time_to_answer_ms, was_revealed } =
+    const { session_id, question_id, selected_option, free_text_answer, time_to_answer_ms, was_revealed } =
       parsed.data;
 
     const { data: session, error: sessionError } = await supabase
@@ -67,10 +68,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const is_correct =
-      selected_option !== null
-        ? selected_option === question.correct_option
-        : false;
+    let is_correct = false;
+    let semanticEvaluation = null;
+
+    if (selected_option !== null) {
+      is_correct = selected_option === question.correct_option;
+    } else if (free_text_answer && free_text_answer.trim().length > 0) {
+      semanticEvaluation = await evaluateSemanticAnswer({
+        questionStem: question.question_text,
+        passageSnippet: question.passage,
+        canonicalAnswer: question.correct_option,
+        studentAnswer: free_text_answer,
+      });
+      is_correct = semanticEvaluation.isCorrect;
+    }
 
     const { data: rpcData, error: rpcError } = await supabase.rpc("submit_answer", {
       p_session_id: session_id,
@@ -111,6 +122,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       inserted,
+      is_correct,
+      semantic_evaluation: semanticEvaluation,
       distractor_analysis: question.distractor_analysis,
       explanation: question.explanation,
       correct_option: question.correct_option,

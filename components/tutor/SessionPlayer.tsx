@@ -76,6 +76,7 @@ export function SessionPlayer(props: SessionPlayerProps) {
     handleDiscardSession,
     handleFinishEarly,
     handleOptionClick,
+    handleTextSubmit,
     handleNext,
     handlePrev,
     handleSkipQuestion,
@@ -203,6 +204,8 @@ export function SessionPlayer(props: SessionPlayerProps) {
           answerState={answerState}
           isCorrect={isCorrect}
           onOptionClick={handleOptionClick}
+          onTextSubmit={handleTextSubmit}
+          examName={examName}
         />
       </main>
 

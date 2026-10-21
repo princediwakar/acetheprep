@@ -12,9 +12,9 @@ export default function SocialProofSection() {
     <section className="relative py-20 sm:py-28">
       <MaxWidthWrapper>
         <HeaderSection
-          label="Student Results"
-          title="Over 50,000 students have transformed how they prepare."
-          subtitle="Real results from students across Digital SAT, GRE, GMAT Focus, CFA, IELTS, and TOEFL who replaced passive reading with active recall."
+          label="Verified Exam Calibration"
+          title="Engineered for high-stakes test-day precision."
+          subtitle="Real diagnostic results from test takers across Digital SAT, GRE, GMAT Focus, CFA, IELTS, and TOEFL who replaced passive reading with calibrated retrieval."
         />
         <div className="mt-16">
           <SocialProofClient testimonials={testimonials} />

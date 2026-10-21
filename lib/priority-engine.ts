@@ -57,86 +57,86 @@ const DEFAULT_C_TIER: Record<DifficultyTier, number> = {
   expert: 75,
 };
 
-// Subject mapping for JEE Main domains
-const DOMAIN_TO_SUBJECT: Record<string, string> = {
-  // Physics
-  Kinematics: "Physics",
-  "Laws of Motion": "Physics",
-  "Work, Energy and Power": "Physics",
-  "Rotational Motion": "Physics",
-  Thermodynamics: "Physics",
-  Electrostatics: "Physics",
-  "Current Electricity": "Physics",
-  Optics: "Physics",
-  "Modern Physics": "Physics",
-  // Chemistry
-  "Atomic Structure": "Chemistry",
-  "Chemical Bonding": "Chemistry",
-  "Chemical Equilibrium": "Chemistry",
-  "Coordination Compounds": "Chemistry",
-  "Organic Chemistry Basics": "Chemistry",
-  Hydrocarbons: "Chemistry",
-  // Mathematics
-  "Complex Numbers": "Mathematics",
-  "Matrices and Determinants": "Mathematics",
-  Calculus: "Mathematics",
-  "Coordinate Geometry": "Mathematics",
-  "Vector Algebra": "Mathematics",
-  "Probability and Statistics": "Mathematics",
+// SAT Exam mappings
+const SAT_DOMAIN_TO_SUBJECT: Record<string, string> = {
+  "Craft and Structure": "Reading and Writing",
+  "Information and Ideas": "Reading and Writing",
+  "Standard English Conventions": "Reading and Writing",
+  "Expression of Ideas": "Reading and Writing",
+  Algebra: "Mathematics",
+  "Advanced Math": "Mathematics",
+  "Problem-Solving and Data Analysis": "Mathematics",
+  "Geometry and Trigonometry": "Mathematics",
 };
 
-// Default difficulty tier per domain (will be overridden by DB)
-const DEFAULT_DIFFICULTY_TIER: Record<string, DifficultyTier> = {
-  Kinematics: "application",
-  "Laws of Motion": "application",
-  "Work, Energy and Power": "application",
-  "Rotational Motion": "advanced",
-  Thermodynamics: "advanced",
-  Electrostatics: "application",
-  "Current Electricity": "application",
-  Optics: "advanced",
-  "Modern Physics": "advanced",
-  "Atomic Structure": "application",
-  "Chemical Bonding": "application",
-  "Chemical Equilibrium": "advanced",
-  "Coordination Compounds": "advanced",
-  "Organic Chemistry Basics": "advanced",
-  Hydrocarbons: "advanced",
-  "Complex Numbers": "application",
-  "Matrices and Determinants": "application",
-  Calculus: "advanced",
-  "Coordinate Geometry": "application",
-  "Vector Algebra": "advanced",
-  "Probability and Statistics": "application",
+const SAT_EXAM_WEIGHTS: Record<string, number> = {
+  "Craft and Structure": 0.14,
+  "Information and Ideas": 0.13,
+  "Standard English Conventions": 0.12,
+  "Expression of Ideas": 0.11,
+  Algebra: 0.14,
+  "Advanced Math": 0.14,
+  "Problem-Solving and Data Analysis": 0.12,
+  "Geometry and Trigonometry": 0.10,
 };
 
-// JEE Main past-10-year question frequency weights (normalized to sum = 1 per subject)
-// These are approximate - in production, load from exam_topic_weights table
-const JEE_EXAM_WEIGHTS: Record<string, number> = {
-  // Physics
-  Kinematics: 0.05,
-  "Laws of Motion": 0.07,
-  "Work, Energy and Power": 0.06,
-  "Rotational Motion": 0.08,
-  Thermodynamics: 0.05,
-  Electrostatics: 0.08,
-  "Current Electricity": 0.07,
-  Optics: 0.06,
-  "Modern Physics": 0.08,
-  // Chemistry
-  "Atomic Structure": 0.06,
-  "Chemical Bonding": 0.08,
-  "Chemical Equilibrium": 0.05,
-  "Coordination Compounds": 0.06,
-  "Organic Chemistry Basics": 0.10,
-  Hydrocarbons: 0.07,
-  // Mathematics
-  "Complex Numbers": 0.04,
-  "Matrices and Determinants": 0.05,
-  Calculus: 0.15,
-  "Coordinate Geometry": 0.08,
-  "Vector Algebra": 0.05,
-  "Probability and Statistics": 0.06,
+// CFA Level 1 Exam mappings
+const CFA_DOMAIN_TO_SUBJECT: Record<string, string> = {
+  "Code of Ethics": "Ethical & Professional Standards",
+  "Standards of Professional Conduct": "Ethical & Professional Standards",
+  "Global Investment Performance Standards (GIPS)": "Ethical & Professional Standards",
+  "Time Value of Money": "Quantitative Methods",
+  "Statistical Concepts & Market Returns": "Quantitative Methods",
+  "Probability Distributions": "Quantitative Methods",
+  "Hypothesis Testing": "Quantitative Methods",
+  "Simple Linear Regression": "Quantitative Methods",
+  "Microeconomic Analysis": "Economics",
+  "Monetary and Fiscal Policy": "Economics",
+  "International Trade & Capital Flows": "Economics",
+  "Currency Exchange Rates": "Economics",
+  "Financial Reporting Standards": "Financial Statement Analysis",
+  "Income Statements": "Financial Statement Analysis",
+  "Balance Sheets": "Financial Statement Analysis",
+  "Cash Flow Statements": "Financial Statement Analysis",
+  "Inventories & Long-Lived Assets": "Financial Statement Analysis",
+  "Financial Analysis Techniques": "Financial Statement Analysis",
+  "Corporate Governance": "Corporate Issuers",
+  "Working Capital & Liquidity": "Corporate Issuers",
+  "Capital Structure": "Corporate Issuers",
+  "Capital Investments": "Corporate Issuers",
+  "Market Organization & Structure": "Equity Investments",
+  "Security Market Indexes": "Equity Investments",
+  "Market Efficiency": "Equity Investments",
+  "Equity Valuation": "Equity Investments",
+  "Fixed-Income Securities": "Fixed Income",
+  "Fixed-Income Valuation": "Fixed Income",
+  "Asset-Backed Securities": "Fixed Income",
+  "Yield & Spread Analysis": "Fixed Income",
+  "Credit Analysis": "Fixed Income",
+  "Derivative Markets & Instruments": "Derivatives",
+  "Forward & Futures Contracts": "Derivatives",
+  "Option Basics": "Derivatives",
+  Swaps: "Derivatives",
+  "Real Estate": "Alternative Investments",
+  "Private Equity": "Alternative Investments",
+  "Hedge Funds": "Alternative Investments",
+  Commodities: "Alternative Investments",
+  "Portfolio Risk & Return": "Portfolio Management",
+  "Portfolio Planning & Construction": "Portfolio Management",
+  "Behavioral Biases": "Portfolio Management",
+};
+
+const CFA_EXAM_WEIGHTS: Record<string, number> = {
+  "Code of Ethics": 0.08,
+  "Standards of Professional Conduct": 0.07,
+  "Global Investment Performance Standards (GIPS)": 0.03,
+  "Financial Reporting Standards": 0.06,
+  "Income Statements": 0.06,
+  "Balance Sheets": 0.05,
+  "Cash Flow Statements": 0.05,
+  "Fixed-Income Securities": 0.06,
+  "Fixed-Income Valuation": 0.06,
+  "Equity Valuation": 0.06,
 };
 
 // GMAT Focus exam section question weights (calibrated to official GMAC question distributions)
@@ -669,6 +669,7 @@ async function getExamTopicWeights(examName: string): Promise<ExamTopicWeight[]>
   const isGRE = /gre/i.test(examName);
   const isIELTS = /ielts/i.test(examName);
   const isTOEFL = /toefl/i.test(examName);
+  const isCFA = /cfa/i.test(examName);
   const domains = getDomainsForExam(examName);
   return domains.map((domain) => {
     let subject = "General";
@@ -691,10 +692,14 @@ async function getExamTopicWeights(examName: string): Promise<ExamTopicWeight[]>
       subject = GMAT_DOMAIN_TO_SUBJECT[domain] || "General";
       difficultyTier = GMAT_DEFAULT_DIFFICULTY_TIER[domain] || "application";
       examWeight = GMAT_EXAM_WEIGHTS[domain] || 0.08;
+    } else if (isCFA) {
+      subject = CFA_DOMAIN_TO_SUBJECT[domain] || "General";
+      difficultyTier = "application";
+      examWeight = CFA_EXAM_WEIGHTS[domain] || 0.06;
     } else {
-      subject = DOMAIN_TO_SUBJECT[domain] || "General";
-      difficultyTier = DEFAULT_DIFFICULTY_TIER[domain] || "application";
-      examWeight = JEE_EXAM_WEIGHTS[domain] || 0.08;
+      subject = SAT_DOMAIN_TO_SUBJECT[domain] || "General";
+      difficultyTier = "application";
+      examWeight = SAT_EXAM_WEIGHTS[domain] || 0.12;
     }
 
     return {
@@ -718,6 +723,10 @@ async function getExamTopicWeights(examName: string): Promise<ExamTopicWeight[]>
  */
 export async function computePriorityScores(input: PriorityInput): Promise<PriorityOutput[]> {
   const isGMAT = /gmat/i.test(input.examName);
+  const isGRE = /gre/i.test(input.examName);
+  const isIELTS = /ielts/i.test(input.examName);
+  const isTOEFL = /toefl/i.test(input.examName);
+  const isCFA = /cfa/i.test(input.examName);
   const domains = getDomainsForExam(input.examName);
 
   // Load empirical C_tier caps
@@ -740,7 +749,16 @@ export async function computePriorityScores(input: PriorityInput): Promise<Prior
     if (!weightInfo) continue;
 
     const examWeight = weightInfo.exam_weight;
-    const difficultyTier = weightInfo.difficulty_tier || (isGMAT ? GMAT_DEFAULT_DIFFICULTY_TIER[domain] : DEFAULT_DIFFICULTY_TIER[domain]) || "application";
+    const examTier = isGMAT
+      ? GMAT_DEFAULT_DIFFICULTY_TIER[domain]
+      : isGRE
+        ? GRE_DEFAULT_DIFFICULTY_TIER[domain]
+        : isIELTS
+          ? IELTS_DEFAULT_DIFFICULTY_TIER[domain]
+          : isTOEFL
+            ? TOEFL_DEFAULT_DIFFICULTY_TIER[domain]
+            : "application";
+    const difficultyTier = weightInfo.difficulty_tier || examTier || "application";
     const cTierCap = weightInfo.c_tier_cap ?? cTierCaps[difficultyTier] ?? DEFAULT_C_TIER[difficultyTier];
 
     // Component 1: Knowledge Gap (0-1)
@@ -780,7 +798,18 @@ export async function computePriorityScores(input: PriorityInput): Promise<Prior
         denominator,
       },
       difficultyTier,
-      subject: (isGMAT ? GMAT_DOMAIN_TO_SUBJECT[domain] : DOMAIN_TO_SUBJECT[domain]) || "General",
+      subject:
+        (isIELTS
+          ? IELTS_DOMAIN_TO_SUBJECT[domain]
+          : isTOEFL
+          ? TOEFL_DOMAIN_TO_SUBJECT[domain]
+          : isGRE
+          ? GRE_DOMAIN_TO_SUBJECT[domain]
+          : isGMAT
+          ? GMAT_DOMAIN_TO_SUBJECT[domain]
+          : isCFA
+          ? CFA_DOMAIN_TO_SUBJECT[domain]
+          : SAT_DOMAIN_TO_SUBJECT[domain]) || "General",
     });
   }
 
