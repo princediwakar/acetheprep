@@ -20,6 +20,7 @@ import {
   demoQuestions,
   EXAM_HINTS,
   EXTENDED_QUESTIONS,
+  EXAM_MODULE_DURATIONS,
   type Phase,
   type OptionKey,
   type DemoQuestion,
@@ -38,16 +39,21 @@ export default function InteractiveDemoHero() {
   const [struckOptions, setStruckOptions] = useState<Set<string>>(new Set());
   const [isMarkedForReview, setIsMarkedForReview] = useState<boolean>(false);
   const [showTimer, setShowTimer] = useState<boolean>(true);
-  const [timerSeconds, setTimerSeconds] = useState<number>(895);
+  const [timerSeconds, setTimerSeconds] = useState<number>(
+    () => EXAM_MODULE_DURATIONS["SAT"] ?? 35 * 60,
+  );
   const [showFormulaSheet, setShowFormulaSheet] = useState<boolean>(false);
   const [showDesmos, setShowDesmos] = useState<boolean>(false);
 
   useEffect(() => {
+    // Only tick timer while actively solving (pause during answer reveal & review)
+    if (phase !== "question") return;
+
     const interval = setInterval(() => {
       setTimerSeconds((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [phase]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -86,6 +92,7 @@ export default function InteractiveDemoHero() {
     setIsMarkedForReview(false);
     setPhase("question");
     setShowHint(false);
+    setTimerSeconds(EXAM_MODULE_DURATIONS[value] ?? 35 * 60);
   }, []);
 
   const handleToggleStrike = useCallback((key: OptionKey) => {
@@ -117,7 +124,8 @@ export default function InteractiveDemoHero() {
     setPhase("question");
     setShowHint(false);
     setQuestionIndex((prev) => prev + 1);
-  }, []);
+    setTimerSeconds(EXAM_MODULE_DURATIONS[exam] ?? 35 * 60);
+  }, [exam]);
 
   const handleGoogleSignIn = useCallback(() => {
     if (typeof window !== "undefined") {
@@ -165,8 +173,6 @@ export default function InteractiveDemoHero() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <DemoHeroHeader
           user={user}
-          exam={exam}
-          onExamChange={handleExamChange}
           onGoogleSignIn={handleGoogleSignIn}
         />
 
@@ -190,6 +196,7 @@ export default function InteractiveDemoHero() {
               exam={exam}
               showTimer={showTimer}
               timerSeconds={timerSeconds}
+              isPaused={phase === "reveal"}
               strikethroughMode={strikethroughMode}
               isMarkedForReview={isMarkedForReview}
               onToggleTimer={() => setShowTimer((prev) => !prev)}
@@ -342,38 +349,6 @@ export default function InteractiveDemoHero() {
                 onReset={handleReset}
               />
             </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          className="mt-12 pt-8 border-t border-border grid grid-cols-2 sm:grid-cols-4 gap-6 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <div>
-            <p className="font-heading text-3xl font-normal text-foreground">13+</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Standardized Curricula
-            </p>
-          </div>
-          <div>
-            <p className="font-heading text-3xl font-normal text-foreground">74%</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Distractor Trap Identification
-            </p>
-          </div>
-          <div>
-            <p className="font-heading text-3xl font-normal text-foreground">100%</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Official Bluebook & ETS Fidelity
-            </p>
-          </div>
-          <div>
-            <p className="font-heading text-3xl font-normal text-foreground">0ms</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Perceived Interaction Latency
-            </p>
           </div>
         </motion.div>
       </div>

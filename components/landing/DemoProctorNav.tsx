@@ -3,12 +3,13 @@
 
 import { Clock, Calculator, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { EXAM_MODULE_NAMES } from "./demo-data";
+import { EXAM_MODULE_NAMES, EXAM_TOOLS_CONFIG } from "./demo-data";
 
 interface DemoProctorNavProps {
   exam: string;
   showTimer: boolean;
   timerSeconds: number;
+  isPaused?: boolean;
   strikethroughMode: boolean;
   isMarkedForReview: boolean;
   onToggleTimer: () => void;
@@ -23,6 +24,7 @@ export function DemoProctorNav({
   exam,
   showTimer,
   timerSeconds,
+  isPaused,
   strikethroughMode,
   isMarkedForReview,
   onToggleTimer,
@@ -32,6 +34,12 @@ export function DemoProctorNav({
   onToggleMarkForReview,
   formatTimer,
 }: DemoProctorNavProps) {
+  const tools = EXAM_TOOLS_CONFIG[exam] ?? {
+    hasCalculator: true,
+    calculatorLabel: "Calculator",
+    hasReferenceSheet: false,
+  };
+
   return (
     <div className="bg-secondary/40 border-b border-border px-4 py-2.5 sm:px-6 sm:py-3 flex flex-wrap items-center justify-between gap-3 transition-colors">
       <div className="flex items-center gap-2.5">
@@ -50,6 +58,11 @@ export function DemoProctorNav({
         ) : (
           <span className="font-mono text-xs text-muted-foreground">Timer Hidden</span>
         )}
+        {isPaused && (
+          <span className="text-[10px] font-mono uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-500/10 px-1 py-0.5 rounded font-semibold">
+            Paused
+          </span>
+        )}
         <button
           type="button"
           onClick={onToggleTimer}
@@ -60,25 +73,29 @@ export function DemoProctorNav({
       </div>
 
       <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={onOpenDesmos}
-          className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-card hover:bg-secondary px-2.5 py-1 text-xs font-medium text-foreground transition-colors cursor-pointer"
-          title="Open Desmos Graphing Calculator"
-        >
-          <Calculator className="h-3.5 w-3.5 text-primary" />
-          <span className="hidden sm:inline">Desmos Calculator</span>
-        </button>
+        {tools.hasCalculator && (
+          <button
+            type="button"
+            onClick={onOpenDesmos}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-card hover:bg-secondary px-2.5 py-1 text-xs font-medium text-foreground transition-colors cursor-pointer"
+            title={`Open ${tools.calculatorLabel || "Calculator"}`}
+          >
+            <Calculator className="h-3.5 w-3.5 text-primary" />
+            <span className="hidden sm:inline">{tools.calculatorLabel || "Calculator"}</span>
+          </button>
+        )}
 
-        <button
-          type="button"
-          onClick={onOpenFormulaSheet}
-          className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-card hover:bg-secondary px-2.5 py-1 text-xs font-medium text-foreground transition-colors cursor-pointer"
-          title="Open Geometry & Math Formula Sheet"
-        >
-          <BookOpen className="h-3.5 w-3.5 text-primary" />
-          <span className="hidden sm:inline">Reference</span>
-        </button>
+        {tools.hasReferenceSheet && (
+          <button
+            type="button"
+            onClick={onOpenFormulaSheet}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-card hover:bg-secondary px-2.5 py-1 text-xs font-medium text-foreground transition-colors cursor-pointer"
+            title="Open Geometry & Math Formula Sheet"
+          >
+            <BookOpen className="h-3.5 w-3.5 text-primary" />
+            <span className="hidden sm:inline">Reference</span>
+          </button>
+        )}
 
         <button
           type="button"

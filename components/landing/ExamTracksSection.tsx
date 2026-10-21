@@ -71,9 +71,9 @@ export default function ExamTracksSection() {
     <section className="relative py-20 sm:py-28 border-t border-border/70">
       <MaxWidthWrapper>
         <HeaderSection
-          label="Supported Curricula"
-          title="Targeted practice built for your exact syllabus."
-          subtitle="Every track breaks down common mistakes and trains quick recall for your target exam."
+          label="Supported Exams"
+          title="Built for your exact exam."
+          subtitle="Practice official topics, avoid common traps, and build speed under time pressure."
         />
 
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

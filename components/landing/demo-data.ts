@@ -21,6 +21,55 @@ export const EXAM_MODULE_NAMES: Record<string, string> = {
   "TOEFL iBT": "TOEFL iBT • Reading Comprehension & Structure",
 };
 
+// Official module durations (in seconds) for authentic pacing simulation
+export const EXAM_MODULE_DURATIONS: Record<string, number> = {
+  SAT: 35 * 60, // 35:00 (Official Bluebook Math Module)
+  GRE: 21 * 60, // 21:00 (Official GRE Quantitative Section)
+  "GMAT Focus": 45 * 60, // 45:00 (Official GMAT Focus Section)
+  "CFA Level 1": 45 * 60, // 45:00 (Focused FSA Practice Block)
+  "IELTS Academic": 20 * 60, // 20:00 (Official Reading Passage Budget)
+  "TOEFL iBT": 35 * 60, // 35:00 (Official TOEFL Reading Section)
+};
+
+// Official test-day tool fidelity per exam
+export const EXAM_TOOLS_CONFIG: Record<
+  string,
+  {
+    hasCalculator: boolean;
+    calculatorLabel?: string;
+    hasReferenceSheet: boolean;
+  }
+> = {
+  SAT: {
+    hasCalculator: true,
+    calculatorLabel: "Desmos Calculator",
+    hasReferenceSheet: true,
+  },
+  GRE: {
+    hasCalculator: true,
+    calculatorLabel: "ETS Calculator",
+    hasReferenceSheet: false,
+  },
+  "GMAT Focus": {
+    hasCalculator: true,
+    calculatorLabel: "Calculator",
+    hasReferenceSheet: false,
+  },
+  "CFA Level 1": {
+    hasCalculator: true,
+    calculatorLabel: "Financial Calculator",
+    hasReferenceSheet: false,
+  },
+  "IELTS Academic": {
+    hasCalculator: false,
+    hasReferenceSheet: false,
+  },
+  "TOEFL iBT": {
+    hasCalculator: false,
+    hasReferenceSheet: false,
+  },
+};
+
 // Conceptual hints for users looking for deeper insights
 export const EXAM_HINTS: Record<string, string> = {
   SAT:

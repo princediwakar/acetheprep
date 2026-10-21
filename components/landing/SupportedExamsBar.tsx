@@ -169,7 +169,7 @@ export default function SupportedExamsBar({
           href="/practice"
           className="inline-flex items-center gap-1 font-medium text-blue-600 dark:text-blue-400 hover:underline"
         >
-          <span>Explore All 13 Syllabi Portals</span>
+          <span>Explore All 6 Exam Syllabi</span>
           <ArrowUpRight className="h-3 w-3" />
         </Link>
       </div>

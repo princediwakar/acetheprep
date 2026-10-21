@@ -18,23 +18,23 @@ interface ComparisonItem {
 const COMPARISONS: ComparisonItem[] = [
   {
     dimension: "Measuring Progress",
-    oldWay: "Rereading textbooks and summaries until they feel familiar, confusing recognition with real recall under stress.",
-    aceWay: "Active problem solving without notes, proving you can retrieve concepts and formulas from memory under the clock.",
+    oldWay: "Rereading notes and highlighting textbooks, confusing familiarity with true understanding.",
+    aceWay: "Solving questions without notes to prove you can recall formulas and concepts under time pressure.",
   },
   {
     dimension: "Learning From Mistakes",
-    oldWay: "Glancing at the answer key, nodding passively, and making the exact same error again under test-day pressure.",
-    aceWay: "Step-by-step breakdown of why wrong options seem appealing, helping you build genuine understanding.",
+    oldWay: "Glancing at the answer key, nodding along, and repeating the same mistake on the real test.",
+    aceWay: "Step-by-step explanations of why wrong choices were tempting so you avoid the trap next time.",
   },
   {
     dimension: "Study Efficiency",
-    oldWay: "Solving dozens of easy questions on topics you already know to feel productive without fixing weaknesses.",
-    aceWay: "Targeted practice focused on the specific 15% of high-yield concepts where you actually drop marks.",
+    oldWay: "Practicing easy questions on topics you already know just to feel productive.",
+    aceWay: "Targeted practice on the exact weak spots where you actually lose points.",
   },
   {
-    dimension: "Exam-Day Retention",
-    oldWay: "Draining 3-hour marathon mock tests that cause burnout while earlier chapters quietly fade from memory.",
-    aceWay: "Bite-sized 10-question practice sessions with smart review intervals that lock concepts permanently into memory.",
+    dimension: "Remembering What You Learn",
+    oldWay: "Taking exhausting 3-hour mock tests that cause burnout while older topics are forgotten.",
+    aceWay: "Quick 10-question daily sets with smart reviews that keep concepts fresh until test day.",
   },
 ];
 
@@ -50,10 +50,10 @@ export default function ReliefComparisonSection() {
             The Difference
           </span>
           <h2 className="mt-4 font-heading text-3xl md:text-4xl lg:text-5xl font-normal tracking-tight text-foreground leading-[1.15] text-balance">
-            Passive Studying vs. Real Exam Readiness
+            Passive Studying vs. Real Exam Practice
           </h2>
           <p className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed text-balance">
-            Why students can study 10+ hours a day, feel confident, and still struggle on exam day. Here is the difference between feeling prepared and actually being ready.
+            Studying for hours doesn&apos;t guarantee a great score. Here is the difference between passive reading and practicing under real exam conditions.
           </p>
         </div>
 

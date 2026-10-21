@@ -1,7 +1,7 @@
 // Path: components/landing/ExamMark.tsx
 import React from "react";
 
-// Precision SVG Monograms (Bespoke vector marks for all 13 exams)
+// Precision SVG Monograms (Bespoke vector marks for all 6 exams)
 export function ExamMark({ id, className }: { id: string; className?: string }) {
   switch (id) {
     case "SAT":

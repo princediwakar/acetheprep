@@ -138,13 +138,13 @@ export default function PeerInsightsSection() {
         <div className="space-y-4 text-center mb-16 max-w-3xl mx-auto">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
             <BarChart3 className="h-3.5 w-3.5" />
-            Common Pitfalls by Exam
+            Common Mistakes
           </span>
           <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-normal tracking-tight text-foreground leading-[1.15] text-balance">
-            Where most students lose marks on exam day.
+            Where students lose points on exam day.
           </h2>
           <p className="text-base md:text-lg text-muted-foreground leading-relaxed text-balance">
-            Real performance data across thousands of practice sessions reveals the concepts that trip students up most. Learn where others stumble so you can avoid the same mistakes.
+            Practice data reveals the exact questions that trip students up most. Learn the common traps so you don&apos;t repeat them.
           </p>
         </div>
 
@@ -159,14 +159,14 @@ export default function PeerInsightsSection() {
             href="/setup"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3 text-xs sm:text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer"
           >
-            <span>Set Up Your Exam Profile Free</span>
+            <span>Get Started Free</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             href="/insights"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl border border-border/80 bg-card px-5 py-3 text-xs font-medium text-foreground shadow-sm transition-all hover:border-primary/40 hover:bg-accent"
           >
-            <span>View All Exam Topic Analyses</span>
+            <span>View All Topics</span>
           </Link>
         </div>
       </MaxWidthWrapper>

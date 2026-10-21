@@ -19,29 +19,29 @@ const FLOW_STEPS: FlowStep[] = [
   {
     icon: ShieldAlert,
     stepNumber: "01",
-    badge: "01 • Mistake Analysis",
-    title: "Understand Why Wrong Answers Look Right",
+    badge: "Mistakes",
+    title: "Learn why wrong answers look right",
     description:
-      "Competitive exam questions feature tempting choices that look correct at first glance. AceThePrep explains why common wrong options seem appealing, helping you learn the underlying principles and choose correctly with confidence.",
-    metric: "Eliminate Repeat Mistakes",
+      "Competitive questions are designed with tempting traps. We explain why common wrong options look appealing so you avoid falling for them on exam day.",
+    metric: "Stop repeat mistakes",
   },
   {
     icon: Cpu,
     stepNumber: "02",
-    badge: "02 • Timed Recall",
-    title: "Fast, Unassisted Recall Under Pressure",
+    badge: "Speed",
+    title: "Build speed under the clock",
     description:
-      "Under strict test-day countdowns, you can't afford to hesitate on core concepts. Focused 10-question practice sessions train your memory to recognize question patterns and solve without second-guessing.",
-    metric: "Fast Problem Solving",
+      "Under a strict timer, you can't afford to hesitate. Quick 10-question drills train you to spot question patterns instantly without freezing or second-guessing.",
+    metric: "Solve faster with confidence",
   },
   {
     icon: GitBranch,
     stepNumber: "03",
-    badge: "03 • Spaced Retention",
-    title: "Remember Everything on Exam Day",
+    badge: "Memory",
+    title: "Remember what you study",
     description:
-      "Cramming fades within 48 hours. AceThePrep schedules reviews at 3, 7, and 14 day intervals, locking formulas and concepts into permanent long-term memory so you don't forget on test day.",
-    metric: "Permanent Recall",
+      "Cramming fades in 48 hours. Daily reviews bring back formulas and key concepts right before you forget them, keeping your memory fresh until test day.",
+    metric: "Long-term memory",
   },
 ];
 
@@ -165,9 +165,9 @@ export default function CognitiveFlowSection() {
     <section className="relative py-20 sm:py-28 border-t border-border/60 bg-muted/20">
       <MaxWidthWrapper>
         <HeaderSection
-          label="The 3 Core Pillars"
+          label="How It Works"
           title="What it actually takes to be exam-ready."
-          subtitle="Most students measure preparation by hours logged and chapters highlighted. Real exam performance comes down to three things: catching common mistakes, quick recall under time pressure, and retaining what you study."
+          subtitle="Most students measure prep by hours logged and chapters read. Real exam readiness comes down to three things: avoiding common traps, solving quickly under the clock, and remembering what you study."
         />
 
         <div className="mt-16 grid gap-6 md:grid-cols-3">
@@ -253,10 +253,10 @@ export default function CognitiveFlowSection() {
         <div className="mt-12 rounded-2xl border border-blue-600/20 bg-card/90 p-6 sm:p-8 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
           <div className="space-y-1 text-center sm:text-left">
             <h4 className="font-heading text-lg sm:text-xl font-medium text-foreground">
-              Ready to start preparing?
+              Ready to start practicing?
             </h4>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              Zero fluff. Zero credit card. Pick your target exam and generate your calibrated practice syllabus in 60 seconds.
+              Free forever. No credit card required. Pick your exam and start in 60 seconds.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto shrink-0">
@@ -264,7 +264,7 @@ export default function CognitiveFlowSection() {
               href="/setup"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 px-6 py-3 text-xs sm:text-sm font-semibold text-white shadow-md shadow-blue-950/20 hover:shadow-blue-900/30 active:scale-[0.99] transition-all cursor-pointer"
             >
-              <span>Set Up Your Exam Free</span>
+              <span>Get Started Free</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link

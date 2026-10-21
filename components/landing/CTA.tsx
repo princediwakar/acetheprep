@@ -16,15 +16,15 @@ export default function CTA() {
       <MaxWidthWrapper className="relative z-10 text-center space-y-6 max-w-3xl mx-auto">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-secondary/80 px-3.5 py-1 text-xs font-semibold tracking-wider text-foreground uppercase shadow-xs">
           <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-          Zero Guesswork • 100% Free Adaptive System
+          100% Free • No Credit Card Required
         </span>
 
         <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-foreground leading-[1.12] text-balance">
-          Start your personalized exam prep today.
+          Start practicing today.
         </h2>
 
         <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-          Set up your target exam, track your daily progress, and build permanent recall under authentic testing conditions. 100% free with zero paywalls.
+          Choose your exam, practice under real test conditions, and track your daily progress. Free forever with no paywalls.
         </p>
 
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -39,7 +39,7 @@ export default function CTA() {
         <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs font-mono text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-            Official Testing Standards
+            Real Test Questions
           </span>
           <span className="flex items-center gap-1.5">
             <Zap className="h-3.5 w-3.5 text-primary" />
