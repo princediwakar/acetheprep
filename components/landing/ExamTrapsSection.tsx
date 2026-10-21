@@ -382,20 +382,19 @@ export function ExamTrapsSection({
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
-              href={`/practice/${EXAM_SLUGS[activeExam]}`}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-foreground text-background hover:opacity-90 px-6 py-3 text-sm font-semibold shadow-xs transition-all cursor-pointer"
+              href={HIGH_YIELD_TOPICS[activeExam]?.[0]?.href || `/practice/${EXAM_SLUGS[activeExam]}`}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground hover:opacity-90 px-6 py-3 text-sm font-semibold shadow-xs transition-all cursor-pointer"
             >
-              <span>Browse All {examConfig.shortName} Questions</span>
+              <span>Start 10Q Diagnostic Drill</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
 
-            <button
-              type="button"
-              onClick={() => signInWithGoogle(`/practice/${EXAM_SLUGS[activeExam]}`)}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-secondary/50 hover:bg-secondary px-6 py-3 text-sm font-semibold text-foreground transition-all cursor-pointer"
+            <Link
+              href={`/practice/${EXAM_SLUGS[activeExam]}`}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-card hover:bg-secondary px-6 py-3 text-sm font-semibold text-foreground transition-all cursor-pointer"
             >
-              <span>Sign in with Google</span>
-            </button>
+              <span>Explore {examConfig.shortName} Syllabus</span>
+            </Link>
           </div>
 
           <p className="text-[11px] font-mono text-muted-foreground">

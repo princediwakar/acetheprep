@@ -247,7 +247,7 @@ export default async function HardestTopicsPage({ params }: PageProps) {
               href={`/practice/${examSlug}`}
               className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-medium text-primary-foreground shadow-sm hover:opacity-95 transition-opacity"
             >
-              Practice {examName} Topics
+              Explore {examName} Syllabus &amp; Drills
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -343,7 +343,7 @@ export default async function HardestTopicsPage({ params }: PageProps) {
             href={`/practice/${examSlug}`}
             className="font-semibold text-primary hover:underline"
           >
-            Practice {examName} Topics &rarr;
+            Explore {examName} Syllabus &amp; Drills &rarr;
           </Link>
         </div>
       </div>

@@ -33,6 +33,32 @@ const TABS = [
   { id: "national-competitive", label: "National Tracks" },
 ] as const;
 
+const DIAGNOSTIC_DRILLS: Record<string, { title: string; href: string }> = {
+  "gmat-focus": {
+    title: "Data Sufficiency",
+    href: "/practice/gmat-focus/data-insights/data-sufficiency",
+  },
+  "sat": {
+    title: "Advanced Math",
+    href: "/practice/sat/mathematics/advanced-math",
+  },
+  "gre": {
+    title: "Quant Comparison",
+    href: "/practice/gre/quantitative-reasoning/quantitative-comparison",
+  },
+  "cfa-level-1": {
+    title: "Time Value of Money",
+    href: "/practice/cfa-level-1/quantitative-methods/time-value-of-money",
+  },
+  "ielts-academic": {
+    title: "Reading Logic",
+    href: "/practice/ielts-academic/reading/inferences",
+  },
+  "toefl-ibt": {
+    title: "Sentence Insertion",
+    href: "/practice/toefl-ibt/reading/transitions-and-logical-flow",
+  },
+};
 
 export function PracticeDirectory({ exams }: PracticeDirectoryProps) {
   const [activeTab, setActiveTab] = useState<string>("all");
@@ -159,18 +185,33 @@ export function PracticeDirectory({ exams }: PracticeDirectoryProps) {
                   </div>
                 </div>
 
-                {/* Card Action Footer */}
-                <div className="mt-6 pt-4 border-t border-border/60 flex items-center justify-between relative z-10">
-                  <span className="text-xs text-muted-foreground font-medium">
-                    Free Instant Practice
-                  </span>
+                {/* Card Action Footer: Honest Dual Actions */}
+                <div className="mt-6 pt-4 border-t border-border/60 flex items-center justify-between gap-2 relative z-10">
                   <Link
                     href={`/practice/${exam.examSlug}`}
-                    className="inline-flex items-center gap-1.5 font-bold text-xs bg-primary text-primary-foreground px-4 py-2 rounded-xl shadow-sm hover:opacity-90 transition-opacity"
+                    className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors py-1.5"
                   >
-                    <span>Start Practice</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    View Syllabus
                   </Link>
+
+                  {DIAGNOSTIC_DRILLS[exam.examSlug] ? (
+                    <Link
+                      href={DIAGNOSTIC_DRILLS[exam.examSlug].href}
+                      className="inline-flex items-center gap-1.5 font-bold text-xs bg-primary text-primary-foreground px-3.5 py-2 rounded-xl shadow-xs hover:opacity-90 transition-opacity"
+                    >
+                      <Zap className="w-3.5 h-3.5" />
+                      <span>Start 10Q Drill</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  ) : (
+                    <Link
+                      href={`/practice/${exam.examSlug}`}
+                      className="inline-flex items-center gap-1.5 font-bold text-xs bg-primary text-primary-foreground px-3.5 py-2 rounded-xl shadow-xs hover:opacity-90 transition-opacity"
+                    >
+                      <span>Explore Topics</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  )}
                 </div>
               </div>
             );

@@ -170,10 +170,10 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
             <span>Curriculum & Questions</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground font-heading">
-            {examName} Practice Questions
+            {examName} Syllabus &amp; Practice Drills
           </h1>
           <p className="mt-3 text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed">
-            Practice authentic {examName} questions organized by section, with step-by-step solutions showing you how to spot and eliminate tricky trap options.
+            Explore the official blueprint and choose any topic module below to launch an authentic 10-question practice drill with immediate distractor autopsies.
           </p>
 
           {/* Topological Cross-Links to Analytics & Insights */}
@@ -183,14 +183,7 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
               className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3.5 py-2 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-all"
             >
               <TrendingUp className="h-3.5 w-3.5" />
-              <span>View {examName} Hardest Topics Data</span>
-            </Link>
-            <Link
-              href={`/insights/${examSlug}/most-failed-concepts`}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-all"
-            >
-              <BarChart3 className="h-3.5 w-3.5 text-primary" />
-              <span>Most Failed Concepts Report</span>
+              <span>View {examName} Hardest Topics &amp; Error Rates</span>
             </Link>
           </div>
         </div>
