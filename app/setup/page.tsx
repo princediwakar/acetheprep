@@ -1,5 +1,5 @@
-// Path: app/setup/page.tsx
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SetupForm } from "@/components/tutor/SetupForm";
 import type { SetupFormPrefill } from "@/components/tutor/SetupForm";
@@ -27,7 +27,7 @@ for (const exam of EXAM_NAMES) {
 
 export const metadata: Metadata = {
   title: "Exam Profile Setup",
-  description: "Set up your personalized exam prep profile for AI-powered practice.",
+  description: "Set your exam and test date to get a personalized study plan and practice sets.",
   robots: {
     index: false,
     follow: false,
@@ -37,15 +37,21 @@ export const metadata: Metadata = {
 export default async function SetupPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ exam?: string }>;
+  searchParams?: Promise<{ exam?: string; edit?: string; next?: string }>;
 }) {
   const resolvedParams = searchParams ? await searchParams : {};
   const rawExam = resolvedParams.exam ? decodeURIComponent(resolvedParams.exam).trim() : undefined;
   const initialExam = rawExam ? (slugToExam(rawExam) || (TAXONOMY[rawExam] ? rawExam : undefined)) : undefined;
+  const isExplicitEdit = resolvedParams.edit === "true";
+  const next = resolvedParams.next;
 
   return (
     <Suspense fallback={<SetupSkeleton />}>
-      <SetupPageContent initialExam={initialExam} />
+      <SetupPageContent
+        initialExam={initialExam}
+        isExplicitEdit={isExplicitEdit}
+        next={next}
+      />
     </Suspense>
   );
 }
@@ -70,14 +76,22 @@ function SetupSkeleton() {
   );
 }
 
-async function SetupPageContent({ initialExam }: { initialExam?: string }) {
+async function SetupPageContent({
+  initialExam,
+  isExplicitEdit,
+  next,
+}: {
+  initialExam?: string;
+  isExplicitEdit: boolean;
+  next?: string;
+}) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    const returnUrl = initialExam ? `/setup?exam=${encodeURIComponent(initialExam)}` : "/setup";
+    const returnUrl = next ?? (initialExam ? `/setup?exam=${encodeURIComponent(initialExam)}` : "/home");
     return (
       <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col items-center justify-center px-4 py-16 text-center">
         <Card className="w-full rounded-2xl border border-border/80 bg-card p-4 sm:p-6 shadow-xl">
@@ -86,12 +100,12 @@ async function SetupPageContent({ initialExam }: { initialExam?: string }) {
               <Sparkles className="h-6 w-6" />
             </div>
             <CardTitle className="text-2xl font-bold tracking-tight">
-              {initialExam ? `Prepare for ${initialExam}` : "Welcome to AceThePrep"}
+              {initialExam ? `${initialExam} Study Plan` : "Welcome to AceThePrep"}
             </CardTitle>
             <CardDescription className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
               {initialExam
-                ? `Sign in to generate your calibrated ${initialExam} syllabus, track your streak, and eliminate recurring mistakes under exam pressure.`
-                : "Sign in to generate your personalized syllabus, track your streak, and build speed under exam pressure."}
+                ? `Sign in to practice ${initialExam} questions under real test conditions and track your progress.`
+                : "Sign in to practice exam questions under real test conditions and track your progress."}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pb-4">
@@ -103,11 +117,11 @@ async function SetupPageContent({ initialExam }: { initialExam?: string }) {
             <div className="grid grid-cols-2 gap-2 pt-2 text-[11px] text-muted-foreground border-t border-border/60">
               <span className="flex items-center justify-center gap-1">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                100% Free Access
+                100% Free
               </span>
               <span className="flex items-center justify-center gap-1">
                 <Zap className="h-3.5 w-3.5 text-amber-500" />
-                60-Second Setup
+                1-Minute Setup
               </span>
             </div>
           </CardContent>
@@ -123,6 +137,11 @@ async function SetupPageContent({ initialExam }: { initialExam?: string }) {
     .eq("user_id", user.id)
     .eq("is_active", true)
     .maybeSingle();
+
+  // If user already has an active profile and did NOT explicitly ask to edit, redirect straight to /home
+  if (profile && !isExplicitEdit) {
+    redirect("/home");
+  }
 
   let prefill: SetupFormPrefill | null = null;
 

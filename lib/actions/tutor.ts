@@ -46,12 +46,14 @@ export async function createExamProfile(
   );
   const time_mode = getTimeMode(daysRemaining);
 
+  // Check if a profile for this exam already exists for this user (active or inactive)
   const { data: existingProfile } = await supabase
     .from("exam_profiles")
-    .select("profile_id")
+    .select("profile_id, is_active")
     .eq("user_id", user.id)
     .eq("exam_name", exam_name)
-    .eq("is_active", true)
+    .order("created_at", { ascending: false })
+    .limit(1)
     .maybeSingle();
 
   let profileId: string;
@@ -60,7 +62,12 @@ export async function createExamProfile(
     profileId = existingProfile.profile_id;
     const { error: updateError } = await supabase
       .from("exam_profiles")
-      .update({ target_date, time_mode, active_targets })
+      .update({
+        target_date,
+        time_mode,
+        active_targets,
+        is_active: true,
+      })
       .eq("profile_id", profileId);
 
     if (updateError) {
@@ -97,6 +104,17 @@ export async function createExamProfile(
     .eq("is_active", true)
     .neq("profile_id", profileId);
 
+  // Fetch existing concept mastery rows for this profile to prevent wiping user progress
+  const { data: existingMasteryRows } = await supabase
+    .from("concept_mastery")
+    .select("skill_domain, total_attempted, mastery_score")
+    .eq("user_id", user.id)
+    .eq("exam_profile_id", profileId);
+
+  const existingMasteryMap = new Map(
+    (existingMasteryRows ?? []).map((r) => [r.skill_domain, r])
+  );
+
   const now = new Date().toISOString();
   const masteryMap = new Map<string, number>();
   const examSubjects = taxonomyData[exam_name] ?? {};
@@ -112,29 +130,69 @@ export async function createExamProfile(
     }
   }
 
-  const masteryRows = [...masteryMap.entries()].map(([domain, prior]) => ({
-    user_id: user.id,
-    exam_profile_id: profileId,
-    skill_domain: domain,
-    mastery_score: prior,
-    total_attempted: 0,
-    total_correct: 0,
-    streak: 0,
-    review_interval_days: TUTOR_CONFIG.SM2_DEFAULTS.initial_interval_days,
-    review_ease_factor: TUTOR_CONFIG.SM2_DEFAULTS.initial_ease_factor,
-    next_review_at: now,
-    last_seen_at: now,
-  }));
+  const rowsToInsert: Array<{
+    user_id: string;
+    exam_profile_id: string;
+    skill_domain: string;
+    mastery_score: number;
+    total_attempted: number;
+    total_correct: number;
+    streak: number;
+    review_interval_days: number;
+    review_ease_factor: number;
+    next_review_at: string;
+    last_seen_at: string;
+  }> = [];
 
-  const { error: masteryError } = await supabase
-    .from("concept_mastery")
-    .upsert(masteryRows, {
-      onConflict: "user_id, exam_profile_id, skill_domain",
-    });
+  const domainsToUpdatePrior: Array<{
+    domain: string;
+    prior: number;
+  }> = [];
 
-  if (masteryError) {
-    console.error("[createExamProfile] Mastery upsert error:", masteryError);
-    return { error: "Failed to save your self-assessments. Please try again." };
+  for (const [domain, prior] of masteryMap.entries()) {
+    const existing = existingMasteryMap.get(domain);
+    if (!existing) {
+      rowsToInsert.push({
+        user_id: user.id,
+        exam_profile_id: profileId,
+        skill_domain: domain,
+        mastery_score: prior,
+        total_attempted: 0,
+        total_correct: 0,
+        streak: 0,
+        review_interval_days: TUTOR_CONFIG.SM2_DEFAULTS.initial_interval_days,
+        review_ease_factor: TUTOR_CONFIG.SM2_DEFAULTS.initial_ease_factor,
+        next_review_at: now,
+        last_seen_at: now,
+      });
+    } else if (existing.total_attempted === 0) {
+      // Untested domain: allow updating initial baseline prior
+      domainsToUpdatePrior.push({ domain, prior });
+    }
+    // Existing domains with total_attempted > 0 are left untouched to preserve user practice data
+  }
+
+  if (rowsToInsert.length > 0) {
+    const { error: insertError } = await supabase
+      .from("concept_mastery")
+      .insert(rowsToInsert);
+
+    if (insertError) {
+      console.error("[createExamProfile] Mastery insert error:", insertError);
+      return { error: "Failed to initialize syllabus topics. Please try again." };
+    }
+  }
+
+  if (domainsToUpdatePrior.length > 0) {
+    for (const item of domainsToUpdatePrior) {
+      await supabase
+        .from("concept_mastery")
+        .update({ mastery_score: item.prior })
+        .eq("user_id", user.id)
+        .eq("exam_profile_id", profileId)
+        .eq("skill_domain", item.domain)
+        .eq("total_attempted", 0);
+    }
   }
 
   revalidatePath("/home");

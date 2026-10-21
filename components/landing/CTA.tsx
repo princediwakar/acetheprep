@@ -30,7 +30,7 @@ export default function CTA() {
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
           <SignInButton
             buttonText="Get Started Free with Google"
-            returnUrl="/setup"
+            returnUrl="/home"
             size="lg"
             className="px-8 py-6 text-base bg-primary hover:opacity-95 text-primary-foreground shadow-xl cursor-pointer rounded-xl"
           />

@@ -1,16 +1,36 @@
 import { FeedbackList } from "@/components/feedback/FeedbackList";
-import { Metadata } from "next";
+import { siteConfig } from "@/config/site";
+import type { Metadata } from "next";
+
+const baseUrl = siteConfig.url;
 
 export const metadata: Metadata = {
-  title: "User Feedback",
-  description: "Read feedback from users about AceThePrep quiz platform. See what others think about our AI-powered quiz creation tool.",
+  title: "Student Feedback & Reviews",
+  description:
+    "Read verified student feedback and reviews on AceThePrep. See how candidates prepare for Digital SAT, GRE, GMAT Focus, CFA Level 1, IELTS, and TOEFL.",
+  alternates: {
+    canonical: `${baseUrl}/feedback`,
+  },
   openGraph: {
-    title: "User Feedback - AceThePrep",
-    description: "See what users are saying about AceThePrep's quiz creation platform.",
+    title: `Student Feedback & Platform Reviews | ${siteConfig.name}`,
+    description:
+      "Read real feedback from students mastering exam mistakes and building test recall with AceThePrep.",
+    url: `${baseUrl}/feedback`,
+    images: [
+      {
+        url: `${baseUrl}/api/og?type=home&title=Student%20Feedback%20%26%20Reviews&topic=Real%20Readiness`,
+        width: 1200,
+        height: 630,
+        alt: "AceThePrep Student Feedback",
+      },
+    ],
   },
   twitter: {
-    title: "User Feedback - AceThePrep",
-    description: "See what users are saying about AceThePrep's quiz creation platform.",
+    card: "summary_large_image",
+    title: `Student Feedback & Platform Reviews | ${siteConfig.name}`,
+    description:
+      "Read real feedback from students mastering exam mistakes with AceThePrep.",
+    images: [`${baseUrl}/api/og?type=home&title=Student%20Feedback%20%26%20Reviews&topic=Real%20Readiness`],
   },
 };
 

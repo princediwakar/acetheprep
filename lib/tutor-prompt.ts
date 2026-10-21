@@ -49,7 +49,7 @@ const TUTOR_SYSTEM_PROMPT = `You are a ruthless, elite competitive exam tutor (S
 3. DISTRACTOR ANALYSIS: The correct option's entry must prove the answer mathematically/logically. Wrong options must deconstruct the specific trap or error.
 4. UNIQUENESS MANDATE: Formulate novel problem contexts, non-standard parameterizations, and realistic multi-variable scenarios. Never recycle standard textbook question tropes.
 5. READING COMPREHENSION & PASSAGES: When generating questions for "Reading Comprehension" or passage-based domains:
-- Provide an authentic, academic multi-paragraph passage (300 to 500 words for GMAT/GRE/SAT/IELTS/TOEFL) in the "passage" field.
+- Provide an authentic, academic multi-paragraph passage (300 to 500 words for GMAT/GRE/IELTS/TOEFL; 25 to 150 words for Digital SAT) in the "passage" field.
 - If multiple questions in the batch test the same passage, assign them the exact same "passage_id" and identical "passage" content so they form a cohesive passage set.
 - Provide ONLY the specific question stem in "question_text" (e.g. "What is the primary rhetorical purpose of paragraph 2?"). NEVER duplicate the passage text inside "question_text".
 
@@ -58,12 +58,12 @@ Output ONLY raw JSON matching this schema. No markdown, no preambles.
 
 interface Response {
   questions: Array<{
-    passage?: string; // Authentic multi-paragraph reading passage (300-500 words) for RC
+    passage?: string; // Authentic passage (300-500 words for GMAT/GRE/IELTS/TOEFL; 25-150 words for SAT)
     passage_id?: string; // Unique shared identifier if multiple questions reference the same passage
     question_text: string; // The question stem alone
-    options: { A: string; B: string; C: string; D: string; E?: string; F?: string };
+    options: { A: string; B: string; C: string; D?: string; E?: string; F?: string };
     correct_option: "A" | "B" | "C" | "D" | "E" | "F";
-    distractor_analysis: { A: string; B: string; C: string; D: string; E?: string; F?: string };
+    distractor_analysis: { A: string; B: string; C: string; D?: string; E?: string; F?: string };
     skill_domain: string; // MUST perfectly match a provided Target Domain
     difficulty_tier: "foundation" | "application" | "advanced" | "expert";
     time_estimate_seconds: number;
@@ -116,10 +116,11 @@ export function buildTutorUserMessage(params: TutorPromptParams): string {
     ? `\nVARIATION FINGERPRINT: [${entropySeed}] — Formulate distinct problem contexts, non-standard parameterizations, or experimental setups. Avoid textbook clichés.`
     : "";
 
+  const isSAT = /sat/i.test(examName);
   const hasReadingComprehension = targetDomains.some((d) =>
     /reading comprehension|verbal ability|comprehension/i.test(d.skillDomain)
   );
-  const rcDirective = hasReadingComprehension
+  const rcDirective = hasReadingComprehension && !isSAT
     ? `\n\nREADING COMPREHENSION DIRECTIVE:\nFor Reading Comprehension items, provide a full authentic passage (350–500 words) in the "passage" field. Group multiple questions under the same passage by assigning them the identical "passage_id" and identical "passage" text. In "question_text", provide ONLY the specific question prompt.`
     : "";
 
@@ -173,6 +174,42 @@ export function buildTutorUserMessage(params: TutorPromptParams): string {
 3. ETS TRAP TAXONOMY: In "misconception", classify ETS traps (e.g., "Plausible but Unmentioned in Passage", "Reversal of Cause and Effect", "Extreme Degree Qualifier", "Contradicts Lecture Evidence").`
     : "";
 
+  const satDirective = isSAT
+    ? `\n\nDIGITAL SAT 2026 SPECIFICATION MANDATE:
+1. 4-CHOICE REQUIREMENT: Every question MUST provide exactly 4 options (A, B, C, D) and distractor_analysis for all 4 choices (A through D).
+2. READING & WRITING MICRO-PASSAGE REQUIREMENT:
+   - Every Reading and Writing item MUST have its own single, self-contained stimulus/passage of 25 to 150 words in the "passage" field.
+   - NEVER generate 300+ word multi-paragraph passages or multi-question reading sets for SAT.
+   - Formulate authentic Digital SAT question stems:
+     * Rhetorical Synthesis: "While researching a topic, a student has taken the following notes: [4-5 concise bullet points] ... The student wants to [specific rhetorical goal]. Which choice most effectively uses relevant information from the notes to accomplish this goal?"
+     * Transitions: "Which choice completes the text with the most logical transition?" (Target contrast, addition, causation, or exemplification: Furthermore, In contrast, Consequently, Specifically).
+     * Boundaries: "Which choice completes the text so that it conforms to the conventions of Standard English?" (Test semicolon vs comma splice vs colon vs dash vs apostrophe rules).
+     * Words in Context: Test high-utility academic vocabulary within the context of a 50-100 word scholarly excerpt.
+     * Command of Evidence (Quantitative): Incorporate small 2x2 or 2x3 research data tables with explicit hypotheses to test.
+3. MATHEMATICS RIGOR & SCOPE BOUNDARIES:
+   - Strictly focus on: Linear equations and systems in 2 variables, Quadratic functions and discriminant analysis (b^2 - 4ac), Exponential growth and decay modeling, Polynomial factor/remainder theorems, Circle equations and arc theorems, and Right triangle trigonometry.
+   - STRICTLY FORBIDDEN: Calculus, limits, integrals, matrix algebra, and university physics. Keep math within the official College Board Digital SAT specification.
+4. DISTRACTOR TRAP ARCHITECTURE: In "misconception", classify the exact cognitive trap (e.g., "Intermediate Computation Stop", "Sign Reversal in Discriminant", "Faulty Parallelism", "Dangling Modifier Trap", "Opposite Direction Transition", "Comma Splice").`
+    : "";
+
+  const isCFA = /cfa/i.test(examName);
+  const cfaDirective = isCFA
+    ? `\n\nCFA LEVEL 1 (2026 CURRICULUM) SPECIFICATION MANDATE:
+1. STRICT 3-CHOICE REQUIREMENT:
+   - CFA Institute eliminated Option D in 2009. Every question MUST have EXACTLY 3 options: A, B, and C.
+   - NEVER generate Option D, E, or F under any circumstances.
+   - Provide "distractor_analysis" strictly for "A", "B", and "C".
+2. COMPUTATIONAL & VIGNETTE RIGOR:
+   - Trivial definitional recall is STRICTLY FORBIDDEN. Every calculation question must be multi-step and reflect Texas Instruments BA II Plus / HP 12C financial calculator operations (e.g. uneven cash flows NPV/IRR, TVM compounding conventions, bond yield-to-call vs. yield-to-maturity, modified/effective duration, money duration, portfolio variance).
+   - In Financial Statement Analysis (FSA): Formulate multi-step balance sheet and income statement adjustments (LIFO reserve and LIFO liquidation impacts on COGS/margins, capitalizing operating leases into debt/assets, deferred tax assets/liabilities with valuation allowances).
+   - In Corporate Issuers & Equity: Require DuPont 3-step/5-step analysis, WACC, and multi-stage Dividend Discount Models.
+3. ETHICAL & PROFESSIONAL STANDARDS:
+   - For Ethics questions, formulate realistic asset management / analyst workplace case vignettes.
+   - Require subtle distinction between CFA Institute Standards of Professional Conduct (e.g., Standard I(A) Knowledge of the Law, Standard III(A) Loyalty, Prudence & Care, Standard III(B) Fair Dealing, Standard VI(B) Priority of Transactions).
+4. DISTRACTOR TRAP ARCHITECTURE:
+   - Every distractor must represent the precise numerical result of an authentic financial error (e.g., "Used simple interest instead of compounding", "Failed to adjust coupon for semi-annual convention", "Applied straight-line instead of MACRS depreciation", "Confused US GAAP vs IFRS development cost capitalization").`
+    : "";
+
   return `CONTEXT: ${examName} ${examYear} | Mode: ${timeMode} | ${daysRemaining} days remaining.
 
 TARGET DOMAINS & MASTERY:
@@ -182,7 +219,7 @@ EXECUTION DIRECTIVE:
 Generate exactly ${questionCount} questions strictly at exam-grade difficulty:
 - ${difficultyDistribution.easy} "foundation" tier (Trivial recall forbidden)
 - ${difficultyDistribution.medium} "application" tier (Rigorous multi-step problem solving)
-- ${difficultyDistribution.hard} "advanced" / "expert" tier (Deceptive distractors, analytical synthesis, calculus/derivation)${exclusions}${seedDirective}${rcDirective}${gmatDirective}${greDirective}${ieltsDirective}${toeflDirective}
+- ${difficultyDistribution.hard} "advanced" / "expert" tier (Deceptive distractors, analytical synthesis${isSAT ? "" : ", calculus/derivation"})${exclusions}${seedDirective}${rcDirective}${gmatDirective}${greDirective}${ieltsDirective}${toeflDirective}${satDirective}${cfaDirective}
 
 CRITICAL: Every question MUST BE COMPLETELY NOVEL and distinct from previous sessions. Strictly use the exact TARGET DOMAIN names provided above for the \`skill_domain\` field.`;
 }

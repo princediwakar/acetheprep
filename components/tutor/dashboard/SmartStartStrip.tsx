@@ -24,14 +24,14 @@ export function SmartStartStrip({
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Zap className="w-5 h-5 text-yellow-500" />
-              <h3 className="font-semibold text-lg">Daily Practice</h3>
+              <h3 className="font-semibold text-lg">Daily Review</h3>
             </div>
             <p className="text-sm text-muted-foreground">
-              10-question mixed set optimized to boost your readiness score and target weak spots.
+              10-question mixed set focused on topics you are most likely to forget and recent mistakes.
             </p>
           </div>
           <Button size="lg" className="w-full cursor-pointer" onClick={onAlgorithmicReview}>
-            <Play className="mr-2 h-4 w-4" /> Start Daily Practice
+            <Play className="mr-2 h-4 w-4" /> Start Daily Review
           </Button>
         </CardContent>
       </Card>
@@ -41,12 +41,12 @@ export function SmartStartStrip({
           <div>
             <div className="flex items-center gap-2 mb-1">
               <ArrowRight className="w-5 h-5 text-blue-500" />
-              <h3 className="font-semibold text-lg">Linear: Next Topic</h3>
+              <h3 className="font-semibold text-lg">Next in Syllabus</h3>
             </div>
             <p className="text-sm text-muted-foreground">
               {nextLinearDomain
-                ? `Next up in curriculum sequence: ${nextLinearDomain.name}.`
-                : "You've mastered all topics! Keep up your daily practice."}
+                ? `Next topic in course order: ${nextLinearDomain.name}.`
+                : "You've completed all topics! Keep up your daily review."}
             </p>
           </div>
           <Button
@@ -56,7 +56,7 @@ export function SmartStartStrip({
             onClick={onLinearNext}
             disabled={!nextLinearDomain}
           >
-            <Play className="mr-2 h-4 w-4" /> Practice {nextLinearDomain?.name || "Next"}
+            <Play className="mr-2 h-4 w-4" /> Practice {nextLinearDomain?.name || "Next Topic"}
           </Button>
         </CardContent>
       </Card>

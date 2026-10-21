@@ -17,7 +17,7 @@ import { BILLING_PLANS } from "@/lib/constants/billing";
 import { createCheckoutSession, activateTestPro } from "@/lib/actions/billing";
 import { Copy, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { VisaIcon, MastercardIcon, ApplePayIcon, UpiIcon } from "./PaymentTrustBadge";
+import { VisaBadge, MastercardBadge, ApplePayBadge, GooglePayBadge, UpiBadge } from "./PaymentTrustBadge";
 
 interface UpgradeModalProps {
   open: boolean;
@@ -241,11 +241,12 @@ export function UpgradeModal({
               <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
               <span>Cards, Apple Pay & UPI via Dodo Payments (MoR)</span>
             </div>
-            <div className="flex items-center gap-1.5 opacity-75">
-              <VisaIcon className="h-3 w-auto text-muted-foreground" />
-              <MastercardIcon className="h-3 w-auto" />
-              <ApplePayIcon className="h-2.5 w-auto text-foreground" />
-              <UpiIcon />
+            <div className="flex items-center gap-1">
+              <VisaBadge className="h-5 w-8" />
+              <MastercardBadge className="h-5 w-8" />
+              <ApplePayBadge className="h-5 w-8" />
+              <GooglePayBadge className="h-5 w-8" />
+              <UpiBadge className="h-5 w-8" />
             </div>
           </div>
 

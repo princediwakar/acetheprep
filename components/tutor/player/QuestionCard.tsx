@@ -212,6 +212,34 @@ export function QuestionCard({
 
   const handleShortAnswerSubmit = async () => {
     if (!shortAnswerText.trim() || isEvaluating) return;
+
+    // Fast-path 0ms evaluation for numeric grid-in and exact matches
+    const studentClean = shortAnswerText.trim().toLowerCase();
+    const canonicalClean = (current.correct_option || "").trim().toLowerCase();
+
+    const parseNumOrFraction = (str: string): number | null => {
+      if (/^-?\d+(?:\.\d+)?$/.test(str)) return parseFloat(str);
+      const frac = str.match(/^(-?\d+)\/(\d+)$/);
+      if (frac) {
+        const num = parseFloat(frac[1]);
+        const den = parseFloat(frac[2]);
+        return den !== 0 ? num / den : null;
+      }
+      return null;
+    };
+
+    const sNum = parseNumOrFraction(studentClean);
+    const cNum = parseNumOrFraction(canonicalClean);
+    if (studentClean === canonicalClean || (sNum !== null && cNum !== null && Math.abs(sNum - cNum) < 1e-6)) {
+      setSemanticFeedback("Exact match: Correct.");
+      if (onTextSubmit) {
+        onTextSubmit(shortAnswerText, true);
+      } else {
+        onOptionClick(current.correct_option as SelectedOption);
+      }
+      return;
+    }
+
     setIsEvaluating(true);
     try {
       const res = await fetch("/api/tutor/evaluate-semantic", {
@@ -543,11 +571,11 @@ export function QuestionCard({
           <div className="flex items-center gap-2 text-sm font-heading font-semibold">
             {isCorrect ? (
               <span className="text-emerald-600 flex items-center gap-1.5">
-                <CheckCircle className="h-4 w-4" /> Correct Deduction
+                <CheckCircle className="h-4 w-4" /> Correct
               </span>
             ) : (
               <span className="text-rose-600 flex items-center gap-1.5">
-                <AlertTriangle className="h-4 w-4" /> Cognitive Distractor Trap Triggered
+                <AlertTriangle className="h-4 w-4" /> Incorrect (Common Trap)
               </span>
             )}
           </div>
@@ -557,7 +585,7 @@ export function QuestionCard({
             current.distractor_analysis?.[selectedOption] && (
               <div className="rounded-lg p-3.5 bg-rose-500/10 border border-rose-500/20 text-xs text-foreground/90 leading-relaxed">
                 <span className="font-semibold text-rose-700 dark:text-rose-400 block mb-1">
-                  Examiner Trap Breakdown (Option {selectedOption}):
+                  Why Option {selectedOption} is a trap:
                 </span>
                 {renderMathContent(current.distractor_analysis[selectedOption])}
               </div>
@@ -566,7 +594,7 @@ export function QuestionCard({
           {current.explanation && (
             <div className="rounded-lg p-3.5 bg-secondary/40 border border-border/80 text-xs text-foreground/90 leading-relaxed">
               <span className="font-semibold text-foreground block mb-1">
-                Solution Derivation:
+                How to solve this:
               </span>
               {renderMathContent(current.explanation)}
             </div>
@@ -575,7 +603,7 @@ export function QuestionCard({
           {current.misconception && (
             <div className="text-xs text-muted-foreground border-t border-border pt-3">
               <span className="font-semibold text-amber-600 dark:text-amber-400 block mb-0.5">
-                Common Exam-Setter Trap:
+                Common mistake to avoid:
               </span>
               {current.misconception}
             </div>
@@ -594,7 +622,7 @@ export function QuestionCard({
           <div className="flex items-center justify-between px-4 py-3 bg-secondary/40 border-b border-border/80 text-xs">
             <span className="flex items-center gap-1.5 font-semibold font-mono uppercase tracking-wider text-foreground/80">
               <Headphones className="h-3.5 w-3.5 text-primary animate-pulse" />
-              Acoustic Audio Simulation
+              Audio Passage
             </span>
             <span className="font-mono text-[11px] text-muted-foreground bg-background px-2 py-0.5 rounded border border-border">
               {wordCount} words spoken
@@ -613,9 +641,9 @@ export function QuestionCard({
                     <Volume2 className="h-4 w-4" />
                   </div>
                   <div>
-                    <div className="font-semibold text-sm text-foreground">Official Examination Audio Track</div>
+                    <div className="font-semibold text-sm text-foreground">Listening Section Audio</div>
                     <div className="text-[11px] text-muted-foreground">
-                      {isPlayingAudio ? "Playing spoken audio snippet..." : "Click to stream audio transcript via native voice"}
+                      {isPlayingAudio ? "Playing audio..." : "Click to play audio track"}
                     </div>
                   </div>
                 </div>

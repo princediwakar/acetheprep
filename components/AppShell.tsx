@@ -10,6 +10,7 @@ import { ThemeToggle } from "./ThemeToggleButton";
 import { Header } from "./Header";
 import { UserMenu } from "./UserMenu";
 import { BrandLogo } from "@/components/shared/BrandLogo";
+import SiteFooter from "@/components/landing/SiteFooter";
 import type { SidebarData } from "@/app/layout";
 import {
   History,
@@ -70,11 +71,14 @@ export function AppShell({ children, sidebarData }: { children: React.ReactNode;
 
   if (!mounted || !shouldShowSidebar) {
     return (
-      <div className="min-h-screen">
-        <Header />
-        <div className="pt-16">
-          {children}
+      <div className="min-h-screen flex flex-col justify-between">
+        <div>
+          <Header />
+          <div className="pt-16">
+            {children}
+          </div>
         </div>
+        <SiteFooter />
       </div>
     );
   }

@@ -17,13 +17,34 @@ interface BlogIndexPageProps {
 export const metadata: Metadata = {
   title: "Engineering & Cognitive Science Guides",
   description:
-    "First-principles research and strategy on memory decay, spaced repetition, distractor psychometrics, and high-yield competitive exam prep for SAT, GRE, GMAT Focus, CFA Level 1, IELTS Academic, TOEFL iBT, and global competitive exams.",
+    "First-principles research and strategy on memory decay, spaced repetition, distractor psychometrics, and high-yield competitive exam prep for Digital SAT, GRE, GMAT Focus, CFA Level 1, IELTS Academic, and TOEFL iBT.",
+  alternates: {
+    canonical: `${baseUrl}/blog`,
+    types: {
+      "application/rss+xml": `${baseUrl}/blog/rss.xml`,
+    },
+  },
   openGraph: {
     title: `Engineering & Cognitive Science Guides | ${siteConfig.name}`,
     description:
       "First-principles research and strategy on memory decay, spaced repetition, distractor psychometrics, and high-yield exam prep for SAT, GRE, GMAT Focus, CFA, IELTS, and TOEFL.",
     url: `${baseUrl}/blog`,
     type: "website",
+    images: [
+      {
+        url: `${baseUrl}/api/og?type=blog&title=Engineering%20%26%20Cognitive%20Science%20Guides&topic=Exam%20Architecture`,
+        width: 1200,
+        height: 630,
+        alt: "AceThePrep Cognitive Science Guides",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Engineering & Cognitive Science Guides | ${siteConfig.name}`,
+    description:
+      "First-principles research on memory decay, spaced repetition, and distractor psychometrics.",
+    images: [`${baseUrl}/api/og?type=blog&title=Engineering%20%26%20Cognitive%20Science%20Guides&topic=Exam%20Architecture`],
   },
 };
 

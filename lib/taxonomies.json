@@ -5,13 +5,39 @@
       "Craft and Structure",
       "Information and Ideas",
       "Standard English Conventions",
-      "Expression of Ideas"
+      "Expression of Ideas",
+      "Words in Context",
+      "Text Structure and Purpose",
+      "Cross-Text Connections",
+      "Central Ideas and Details",
+      "Inferences",
+      "Command of Evidence (Textual)",
+      "Command of Evidence (Quantitative)",
+      "Boundaries (Punctuation & Splices)",
+      "Form, Structure, and Sense",
+      "Transitions and Logical Flow",
+      "Rhetorical Synthesis"
     ],
     "Mathematics": [
       "Algebra",
       "Advanced Math",
       "Problem-Solving and Data Analysis",
-      "Geometry and Trigonometry"
+      "Geometry and Trigonometry",
+      "Linear Equations in 1 & 2 Variables",
+      "Linear Functions & Graphs",
+      "Systems of Linear Equations",
+      "Linear Inequalities",
+      "Nonlinear Functions & Modeling",
+      "Quadratic Equations & Discriminant",
+      "Exponential Growth & Decay",
+      "Polynomial Operations & Factors",
+      "Ratios, Rates & Proportions",
+      "Percentages & Unit Conversions",
+      "One- & Two-Variable Statistics",
+      "Probability & Data Interpretation",
+      "Lines, Angles & Triangles",
+      "Right Triangles & Trigonometry",
+      "Circles & Theorems"
     ]
   },
   "GRE": {

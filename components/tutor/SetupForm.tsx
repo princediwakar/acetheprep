@@ -182,22 +182,22 @@ export function SetupForm({ prefill, examNames, examSubjects }: SetupFormProps) 
       return;
     }
 
-    toast.success("Profile calibrated! Launching practice...", { duration: 2000 });
+    toast.success("Saved! Loading your dashboard...", { duration: 2000 });
     router.push(TUTOR_ROUTES.DASHBOARD);
   }, [saveProfile, router]);
 
   // ---- Page metadata ----
-  const pageTitle = isExisting ? "Update Your Exam Profile" : "Calibrate Your Prep";
+  const pageTitle = isExisting ? "Update Study Plan" : "Set Up Your Study Plan";
   const pageDescription = isExisting
-    ? "Adjust your target exam, date horizon, or subject focus."
-    : "Pick your exam and target timeline. We will calibrate your syllabus and spaced recall schedule.";
+    ? "Update your target exam, test date, or starting levels."
+    : "Choose your exam and test date to get a personalized study plan.";
 
   return (
     <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col justify-center px-4 py-10">
       <div className="mb-6 text-center space-y-1.5">
         <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-0.5 text-xs font-semibold text-primary mb-1">
           <Sparkles className="h-3.5 w-3.5" />
-          <span>Instant Syllabus Synthesis</span>
+          <span>Quick Setup</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           {pageTitle}
@@ -231,16 +231,16 @@ export function SetupForm({ prefill, examNames, examSubjects }: SetupFormProps) 
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Calibrating Syllabus & Launching...
+                Saving...
               </>
             ) : isExisting ? (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                Save Profile Changes
+                Save Changes
               </>
             ) : (
               <>
-                Generate Syllabus & Start Practice
+                Start Practice
                 <ChevronRight className="ml-1.5 h-4 w-4" />
               </>
             )}
@@ -248,7 +248,7 @@ export function SetupForm({ prefill, examNames, examSubjects }: SetupFormProps) 
 
           {!isValid && !exam && (
             <p className="text-center text-xs text-muted-foreground">
-              Select your target exam above to continue.
+              Select your exam above to continue.
             </p>
           )}
         </div>

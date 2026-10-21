@@ -13,6 +13,7 @@ interface SessionProctorHeaderProps {
   showTimer: boolean;
   totalTimeElapsed: number;
   showCalculator: boolean;
+  isCalculatorPermitted?: boolean;
   onToggleTimer: () => void;
   onToggleCalculator: () => void;
   onEndTest: () => void;
@@ -26,6 +27,7 @@ export function SessionProctorHeader({
   showTimer,
   totalTimeElapsed,
   showCalculator,
+  isCalculatorPermitted = true,
   onToggleTimer,
   onToggleCalculator,
   onEndTest,
@@ -64,20 +66,32 @@ export function SessionProctorHeader({
 
       {/* Right: Essential Tools & Exit */}
       <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={onToggleCalculator}
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
-            showCalculator
-              ? "bg-primary text-primary-foreground border-primary shadow-xs font-semibold"
-              : "border-border/80 bg-secondary/50 hover:bg-secondary text-foreground",
-          )}
-          title="Open Exam Calculator"
-        >
-          <Calculator className={cn("h-3.5 w-3.5", showCalculator ? "text-primary-foreground" : "text-primary")} />
-          <span className="hidden sm:inline">Calculator</span>
-        </button>
+        {isCalculatorPermitted ? (
+          <button
+            type="button"
+            onClick={onToggleCalculator}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
+              showCalculator
+                ? "bg-primary text-primary-foreground border-primary shadow-xs font-semibold"
+                : "border-border/80 bg-secondary/50 hover:bg-secondary text-foreground",
+            )}
+            title="Open Exam Calculator"
+          >
+            <Calculator className={cn("h-3.5 w-3.5", showCalculator ? "text-primary-foreground" : "text-primary")} />
+            <span className="hidden sm:inline">Calculator</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            disabled
+            className="inline-flex items-center gap-1.5 rounded-md border border-border/40 bg-secondary/20 px-2.5 py-1 text-xs font-medium text-muted-foreground/60 cursor-not-allowed"
+            title="Calculators are strictly prohibited in GMAT Quantitative Reasoning and Verbal Reasoning sections."
+          >
+            <Calculator className="h-3.5 w-3.5 text-muted-foreground/40" />
+            <span className="hidden sm:inline">No Calculator (GMAT)</span>
+          </button>
+        )}
 
         <div className="h-4 w-px bg-border/80 mx-0.5" />
         <ThemeToggle />

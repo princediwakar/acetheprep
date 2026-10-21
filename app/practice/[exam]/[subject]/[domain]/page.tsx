@@ -215,17 +215,24 @@ export default async function PracticePage({ params }: PracticePageProps) {
     about: { "@type": "Thing", name: domainName },
     hasPart: questions.map((q) => ({
       "@type": "Question",
+      eduQuestionType: "Multiple choice",
+      learningResourceType: "Practice problem",
       name:
         q.question_text.length > 110
           ? q.question_text.slice(0, 107) + "..."
           : q.question_text,
+      text: q.question_text,
       suggestedAnswer: Object.entries(q.options).map(([label, text]) => ({
         "@type": "Answer",
         text: `${label}) ${text}`,
+        comment: q.distractor_analysis?.[label as "A" | "B" | "C" | "D"]
+          ? `Common misconception: ${q.distractor_analysis[label as "A" | "B" | "C" | "D"]}`
+          : undefined,
       })),
       acceptedAnswer: {
         "@type": "Answer",
         text: `${q.correct_option}) ${q.options[q.correct_option] ?? ""}`,
+        comment: q.explanation || "Correct step-by-step mathematical or logical solution.",
       },
     })),
   } as WithContext<any>;

@@ -91,7 +91,7 @@ export const UserMenu = memo(({ user, isOpen, onOpenChange, onSignOut, variant =
         <DropdownMenuSeparator />
         
         <DropdownMenuItem
-          onClick={() => router.push("/setup")}
+          onClick={() => router.push("/setup?edit=true")}
           className="cursor-pointer"
         >
           <Settings className="mr-2 h-4 w-4" />

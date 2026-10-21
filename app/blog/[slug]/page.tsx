@@ -26,10 +26,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!post) return { title: "Article Not Found" };
 
   const url = `${baseUrl}/blog/${post.slug}`;
+  const ogImage = `${baseUrl}/api/og?type=blog&title=${encodeURIComponent(post.title)}&topic=${encodeURIComponent(post.examTag || post.category || "Cognitive Science")}`;
+
   return {
     title: post.title,
     description: post.description,
-
+    alternates: {
+      canonical: url,
+      types: {
+        "application/rss+xml": `${baseUrl}/blog/rss.xml`,
+      },
+    },
     openGraph: {
       title: post.title,
       description: post.description,
@@ -38,11 +45,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       publishedTime: post.date,
       authors: [post.author],
       tags: [post.category, post.examTag || ""].filter(Boolean),
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.description,
+      images: [ogImage],
     },
   };
 }

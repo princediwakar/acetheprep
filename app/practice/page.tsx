@@ -100,7 +100,7 @@ export default function PracticeHubPage() {
         <div className="text-center sm:text-left border-b border-border/80 pb-8 space-y-3">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>13 Supported Curricula</span>
+            <span>6 Global Curricula</span>
           </div>
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground">
             Exam Practice Directory

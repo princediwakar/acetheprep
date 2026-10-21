@@ -12,7 +12,7 @@ export const websiteSchema = {
   description: siteConfig.description,
   potentialAction: {
     "@type": "SearchAction",
-    target: `${baseUrl}/quizzes?search={search_term_string}`,
+    target: `${baseUrl}/practice?search={search_term_string}`,
     "query-input": "required name=search_term_string",
   },
 } as WithContext<WebSite>;
@@ -34,9 +34,9 @@ export const educationalAppSchema: WithContext<any> = {
   description: siteConfig.description,
   applicationCategory: "EducationalApplication",
   operatingSystem: "Web",
-  educationalLevel: "High School, Undergraduate, Graduate",
-  teaches: "Physics, Chemistry, Mathematics, Biology, Logical Reasoning, Quantitative Aptitude",
-  educationalUse: "Personalized adaptive practice, knowledge assessment, spaced repetition review",
+  educationalLevel: "Undergraduate, Graduate, Professional",
+  teaches: "Digital SAT Math & Reading, GRE Quantitative & Verbal, GMAT Focus Data Insights, CFA Level 1 Financial Analysis, IELTS Academic, TOEFL iBT",
+  educationalUse: "Personalized adaptive practice, distractor error analysis, spaced repetition retrieval",
   offers: {
     "@type": "Offer",
     price: "0",
@@ -87,6 +87,8 @@ export const practiceQuizSchema = (params: {
     options: { label: string; text: string }[];
     correctOption: string;
     correctText: string;
+    distractorAnalysis?: Record<string, string>;
+    explanation?: string;
   }>;
 }) => ({
   "@context": "https://schema.org",
@@ -98,16 +100,62 @@ export const practiceQuizSchema = (params: {
   about: { "@type": "Thing", name: params.domain },
   hasPart: params.questions.map((q) => ({
     "@type": "Question",
+    eduQuestionType: "Multiple choice",
+    learningResourceType: "Practice problem",
     name: q.questionText.length > 110 ? q.questionText.slice(0, 107) + "..." : q.questionText,
+    text: q.questionText,
     suggestedAnswer: q.options.map((opt) => ({
       "@type": "Answer",
       text: `${opt.label}) ${opt.text}`,
+      comment: q.distractorAnalysis?.[opt.label]
+        ? `Common misconception: ${q.distractorAnalysis[opt.label]}`
+        : undefined,
     })),
     acceptedAnswer: {
       "@type": "Answer",
       text: `${q.correctOption}) ${q.correctText}`,
+      comment: q.explanation || "Correct step-by-step mathematical or logical solution.",
     },
   })),
+});
+
+export const productOfferSchema = () => ({
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: `${siteConfig.name} Pro Test Prep`,
+  description: "Official adaptive question banks, distractor teardowns, full mock simulations, and spaced review scheduler for Digital SAT, GRE, GMAT Focus, and CFA Level 1.",
+  brand: {
+    "@type": "Brand",
+    name: siteConfig.name,
+  },
+  offers: [
+    {
+      "@type": "Offer",
+      name: "AceThePrep Free Diagnostic Tier",
+      price: "0",
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      url: `${baseUrl}/pricing`,
+    },
+    {
+      "@type": "Offer",
+      name: "AceThePrep Pro Monthly",
+      price: "29",
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      url: `${baseUrl}/pricing`,
+      priceValidUntil: "2027-12-31",
+    },
+    {
+      "@type": "Offer",
+      name: "AceThePrep 3-Month Season Pass",
+      price: "69",
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      url: `${baseUrl}/pricing`,
+      priceValidUntil: "2027-12-31",
+    },
+  ],
 });
 
 export const faqPageSchema = (faqs: Array<{ question: string; answer: string }>) => ({

@@ -23,6 +23,7 @@ interface UseSessionEngineProps {
   initialTimeElapsed?: number;
   initialIndex?: number;
   autoStart?: boolean;
+  examName?: string;
 }
 
 export function useSessionEngine({
@@ -38,6 +39,7 @@ export function useSessionEngine({
   initialTimeElapsed,
   initialIndex = 0,
   autoStart = false,
+  examName,
 }: UseSessionEngineProps) {
   const router = useRouter();
 
@@ -65,6 +67,23 @@ export function useSessionEngine({
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [isDiscarding, setIsDiscarding] = useState(false);
   const [showSectionReview, setShowSectionReview] = useState(false);
+
+  // GMAT Focus official review edit tracking (up to 3 edits allowed during section review)
+  const isGMAT = Boolean(examName && /gmat/i.test(examName));
+  const [hasEnteredReview, setHasEnteredReview] = useState(false);
+  const reviewSnapshotRef = useRef<Record<string, SelectedOption | null>>({});
+  const [reviewedEditedQuestionIds, setReviewedEditedQuestionIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (showSectionReview && !hasEnteredReview) {
+      setHasEnteredReview(true);
+      const snapshot: Record<string, SelectedOption | null> = {};
+      for (const [qid, attempt] of Object.entries(userAttempts)) {
+        snapshot[qid] = attempt.selected;
+      }
+      reviewSnapshotRef.current = snapshot;
+    }
+  }, [showSectionReview, hasEnteredReview, userAttempts]);
 
   // Test-day tools
   const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(new Set());
@@ -198,8 +217,34 @@ export function useSessionEngine({
   const handleOptionClick = useCallback(
     (option: SelectedOption) => {
       if (mode === "exam") {
+        if (hasEnteredReview && isGMAT) {
+          const original = reviewSnapshotRef.current[current.question_id];
+          const isModifying = original !== undefined && original !== option;
+          if (
+            isModifying &&
+            !reviewedEditedQuestionIds.has(current.question_id) &&
+            reviewedEditedQuestionIds.size >= 3
+          ) {
+            toast.warning(
+              "Official GMAT Focus limit: You can only edit answers for up to 3 questions per section during review.",
+            );
+            return;
+          }
+          if (isModifying) {
+            setReviewedEditedQuestionIds((prev) => new Set(prev).add(current.question_id));
+          } else if (original === option) {
+            setReviewedEditedQuestionIds((prev) => {
+              const next = new Set(prev);
+              next.delete(current.question_id);
+              return next;
+            });
+          }
+        }
+
         setSelectedOption(option);
         setNextEnabled(true);
+        const correct = option === current.correct_option;
+        lockInAnswer(option, correct, false);
         return;
       }
 
@@ -208,7 +253,7 @@ export function useSessionEngine({
       setSelectedOption(option);
       lockInAnswer(option, correct, false);
     },
-    [mode, answerState, current, lockInAnswer],
+    [mode, answerState, current, lockInAnswer, hasEnteredReview, isGMAT, reviewedEditedQuestionIds],
   );
 
   const handleTextSubmit = useCallback(
@@ -394,5 +439,7 @@ export function useSessionEngine({
     handleToggleFlag,
     handleBackToDashboard,
     handleStartNextTopic,
+    reviewedEditedQuestionIds,
+    reviewedEditedCount: reviewedEditedQuestionIds.size,
   };
 }

@@ -17,6 +17,8 @@ interface SessionSectionReviewProps {
   flaggedQuestions: Set<number>;
   totalTimeElapsed: number;
   showTimer: boolean;
+  reviewedEditedQuestionIds?: Set<string>;
+  reviewedEditedCount?: number;
   onReturnToCurrent: () => void;
   onJumpToQuestion: (index: number) => void;
   onSubmitFinal: () => void;
@@ -32,11 +34,14 @@ export function SessionSectionReview({
   flaggedQuestions,
   totalTimeElapsed,
   showTimer,
+  reviewedEditedQuestionIds,
+  reviewedEditedCount = 0,
   onReturnToCurrent,
   onJumpToQuestion,
   onSubmitFinal,
   formatTime,
 }: SessionSectionReviewProps) {
+  const isGMAT = Boolean(examName && /gmat/i.test(examName));
   const answeredCount = Object.keys(userAttempts).length;
   const unAnsweredCount = total - answeredCount;
   const flaggedCount = flaggedQuestions.size;
@@ -87,6 +92,30 @@ export function SessionSectionReview({
               Review your responses before finalizing. Questions marked for review or left unanswered are highlighted below. Click any question card to jump directly to it and update your answer.
             </p>
           </div>
+
+          {/* GMAT Focus Official Review Edit Limit Notice */}
+          {isGMAT && (
+            <div
+              className={cn(
+                "flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 px-4 py-3 rounded-xl border text-xs shadow-xs transition-colors",
+                reviewedEditedCount >= 3
+                  ? "bg-amber-500/10 border-amber-500/30 text-amber-800 dark:text-amber-200"
+                  : "bg-primary/5 border-primary/20 text-foreground",
+              )}
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="font-semibold uppercase tracking-wider text-[10px] bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded font-mono shrink-0">
+                  Official GMAT Focus Rule
+                </span>
+                <span>
+                  You may review all items. You may change answers for up to <strong>3 questions</strong> per section.
+                </span>
+              </div>
+              <div className="font-mono font-bold shrink-0 self-end sm:self-auto text-xs bg-card px-2.5 py-1 rounded-md border border-border">
+                {reviewedEditedCount} / 3 Edits Used
+              </div>
+            </div>
+          )}
 
           {/* Metric Summary Strip */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -222,6 +251,11 @@ export function SessionSectionReview({
                         <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-[10px] font-mono font-bold text-amber-600 dark:text-amber-400">
                           <Flag className="h-3 w-3 fill-amber-500 text-amber-500" />
                           Flagged
+                        </span>
+                      )}
+                      {reviewedEditedQuestionIds?.has(q.question_id) && (
+                        <span className="inline-flex items-center rounded-md bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 text-[10px] font-mono font-semibold text-sky-600 dark:text-sky-400">
+                          Edited
                         </span>
                       )}
                       {isAnswered ? (

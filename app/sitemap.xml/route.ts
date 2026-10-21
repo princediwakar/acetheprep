@@ -11,19 +11,19 @@ export async function GET() {
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
-    <loc>${baseUrl}/sitemap-static</loc>
+    <loc>${baseUrl}/sitemap-static.xml</loc>
     <lastmod>${lastModified}</lastmod>
   </sitemap>
   <sitemap>
-    <loc>${baseUrl}/sitemap-blog</loc>
+    <loc>${baseUrl}/sitemap-blog.xml</loc>
     <lastmod>${lastModified}</lastmod>
   </sitemap>
   <sitemap>
-    <loc>${baseUrl}/sitemap-practice/1</loc>
+    <loc>${baseUrl}/sitemap-practice.xml</loc>
     <lastmod>${lastModified}</lastmod>
   </sitemap>
   <sitemap>
-    <loc>${baseUrl}/sitemap-insights/1</loc>
+    <loc>${baseUrl}/sitemap-insights.xml</loc>
     <lastmod>${lastModified}</lastmod>
   </sitemap>
 </sitemapindex>`;

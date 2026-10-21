@@ -60,7 +60,7 @@ export function Step1RealityAnchor({
       <CardContent className="space-y-5 pt-6">
         {/* Exam Selection */}
         <div className="space-y-2">
-          <Label htmlFor="exam-select">What exam are you preparing for?</Label>
+          <Label htmlFor="exam-select">Exam</Label>
           <Select value={exam} onValueChange={onExamChange}>
             <SelectTrigger ref={selectRef} id="exam-select">
               <SelectValue placeholder="Select your exam..." />
@@ -102,7 +102,7 @@ export function Step1RealityAnchor({
         {exam && (
           <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
             <div className="flex items-center justify-between">
-              <Label htmlFor="target-date">Target Exam Horizon</Label>
+              <Label htmlFor="target-date">Test Date</Label>
               {timeMode && <TimeModeBadge mode={timeMode} />}
             </div>
 
@@ -110,7 +110,7 @@ export function Step1RealityAnchor({
             <div className="grid grid-cols-3 gap-2">
               {[
                 { label: "1 Month", days: 30 },
-                { label: "3 Months (Recommended)", days: 90 },
+                { label: "3 Months", days: 90 },
                 { label: "6 Months", days: 180 },
               ].map((preset) => {
                 const targetISO = (() => {
@@ -141,7 +141,7 @@ export function Step1RealityAnchor({
             {/* Custom Date Input */}
             <div className="pt-1">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">Or exact date:</span>
+                <span className="text-xs text-muted-foreground">Or pick a date:</span>
                 <input
                   id="target-date"
                   type="date"
@@ -165,10 +165,10 @@ export function Step1RealityAnchor({
           <div className="space-y-3 pt-2 border-t border-border/50 animate-in fade-in slide-in-from-top-2 duration-300">
             <div>
               <Label className="text-sm font-medium">
-                Baseline Knowledge Check
+                Starting Level
               </Label>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Pre-calibrated to Okay. Adjust any subject where you feel Weak or Strong.
+                All subjects start at Medium. Adjust any topic where you need extra practice or already feel strong.
               </p>
             </div>
 

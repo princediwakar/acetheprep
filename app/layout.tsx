@@ -2,7 +2,6 @@ import { ThemeProvider } from "@/components/ThemeProvider"
 // import { ClarityProvider } from '@/components/ClarityProvider';
 
 import { AppShell } from "@/components/AppShell";
-import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner"
 import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
 import { createClient } from "@/lib/supabase/server";
@@ -25,6 +24,13 @@ export const metadata: Metadata = {
     },
     description: "Adaptive exam preparation for Digital SAT, GRE, GMAT Focus, CFA Level 1, IELTS, TOEFL, and global competitive exams. Master common mistakes, build recall under exam conditions, and stop memory decay.",
     keywords: ["Digital SAT prep", "GRE preparation", "GMAT Focus prep", "CFA Level 1 exam", "IELTS practice", "TOEFL iBT", "exam readiness", "active recall", "spaced repetition", "distractor analysis", "adaptive test prep", "free practice questions"],
+    alternates: {
+        canonical: baseUrl,
+        types: {
+            "application/rss+xml": `${baseUrl}/blog/rss.xml`,
+            "text/markdown": `${baseUrl}/llms.txt`,
+        },
+    },
     openGraph: {
         title: "AceThePrep — Real Exam Readiness for SAT, GRE, GMAT, CFA & Global Exams",
         description: "Adaptive exam preparation for Digital SAT, GRE, GMAT Focus, CFA Level 1, IELTS, and global exams. Master common mistakes with personalized distractor analysis.",

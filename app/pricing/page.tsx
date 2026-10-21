@@ -12,12 +12,44 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Check, HelpCircle, ShieldCheck, Sparkles, X } from "lucide-react";
+import { Check, Sparkles, X } from "lucide-react";
+import { siteConfig } from "@/config/site";
+import StructuredData, {
+  faqPageSchema,
+  productOfferSchema,
+  breadcrumbSchema,
+} from "@/components/seo/StructuredData";
+
+const baseUrl = siteConfig.url;
 
 export const metadata: Metadata = {
-  title: "Pricing & Plans",
+  title: "Pricing & Plans — Transparent Test Prep",
   description:
-    "Simple, transparent pricing for competitive exams. Start free with 10-question practice sets or unlock official sectional drills and full mock simulations with AceThePrep Pro.",
+    "Simple, transparent pricing for Digital SAT, GRE, GMAT Focus, and CFA Level 1. Start free with 10-question practice sets or unlock official sectional drills and full mock simulations with AceThePrep Pro.",
+  alternates: {
+    canonical: `${baseUrl}/pricing`,
+  },
+  openGraph: {
+    title: `Pricing & Plans | ${siteConfig.name}`,
+    description:
+      "Simple, transparent pricing for competitive exams. Start free with 10-question practice sets or unlock official sectional drills and full mock simulations with AceThePrep Pro.",
+    url: `${baseUrl}/pricing`,
+    images: [
+      {
+        url: `${baseUrl}/api/og?type=home&title=Pricing%20%26%20Plans&topic=AceThePrep%20Pro`,
+        width: 1200,
+        height: 630,
+        alt: "AceThePrep Pricing & Plans",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Pricing & Plans | ${siteConfig.name}`,
+    description:
+      "Simple, transparent pricing for competitive exams. Free adaptive practice + Pro mock simulations.",
+    images: [`${baseUrl}/api/og?type=home&title=Pricing%20%26%20Plans&topic=AceThePrep%20Pro`],
+  },
 };
 
 const COMPARISON_ROWS = [
@@ -104,8 +136,22 @@ export default async function PricingPage() {
     ? await getUserSubscriptionStatus(user.id)
     : { isPro: false, planType: null };
 
+  const pricingFaqs = FAQS.map((f) => ({
+    question: f.q,
+    answer: f.a,
+  }));
+
   return (
     <main className="min-h-screen bg-background text-foreground pt-24 pb-20 px-4 sm:px-6 lg:px-8">
+      <StructuredData schema={productOfferSchema()} />
+      <StructuredData schema={faqPageSchema(pricingFaqs)} />
+      <StructuredData
+        schema={breadcrumbSchema([
+          { name: "Home", url: baseUrl },
+          { name: "Pricing", url: `${baseUrl}/pricing` },
+        ])}
+      />
+
       {/* Hero Section */}
       <div className="max-w-4xl mx-auto text-center space-y-4 mb-16">
         <Badge className="bg-primary/10 text-primary border-primary/20 text-xs uppercase tracking-wider font-semibold py-1 px-3">

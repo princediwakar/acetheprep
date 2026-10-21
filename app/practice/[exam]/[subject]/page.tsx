@@ -58,6 +58,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description = `Prepare for ${examName} ${subjectName} with free topic-by-topic practice tests. Includes AI-powered distractor analysis explaining every student trap.`;
 
 
+  const ogImage = `${baseUrl}/api/og?type=practice&title=${encodeURIComponent(subjectName)}&topic=${encodeURIComponent(examName)}`;
+
   return {
     title,
     description,
@@ -66,6 +68,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title,
       description,
       url: canonicalUrl,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: `${examName} ${subjectName} Practice`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
     },
   };
 }

@@ -33,12 +33,12 @@ export function SyllabusMap({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Syllabus Map</h2>
-          <p className="text-muted-foreground text-sm">Practice topics individually based on mastery.</p>
+          <h2 className="text-2xl font-bold tracking-tight">Syllabus Topics</h2>
+          <p className="text-muted-foreground text-sm">Pick any topic to practice, or review topics that are due.</p>
         </div>
         <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-lg">
           <Label htmlFor="linear-mode" className="text-sm font-medium cursor-pointer">
-            Linear Mode
+            Study in Order
           </Label>
           <input
             type="checkbox"
@@ -86,43 +86,49 @@ export function SyllabusMap({
                     return (
                       <div
                         key={domain.name}
-                        className={`p-4 hover:bg-muted/30 transition-all flex flex-col gap-3 group ${
-                          isFutureTopic ? "opacity-50 hover:opacity-100 grayscale hover:grayscale-0" : ""
+                        className={`p-3.5 hover:bg-muted/40 transition-all flex flex-col justify-center min-h-[72px] group ${
+                          isFutureTopic ? "opacity-45 hover:opacity-100 grayscale hover:grayscale-0" : ""
                         }`}
                       >
-                        <div className="flex justify-between items-start gap-4">
-                          <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
-                              <span className="font-medium text-sm leading-snug mr-1">{domain.name}</span>
-                              {isOverdue && (
-                                <Badge
-                                  variant="outline"
-                                  className="text-[10px] whitespace-nowrap uppercase px-1.5 h-4 border-orange-500/30 text-orange-600 bg-orange-500/10 shrink-0"
-                                >
-                                  <Clock className="w-3 h-3 mr-1" /> Due
-                                </Badge>
-                              )}
-                              {isStrong && !isOverdue && (
-                                <Badge
-                                  variant="outline"
-                                  className="text-[10px] whitespace-nowrap uppercase px-1.5 h-4 border-green-500/30 text-green-600 bg-green-500/10 shrink-0"
-                                >
-                                  <CheckCircle2 className="w-3 h-3 mr-1" /> Strong
-                                </Badge>
-                              )}
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="min-w-0 flex-1 space-y-1.5">
+                            {/* Topic Title: Always full, readable, never truncated */}
+                            <div className="font-semibold text-sm leading-snug text-foreground">
+                              {domain.name}
                             </div>
+
+                            {/* Metrics & Status Row */}
                             <TooltipProvider delayDuration={200}>
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <div className="flex items-center gap-2.5 cursor-help group/metric">
-                                    <div className="h-1.5 bg-muted rounded-full overflow-hidden w-24 shrink-0">
+                                    <div className="h-1.5 bg-muted rounded-full overflow-hidden w-16 sm:w-20 shrink-0">
                                       <div
                                         className={`h-full rounded-full transition-all duration-500 ${notStarted ? "bg-transparent" : barColor}`}
                                         style={{ width: `${notStarted ? 0 : Math.max(pct, 4)}%` }}
                                       />
                                     </div>
-                                    <span className="text-xs tabular-nums text-muted-foreground whitespace-nowrap group-hover/metric:text-foreground transition-colors">
-                                      {notStarted ? "Not started · 0 Qs" : `${pct}% Mastery · ${domain.totalAttempted} Q${domain.totalAttempted !== 1 ? "s" : ""}`}
+                                    <span className="text-xs tabular-nums font-medium text-foreground/85 whitespace-nowrap">
+                                      {notStarted ? "Not started" : `${pct}% Mastery`}
+                                    </span>
+                                    {isOverdue && (
+                                      <Badge
+                                        variant="outline"
+                                        className="text-[10px] font-semibold tracking-wide uppercase px-1.5 py-0 h-4 border-amber-500/30 text-amber-500 bg-amber-500/10 shrink-0 gap-1"
+                                      >
+                                        <Clock className="w-2.5 h-2.5" /> Due
+                                      </Badge>
+                                    )}
+                                    {isStrong && !isOverdue && (
+                                      <Badge
+                                        variant="outline"
+                                        className="text-[10px] font-semibold tracking-wide uppercase px-1.5 py-0 h-4 border-emerald-500/30 text-emerald-500 bg-emerald-500/10 shrink-0 gap-1"
+                                      >
+                                        <CheckCircle2 className="w-2.5 h-2.5" /> Strong
+                                      </Badge>
+                                    )}
+                                    <span className="text-[11px] tabular-nums text-muted-foreground whitespace-nowrap ml-auto">
+                                      {notStarted ? "0 Qs" : `${domain.totalAttempted} Q${domain.totalAttempted !== 1 ? "s" : ""}`}
                                     </span>
                                   </div>
                                 </TooltipTrigger>
@@ -132,8 +138,8 @@ export function SyllabusMap({
                                   </p>
                                   <p className="text-muted-foreground text-[11px] leading-relaxed">
                                     {notStarted
-                                      ? "No questions attempted yet. Practice to establish your baseline calibration and retention curve."
-                                      : `Calibrated based on accuracy and solving speed across ${domain.totalAttempted} questions.`}
+                                      ? "No questions answered yet. Practice this topic to start tracking your score."
+                                      : `Based on your accuracy and speed across ${domain.totalAttempted} questions.`}
                                   </p>
                                 </TooltipContent>
                               </Tooltip>
@@ -143,7 +149,7 @@ export function SyllabusMap({
                           <Button
                             size="sm"
                             variant={isOverdue ? "default" : "outline"}
-                            className="shrink-0 transition-opacity opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100 cursor-pointer"
+                            className="h-7 px-2.5 text-xs font-medium shrink-0 self-center transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100 cursor-pointer"
                             onClick={() => onDomainPractice(domain.name, subject.name)}
                           >
                             Practice

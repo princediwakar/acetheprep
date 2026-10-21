@@ -59,17 +59,47 @@ const DEFAULT_C_TIER: Record<DifficultyTier, number> = {
 
 // SAT Exam mappings
 const SAT_DOMAIN_TO_SUBJECT: Record<string, string> = {
+  // Reading & Writing Micro-Skills & Macro-Domains
   "Craft and Structure": "Reading and Writing",
   "Information and Ideas": "Reading and Writing",
   "Standard English Conventions": "Reading and Writing",
   "Expression of Ideas": "Reading and Writing",
+  "Words in Context": "Reading and Writing",
+  "Text Structure and Purpose": "Reading and Writing",
+  "Cross-Text Connections": "Reading and Writing",
+  "Central Ideas and Details": "Reading and Writing",
+  Inferences: "Reading and Writing",
+  "Command of Evidence (Textual)": "Reading and Writing",
+  "Command of Evidence (Quantitative)": "Reading and Writing",
+  "Boundaries (Punctuation & Splices)": "Reading and Writing",
+  "Form, Structure, and Sense": "Reading and Writing",
+  "Transitions and Logical Flow": "Reading and Writing",
+  "Rhetorical Synthesis": "Reading and Writing",
+
+  // Mathematics Micro-Skills & Macro-Domains
   Algebra: "Mathematics",
   "Advanced Math": "Mathematics",
   "Problem-Solving and Data Analysis": "Mathematics",
   "Geometry and Trigonometry": "Mathematics",
+  "Linear Equations in 1 & 2 Variables": "Mathematics",
+  "Linear Functions & Graphs": "Mathematics",
+  "Systems of Linear Equations": "Mathematics",
+  "Linear Inequalities": "Mathematics",
+  "Nonlinear Functions & Modeling": "Mathematics",
+  "Quadratic Equations & Discriminant": "Mathematics",
+  "Exponential Growth & Decay": "Mathematics",
+  "Polynomial Operations & Factors": "Mathematics",
+  "Ratios, Rates & Proportions": "Mathematics",
+  "Percentages & Unit Conversions": "Mathematics",
+  "One- & Two-Variable Statistics": "Mathematics",
+  "Probability & Data Interpretation": "Mathematics",
+  "Lines, Angles & Triangles": "Mathematics",
+  "Right Triangles & Trigonometry": "Mathematics",
+  "Circles & Theorems": "Mathematics",
 };
 
 const SAT_EXAM_WEIGHTS: Record<string, number> = {
+  // Macro-Domains
   "Craft and Structure": 0.14,
   "Information and Ideas": 0.13,
   "Standard English Conventions": 0.12,
@@ -78,6 +108,34 @@ const SAT_EXAM_WEIGHTS: Record<string, number> = {
   "Advanced Math": 0.14,
   "Problem-Solving and Data Analysis": 0.12,
   "Geometry and Trigonometry": 0.10,
+
+  // Micro-Skills
+  "Words in Context": 0.05,
+  "Text Structure and Purpose": 0.05,
+  "Cross-Text Connections": 0.04,
+  "Central Ideas and Details": 0.05,
+  Inferences: 0.04,
+  "Command of Evidence (Textual)": 0.05,
+  "Command of Evidence (Quantitative)": 0.05,
+  "Boundaries (Punctuation & Splices)": 0.06,
+  "Form, Structure, and Sense": 0.05,
+  "Transitions and Logical Flow": 0.05,
+  "Rhetorical Synthesis": 0.05,
+  "Linear Equations in 1 & 2 Variables": 0.04,
+  "Linear Functions & Graphs": 0.04,
+  "Systems of Linear Equations": 0.04,
+  "Linear Inequalities": 0.03,
+  "Nonlinear Functions & Modeling": 0.04,
+  "Quadratic Equations & Discriminant": 0.04,
+  "Exponential Growth & Decay": 0.04,
+  "Polynomial Operations & Factors": 0.03,
+  "Ratios, Rates & Proportions": 0.04,
+  "Percentages & Unit Conversions": 0.04,
+  "One- & Two-Variable Statistics": 0.04,
+  "Probability & Data Interpretation": 0.04,
+  "Lines, Angles & Triangles": 0.04,
+  "Right Triangles & Trigonometry": 0.04,
+  "Circles & Theorems": 0.04,
 };
 
 // CFA Level 1 Exam mappings
@@ -127,16 +185,67 @@ const CFA_DOMAIN_TO_SUBJECT: Record<string, string> = {
 };
 
 const CFA_EXAM_WEIGHTS: Record<string, number> = {
-  "Code of Ethics": 0.08,
-  "Standards of Professional Conduct": 0.07,
-  "Global Investment Performance Standards (GIPS)": 0.03,
-  "Financial Reporting Standards": 0.06,
-  "Income Statements": 0.06,
-  "Balance Sheets": 0.05,
-  "Cash Flow Statements": 0.05,
-  "Fixed-Income Securities": 0.06,
-  "Fixed-Income Valuation": 0.06,
-  "Equity Valuation": 0.06,
+  // Ethical & Professional Standards (15-20%, ~17.5%)
+  "Code of Ethics": 0.07,
+  "Standards of Professional Conduct": 0.08,
+  "Global Investment Performance Standards (GIPS)": 0.025,
+
+  // Quantitative Methods (6-9%, ~7.5%)
+  "Time Value of Money": 0.025,
+  "Statistical Concepts & Market Returns": 0.015,
+  "Probability Distributions": 0.015,
+  "Hypothesis Testing": 0.01,
+  "Simple Linear Regression": 0.01,
+
+  // Economics (6-9%, ~7.5%)
+  "Microeconomic Analysis": 0.02,
+  "Monetary and Fiscal Policy": 0.02,
+  "International Trade & Capital Flows": 0.015,
+  "Currency Exchange Rates": 0.02,
+
+  // Financial Statement Analysis (11-14%, ~13%)
+  "Financial Reporting Standards": 0.02,
+  "Income Statements": 0.025,
+  "Balance Sheets": 0.025,
+  "Cash Flow Statements": 0.025,
+  "Inventories & Long-Lived Assets": 0.025,
+  "Financial Analysis Techniques": 0.01,
+
+  // Corporate Issuers (6-9%, ~7.5%)
+  "Corporate Governance": 0.02,
+  "Working Capital & Liquidity": 0.02,
+  "Capital Structure": 0.02,
+  "Capital Investments": 0.015,
+
+  // Equity Investments (11-14%, ~12.5%)
+  "Market Organization & Structure": 0.025,
+  "Security Market Indexes": 0.025,
+  "Market Efficiency": 0.025,
+  "Equity Valuation": 0.05,
+
+  // Fixed Income (11-14%, ~12.5%)
+  "Fixed-Income Securities": 0.025,
+  "Fixed-Income Valuation": 0.035,
+  "Asset-Backed Securities": 0.02,
+  "Yield & Spread Analysis": 0.025,
+  "Credit Analysis": 0.02,
+
+  // Derivatives (5-8%, ~6%)
+  "Derivative Markets & Instruments": 0.015,
+  "Forward & Futures Contracts": 0.015,
+  "Option Basics": 0.02,
+  Swaps: 0.01,
+
+  // Alternative Investments (7-10%, ~8%)
+  "Real Estate": 0.02,
+  "Private Equity": 0.025,
+  "Hedge Funds": 0.02,
+  Commodities: 0.015,
+
+  // Portfolio Management (8-11%, ~8.5%)
+  "Portfolio Risk & Return": 0.035,
+  "Portfolio Planning & Construction": 0.03,
+  "Behavioral Biases": 0.02,
 };
 
 // GMAT Focus exam section question weights (calibrated to official GMAC question distributions)

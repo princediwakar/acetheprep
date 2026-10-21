@@ -12,6 +12,8 @@ export async function GET() {
 User-agent: *
 Allow: /
 Allow: /practice/
+Allow: /pricing
+Allow: /predictor
 Allow: /insights/
 Allow: /blog/
 Allow: /feedback

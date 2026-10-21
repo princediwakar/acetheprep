@@ -13,9 +13,11 @@ interface StaticRoute {
 export async function GET() {
   const routes: StaticRoute[] = [
     { url: "", changeFrequency: "daily", priority: 1.0 }, // Homepage
+    { url: "/practice", changeFrequency: "daily", priority: 0.95 }, // Practice Portal
+    { url: "/pricing", changeFrequency: "daily", priority: 0.95 }, // Pro Pricing & Pass
     { url: "/blog", changeFrequency: "daily", priority: 0.9 }, // Blog Index
-    { url: "/practice", changeFrequency: "daily", priority: 0.9 }, // Practice Portal
-    { url: "/insights", changeFrequency: "weekly", priority: 0.8 }, // Insights
+    { url: "/insights", changeFrequency: "weekly", priority: 0.85 }, // Insights & Hardest Topics
+    { url: "/predictor", changeFrequency: "weekly", priority: 0.8 }, // Diagnostic Percentile Predictor
     { url: "/feedback", changeFrequency: "monthly", priority: 0.5 },
     { url: "/privacy", changeFrequency: "yearly", priority: 0.3 },
     { url: "/terms", changeFrequency: "yearly", priority: 0.3 },

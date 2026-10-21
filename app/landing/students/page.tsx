@@ -6,7 +6,6 @@ import CognitiveFlowSection from "@/components/landing/CognitiveFlowSection";
 import ReliefComparisonSection from "@/components/landing/ReliefComparisonSection";
 import ExamTracksSection from "@/components/landing/ExamTracksSection";
 import CTA from "@/components/landing/CTA";
-import SiteFooter from "@/components/landing/SiteFooter";
 
 const SocialProofSection = dynamic(
   () => import("@/components/landing/SocialProofSection"),
@@ -25,7 +24,6 @@ const StudentsLanding = async () => {
       <PeerInsightsSection />
       <SocialProofSection />
       <CTA />
-      <SiteFooter />
     </main>
   );
 };

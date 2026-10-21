@@ -12,7 +12,8 @@ import StructuredData, {
 } from "@/components/seo/StructuredData";
 import ExamCTABanner from "@/components/practice/ExamCTABanner";
 import { siteConfig } from "@/config/site";
-import { ArrowLeft, BookOpen, Sparkles, ArrowRight, BarChart3, TrendingUp } from "lucide-react";
+import { ArrowLeft, BookOpen, Sparkles, ArrowRight, BarChart3, TrendingUp, Clock, Timer, Target, Layers } from "lucide-react";
+import { getExamBlueprint } from "@/lib/constants/exam-blueprints";
 
 interface PageProps {
   params: Promise<{ exam: string }>;
@@ -88,6 +89,7 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
   }
 
   const examSlug = examToSlug(examName);
+  const blueprint = getExamBlueprint(examName);
   const breadcrumbs = [
     { name: "Home", url: baseUrl },
     { name: "Practice", url: `${baseUrl}/practice` },
@@ -156,6 +158,64 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
           </div>
         </div>
 
+        {/* Official Exam Structure & Timing Blueprint */}
+        <div className="mb-12 rounded-2xl border border-border/80 bg-card p-6 sm:p-8 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-border/60 gap-3 mb-6">
+            <div>
+              <span className="text-xs font-semibold text-primary uppercase tracking-wider font-mono">
+                Official Blueprint Specification
+              </span>
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground mt-1">
+                {examName} Test Format & Time Allocation
+              </h2>
+            </div>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+              <Clock className="w-3.5 h-3.5" />
+              <span>{blueprint.officialTimeMinutes} Min Total Time</span>
+            </span>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-1">
+              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                <Target className="w-4 h-4 text-primary" />
+                <span>Full Official Mock</span>
+              </div>
+              <div className="text-2xl font-extrabold text-foreground">
+                {blueprint.officialMockCount} Questions
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {blueprint.officialTimeMinutes} minutes • ~{Math.round((blueprint.officialTimeMinutes * 60) / blueprint.officialMockCount)}s per question
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-1">
+              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                <Layers className="w-4 h-4 text-emerald-500" />
+                <span>{blueprint.sectionName}</span>
+              </div>
+              <div className="text-2xl font-extrabold text-foreground">
+                {blueprint.sectionTestCount} Questions
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {blueprint.sectionTimeMinutes} minutes • Standard Sectional Pace
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-1">
+              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                <Timer className="w-4 h-4 text-amber-500" />
+                <span>Daily Quick Drill</span>
+              </div>
+              <div className="text-2xl font-extrabold text-foreground">
+                {blueprint.quickDrillCount} Questions
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {blueprint.quickDrillMinutes} minutes • Zero-friction topic sprints
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* Subjects & Topics Section */}
         <div className="mb-6 flex items-center justify-between">

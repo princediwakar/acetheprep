@@ -65,7 +65,7 @@ export const Header = memo(() => {
           ) : (
             <SignInButton
               buttonText="Get Started"
-              returnUrl={pathname !== "/" ? pathname : "/setup"}
+              returnUrl={pathname !== "/" ? pathname : "/home"}
             />
           )}
         </div>

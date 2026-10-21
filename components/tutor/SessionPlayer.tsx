@@ -1,6 +1,7 @@
 // Path: components/tutor/SessionPlayer.tsx
 "use client";
 
+import { useEffect } from "react";
 import { ExamCalculator } from "@/components/tutor/ExamCalculator";
 import { SessionStartScreen } from "@/components/tutor/player/SessionStartScreen";
 import { SessionPaletteModal } from "@/components/tutor/player/SessionPaletteModal";
@@ -84,6 +85,8 @@ export function SessionPlayer(props: SessionPlayerProps) {
     handleToggleFlag,
     handleBackToDashboard,
     handleStartNextTopic,
+    reviewedEditedQuestionIds,
+    reviewedEditedCount,
   } = useSessionEngine(props);
 
   const formatTime = (seconds: number) => {
@@ -91,6 +94,19 @@ export function SessionPlayer(props: SessionPlayerProps) {
     const secs = seconds % 60;
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
+
+  const isGMAT = Boolean(examName && /gmat/i.test(examName));
+  const isCalculatorPermitted = isGMAT
+    ? current?.subject === "Data Insights" ||
+      /data insights|sufficiency|table|two-part|multi-source|graphics/i.test(current?.skill_domain || "")
+    : true;
+
+  // Auto-close calculator if user transitions to a section where calculators are prohibited (GMAT Quant/Verbal)
+  useEffect(() => {
+    if (showCalculator && !isCalculatorPermitted) {
+      setShowCalculator(false);
+    }
+  }, [showCalculator, isCalculatorPermitted, setShowCalculator]);
 
   const bp = examName ? getExamBlueprint(examName) : null;
   const estimatedMinutes =
@@ -128,6 +144,8 @@ export function SessionPlayer(props: SessionPlayerProps) {
         flaggedQuestions={flaggedQuestions}
         totalTimeElapsed={totalTimeElapsed}
         showTimer={showTimer}
+        reviewedEditedQuestionIds={reviewedEditedQuestionIds}
+        reviewedEditedCount={reviewedEditedCount}
         onReturnToCurrent={() => setShowSectionReview(false)}
         onJumpToQuestion={handleJumpToQuestion}
         onSubmitFinal={() => {
@@ -190,6 +208,7 @@ export function SessionPlayer(props: SessionPlayerProps) {
         showTimer={showTimer}
         totalTimeElapsed={totalTimeElapsed}
         showCalculator={showCalculator}
+        isCalculatorPermitted={isCalculatorPermitted}
         onToggleTimer={() => setShowTimer((prev) => !prev)}
         onToggleCalculator={() => setShowCalculator((prev) => !prev)}
         onEndTest={() => setShowExitDialog(true)}

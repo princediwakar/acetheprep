@@ -51,6 +51,30 @@ const nextConfig = {
 		  source: "/oembed",
 		  destination: "/api/oembed",
 		},
+		{
+		  source: "/sitemap-static.xml",
+		  destination: "/sitemap-static",
+		},
+		{
+		  source: "/sitemap-blog.xml",
+		  destination: "/sitemap-blog",
+		},
+		{
+		  source: "/sitemap-practice.xml",
+		  destination: "/sitemap-practice/1",
+		},
+		{
+		  source: "/sitemap-practice/:id.xml",
+		  destination: "/sitemap-practice/:id",
+		},
+		{
+		  source: "/sitemap-insights.xml",
+		  destination: "/sitemap-insights/1",
+		},
+		{
+		  source: "/sitemap-insights/:id.xml",
+		  destination: "/sitemap-insights/:id",
+		},
 	  ];
 	},
   };

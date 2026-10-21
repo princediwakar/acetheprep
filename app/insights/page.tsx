@@ -7,12 +7,40 @@ import { getInsightsExams } from "@/lib/insights-queries";
 import { examToSlug, GLOBAL_EXAM_PRIORITY } from "@/lib/slugs";
 import taxonomyRaw from "@/lib/taxonomies.json";
 
+import { siteConfig } from "@/config/site";
+
+const baseUrl = siteConfig.url;
+
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Hardest Exam Topics & Common Mistakes",
+  title: "Hardest Exam Topics & Common Mistakes — Empirical Insights",
   description:
     "Discover the hardest exam topics and most frequent mistakes across competitive exams like Digital SAT, GRE, GMAT Focus, CFA Level 1, IELTS, and TOEFL.",
+  alternates: {
+    canonical: `${baseUrl}/insights`,
+  },
+  openGraph: {
+    title: `Hardest Exam Topics & Common Mistakes | ${siteConfig.name}`,
+    description:
+      "Explore real student error rates, hardest conceptual topics, and distractor traps across Digital SAT, GRE, GMAT Focus, and CFA Level 1.",
+    url: `${baseUrl}/insights`,
+    images: [
+      {
+        url: `${baseUrl}/api/og?type=insights&title=Exam%20Topic%20Insights&topic=Hardest%20Mistakes`,
+        width: 1200,
+        height: 630,
+        alt: "AceThePrep Exam Insights",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Hardest Exam Topics & Common Mistakes | ${siteConfig.name}`,
+    description:
+      "Explore real student error rates and hardest topics across competitive exams.",
+    images: [`${baseUrl}/api/og?type=insights&title=Exam%20Topic%20Insights&topic=Hardest%20Mistakes`],
+  },
 };
 
 

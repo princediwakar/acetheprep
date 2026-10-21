@@ -48,6 +48,13 @@ const SAT_DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
     domains: [
       "Craft and Structure",
       "Information and Ideas",
+      "Words in Context",
+      "Text Structure and Purpose",
+      "Cross-Text Connections",
+      "Central Ideas and Details",
+      "Inferences",
+      "Command of Evidence (Textual)",
+      "Command of Evidence (Quantitative)",
     ],
   },
   {
@@ -55,6 +62,10 @@ const SAT_DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
     domains: [
       "Standard English Conventions",
       "Expression of Ideas",
+      "Boundaries (Punctuation & Splices)",
+      "Form, Structure, and Sense",
+      "Transitions and Logical Flow",
+      "Rhetorical Synthesis",
     ],
   },
   {
@@ -62,18 +73,33 @@ const SAT_DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
     domains: [
       "Algebra",
       "Advanced Math",
+      "Linear Equations in 1 & 2 Variables",
+      "Linear Functions & Graphs",
+      "Systems of Linear Equations",
+      "Linear Inequalities",
+      "Nonlinear Functions & Modeling",
+      "Quadratic Equations & Discriminant",
+      "Exponential Growth & Decay",
+      "Polynomial Operations & Factors",
     ],
   },
   {
     name: "Math: Problem Solving & Data Analysis",
     domains: [
       "Problem-Solving and Data Analysis",
+      "Ratios, Rates & Proportions",
+      "Percentages & Unit Conversions",
+      "One- & Two-Variable Statistics",
+      "Probability & Data Interpretation",
     ],
   },
   {
     name: "Math: Geometry & Trigonometry",
     domains: [
       "Geometry and Trigonometry",
+      "Lines, Angles & Triangles",
+      "Right Triangles & Trigonometry",
+      "Circles & Theorems",
     ],
   },
 ];
@@ -530,11 +556,63 @@ export function getStratumForDomain(domain: string, examName?: string): string |
   const isSAT = examName && /sat/i.test(examName);
   if (isSAT) {
     if (SAT_DOMAIN_TO_STRATUM[norm]) return SAT_DOMAIN_TO_STRATUM[norm];
-    if (norm.includes("craft") || norm.includes("information") || norm.includes("reading")) return "Reading & Writing: Rhetoric & Structure";
-    if (norm.includes("convention") || norm.includes("expression") || norm.includes("grammar") || norm.includes("writing")) return "Reading & Writing: Conventions & Expression";
-    if (norm.includes("algebra") || norm.includes("advanced math")) return "Math: Algebra & Equations";
-    if (norm.includes("problem-solving") || norm.includes("data analysis") || norm.includes("statistics")) return "Math: Problem Solving & Data Analysis";
-    if (norm.includes("geometry") || norm.includes("trigonometry")) return "Math: Geometry & Trigonometry";
+    if (
+      norm.includes("craft") ||
+      norm.includes("information") ||
+      norm.includes("reading") ||
+      norm.includes("words in context") ||
+      norm.includes("evidence") ||
+      norm.includes("inference") ||
+      norm.includes("central idea") ||
+      norm.includes("text structure") ||
+      norm.includes("cross-text")
+    ) {
+      return "Reading & Writing: Rhetoric & Structure";
+    }
+    if (
+      norm.includes("convention") ||
+      norm.includes("expression") ||
+      norm.includes("grammar") ||
+      norm.includes("writing") ||
+      norm.includes("boundary") ||
+      norm.includes("transition") ||
+      norm.includes("rhetorical") ||
+      norm.includes("punctuation") ||
+      norm.includes("form, structure")
+    ) {
+      return "Reading & Writing: Conventions & Expression";
+    }
+    if (
+      norm.includes("algebra") ||
+      norm.includes("advanced math") ||
+      norm.includes("linear") ||
+      norm.includes("quadratic") ||
+      norm.includes("polynomial") ||
+      norm.includes("exponential") ||
+      norm.includes("systems")
+    ) {
+      return "Math: Algebra & Equations";
+    }
+    if (
+      norm.includes("problem-solving") ||
+      norm.includes("data analysis") ||
+      norm.includes("statistics") ||
+      norm.includes("ratio") ||
+      norm.includes("percentage") ||
+      norm.includes("probability")
+    ) {
+      return "Math: Problem Solving & Data Analysis";
+    }
+    if (
+      norm.includes("geometry") ||
+      norm.includes("trigonometry") ||
+      norm.includes("circle") ||
+      norm.includes("triangle") ||
+      norm.includes("angle") ||
+      norm.includes("lines")
+    ) {
+      return "Math: Geometry & Trigonometry";
+    }
     return "Math: Algebra & Equations";
   }
 
