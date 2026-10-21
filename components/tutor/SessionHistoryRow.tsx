@@ -57,6 +57,11 @@ export function SessionHistoryRow({ session, examName, onDiscard }: SessionHisto
         ? session.target_domains[0]
         : `${domainCount} domains`;
 
+  // Primary display: for single-domain sessions, the topic IS the title
+  const isSingleDomain = domainCount === 1;
+  const primaryTitle = isSingleDomain ? session.target_domains[0] : intentLabel;
+  const showIntentBadge = isSingleDomain;
+
   const accuracyColor =
     session.accuracy >= 80
       ? "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/25"
@@ -97,13 +102,18 @@ export function SessionHistoryRow({ session, examName, onDiscard }: SessionHisto
           </div>
 
           <div className="min-w-0 space-y-0.5">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
-                {intentLabel}
+                {primaryTitle}
               </span>
+              {showIntentBadge && (
+                <span className="text-[10px] uppercase font-mono font-medium px-1.5 py-0.5 rounded border bg-muted/50 text-muted-foreground border-border/60">
+                  {intentLabel}
+                </span>
+              )}
               <span
                 className={cn(
-                  "text-[10px] uppercase font-mono font-medium px-1.5 py-0.2 rounded border",
+                  "text-[10px] uppercase font-mono font-medium px-1.5 py-0.5 rounded border",
                   isCompleted
                     ? "bg-muted/50 text-muted-foreground border-border/60"
                     : isActive
@@ -116,8 +126,8 @@ export function SessionHistoryRow({ session, examName, onDiscard }: SessionHisto
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground truncate">
               {examName && <span className="font-medium text-foreground/80">{examName}</span>}
-              {examName && <span>•</span>}
-              <span className="truncate">{domainText}</span>
+              {examName && !isSingleDomain && <span>•</span>}
+              {!isSingleDomain && <span className="truncate">{domainText}</span>}
             </div>
           </div>
         </div>
@@ -218,11 +228,11 @@ export function SessionHistoryRow({ session, examName, onDiscard }: SessionHisto
             </div>
             <div className="min-w-0">
               <h4 className="font-semibold text-sm text-foreground truncate">
-                {intentLabel}
+                {primaryTitle}
               </h4>
-              {examName && (
-                <p className="text-[11px] text-muted-foreground truncate">{examName}</p>
-              )}
+              <p className="text-[11px] text-muted-foreground truncate">
+                {examName}{isSingleDomain ? ` · ${intentLabel}` : domainCount > 1 ? ` · ${domainText}` : ""}
+              </p>
             </div>
           </div>
 

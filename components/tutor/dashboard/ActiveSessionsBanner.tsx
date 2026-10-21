@@ -92,8 +92,13 @@ export function ActiveSessionsBanner({ initialSessions }: ActiveSessionsBannerPr
                 : session.session_intent === "diagnostic"
                   ? "Diagnostic Test"
                   : "Study Session";
-
-          const topicLabel = session.target_domains?.[0] || "Mixed Domains";
+          const domainCount = session.target_domains?.length ?? 0;
+          const topicLabel = domainCount === 1
+            ? session.target_domains[0]
+            : domainCount > 1
+              ? `${domainCount} domains`
+              : "Mixed Domains";
+          const primaryTitle = domainCount === 1 ? session.target_domains[0] : intentLabel;
 
           return (
             <div
@@ -103,15 +108,21 @@ export function ActiveSessionsBanner({ initialSessions }: ActiveSessionsBannerPr
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-sm font-bold text-foreground truncate">
-                    {intentLabel}
+                    {primaryTitle}
                   </span>
                   <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400">
                     Active
                   </span>
                 </div>
                 <div className="text-xs text-muted-foreground flex items-center gap-1.5 flex-wrap">
-                  <span className="font-medium text-foreground/80">{topicLabel}</span>
-                  <span>&middot;</span>
+                  {domainCount === 1 && (
+                    <span className="font-medium text-foreground/80">{intentLabel}</span>
+                  )}
+                  {domainCount === 1 && <span>&middot;</span>}
+                  {domainCount !== 1 && (
+                    <span className="font-medium text-foreground/80">{topicLabel}</span>
+                  )}
+                  {domainCount !== 1 && <span>&middot;</span>}
                   <span>
                     {session.answeredCount} of {totalQ} questions answered
                   </span>
