@@ -113,6 +113,27 @@ export const PREREQUISITE_WEIGHTS: Record<string, number> = {
   'Number Properties & Divisibility': 1.4,
   'Counting Methods & Probability': 1.3,
   'Statistics & Data Interpretation': 1.2,
+  // IELTS Academic
+  'Academic Vocabulary in Context': 1.4,
+  'True-False-Not Given': 1.5,
+  'TFNG: Modal Qualification': 1.4,
+  'Headings and Main Idea Matching': 1.3,
+  'Summary Completion': 1.2,
+  'Multiple Choice Traps': 1.4,
+  'Form and Note Completion': 1.2,
+  'Task 2: Task Response (TR)': 1.5,
+  'Task 2: Coherence & Cohesion (CC)': 1.4,
+  // TOEFL iBT
+  'Vocabulary in Context': 1.3,
+  'Factual Information': 1.4,
+  'Negative Factual Information': 1.4,
+  'Sentence Simplification': 1.5,
+  'Insert Text': 1.3,
+  'Prose Summary': 1.5,
+  'Gist-Content and Purpose': 1.4,
+  'Function and Speaker Stance': 1.3,
+  'Integrated Writing: Lecture Refutation': 1.5,
+  'Academic Discussion: Contribution': 1.4,
 };
 
 export const TUTOR_AI_CONFIG = {

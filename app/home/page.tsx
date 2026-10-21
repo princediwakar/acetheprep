@@ -12,6 +12,8 @@ import type { ProjectionHeroProps } from "@/components/tutor/ProjectionHero";
 import { marksToPercentile, getColdStartBand, computeCompositePercentile } from "@/lib/predictor/nta-priors";
 import { computeGMATPrediction } from "@/lib/predictor/gmat-score-engine";
 import { computeGREPrediction } from "@/lib/predictor/gre-score-engine";
+import { computeIELTSPrediction } from "@/lib/predictor/ielts-score-engine";
+import { computeTOEFLPrediction } from "@/lib/predictor/toefl-score-engine";
 import { getUserSubscriptionStatus, syncCheckoutSession } from "@/lib/billing";
 import taxonomy from "@/lib/taxonomies.json";
 
@@ -309,30 +311,94 @@ async function HomePageContent({
 
   const isGMAT = /gmat/i.test(profile.exam_name);
   const isGRE = /gre/i.test(profile.exam_name);
+  const isIELTS = /ielts/i.test(profile.exam_name);
+  const isTOEFL = /toefl/i.test(profile.exam_name);
 
   let prediction: ProjectionHeroProps["prediction"] = null;
 
-  if (isGRE) {
+  const getSectionMastery = (domains: string[], defaultMastery = 0.5) => {
+    let sum = 0;
+    let count = 0;
+    for (const d of domains) {
+      if (domainAttempted[d] && domainAttempted[d] > 0) {
+        sum += masteryMap[d] ?? 0;
+        count++;
+      }
+    }
+    return count > 0 ? sum / count : defaultMastery;
+  };
+
+  if (isIELTS) {
+    const readingDomains = examSubjects?.["Reading"] ?? [];
+    const listeningDomains = examSubjects?.["Listening"] ?? [];
+    const writingDomains = examSubjects?.["Writing"] ?? [];
+    const speakingDomains = examSubjects?.["Speaking"] ?? [];
+
+    const ieltsPred = computeIELTSPrediction({
+      readingMastery: getSectionMastery(readingDomains, 0.55),
+      listeningMastery: getSectionMastery(listeningDomains, 0.55),
+      writingMastery: getSectionMastery(writingDomains, 0.55),
+      speakingMastery: getSectionMastery(speakingDomains, 0.55),
+      totalTrackedSessions: sessionsCompleted,
+      readingDomainsTracked: readingDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+      listeningDomainsTracked: listeningDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+      writingDomainsTracked: writingDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+      speakingDomainsTracked: speakingDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+    });
+
+    prediction = {
+      overallPercentile: ieltsPred.overallPercentile,
+      overallBandLower: ieltsPred.bandLower,
+      overallBandUpper: ieltsPred.bandUpper,
+      overallBandWidth: ieltsPred.bandWidth,
+      calibrationSource: ieltsPred.calibrationSource,
+      disclaimer: ieltsPred.disclaimer,
+      isFrozen: false,
+      totalTrackedSessions: ieltsPred.totalTrackedSessions,
+      metricLabel: "Projected IELTS Band (1.0–9.0)",
+      displayValue: `${ieltsPred.overallBand.toFixed(1)} (${ieltsPred.bandLower.toFixed(1)}–${ieltsPred.bandUpper.toFixed(1)})`,
+      secondaryLabel: `~${ieltsPred.overallPercentile}th %ile`,
+    };
+  } else if (isTOEFL) {
+    const readingDomains = examSubjects?.["Reading"] ?? [];
+    const listeningDomains = examSubjects?.["Listening"] ?? [];
+    const speakingDomains = examSubjects?.["Speaking"] ?? [];
+    const writingDomains = examSubjects?.["Writing"] ?? [];
+
+    const toeflPred = computeTOEFLPrediction({
+      readingMastery: getSectionMastery(readingDomains, 0.60),
+      listeningMastery: getSectionMastery(listeningDomains, 0.60),
+      speakingMastery: getSectionMastery(speakingDomains, 0.60),
+      writingMastery: getSectionMastery(writingDomains, 0.60),
+      totalTrackedSessions: sessionsCompleted,
+      readingDomainsTracked: readingDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+      listeningDomainsTracked: listeningDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+      speakingDomainsTracked: speakingDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+      writingDomainsTracked: writingDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+    });
+
+    prediction = {
+      overallPercentile: toeflPred.overallPercentile,
+      overallBandLower: toeflPred.scoreBandLower,
+      overallBandUpper: toeflPred.scoreBandUpper,
+      overallBandWidth: toeflPred.scoreBandWidth,
+      calibrationSource: toeflPred.calibrationSource,
+      disclaimer: toeflPred.disclaimer,
+      isFrozen: false,
+      totalTrackedSessions: toeflPred.totalTrackedSessions,
+      metricLabel: "Projected TOEFL iBT Score (0–120)",
+      displayValue: `${toeflPred.compositeScore} (${toeflPred.scoreBandLower}–${toeflPred.scoreBandUpper})`,
+      secondaryLabel: `~${toeflPred.overallPercentile}th %ile`,
+    };
+  } else if (isGRE) {
     const quantDomains = examSubjects?.["Quantitative Reasoning"] ?? [];
     const verbalDomains = examSubjects?.["Verbal Reasoning"] ?? [];
     const writingDomains = examSubjects?.["Analytical Writing"] ?? [];
 
-    const getSectionMastery = (domains: string[], defaultMastery = 0.45) => {
-      let sum = 0;
-      let count = 0;
-      for (const d of domains) {
-        if (domainAttempted[d] && domainAttempted[d] > 0) {
-          sum += masteryMap[d] ?? 0;
-          count++;
-        }
-      }
-      return count > 0 ? sum / count : defaultMastery;
-    };
-
     const grePred = computeGREPrediction({
-      quantMastery: getSectionMastery(quantDomains),
-      verbalMastery: getSectionMastery(verbalDomains),
-      writingMastery: getSectionMastery(writingDomains, 0.5),
+      quantMastery: getSectionMastery(quantDomains, 0.45),
+      verbalMastery: getSectionMastery(verbalDomains, 0.45),
+      writingMastery: getSectionMastery(writingDomains, 0.50),
       totalTrackedSessions: sessionsCompleted,
       quantDomainsTracked: quantDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
       verbalDomainsTracked: verbalDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
@@ -356,22 +422,10 @@ async function HomePageContent({
     const verbalDomains = examSubjects?.["Verbal Reasoning"] ?? [];
     const diDomains = examSubjects?.["Data Insights"] ?? [];
 
-    const getSectionMastery = (domains: string[]) => {
-      let sum = 0;
-      let count = 0;
-      for (const d of domains) {
-        if (domainAttempted[d] && domainAttempted[d] > 0) {
-          sum += masteryMap[d] ?? 0;
-          count++;
-        }
-      }
-      return count > 0 ? sum / count : 0.4;
-    };
-
     const gmatPred = computeGMATPrediction({
-      quantMastery: getSectionMastery(quantDomains),
-      verbalMastery: getSectionMastery(verbalDomains),
-      diMastery: getSectionMastery(diDomains),
+      quantMastery: getSectionMastery(quantDomains, 0.40),
+      verbalMastery: getSectionMastery(verbalDomains, 0.40),
+      diMastery: getSectionMastery(diDomains, 0.40),
       totalTrackedSessions: sessionsCompleted,
       quantDomainsTracked: quantDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
       verbalDomainsTracked: verbalDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,

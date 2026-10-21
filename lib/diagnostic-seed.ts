@@ -201,6 +201,115 @@ const GRE_DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
   },
 ];
 
+const IELTS_DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
+  {
+    name: "Reading: Factual & Ternary Logic",
+    domains: [
+      "True-False-Not Given",
+      "Inference and Implication",
+      "TFNG: Modal Qualification",
+      "TFNG: Factual Contradiction",
+      "TFNG: Unstated & Not Given",
+    ],
+  },
+  {
+    name: "Reading: Cohesion & Macro Structure",
+    domains: [
+      "Headings and Main Idea Matching",
+      "Summary Completion",
+      "Sentence Completion",
+      "Academic Vocabulary in Context",
+      "Heading: Overly Specific Distractors",
+      "Matching Information to Paragraphs",
+    ],
+  },
+  {
+    name: "Listening: Conversational Detail & Trap Elimination",
+    domains: [
+      "Multiple Choice Traps",
+      "Form and Note Completion",
+      "Short Answer Comprehension",
+      "Conversational Self-Correction Traps",
+    ],
+  },
+  {
+    name: "Listening: Spatial & Feature Categorization",
+    domains: [
+      "Map and Diagram Labelling",
+      "Classification of Features",
+      "Academic Lecture Gist",
+    ],
+  },
+  {
+    name: "Academic Writing & Lexical Precision",
+    domains: [
+      "Task 1: Data Synthesis",
+      "Task 1: Process & Map",
+      "Task 2: Task Response (TR)",
+      "Task 2: Coherence & Cohesion (CC)",
+      "Task 2: Lexical Resource (LR)",
+      "Task 2: Grammatical Range & Accuracy (GRA)",
+      "Part 1: Personal Interview",
+      "Part 2: Long Turn (Cue Card)",
+      "Part 3: Discussion & Discourse",
+      "Pronunciation & Intonation",
+    ],
+  },
+];
+
+const TOEFL_DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
+  {
+    name: "Reading: Factual & Lexical Analysis",
+    domains: [
+      "Factual Information",
+      "Negative Factual Information",
+      "Vocabulary in Context",
+      "Inference and Rhetorical Purpose",
+      "Purpose and Method",
+    ],
+  },
+  {
+    name: "Reading: Syntactic Cohesion & Synthesis",
+    domains: [
+      "Sentence Simplification",
+      "Insert Text",
+      "Prose Summary",
+      "Insert Text [■] Placement",
+      "Prose Summary Traps",
+    ],
+  },
+  {
+    name: "Listening: Pragmatic & Communicative Intent",
+    domains: [
+      "Gist-Content and Purpose",
+      "Function and Speaker Stance",
+      "Conversational Register",
+    ],
+  },
+  {
+    name: "Listening: Structural & Connecting Content",
+    domains: [
+      "Detail Identification",
+      "Organization and Categorization",
+      "Connecting Content",
+      "Lecture Topic Structure",
+    ],
+  },
+  {
+    name: "Academic Writing & Integrated Speaking",
+    domains: [
+      "Integrated Writing: Lecture Refutation",
+      "Academic Discussion: Contribution",
+      "Syntactic Variety & Cohesion",
+      "Grammatical Precision",
+      "Independent Speaking (Q1)",
+      "Integrated Campus Speech (Q2)",
+      "Integrated Academic Concept (Q3)",
+      "Integrated Lecture (Q4)",
+    ],
+  },
+];
+
 const JEE_DOMAIN_TO_STRATUM: Record<string, string> = (() => {
   const map: Record<string, string> = {};
   for (const stratum of JEE_DIAGNOSTIC_STRATA) {
@@ -231,6 +340,26 @@ const GRE_DOMAIN_TO_STRATUM: Record<string, string> = (() => {
   return map;
 })();
 
+const IELTS_DOMAIN_TO_STRATUM: Record<string, string> = (() => {
+  const map: Record<string, string> = {};
+  for (const stratum of IELTS_DIAGNOSTIC_STRATA) {
+    for (const domain of stratum.domains) {
+      map[domain.toLowerCase()] = stratum.name;
+    }
+  }
+  return map;
+})();
+
+const TOEFL_DOMAIN_TO_STRATUM: Record<string, string> = (() => {
+  const map: Record<string, string> = {};
+  for (const stratum of TOEFL_DIAGNOSTIC_STRATA) {
+    for (const domain of stratum.domains) {
+      map[domain.toLowerCase()] = stratum.name;
+    }
+  }
+  return map;
+})();
+
 // ----- Exported Accessors -----
 
 export function getDiagnosticStrata(examName?: string): DiagnosticStrata[] {
@@ -240,6 +369,12 @@ export function getDiagnosticStrata(examName?: string): DiagnosticStrata[] {
   if (examName && /gmat/i.test(examName)) {
     return GMAT_DIAGNOSTIC_STRATA;
   }
+  if (examName && /ielts/i.test(examName)) {
+    return IELTS_DIAGNOSTIC_STRATA;
+  }
+  if (examName && /toefl/i.test(examName)) {
+    return TOEFL_DIAGNOSTIC_STRATA;
+  }
   return JEE_DIAGNOSTIC_STRATA;
 }
 
@@ -247,6 +382,48 @@ export function getStratumForDomain(domain: string, examName?: string): string |
   const norm = domain.trim().toLowerCase();
   const isGRE = examName && /gre/i.test(examName);
   const isGMAT = examName && /gmat/i.test(examName);
+  const isIELTS = examName && /ielts/i.test(examName);
+  const isTOEFL = examName && /toefl/i.test(examName);
+
+  if (isIELTS) {
+    if (IELTS_DOMAIN_TO_STRATUM[norm]) return IELTS_DOMAIN_TO_STRATUM[norm];
+    if (norm.includes("tfng") || norm.includes("true-false") || norm.includes("yes-no") || norm.includes("not given")) {
+      return "Reading: Factual & Ternary Logic";
+    }
+    if (norm.includes("heading") || norm.includes("summary") || norm.includes("sentence") || norm.includes("vocabulary") || norm.includes("matching")) {
+      return "Reading: Cohesion & Macro Structure";
+    }
+    if (norm.includes("trap") || norm.includes("form") || norm.includes("note") || norm.includes("short answer")) {
+      return "Listening: Conversational Detail & Trap Elimination";
+    }
+    if (norm.includes("map") || norm.includes("diagram") || norm.includes("feature") || norm.includes("lecture")) {
+      return "Listening: Spatial & Feature Categorization";
+    }
+    if (norm.includes("task") || norm.includes("writing") || norm.includes("speaking") || norm.includes("pronunciation")) {
+      return "Academic Writing & Lexical Precision";
+    }
+    return "Reading: Cohesion & Macro Structure";
+  }
+
+  if (isTOEFL) {
+    if (TOEFL_DOMAIN_TO_STRATUM[norm]) return TOEFL_DOMAIN_TO_STRATUM[norm];
+    if (norm.includes("factual") || norm.includes("vocabulary") || norm.includes("purpose") || norm.includes("inference")) {
+      return "Reading: Factual & Lexical Analysis";
+    }
+    if (norm.includes("simplification") || norm.includes("insert") || norm.includes("prose summary")) {
+      return "Reading: Syntactic Cohesion & Synthesis";
+    }
+    if (norm.includes("gist") || norm.includes("stance") || norm.includes("attitude")) {
+      return "Listening: Pragmatic & Communicative Intent";
+    }
+    if (norm.includes("detail") || norm.includes("organization") || norm.includes("connecting")) {
+      return "Listening: Structural & Connecting Content";
+    }
+    if (norm.includes("writing") || norm.includes("speaking") || norm.includes("discussion")) {
+      return "Academic Writing & Integrated Speaking";
+    }
+    return "Reading: Factual & Lexical Analysis";
+  }
 
   if (isGRE) {
     if (GRE_DOMAIN_TO_STRATUM[norm]) return GRE_DOMAIN_TO_STRATUM[norm];
@@ -279,7 +456,7 @@ export function getStratumForDomain(domain: string, examName?: string): string |
   }
 
   // Default to JEE mapping, fallback to checking others
-  return JEE_DOMAIN_TO_STRATUM[norm] ?? GMAT_DOMAIN_TO_STRATUM[norm] ?? GRE_DOMAIN_TO_STRATUM[norm] ?? null;
+  return JEE_DOMAIN_TO_STRATUM[norm] ?? GMAT_DOMAIN_TO_STRATUM[norm] ?? GRE_DOMAIN_TO_STRATUM[norm] ?? IELTS_DOMAIN_TO_STRATUM[norm] ?? TOEFL_DOMAIN_TO_STRATUM[norm] ?? null;
 }
 
 // ----- Scoring Constants -----

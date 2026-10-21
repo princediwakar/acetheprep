@@ -336,6 +336,211 @@ const GRE_DEFAULT_DIFFICULTY_TIER: Record<string, DifficultyTier> = {
   "Issue: Counterargument & Rebuttal": "advanced",
 };
 
+// IELTS Academic section weights (calibrated to Cambridge Assessment specifications)
+const IELTS_EXAM_WEIGHTS: Record<string, number> = {
+  // Reading (40 Qs, Band 1.0–9.0)
+  "True-False-Not Given": 0.16,
+  "TFNG: Modal Qualification": 0.10,
+  "TFNG: Factual Contradiction": 0.08,
+  "TFNG: Unstated & Not Given": 0.08,
+  "Headings and Main Idea Matching": 0.15,
+  "Heading: Overly Specific Distractors": 0.08,
+  "Summary Completion": 0.12,
+  "Sentence Completion": 0.09,
+  "Inference and Implication": 0.11,
+  "Academic Vocabulary in Context": 0.10,
+  "Matching Information to Paragraphs": 0.11,
+
+  // Listening (40 Qs, Band 1.0–9.0)
+  "Multiple Choice Traps": 0.15,
+  "Conversational Self-Correction Traps": 0.12,
+  "Form and Note Completion": 0.15,
+  "Map and Diagram Labelling": 0.12,
+  "Classification of Features": 0.10,
+  "Short Answer Comprehension": 0.10,
+  "Academic Lecture Gist": 0.12,
+
+  // Writing (Task 1 & Task 2)
+  "Task 1: Data Synthesis": 0.12,
+  "Task 1: Process & Map": 0.10,
+  "Task 2: Task Response (TR)": 0.18,
+  "Task 2: Coherence & Cohesion (CC)": 0.16,
+  "Task 2: Lexical Resource (LR)": 0.14,
+  "Task 2: Grammatical Range & Accuracy (GRA)": 0.14,
+
+  // Speaking
+  "Part 1: Personal Interview": 0.08,
+  "Part 2: Long Turn (Cue Card)": 0.14,
+  "Part 3: Discussion & Discourse": 0.16,
+  "Pronunciation & Intonation": 0.12,
+};
+
+const IELTS_DOMAIN_TO_SUBJECT: Record<string, string> = {
+  "True-False-Not Given": "Reading",
+  "TFNG: Modal Qualification": "Reading",
+  "TFNG: Factual Contradiction": "Reading",
+  "TFNG: Unstated & Not Given": "Reading",
+  "Headings and Main Idea Matching": "Reading",
+  "Heading: Overly Specific Distractors": "Reading",
+  "Summary Completion": "Reading",
+  "Sentence Completion": "Reading",
+  "Inference and Implication": "Reading",
+  "Academic Vocabulary in Context": "Reading",
+  "Matching Information to Paragraphs": "Reading",
+
+  "Multiple Choice Traps": "Listening",
+  "Conversational Self-Correction Traps": "Listening",
+  "Form and Note Completion": "Listening",
+  "Map and Diagram Labelling": "Listening",
+  "Classification of Features": "Listening",
+  "Short Answer Comprehension": "Listening",
+  "Academic Lecture Gist": "Listening",
+
+  "Task 1: Data Synthesis": "Writing",
+  "Task 1: Process & Map": "Writing",
+  "Task 2: Task Response (TR)": "Writing",
+  "Task 2: Coherence & Cohesion (CC)": "Writing",
+  "Task 2: Lexical Resource (LR)": "Writing",
+  "Task 2: Grammatical Range & Accuracy (GRA)": "Writing",
+
+  "Part 1: Personal Interview": "Speaking",
+  "Part 2: Long Turn (Cue Card)": "Speaking",
+  "Part 3: Discussion & Discourse": "Speaking",
+  "Pronunciation & Intonation": "Speaking",
+};
+
+const IELTS_DEFAULT_DIFFICULTY_TIER: Record<string, DifficultyTier> = {
+  "True-False-Not Given": "advanced",
+  "TFNG: Modal Qualification": "expert",
+  "TFNG: Factual Contradiction": "application",
+  "TFNG: Unstated & Not Given": "advanced",
+  "Headings and Main Idea Matching": "advanced",
+  "Heading: Overly Specific Distractors": "advanced",
+  "Summary Completion": "application",
+  "Sentence Completion": "application",
+  "Inference and Implication": "advanced",
+  "Academic Vocabulary in Context": "application",
+  "Matching Information to Paragraphs": "advanced",
+
+  "Multiple Choice Traps": "advanced",
+  "Conversational Self-Correction Traps": "advanced",
+  "Form and Note Completion": "foundation",
+  "Map and Diagram Labelling": "application",
+  "Classification of Features": "application",
+  "Short Answer Comprehension": "application",
+  "Academic Lecture Gist": "advanced",
+
+  "Task 1: Data Synthesis": "advanced",
+  "Task 1: Process & Map": "application",
+  "Task 2: Task Response (TR)": "expert",
+  "Task 2: Coherence & Cohesion (CC)": "advanced",
+  "Task 2: Lexical Resource (LR)": "advanced",
+  "Task 2: Grammatical Range & Accuracy (GRA)": "advanced",
+
+  "Part 1: Personal Interview": "foundation",
+  "Part 2: Long Turn (Cue Card)": "application",
+  "Part 3: Discussion & Discourse": "advanced",
+  "Pronunciation & Intonation": "advanced",
+};
+
+// TOEFL iBT section weights (calibrated to ETS 2023–2026 format)
+const TOEFL_EXAM_WEIGHTS: Record<string, number> = {
+  // Reading (20 Qs, 0–30 scaled)
+  "Factual Information": 0.16,
+  "Negative Factual Information": 0.14,
+  "Inference and Rhetorical Purpose": 0.15,
+  "Vocabulary in Context": 0.14,
+  "Sentence Simplification": 0.15,
+  "Insert Text": 0.13,
+  "Prose Summary": 0.18,
+  "Insert Text [■] Placement": 0.11,
+  "Prose Summary Traps": 0.12,
+  "Purpose and Method": 0.10,
+
+  // Listening (28 Qs, 0–30 scaled)
+  "Gist-Content and Purpose": 0.14,
+  "Detail Identification": 0.15,
+  "Function and Speaker Stance": 0.15,
+  "Organization and Categorization": 0.12,
+  "Connecting Content": 0.13,
+  "Lecture Topic Structure": 0.12,
+  "Conversational Register": 0.10,
+
+  // Speaking (0–30 scaled)
+  "Independent Speaking (Q1)": 0.12,
+  "Integrated Campus Speech (Q2)": 0.14,
+  "Integrated Academic Concept (Q3)": 0.15,
+  "Integrated Lecture (Q4)": 0.15,
+
+  // Writing (0–30 scaled)
+  "Integrated Writing: Lecture Refutation": 0.22,
+  "Academic Discussion: Contribution": 0.20,
+  "Syntactic Variety & Cohesion": 0.12,
+  "Grammatical Precision": 0.12,
+};
+
+const TOEFL_DOMAIN_TO_SUBJECT: Record<string, string> = {
+  "Factual Information": "Reading",
+  "Negative Factual Information": "Reading",
+  "Inference and Rhetorical Purpose": "Reading",
+  "Vocabulary in Context": "Reading",
+  "Sentence Simplification": "Reading",
+  "Insert Text": "Reading",
+  "Prose Summary": "Reading",
+  "Insert Text [■] Placement": "Reading",
+  "Prose Summary Traps": "Reading",
+  "Purpose and Method": "Reading",
+
+  "Gist-Content and Purpose": "Listening",
+  "Detail Identification": "Listening",
+  "Function and Speaker Stance": "Listening",
+  "Organization and Categorization": "Listening",
+  "Connecting Content": "Listening",
+  "Lecture Topic Structure": "Listening",
+  "Conversational Register": "Listening",
+
+  "Independent Speaking (Q1)": "Speaking",
+  "Integrated Campus Speech (Q2)": "Speaking",
+  "Integrated Academic Concept (Q3)": "Speaking",
+  "Integrated Lecture (Q4)": "Speaking",
+
+  "Integrated Writing: Lecture Refutation": "Writing",
+  "Academic Discussion: Contribution": "Writing",
+  "Syntactic Variety & Cohesion": "Writing",
+  "Grammatical Precision": "Writing",
+};
+
+const TOEFL_DEFAULT_DIFFICULTY_TIER: Record<string, DifficultyTier> = {
+  "Factual Information": "application",
+  "Negative Factual Information": "advanced",
+  "Inference and Rhetorical Purpose": "advanced",
+  "Vocabulary in Context": "foundation",
+  "Sentence Simplification": "advanced",
+  "Insert Text": "application",
+  "Prose Summary": "expert",
+  "Insert Text [■] Placement": "application",
+  "Prose Summary Traps": "advanced",
+  "Purpose and Method": "application",
+
+  "Gist-Content and Purpose": "foundation",
+  "Detail Identification": "application",
+  "Function and Speaker Stance": "advanced",
+  "Organization and Categorization": "advanced",
+  "Connecting Content": "advanced",
+  "Lecture Topic Structure": "application",
+  "Conversational Register": "application",
+
+  "Independent Speaking (Q1)": "application",
+  "Integrated Campus Speech (Q2)": "application",
+  "Integrated Academic Concept (Q3)": "advanced",
+  "Integrated Lecture (Q4)": "advanced",
+
+  "Integrated Writing: Lecture Refutation": "advanced",
+  "Academic Discussion: Contribution": "advanced",
+  "Syntactic Variety & Cohesion": "application",
+  "Grammatical Precision": "application",
+};
+
 // Forgetting curve parameters by time mode
 const FORGETTING_PARAMS = {
   foundation: { halfLifeDays: 30, steepness: 0.8 },
@@ -462,13 +667,23 @@ async function getExamTopicWeights(examName: string): Promise<ExamTopicWeight[]>
   // Build defaults from taxonomy + exam-specific weights
   const isGMAT = /gmat/i.test(examName);
   const isGRE = /gre/i.test(examName);
+  const isIELTS = /ielts/i.test(examName);
+  const isTOEFL = /toefl/i.test(examName);
   const domains = getDomainsForExam(examName);
   return domains.map((domain) => {
     let subject = "General";
     let difficultyTier: DifficultyTier = "application";
     let examWeight = 0.08;
 
-    if (isGRE) {
+    if (isIELTS) {
+      subject = IELTS_DOMAIN_TO_SUBJECT[domain] || "General";
+      difficultyTier = IELTS_DEFAULT_DIFFICULTY_TIER[domain] || "application";
+      examWeight = IELTS_EXAM_WEIGHTS[domain] || 0.10;
+    } else if (isTOEFL) {
+      subject = TOEFL_DOMAIN_TO_SUBJECT[domain] || "General";
+      difficultyTier = TOEFL_DEFAULT_DIFFICULTY_TIER[domain] || "application";
+      examWeight = TOEFL_EXAM_WEIGHTS[domain] || 0.10;
+    } else if (isGRE) {
       subject = GRE_DOMAIN_TO_SUBJECT[domain] || "General";
       difficultyTier = GRE_DEFAULT_DIFFICULTY_TIER[domain] || "application";
       examWeight = GRE_EXAM_WEIGHTS[domain] || 0.08;

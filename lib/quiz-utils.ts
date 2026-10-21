@@ -300,25 +300,39 @@ function isQuestion(q: unknown): q is Question {
 export interface ExtractedQuestionContent {
   passage: string | null;
   prompt: string;
+  isAudioTranscript?: boolean;
 }
 
 /**
  * Extracts reading passage and question prompt cleanly.
- * Works for explicit passage fields and backward-compatible embedded passages in question_text.
+ * Works for explicit passage fields, audio transcript excerpts, and backward-compatible embedded passages in question_text.
  */
 export function extractPassageContent(
   questionText: string,
   explicitPassage?: string | null
 ): ExtractedQuestionContent {
   if (explicitPassage && explicitPassage.trim().length > 0) {
+    const isAudio = /^(?:Audio Transcript|Listening (?:Lecture|Conversation)|Acoustic Track)/i.test(explicitPassage.trim());
     return {
       passage: explicitPassage.trim(),
       prompt: questionText.trim(),
+      isAudioTranscript: isAudio,
     };
   }
 
   if (!questionText) {
     return { passage: null, prompt: "" };
+  }
+
+  // Pattern 0: Audio Transcript Excerpt / Listening Excerpt (IELTS / TOEFL)
+  const audioPrefixRegex = /^(?:Audio Transcript(?:\s+Excerpt)?|Listening (?:Lecture|Conversation)(?:\s+Excerpt)?|Spoken Lecture Excerpt):\s*["']?([\s\S]+?)["']?\s*\n\n+([\s\S]+)$/i;
+  const audioMatch = questionText.match(audioPrefixRegex);
+  if (audioMatch && audioMatch[1] && audioMatch[2]) {
+    return {
+      passage: audioMatch[1].trim(),
+      prompt: audioMatch[2].trim(),
+      isAudioTranscript: true,
+    };
   }
 
   // Pattern 1: Passage: '...' \n\n (Question prompt) or Passage excerpt: '...'
@@ -331,6 +345,7 @@ export function extractPassageContent(
       return {
         passage: candidatePassage,
         prompt: match[2].trim(),
+        isAudioTranscript: false,
       };
     }
   }
@@ -344,6 +359,7 @@ export function extractPassageContent(
       return {
         passage: candidatePassage,
         prompt: promptFirstMatch[1].trim(),
+        isAudioTranscript: false,
       };
     }
   }
@@ -360,9 +376,11 @@ export function extractPassageContent(
       /^(what|which|why|how|according|it can be inferred|the author)/i.test(lastParagraph);
 
     if (leadingParagraphs.split(/\s+/).length >= 35 && isQuestionEnding) {
+      const isAudio = /audio transcript/i.test(leadingParagraphs);
       return {
         passage: leadingParagraphs.replace(/^['"]|['"]$/g, ""),
         prompt: lastParagraph,
+        isAudioTranscript: isAudio,
       };
     }
   }
@@ -370,6 +388,7 @@ export function extractPassageContent(
   return {
     passage: null,
     prompt: questionText.trim(),
+    isAudioTranscript: false,
   };
 }
 

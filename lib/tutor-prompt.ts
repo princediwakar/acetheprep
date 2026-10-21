@@ -152,6 +152,27 @@ export function buildTutorUserMessage(params: TutorPromptParams): string {
    In "misconception", classify the specific cognitive trap (e.g., "QC Zero/Negative Trap", "False Synonym in SE", "Extreme Degree Modifier in RC", "Failure to test fractional values").`
     : "";
 
+  const isIELTS = /ielts/i.test(examName);
+  const ieltsDirective = isIELTS
+    ? `\n\nIELTS ACADEMIC 2026 SPECIFICATION MANDATE:
+1. TERNARY OPTIONS FOR TFNG / YNNG: For any "True-False-Not Given" or "Yes-No-Not Given" questions, provide EXACTLY 3 options (A: TRUE, B: FALSE, C: NOT GIVEN or A: YES, B: NO, C: NOT GIVEN). NEVER provide a 4th option like "Cannot be determined".
+2. LISTENING ACOUSTIC TRANSCRIPT FORMAT: For Listening questions, formulate realistic conversational or academic lecture dialogues under "Audio Transcript Excerpt:\n[Speaker]: ...\n\n[Question prompt]".
+3. CAMBRIDGE TRAP TAXONOMY: In "misconception", classify the trap (e.g. "Modal Qualifier Trap (all/some/often)", "False vs Not Given Confusion", "Conversational Self-Correction Lure", "Verbatim Keyword Distractor", "Unstated Assumption").
+4. BRITISH & COMMONWEALTH CONVENTIONS: Use standard British/Commonwealth spellings and metric units.`
+    : "";
+
+  const isTOEFL = /toefl/i.test(examName);
+  const toeflDirective = isTOEFL
+    ? `\n\nTOEFL iBT 2026 SPECIFICATION MANDATE:
+1. READING QUESTION FORMATS:
+   - For "Insert Text", provide paragraph text containing exactly four bracketed letter markers [A], [B], [C], [D], with options matching those four positions.
+   - For "Sentence Simplification", identify essential information in a complex highlighted sentence without omitting major facts or introducing false causal links.
+   - For "Negative Factual", explicitly use capitalized "NOT" or "EXCEPT" in the stem.
+2. LISTENING LECTURE & CONVERSATION FORMAT:
+   - For Listening, format as "Audio Transcript Excerpt:\nPROFESSOR / STUDENT: ...\n\n[Question prompt]". Incorporate realistic North American professor lectures with rhetorical questions, digressions, and student questions.
+3. ETS TRAP TAXONOMY: In "misconception", classify ETS traps (e.g., "Plausible but Unmentioned in Passage", "Reversal of Cause and Effect", "Extreme Degree Qualifier", "Contradicts Lecture Evidence").`
+    : "";
+
   return `CONTEXT: ${examName} ${examYear} | Mode: ${timeMode} | ${daysRemaining} days remaining.
 
 TARGET DOMAINS & MASTERY:
@@ -161,7 +182,7 @@ EXECUTION DIRECTIVE:
 Generate exactly ${questionCount} questions strictly at exam-grade difficulty:
 - ${difficultyDistribution.easy} "foundation" tier (Trivial recall forbidden)
 - ${difficultyDistribution.medium} "application" tier (Rigorous multi-step problem solving)
-- ${difficultyDistribution.hard} "advanced" / "expert" tier (Deceptive distractors, analytical synthesis, calculus/derivation)${exclusions}${seedDirective}${rcDirective}${gmatDirective}${greDirective}
+- ${difficultyDistribution.hard} "advanced" / "expert" tier (Deceptive distractors, analytical synthesis, calculus/derivation)${exclusions}${seedDirective}${rcDirective}${gmatDirective}${greDirective}${ieltsDirective}${toeflDirective}
 
 CRITICAL: Every question MUST BE COMPLETELY NOVEL and distinct from previous sessions. Strictly use the exact TARGET DOMAIN names provided above for the \`skill_domain\` field.`;
 }
@@ -249,9 +270,17 @@ export function buildDiagnosticUserMessage(
     .join("\n");
 
   const isGMAT = /gmat/i.test(examName);
-  const conventionLine = isGMAT
-    ? "3. Provide exactly 5 options (A, B, C, D, E) and distractor_analysis for each, adhering to GMAC question standards."
-    : "3. Use the standard conventions for the exam (SI, IUPAC where applicable).";
+  const isIELTS = /ielts/i.test(examName);
+  const isTOEFL = /toefl/i.test(examName);
+
+  let conventionLine = "3. Use the standard conventions for the exam (SI, IUPAC where applicable).";
+  if (isGMAT) {
+    conventionLine = "3. Provide exactly 5 options (A, B, C, D, E) and distractor_analysis for each, adhering to GMAC question standards.";
+  } else if (isIELTS) {
+    conventionLine = "3. Adhere to Cambridge IELTS standards: TFNG questions must have exactly 3 options (A: TRUE, B: FALSE, C: NOT GIVEN); Listening stems must start with 'Audio Transcript Excerpt:'.";
+  } else if (isTOEFL) {
+    conventionLine = "3. Adhere to ETS TOEFL iBT standards: Insert Text items must use [A], [B], [C], [D]; Listening stems must start with 'Audio Transcript Excerpt:'.";
+  }
 
   return `CONTEXT: ${examName} ${examYear} | Mode: Diagnostic (5 questions)
 

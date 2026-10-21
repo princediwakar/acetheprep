@@ -87,12 +87,77 @@
     "Portfolio Management": ["Portfolio Risk & Return", "Portfolio Planning & Construction", "Behavioral Biases"]
   },
   "IELTS Academic": {
-    "Reading": ["Inference and Implication", "True-False-Not Given", "Headings and Main Idea Matching", "Summary Completion", "Sentence Completion", "Academic Vocabulary in Context"],
-    "Listening": ["Multiple Choice Traps", "Form and Note Completion", "Map and Diagram Labelling", "Classification of Features", "Short Answer Comprehension"]
+    "Reading": [
+      "True-False-Not Given",
+      "Inference and Implication",
+      "Headings and Main Idea Matching",
+      "Summary Completion",
+      "Sentence Completion",
+      "Academic Vocabulary in Context",
+      "TFNG: Modal Qualification",
+      "TFNG: Factual Contradiction",
+      "TFNG: Unstated & Not Given",
+      "Heading: Overly Specific Distractors",
+      "Matching Information to Paragraphs"
+    ],
+    "Listening": [
+      "Multiple Choice Traps",
+      "Form and Note Completion",
+      "Map and Diagram Labelling",
+      "Classification of Features",
+      "Short Answer Comprehension",
+      "Conversational Self-Correction Traps",
+      "Academic Lecture Gist"
+    ],
+    "Writing": [
+      "Task 1: Data Synthesis",
+      "Task 1: Process & Map",
+      "Task 2: Task Response (TR)",
+      "Task 2: Coherence & Cohesion (CC)",
+      "Task 2: Lexical Resource (LR)",
+      "Task 2: Grammatical Range & Accuracy (GRA)"
+    ],
+    "Speaking": [
+      "Part 1: Personal Interview",
+      "Part 2: Long Turn (Cue Card)",
+      "Part 3: Discussion & Discourse",
+      "Pronunciation & Intonation"
+    ]
   },
   "TOEFL iBT": {
-    "Reading": ["Factual Information", "Inference and Rhetorical Purpose", "Vocabulary in Context", "Sentence Simplification", "Insert Text", "Prose Summary"],
-    "Listening": ["Gist-Content and Purpose", "Detail Identification", "Function and Speaker Stance", "Organization and Categorization", "Connecting Content"]
+    "Reading": [
+      "Factual Information",
+      "Negative Factual Information",
+      "Inference and Rhetorical Purpose",
+      "Vocabulary in Context",
+      "Sentence Simplification",
+      "Insert Text",
+      "Prose Summary",
+      "Insert Text [■] Placement",
+      "Prose Summary Traps",
+      "Purpose and Method"
+    ],
+    "Listening": [
+      "Gist-Content and Purpose",
+      "Detail Identification",
+      "Function and Speaker Stance",
+      "Organization and Categorization",
+      "Connecting Content",
+      "Lecture Topic Structure",
+      "Conversational Register"
+    ],
+    "Speaking": [
+      "Independent Speaking (Q1)",
+      "Integrated Campus Speech (Q2)",
+      "Integrated Academic Concept (Q3)",
+      "Integrated Lecture (Q4)"
+    ],
+    "Writing": [
+      "Integrated Writing: Lecture Refutation",
+      "Academic Discussion: Contribution",
+      "Syntactic Variety & Cohesion",
+      "Grammatical Precision"
+    ]
   },
   "JEE Main": {
     "Physics": ["Kinematics", "Laws of Motion", "Work, Energy and Power", "Rotational Motion", "Thermodynamics", "Electrostatics", "Current Electricity", "Optics", "Modern Physics"],

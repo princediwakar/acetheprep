@@ -54,6 +54,7 @@ export interface SessionQuestion {
   explanation: string;
   distractor_analysis: Record<string, string>;
   skill_domain: string;
+  subject?: string;
   difficulty_tier: DifficultyTier;
   time_estimate_seconds: number;
   misconception: string;
