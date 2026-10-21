@@ -1,4 +1,4 @@
-// Path: components/landing/TrapsAndProofSection.tsx
+// Path: components/landing/ExamTrapsSection.tsx
 "use client";
 
 import Link from "next/link";
@@ -10,10 +10,10 @@ import {
   Layers,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ARENA_EXAMS, type ExamKey } from "./arena-data";
+import { LANDING_EXAMS, type ExamKey } from "./landing-data";
 import { signInWithGoogle } from "@/lib/supabase/auth";
 
-interface TrapsAndProofSectionProps {
+interface ExamTrapsSectionProps {
   activeExam: ExamKey;
 }
 
@@ -188,10 +188,10 @@ const HIGH_YIELD_TOPICS: Record<
   ],
 };
 
-export function TrapsAndProofSection({
+export function ExamTrapsSection({
   activeExam,
-}: TrapsAndProofSectionProps) {
-  const examConfig = ARENA_EXAMS[activeExam] || ARENA_EXAMS.gmat;
+}: ExamTrapsSectionProps) {
+  const examConfig = LANDING_EXAMS[activeExam] || LANDING_EXAMS.gmat;
   const highYieldTopics = HIGH_YIELD_TOPICS[activeExam] || HIGH_YIELD_TOPICS.gmat;
 
   return (
@@ -406,3 +406,8 @@ export function TrapsAndProofSection({
     </section>
   );
 }
+
+// Backward compatibility alias
+export const TrapsAndProofSection = ExamTrapsSection;
+export type { ExamTrapsSectionProps as TrapsAndProofSectionProps };
+

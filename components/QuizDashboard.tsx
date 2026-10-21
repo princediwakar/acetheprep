@@ -7,7 +7,7 @@ import { QuizList } from "./QuizList";
 import { useUser } from "@/hooks/useUser";
 import { Input } from "@/components/ui/input";
 import { Search, Loader2 } from "lucide-react";
-import PublicLanding from "@/components/landing/PublicLanding";
+import LandingPage from "@/components/landing/LandingPage";
 
 export function QuizDashboard() {
   const { user, isUserLoading } = useUser();
@@ -35,7 +35,7 @@ export function QuizDashboard() {
           <Loader2 className="w-6 h-6 animate-spin" />
         </div>
       ) : !user ? (
-        <PublicLanding />
+        <LandingPage />
       ) : (
         <div className="w-full max-w-6xl">
           <div className="flex flex-col items-center mb-12 space-y-8">

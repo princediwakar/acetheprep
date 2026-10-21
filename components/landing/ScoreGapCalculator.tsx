@@ -1,13 +1,13 @@
-// Path: components/landing/ScoreGapTool.tsx
+// Path: components/landing/ScoreGapCalculator.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ARENA_EXAMS, type ExamKey } from "./arena-data";
+import { LANDING_EXAMS, type ExamKey } from "./landing-data";
 
-interface ScoreGapToolProps {
+interface ScoreGapCalculatorProps {
   activeExam: ExamKey;
 }
 
@@ -20,8 +20,8 @@ const EXAM_SLUGS: Record<ExamKey, string> = {
   toefl: "toefl-ibt",
 };
 
-export function ScoreGapTool({ activeExam }: ScoreGapToolProps) {
-  const examConfig = ARENA_EXAMS[activeExam] || ARENA_EXAMS.gmat;
+export function ScoreGapCalculator({ activeExam }: ScoreGapCalculatorProps) {
+  const examConfig = LANDING_EXAMS[activeExam] || LANDING_EXAMS.gmat;
   const scale = examConfig.scoreScale;
   const gapLogic = examConfig.scoreGapLogic;
 
@@ -195,3 +195,8 @@ export function ScoreGapTool({ activeExam }: ScoreGapToolProps) {
     </section>
   );
 }
+
+// Backward compatibility alias
+export const ScoreGapTool = ScoreGapCalculator;
+export type { ScoreGapCalculatorProps as ScoreGapToolProps };
+

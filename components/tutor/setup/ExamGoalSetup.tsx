@@ -1,4 +1,4 @@
-// Path: components/tutor/setup/Step1RealityAnchor.tsx
+// Path: components/tutor/setup/ExamGoalSetup.tsx
 
 import React from "react";
 import { cn } from "@/lib/utils";
@@ -26,7 +26,7 @@ function getTodayISO(): string {
   return `${y}-${m}-${d}`;
 }
 
-interface Step1RealityAnchorProps {
+interface ExamGoalSetupProps {
   exam: string;
   examNames: string[];
   targetDate: string;
@@ -39,7 +39,7 @@ interface Step1RealityAnchorProps {
   selectRef: React.RefObject<HTMLButtonElement | null>;
 }
 
-export function Step1RealityAnchor({
+export function ExamGoalSetup({
   exam,
   examNames,
   targetDate,
@@ -50,7 +50,7 @@ export function Step1RealityAnchor({
   onTargetDateChange,
   onAssessmentChange,
   selectRef,
-}: Step1RealityAnchorProps) {
+}: ExamGoalSetupProps) {
   // Pre-calculate categorized exams and any leftovers
   const categorizedExams = new Set(EXAM_CATEGORIES.flatMap((c) => c.exams));
   const uncategorized = examNames.filter((e) => !categorizedExams.has(e));
@@ -194,3 +194,8 @@ export function Step1RealityAnchor({
     </Card>
   );
 }
+
+// Backward compatibility alias
+export const Step1RealityAnchor = ExamGoalSetup;
+export type { ExamGoalSetupProps as Step1RealityAnchorProps };
+

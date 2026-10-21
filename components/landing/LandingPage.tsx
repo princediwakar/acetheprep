@@ -1,23 +1,23 @@
-// Path: components/landing/PublicLanding.tsx
+// Path: components/landing/LandingPage.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { LiveArenaSection } from "./LiveArenaSection";
-import { ScoreGapTool } from "./ScoreGapTool";
-import { TrapsAndProofSection } from "./TrapsAndProofSection";
-import { ARENA_EXAMS, type ExamKey } from "./arena-data";
+import { PracticeHeroSection } from "./PracticeHeroSection";
+import { ScoreGapCalculator } from "./ScoreGapCalculator";
+import { ExamTrapsSection } from "./ExamTrapsSection";
+import { LANDING_EXAMS, type ExamKey } from "./landing-data";
 
-interface PublicLandingProps {
+interface LandingPageProps {
   initialExam?: string;
 }
 
-export default function PublicLanding({ initialExam }: PublicLandingProps) {
+export default function LandingPage({ initialExam }: LandingPageProps) {
   const searchParams = useSearchParams();
   const paramExam = (searchParams.get("exam") || initialExam)?.toLowerCase() as ExamKey | undefined;
 
   const validExam: ExamKey =
-    paramExam && ARENA_EXAMS[paramExam]
+    paramExam && LANDING_EXAMS[paramExam]
       ? paramExam
       : "gmat";
 
@@ -26,7 +26,7 @@ export default function PublicLanding({ initialExam }: PublicLandingProps) {
 
   // Keep state in sync if SSR initialExam changes or URL changes externally
   useEffect(() => {
-    if (paramExam && ARENA_EXAMS[paramExam] && paramExam !== activeExam) {
+    if (paramExam && LANDING_EXAMS[paramExam] && paramExam !== activeExam) {
       setActiveExam(paramExam);
       setSelectedQuestionIndex(0);
     }
@@ -50,19 +50,23 @@ export default function PublicLanding({ initialExam }: PublicLandingProps) {
 
   return (
     <div className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
-      {/* 1. Live Arena: Problem first, zero sign-up gate, instant trap autopsy, crawlable <a> exam tabs */}
-      <LiveArenaSection
+      {/* 1. Practice Hero: Problem first, zero sign-up gate, instant trap autopsy, crawlable <a> exam tabs */}
+      <PracticeHeroSection
         activeExam={activeExam}
         onExamChange={handleExamChange}
         selectedQuestionIndex={selectedQuestionIndex}
         onSelectQuestionIndex={setSelectedQuestionIndex}
       />
 
-      {/* 2. Score Gap Tool: Exact math of score points translated to missed questions */}
-      <ScoreGapTool activeExam={activeExam} />
+      {/* 2. Score Gap Calculator: Exact math of score points translated to missed questions */}
+      <ScoreGapCalculator activeExam={activeExam} />
 
-      {/* 3. Traps Guide & Community Difficulty Proof: Real test traps, error rates, and topic bridges */}
-      <TrapsAndProofSection activeExam={activeExam} />
+      {/* 3. Exam Traps & High-Yield Topics: Real test traps, error rates, and topic bridges */}
+      <ExamTrapsSection activeExam={activeExam} />
     </div>
   );
 }
+
+// Backward compatibility aliases
+export { LandingPage as PublicLanding };
+export type { LandingPageProps as PublicLandingProps };

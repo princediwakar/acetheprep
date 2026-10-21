@@ -1,10 +1,10 @@
 // Path: app/page.tsx
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import PublicLanding from "@/components/landing/PublicLanding";
+import LandingPage from "@/components/landing/LandingPage";
 import { metadata as defaultMetadata } from "./metadata";
 import type { Metadata } from "next";
-import { ARENA_EXAMS, type ExamKey } from "@/components/landing/arena-data";
+import { LANDING_EXAMS, type ExamKey } from "@/components/landing/landing-data";
 import { siteConfig } from "@/config/site";
 import StructuredData, {
   websiteSchema,
@@ -20,7 +20,7 @@ interface PageProps {
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
   const resolvedParams = await searchParams;
   const examKey = resolvedParams?.exam?.toLowerCase() as ExamKey | undefined;
-  const examConfig = examKey && ARENA_EXAMS[examKey] ? ARENA_EXAMS[examKey] : null;
+  const examConfig = examKey && LANDING_EXAMS[examKey] ? LANDING_EXAMS[examKey] : null;
 
   if (examConfig) {
     const canonicalPath = examKey === "gmat" ? "/" : `/?exam=${examKey}`;
@@ -68,10 +68,10 @@ export default async function IndexPage({ searchParams }: PageProps) {
   const resolvedParams = await searchParams;
   const initialExamParam = resolvedParams?.exam?.toLowerCase();
   const activeExamKey: ExamKey =
-    initialExamParam && ARENA_EXAMS[initialExamParam as ExamKey]
+    initialExamParam && LANDING_EXAMS[initialExamParam as ExamKey]
       ? (initialExamParam as ExamKey)
       : "gmat";
-  const activeConfig = ARENA_EXAMS[activeExamKey];
+  const activeConfig = LANDING_EXAMS[activeExamKey];
 
   if (!user) {
     const quizSchema = practiceQuizSchema({
@@ -130,7 +130,7 @@ export default async function IndexPage({ searchParams }: PageProps) {
         <StructuredData schema={educationalAppSchema} />
         <StructuredData schema={quizSchema as any} />
         <StructuredData schema={faqSchema as any} />
-        <PublicLanding initialExam={initialExamParam} />
+        <LandingPage initialExam={initialExamParam} />
       </>
     );
   }

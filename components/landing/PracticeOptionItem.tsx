@@ -1,10 +1,10 @@
-// Path: components/landing/BluebookOption.tsx
+// Path: components/landing/PracticeOptionItem.tsx
 "use client";
 
 import { cn } from "@/lib/utils";
 import { CheckCircle2, TrendingUp } from "lucide-react";
 
-interface BluebookOptionProps {
+interface PracticeOptionItemProps {
   letter: string;
   text: string;
   isSelected: boolean;
@@ -17,7 +17,7 @@ interface BluebookOptionProps {
   onToggleStrike: () => void;
 }
 
-export function BluebookOption({
+export function PracticeOptionItem({
   letter,
   text,
   isSelected,
@@ -28,14 +28,14 @@ export function BluebookOption({
   isTrap,
   onSelect,
   onToggleStrike,
-}: BluebookOptionProps) {
+}: PracticeOptionItemProps) {
   const handleClick = () => {
     if (isRevealed) return;
     if (strikethroughMode) {
       onToggleStrike();
     } else {
       if (isStruck) {
-        onToggleStrike(); // Un-strike if clicking to select
+        onToggleStrike();
       }
       onSelect();
     }
@@ -131,3 +131,6 @@ export function BluebookOption({
     </div>
   );
 }
+
+// Backward compatibility alias
+export const BluebookOption = PracticeOptionItem;

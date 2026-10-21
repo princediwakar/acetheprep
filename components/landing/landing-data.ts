@@ -2,7 +2,7 @@
 
 export type ExamKey = "gmat" | "sat" | "gre" | "cfa" | "ielts" | "toefl";
 
-export interface ArenaQuestion {
+export interface LandingQuestion {
   id: string;
   section: string;
   topic: string;
@@ -16,6 +16,9 @@ export interface ArenaQuestion {
   tenSecondRule: string;
   timeEstimateSeconds: number;
 }
+
+export type ArenaQuestion = LandingQuestion;
+
 
 export interface ScoreGapPreset {
   label: string;
@@ -1126,4 +1129,6 @@ export const ARENA_EXAMS: Record<ExamKey, ExamArenaConfig> = {
     ],
   },
 };
+
+export const LANDING_EXAMS = ARENA_EXAMS;
 

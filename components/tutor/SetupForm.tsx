@@ -12,7 +12,7 @@ import { TUTOR_ROUTES } from "@/lib/constants/tutor";
 import { createExamProfile } from "@/lib/actions/tutor";
 import type { TimeMode, SelfAssessment } from "@/types/tutor";
 
-import { Step1RealityAnchor } from "./setup/Step1RealityAnchor";
+import { ExamGoalSetup } from "./setup/ExamGoalSetup";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -208,7 +208,7 @@ export function SetupForm({ prefill, examNames, examSubjects }: SetupFormProps) 
       </div>
 
       <div className="space-y-6">
-        <Step1RealityAnchor
+        <ExamGoalSetup
           exam={exam}
           examNames={examNames}
           targetDate={targetDate}

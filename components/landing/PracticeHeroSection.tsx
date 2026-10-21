@@ -1,4 +1,4 @@
-// Path: components/landing/LiveArenaSection.tsx
+// Path: components/landing/PracticeHeroSection.tsx
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -18,24 +18,24 @@ import {
 import { cn } from "@/lib/utils";
 import { ExamCalculator } from "@/components/tutor/ExamCalculator";
 import { FormulaSheetModal } from "@/components/landing/FormulaSheetModal";
-import { BluebookOption } from "./BluebookOption";
-import { ARENA_EXAMS, type ExamKey, type ArenaQuestion } from "./arena-data";
+import { PracticeOptionItem } from "./PracticeOptionItem";
+import { LANDING_EXAMS, type ExamKey, type LandingQuestion } from "./landing-data";
 import { signInWithGoogle } from "@/lib/supabase/auth";
 
-interface LiveArenaSectionProps {
+interface PracticeHeroSectionProps {
   activeExam: ExamKey;
   onExamChange: (exam: ExamKey) => void;
   selectedQuestionIndex?: number;
   onSelectQuestionIndex?: (idx: number) => void;
 }
 
-export function LiveArenaSection({
+export function PracticeHeroSection({
   activeExam,
   onExamChange,
   selectedQuestionIndex = 0,
   onSelectQuestionIndex,
-}: LiveArenaSectionProps) {
-  const examConfig = ARENA_EXAMS[activeExam] || ARENA_EXAMS.gmat;
+}: PracticeHeroSectionProps) {
+  const examConfig = LANDING_EXAMS[activeExam] || LANDING_EXAMS.gmat;
   const questions = examConfig.questions;
 
   const [questionIndex, setQuestionIndex] = useState<number>(selectedQuestionIndex);
@@ -60,7 +60,7 @@ export function LiveArenaSection({
     setIsRevealed(false);
   }, [activeExam]);
 
-  const currentQuestion: ArenaQuestion =
+  const currentQuestion: LandingQuestion =
     questions[questionIndex % questions.length] ?? questions[0];
 
   const isCorrect = selectedOption === currentQuestion.correctOption;
@@ -102,7 +102,7 @@ export function LiveArenaSection({
 
     // Keep question terminal cleanly in view so user never has to scroll up manually
     if (typeof window !== "undefined") {
-      const el = document.getElementById("live-arena-terminal");
+      const el = document.getElementById("practice-hero-terminal");
       if (el) {
         const rect = el.getBoundingClientRect();
         if (rect.top < 60) {
@@ -258,7 +258,7 @@ export function LiveArenaSection({
 
         {/* Live Question Terminal Card */}
         <div
-          id="live-arena-terminal"
+          id="practice-hero-terminal"
           className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden scroll-mt-20"
         >
           {/* Proctor Toolbar with Top Next Question Navigation */}
@@ -349,7 +349,7 @@ export function LiveArenaSection({
             {/* Answer Options */}
             <div className="space-y-2.5">
               {Object.entries(currentQuestion.options).map(([letter, text]) => (
-                <BluebookOption
+                <PracticeOptionItem
                   key={letter}
                   letter={letter}
                   text={text}
@@ -466,3 +466,8 @@ export function LiveArenaSection({
     </section>
   );
 }
+
+// Backward compatibility alias
+export const LiveArenaSection = PracticeHeroSection;
+export type { PracticeHeroSectionProps as LiveArenaSectionProps };
+
