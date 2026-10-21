@@ -23,6 +23,42 @@ type TaxonomyData = Record<string, Record<string, string[]>>;
 const taxonomy = taxonomyRaw as unknown as TaxonomyData;
 const baseUrl = siteConfig.url;
 
+const FEATURED_DRILLS: Record<string, Array<{ name: string; href: string; tag: string }>> = {
+  "gmat-focus": [
+    { name: "Data Sufficiency", href: "/practice/gmat-focus/data-insights/data-sufficiency", tag: "10 Questions • Parity & Zero Traps" },
+    { name: "Multi-Source Reasoning", href: "/practice/gmat-focus/data-insights/multi-source-reasoning", tag: "11 Questions • Multi-Tab Synthesis" },
+    { name: "Number Properties", href: "/practice/gmat-focus/quantitative-reasoning/number-properties", tag: "10 Questions • Divisors & Remainders" },
+    { name: "Critical Reasoning", href: "/practice/gmat-focus/verbal-reasoning/critical-reasoning", tag: "10 Questions • Assumptions & Flaws" },
+  ],
+  "sat": [
+    { name: "Advanced Math", href: "/practice/sat/mathematics/advanced-math", tag: "10 Questions • Extraneous Solutions" },
+    { name: "Algebra", href: "/practice/sat/mathematics/algebra", tag: "10 Questions • Linear Systems" },
+    { name: "Rhetorical Synthesis", href: "/practice/sat/reading-and-writing/rhetorical-synthesis", tag: "10 Questions • Prompt Alignment" },
+    { name: "Craft & Structure", href: "/practice/sat/reading-and-writing/craft-and-structure", tag: "10 Questions • Words in Context" },
+  ],
+  "gre": [
+    { name: "Quantitative Comparison", href: "/practice/gre/quantitative-reasoning/quantitative-comparison", tag: "10 Questions • Real Number Traps" },
+    { name: "Arithmetic & Exponents", href: "/practice/gre/quantitative-reasoning/arithmetic", tag: "10 Questions • Modular Math" },
+    { name: "Text Completion", href: "/practice/gre/verbal-reasoning/text-completion", tag: "10 Questions • Contrast Signals" },
+    { name: "Sentence Equivalence", href: "/practice/gre/verbal-reasoning/sentence-equivalence", tag: "10 Questions • Synonym Traps" },
+  ],
+  "cfa-level-1": [
+    { name: "Time Value of Money", href: "/practice/cfa-level-1/quantitative-methods/time-value-of-money", tag: "10 Questions • Compounding & EAR" },
+    { name: "Financial Reporting Standards", href: "/practice/cfa-level-1/financial-statement-analysis/financial-reporting-standards", tag: "10 Questions • IFRS vs GAAP" },
+    { name: "Cost of Capital & WACC", href: "/practice/cfa-level-1/corporate-issuers/cost-of-capital", tag: "10 Questions • Interest Tax Shields" },
+  ],
+  "ielts-academic": [
+    { name: "True / False / Not Given", href: "/practice/ielts-academic/reading/inferences", tag: "10 Questions • Passage Logic" },
+    { name: "Central Ideas & Details", href: "/practice/ielts-academic/reading/central-ideas-and-details", tag: "10 Questions • Paraphrase Matching" },
+    { name: "Craft & Structure", href: "/practice/ielts-academic/reading/craft-and-structure", tag: "10 Questions • Qualifying Words" },
+  ],
+  "toefl-ibt": [
+    { name: "Sentence Insertion Flow", href: "/practice/toefl-ibt/reading/transitions-and-logical-flow", tag: "10 Questions • Transition Clues" },
+    { name: "Rhetorical Purpose", href: "/practice/toefl-ibt/reading/text-structure-and-purpose", tag: "10 Questions • Author Stance" },
+    { name: "Negative Factual ('EXCEPT')", href: "/practice/toefl-ibt/reading/information-and-ideas", tag: "10 Questions • Inversion Traps" },
+  ],
+};
+
 export async function generateStaticParams() {
   return Object.keys(taxonomy)
     .filter((k) => k !== "_schema_version")
@@ -89,6 +125,7 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
   }
 
   const examSlug = examToSlug(examName);
+  const featuredDrills = FEATURED_DRILLS[examSlug] || [];
   const blueprint = getExamBlueprint(examName);
   const breadcrumbs = [
     { name: "Home", url: baseUrl },
@@ -217,6 +254,47 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
           </div>
         </div>
 
+        {/* Highest-Yield Diagnostic Drills (1-Click Start) */}
+        {featuredDrills && featuredDrills.length > 0 && (
+          <div className="mb-12 rounded-2xl border border-primary/30 bg-primary/5 p-6 sm:p-7 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+              <div className="space-y-0.5">
+                <span className="text-xs font-semibold uppercase tracking-wider text-primary font-mono">
+                  Recommended Starting Points
+                </span>
+                <h2 className="text-xl font-bold text-foreground">
+                  Highest-Yield Diagnostic Drills
+                </h2>
+              </div>
+              <span className="text-xs text-muted-foreground font-medium">
+                Instant • No account required
+              </span>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {featuredDrills.map((drill) => (
+                <Link
+                  key={drill.href}
+                  href={drill.href}
+                  className="rounded-xl border border-border/80 bg-card p-4 hover:border-primary/50 hover:shadow-xs transition-all space-y-2 group flex flex-col justify-between"
+                >
+                  <div className="space-y-1">
+                    <p className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
+                      {drill.name}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground">
+                      {drill.tag}
+                    </p>
+                  </div>
+                  <span className="text-xs font-semibold text-primary inline-flex items-center gap-1 pt-1">
+                    Start Drill <ArrowRight className="h-3 w-3" />
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Subjects & Topics Section */}
         <div className="mb-6 flex items-center justify-between">
           <div>
@@ -273,8 +351,8 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
                         <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
                           {domainName}
                         </span>
-                        <span className="mt-3 text-xs text-muted-foreground inline-flex items-center gap-1 font-medium group-hover:text-primary">
-                          Solve questions →
+                        <span className="mt-3 text-xs text-primary inline-flex items-center gap-1 font-semibold group-hover:translate-x-0.5 transition-transform">
+                          Start Drill <ArrowRight className="w-3 h-3" />
                         </span>
                       </Link>
                     );

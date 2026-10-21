@@ -3,7 +3,7 @@
 import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import PracticeQuestion from "@/components/practice/PracticeQuestion";
+import { TopicPracticeDrill } from "@/components/practice/TopicPracticeDrill";
 import ExamCTABanner from "@/components/practice/ExamCTABanner";
 import StructuredData, {
   breadcrumbSchema,
@@ -22,17 +22,87 @@ import {
 import { siteConfig } from "@/config/site";
 import taxonomyRaw from "@/lib/taxonomies.json";
 import demoQuestionsRaw from "@/lib/demo-questions.json";
+import { ALL_BANKS } from "@/lib/data/banks";
 import { getDomainKnowledge } from "@/lib/curriculum-knowledge";
 import {
-  Lightbulb,
   CheckCircle2,
   TrendingUp,
   ArrowRight,
-  ShieldAlert,
   Sparkles,
 } from "lucide-react";
 import { DomainCorePrinciples } from "@/components/practice/DomainCorePrinciples";
 import { DomainFaqSection } from "@/components/practice/DomainFaqSection";
+
+function getDomainQuestions(
+  examName: string,
+  subjectName: string,
+  domainName: string,
+): Question[] {
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const normExam = norm(examName);
+  const normSubject = norm(subjectName);
+  const normDomain = norm(domainName);
+
+  // 1. Direct match on exam + subject + domain
+  let matches = ALL_BANKS.filter((q) => {
+    const qExam = norm(q.exam_name);
+    const qSubject = norm(q.subject);
+    const qDomain = norm(q.skill_domain);
+    const examMatch = qExam === normExam || qExam.includes(normExam) || normExam.includes(qExam);
+    const subjectMatch = !qSubject || qSubject === normSubject || qSubject.includes(normSubject) || normSubject.includes(qSubject);
+    const domainMatch = qDomain === normDomain || qDomain.includes(normDomain) || normDomain.includes(qDomain);
+    return examMatch && subjectMatch && domainMatch;
+  });
+
+  // 2. Domain match across exam
+  if (matches.length === 0) {
+    matches = ALL_BANKS.filter((q) => {
+      const qExam = norm(q.exam_name);
+      const qDomain = norm(q.skill_domain);
+      const examMatch = qExam === normExam || qExam.includes(normExam) || normExam.includes(qExam);
+      const domainMatch = qDomain === normDomain || qDomain.includes(normDomain) || normDomain.includes(qDomain);
+      return examMatch && domainMatch;
+    });
+  }
+
+  // 3. Subject-level match within the exam
+  if (matches.length === 0) {
+    matches = ALL_BANKS.filter((q) => {
+      const qExam = norm(q.exam_name);
+      const qSubject = norm(q.subject);
+      const examMatch = qExam === normExam || qExam.includes(normExam) || normExam.includes(qExam);
+      const subjectMatch = qSubject === normSubject;
+      return examMatch && subjectMatch;
+    });
+  }
+
+  // 4. Any question in the exam bank
+  if (matches.length === 0) {
+    matches = ALL_BANKS.filter((q) => {
+      const qExam = norm(q.exam_name);
+      return qExam === normExam || qExam.includes(normExam) || normExam.includes(qExam);
+    });
+  }
+
+  return matches.map((q) => ({
+    question_text: q.question_text,
+    passage: q.passage,
+    passage_id: q.passage_id,
+    options: q.options,
+    correct_option: q.correct_option,
+    explanation: q.explanation || "",
+    distractor_analysis: q.distractor_analysis,
+    skill_domain: q.skill_domain || domainName,
+    misconception: q.misconception,
+    time_estimate_seconds: q.time_estimate_seconds,
+    difficulty_tier: (q.difficulty_tier === 1
+      ? "foundation"
+      : q.difficulty_tier === 2
+      ? "application"
+      : "advanced") as "foundation" | "application" | "advanced",
+    topics: [q.skill_domain || domainName, subjectName],
+  }));
+}
 
 
 // ---- Types ----
@@ -159,22 +229,27 @@ export default async function PracticePage({ params }: PracticePageProps) {
   if (row && Array.isArray(row.questions_json) && row.questions_json.length > 0) {
     questions = row.questions_json;
   } else {
-    // Gracefully seed from verified demo questions so search engines & students never hit a dead-end
-    const demoMap = demoQuestionsRaw as unknown as {
-      exams: Record<string, { question: Question }>;
-    };
-    const sampleQuestion = demoMap.exams[examName]?.question;
+    // Primary retrieval: authentic verified master question bank for this domain
+    questions = getDomainQuestions(examName, subjectName, domainName);
 
-    if (sampleQuestion) {
-      questions = [
-        {
-          ...sampleQuestion,
-          skill_domain: domainName,
-          topics: [domainName, subjectName],
-        },
-      ];
-    } else {
-      notFound();
+    // Graceful fallback to verified demo questions if domain is not yet in the bank
+    if (questions.length === 0) {
+      const demoMap = demoQuestionsRaw as unknown as {
+        exams: Record<string, { question: Question }>;
+      };
+      const sampleQuestion = demoMap.exams[examName]?.question;
+
+      if (sampleQuestion) {
+        questions = [
+          {
+            ...sampleQuestion,
+            skill_domain: domainName,
+            topics: [domainName, subjectName],
+          },
+        ];
+      } else {
+        notFound();
+      }
     }
   }
 
@@ -328,50 +403,22 @@ export default async function PracticePage({ params }: PracticePageProps) {
           </p>
         </div>
 
-        {/* Core Principles & Key Formulas & Primary Exam Trap */}
-        <DomainCorePrinciples
-          principles={knowledge.corePrinciples}
-          primaryDistractorTrap={knowledge.primaryDistractorTrap}
-        />
-
-        {/* Interactive Questions Section */}
+        {/* Center-Stage Interactive Topic Practice Drill */}
         <div className="mb-10">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-foreground">
-              Practice Questions & Explanations
-            </h2>
-            <span className="text-xs text-muted-foreground font-medium">
-              Interactive Practice
-            </span>
-          </div>
-          <div className="space-y-6">
-            {questions.map((q, idx) => (
-              <PracticeQuestion key={idx} question={q} index={idx} />
-            ))}
-          </div>
+          <TopicPracticeDrill
+            questions={questions}
+            examName={examName}
+            subjectName={subjectName}
+            domainName={domainName}
+          />
+        </div>
 
-          {/* Interactive Diagnostic Sprint CTA */}
-          <div className="mt-6 rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider mb-1">
-                <Sparkles className="h-3.5 w-3.5" />
-                Adaptive Retrieval Engine
-              </span>
-              <h3 className="text-base font-bold text-foreground">
-                Ready to test {domainName} under real exam conditions?
-              </h3>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Take an adaptive 10-question diagnostic with personalized mistake tracking and spaced repetition review.
-              </p>
-            </div>
-            <Link
-              href={`/setup?exam=${encodeURIComponent(examName)}`}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm hover:opacity-95 transition-opacity shrink-0"
-            >
-              Start {domainName} Diagnostic
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
+        {/* Core Principles & Key Formulas & Primary Exam Trap */}
+        <div className="mb-10">
+          <DomainCorePrinciples
+            principles={knowledge.corePrinciples}
+            primaryDistractorTrap={knowledge.primaryDistractorTrap}
+          />
         </div>
 
         {/* Topological Cross-Links: Related Domains in Subject */}

@@ -18,6 +18,7 @@ import StructuredData, {
 import ExamCTABanner from "@/components/practice/ExamCTABanner";
 import { siteConfig } from "@/config/site";
 import { ArrowLeft, BookOpen, Sparkles, ArrowRight, TrendingUp } from "lucide-react";
+import { getDomainKnowledge } from "@/lib/curriculum-knowledge";
 
 
 interface PageProps {
@@ -167,24 +168,98 @@ export default async function SubjectPracticeHubPage({ params }: PageProps) {
         </div>
 
 
+        {/* Subject Curriculum Metrics Strip */}
+        <div className="mb-8 grid gap-4 grid-cols-2 sm:grid-cols-4">
+          <div className="rounded-xl border border-border/80 bg-card p-4">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
+              Syllabus Coverage
+            </span>
+            <div className="mt-1 text-2xl font-extrabold text-foreground font-mono">
+              {domains.length} Topics
+            </div>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Official {examName} blueprint
+            </p>
+          </div>
+          <div className="rounded-xl border border-border/80 bg-card p-4">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
+              Question Format
+            </span>
+            <div className="mt-1 text-2xl font-extrabold text-primary font-mono">
+              Multiple Choice
+            </div>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Step-by-step solutions
+            </p>
+          </div>
+          <div className="rounded-xl border border-border/80 bg-card p-4">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
+              Common Mistakes
+            </span>
+            <div className="mt-1 text-2xl font-extrabold text-amber-500 font-mono">
+              Full Breakdown
+            </div>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Shows why wrong choices fool students
+            </p>
+          </div>
+          <div className="rounded-xl border border-border/80 bg-card p-4">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
+              Access Tier
+            </span>
+            <div className="mt-1 text-2xl font-extrabold text-emerald-500 font-mono">
+              100% Free
+            </div>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Zero login required to practice
+            </p>
+          </div>
+        </div>
+
         {/* Domain modules grid */}
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {domains.map((domainName) => {
             const domainSlug = domainToSlug(domainName);
+            const knowledge = getDomainKnowledge(examName, subjectName, domainName);
+
+            const isHighYield = knowledge.weightageTier === "High-Yield";
+
             return (
               <div
                 key={domainSlug}
                 className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-6 transition-all hover:border-primary/40 hover:shadow-md"
               >
                 <div>
-                  <span className="text-xs font-semibold text-primary/80 uppercase tracking-wider">
-                    Module
-                  </span>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold border ${
+                        isHighYield
+                          ? "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                          : "border-primary/20 bg-primary/10 text-primary"
+                      }`}
+                    >
+                      {knowledge.weightageTier}
+                    </span>
+                    <span className="text-[11px] font-mono text-muted-foreground">
+                      ~{knowledge.avgFailureRatePct}% error rate
+                    </span>
+                  </div>
+
                   <h2 className="mt-1 text-lg font-bold text-foreground group-hover:text-primary transition-colors">
                     {domainName}
                   </h2>
-                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                    Interactive questions with instant distractor analysis and conceptual trap identification.
+
+                  <div className="mt-3 rounded-lg border border-border/60 bg-muted/30 p-2.5 text-xs">
+                    <span className="font-semibold text-foreground block text-[11px] mb-0.5">
+                      Primary Exam Trap:
+                    </span>
+                    <span className="text-muted-foreground line-clamp-2 leading-relaxed">
+                      {knowledge.primaryDistractorTrap.trapName}
+                    </span>
+                  </div>
+
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Frequency: {knowledge.typicalQuestionCount}
                   </p>
                 </div>
 
