@@ -340,10 +340,10 @@ export default async function HardestTopicsPage({ params }: PageProps) {
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-xl border border-border/80 bg-muted/20 p-4 text-xs text-muted-foreground">
           <span>Data refreshed dynamically from live student practice sessions on AceThePrep.</span>
           <Link
-            href={`/insights/${examSlug}/most-failed-concepts`}
+            href={`/practice/${examSlug}`}
             className="font-semibold text-primary hover:underline"
           >
-            View Most Failed Concepts &rarr;
+            Practice {examName} Topics &rarr;
           </Link>
         </div>
       </div>

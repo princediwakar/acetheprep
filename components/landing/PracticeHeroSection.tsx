@@ -53,12 +53,17 @@ export function PracticeHeroSection({
     }
   }, [selectedQuestionIndex, questions.length, questionIndex]);
 
-  // Reset when exam changes
+  // Reset when exam changes & prefill for setup bridge
   useEffect(() => {
     setQuestionIndex(0);
     setSelectedOption(null);
     setIsRevealed(false);
-  }, [activeExam]);
+    try {
+      localStorage.setItem("landingPrefill", JSON.stringify({ exam: examConfig.name }));
+    } catch {
+      // LocalStorage access fails gracefully in private/incognito modes
+    }
+  }, [activeExam, examConfig.name]);
 
   const currentQuestion: LandingQuestion =
     questions[questionIndex % questions.length] ?? questions[0];
@@ -71,7 +76,7 @@ export function PracticeHeroSection({
     setSelectedOption(key);
     setIsRevealed(true);
 
-    // Save attempt in browser memory
+    // Save attempt in browser memory & prefill for frictionless setup
     try {
       const storageKey = `acetheprep_arena_${activeExam}`;
       const existing = JSON.parse(localStorage.getItem(storageKey) || "{}");
@@ -81,6 +86,7 @@ export function PracticeHeroSection({
         timestamp: Date.now(),
       };
       localStorage.setItem(storageKey, JSON.stringify(existing));
+      localStorage.setItem("landingPrefill", JSON.stringify({ exam: examConfig.name }));
     } catch {
       // LocalStorage access fails gracefully in private/incognito modes
     }
@@ -133,56 +139,44 @@ export function PracticeHeroSection({
       />
 
       <div className="mx-auto max-w-4xl space-y-6">
-        {/* CENTER-STAGE EXAM SELECTOR: The First Thing to Choose */}
-        <div className="text-center space-y-3 pt-2">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Free Adaptive Practice • 2026 Test Specifications</span>
+        {/* Sleek, High-Density Utilitarian Command Header */}
+        <div className="space-y-3 pt-1">
+          {/* Top Headline & Utility Badges */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-left">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
+                <Sparkles className="h-3 w-3" />
+                <span>Free Live Arena • Zero Sign-Up</span>
+                <span className="text-primary/40">•</span>
+                <span className="text-[10px] uppercase font-mono tracking-wider">{examConfig.officialBadge}</span>
+              </div>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-heading font-normal tracking-tight text-foreground leading-tight">
+                Free {examConfig.name} Practice &amp; Trap Autopsies
+              </h1>
+            </div>
+
+            {!isRevealed && (
+              <button
+                type="button"
+                onClick={handleRevealWithoutAnswering}
+                className="self-start sm:self-auto inline-flex items-center gap-1.5 rounded-lg border border-border bg-card hover:bg-secondary/70 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors shrink-0 cursor-pointer shadow-2xs"
+              >
+                <Eye className="h-3.5 w-3.5 text-primary" />
+                <span>Reveal Trap Instantly</span>
+              </button>
+            )}
           </div>
 
-          <div className="space-y-1.5">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-heading font-normal tracking-tight text-foreground max-w-2xl mx-auto leading-tight">
-              Free {examConfig.name} Practice Questions & Trap Autopsies
-            </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto">
-              Solve authentic {examConfig.name} questions, uncover the exact mental traps designed into wrong choices, and calculate your real score gap with zero sign-up.
-            </p>
-          </div>
-
-          {/* Prominent 6-Track Center Selector Deck (Semantic Crawlable <a> Links) */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 max-w-5xl mx-auto pt-2">
+          {/* Compact Horizontal Exam Tabs (Crawlable <a> Links) */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
             {(
               [
-                {
-                  key: "gmat",
-                  title: "GMAT Focus",
-                  subtitle: "Data Insights & Quant",
-                },
-                {
-                  key: "sat",
-                  title: "Digital SAT",
-                  subtitle: "Bluebook Math & Reading",
-                },
-                {
-                  key: "gre",
-                  title: "GRE General",
-                  subtitle: "Quant & Verbal",
-                },
-                {
-                  key: "cfa",
-                  title: "CFA Level 1",
-                  subtitle: "Financial Analysis",
-                },
-                {
-                  key: "ielts",
-                  title: "IELTS Academic",
-                  subtitle: "Reading & Language",
-                },
-                {
-                  key: "toefl",
-                  title: "TOEFL iBT",
-                  subtitle: "Reading & Rhetoric",
-                },
+                { key: "gmat", title: "GMAT Focus" },
+                { key: "sat", title: "Digital SAT" },
+                { key: "gre", title: "GRE General" },
+                { key: "cfa", title: "CFA Level 1" },
+                { key: "ielts", title: "IELTS Academic" },
+                { key: "toefl", title: "TOEFL iBT" },
               ] as const
             ).map((item) => {
               const isSelected = activeExam === item.key;
@@ -196,64 +190,35 @@ export function PracticeHeroSection({
                     onExamChange(item.key);
                   }}
                   className={cn(
-                    "flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-xl border text-center transition-all cursor-pointer min-h-[64px]",
+                    "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all border shrink-0 cursor-pointer",
                     isSelected
-                      ? "border-primary bg-primary/10 text-foreground ring-2 ring-primary/40 shadow-xs"
-                      : "border-border/80 bg-card hover:bg-secondary/60 hover:border-border text-muted-foreground hover:text-foreground",
+                      ? "border-primary bg-primary text-primary-foreground shadow-xs font-bold"
+                      : "border-border/70 bg-card hover:bg-secondary/80 text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  <div className="flex items-center gap-1.5">
-                    {isSelected && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                    )}
-                    <span
-                      className={cn(
-                        "text-xs sm:text-sm font-semibold tracking-tight truncate",
-                        isSelected ? "text-foreground" : "text-foreground/90",
-                      )}
-                    >
-                      {item.title}
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-mono mt-0.5 text-muted-foreground truncate w-full">
-                    {item.subtitle}
-                  </span>
+                  {isSelected && <span className="h-1.5 w-1.5 rounded-full bg-white shrink-0" />}
+                  <span>{item.title}</span>
                 </a>
               );
             })}
           </div>
 
-          {/* Official Blueprint Verification Badge */}
-          <div className="flex items-center justify-center gap-2 pt-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">
-              {examConfig.officialBadge}
-            </span>
-          </div>
-        </div>
-
-        {/* Challenge Hook Banner */}
-        <div className="rounded-xl border border-border/80 bg-secondary/30 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-primary font-medium text-xs">
-              <Zap className="h-3.5 w-3.5 shrink-0" />
-              <span>Live Problem Arena • Zero Sign-Up Required</span>
+          {/* Challenge Hook Banner */}
+          <div className="rounded-xl border border-primary/20 bg-primary/5 px-3.5 py-2.5 flex items-center justify-between gap-3 text-xs sm:text-sm">
+            <div className="flex items-center gap-2 text-foreground/90 font-medium leading-snug">
+              <Zap className="h-4 w-4 text-primary shrink-0" />
+              <span>{examConfig.heroPrompt}</span>
             </div>
-            <p className="text-sm sm:text-base font-normal text-foreground leading-snug">
-              {examConfig.heroPrompt}
-            </p>
+            {!isRevealed && (
+              <button
+                type="button"
+                onClick={handleRevealWithoutAnswering}
+                className="hidden sm:inline-flex items-center gap-1 text-xs text-primary hover:underline font-semibold shrink-0 cursor-pointer"
+              >
+                Reveal Trap
+              </button>
+            )}
           </div>
-
-          {!isRevealed && (
-            <button
-              type="button"
-              onClick={handleRevealWithoutAnswering}
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/70 transition-colors shrink-0 cursor-pointer"
-            >
-              <Eye className="h-3.5 w-3.5" />
-              <span>Just show me the trap</span>
-            </button>
-          )}
         </div>
 
         {/* Live Question Terminal Card */}
@@ -440,14 +405,19 @@ export function PracticeHeroSection({
 
                   {/* Action Bar */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-                    <span className="text-[11px] font-mono text-muted-foreground">
-                      Free practice sample • Zero sign-up required
-                    </span>
+                    <button
+                      type="button"
+                      onClick={() => signInWithGoogle(`/setup?exam=${encodeURIComponent(examConfig.name)}`)}
+                      className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline font-semibold cursor-pointer text-left"
+                    >
+                      <Sparkles className="h-3.5 w-3.5 shrink-0" />
+                      <span>Save attempt &amp; start personalized study plan</span>
+                    </button>
 
                     <button
                       type="button"
                       onClick={handleNextQuestion}
-                      className="inline-flex items-center justify-center gap-2 rounded-lg bg-foreground text-background px-4 py-2 text-xs font-semibold hover:opacity-90 transition-opacity cursor-pointer"
+                      className="inline-flex items-center justify-center gap-2 rounded-lg bg-foreground text-background px-4 py-2 text-xs font-semibold hover:opacity-90 transition-opacity cursor-pointer shrink-0"
                     >
                       <span>
                         Next Question (

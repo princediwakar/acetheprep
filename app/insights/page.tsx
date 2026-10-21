@@ -111,17 +111,17 @@ export default async function InsightsPage() {
                   >
                     <span className="flex items-center gap-2">
                       <Brain className="w-3.5 h-3.5 text-primary" />
-                      Hardest Topics Ranking
+                      Hardest Topics &amp; Error Rates
                     </span>
                     <ArrowRight className="w-3 h-3 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
                   </Link>
                   <Link
-                    href={`/insights/${slug}/most-failed-concepts`}
-                    className="inline-flex items-center justify-between text-xs font-medium text-foreground hover:text-primary transition-colors"
+                    href={`/practice/${slug}`}
+                    className="inline-flex items-center justify-between text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <span className="flex items-center gap-2">
-                      <BarChart3 className="w-3.5 h-3.5 text-primary" />
-                      Most Failed Concepts
+                      <BarChart3 className="w-3.5 h-3.5 text-muted-foreground" />
+                      Practice Syllabus Catalog
                     </span>
                     <ArrowRight className="w-3 h-3 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
                   </Link>
