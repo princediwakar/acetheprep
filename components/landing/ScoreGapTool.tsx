@@ -52,7 +52,7 @@ export function ScoreGapTool({ activeExam }: ScoreGapToolProps) {
             Score Gap Breakdown
           </span>
           <h2 className="font-heading text-2xl sm:text-3xl font-normal tracking-tight text-foreground">
-            What is separating you from your target score?
+            {examConfig.name} Score Gap Calculator & Penalty Breakdown
           </h2>
           <p className="text-sm text-muted-foreground">
             You don&apos;t need to read 300 pages of notes. Standardized exam scores come down to eliminating a few recurring question traps.

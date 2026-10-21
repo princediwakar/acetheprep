@@ -26,10 +26,173 @@ const EXAM_SLUGS: Record<ExamKey, string> = {
   toefl: "toefl-ibt",
 };
 
+const HIGH_YIELD_TOPICS: Record<
+  ExamKey,
+  Array<{ name: string; section: string; href: string; badge: string }>
+> = {
+  gmat: [
+    {
+      name: "Data Sufficiency",
+      section: "Data Insights",
+      href: "/practice/gmat-focus/data-insights/data-sufficiency",
+      badge: "Parity & Zero Traps",
+    },
+    {
+      name: "Multi-Source Reasoning",
+      section: "Data Insights",
+      href: "/practice/gmat-focus/data-insights/multi-source-reasoning",
+      badge: "Multi-Tab Synthesis",
+    },
+    {
+      name: "Number Properties",
+      section: "Quantitative",
+      href: "/practice/gmat-focus/quantitative-reasoning/number-properties",
+      badge: "Divisors & Primes",
+    },
+    {
+      name: "Critical Reasoning",
+      section: "Verbal",
+      href: "/practice/gmat-focus/verbal-reasoning/critical-reasoning",
+      badge: "Flaws & Assumptions",
+    },
+  ],
+  sat: [
+    {
+      name: "Advanced Math",
+      section: "Mathematics",
+      href: "/practice/sat/mathematics/advanced-math",
+      badge: "Extraneous Solutions",
+    },
+    {
+      name: "Linear Systems & Algebra",
+      section: "Mathematics",
+      href: "/practice/sat/mathematics/algebra",
+      badge: "Desmos Shortcuts",
+    },
+    {
+      name: "Rhetorical Synthesis",
+      section: "Reading & Writing",
+      href: "/practice/sat/reading-and-writing/rhetorical-synthesis",
+      badge: "Goal Alignment",
+    },
+    {
+      name: "Craft & Structure",
+      section: "Reading & Writing",
+      href: "/practice/sat/reading-and-writing/craft-and-structure",
+      badge: "Words in Context",
+    },
+  ],
+  gre: [
+    {
+      name: "Quantitative Comparison",
+      section: "Quantitative",
+      href: "/practice/gre/quantitative-reasoning/quantitative-comparison",
+      badge: "Real Number Bounds",
+    },
+    {
+      name: "Arithmetic & Exponents",
+      section: "Quantitative",
+      href: "/practice/gre/quantitative-reasoning/arithmetic",
+      badge: "Modular Cycles",
+    },
+    {
+      name: "Text Completion",
+      section: "Verbal",
+      href: "/practice/gre/verbal-reasoning/text-completion",
+      badge: "Contrast Signals",
+    },
+    {
+      name: "Sentence Equivalence",
+      section: "Verbal",
+      href: "/practice/gre/verbal-reasoning/sentence-equivalence",
+      badge: "Synonym Traps",
+    },
+  ],
+  cfa: [
+    {
+      name: "Time Value of Money",
+      section: "Quantitative Methods",
+      href: "/practice/cfa-level-1/quantitative-methods/time-value-of-money",
+      badge: "Compounding & EAR",
+    },
+    {
+      name: "Financial Reporting Standards",
+      section: "Financial Analysis",
+      href: "/practice/cfa-level-1/financial-statement-analysis/financial-reporting-standards",
+      badge: "IFRS vs US GAAP",
+    },
+    {
+      name: "Cost of Capital & WACC",
+      section: "Corporate Issuers",
+      href: "/practice/cfa-level-1/corporate-issuers/cost-of-capital",
+      badge: "Tax Shield Math",
+    },
+    {
+      name: "Fixed Income Valuation",
+      section: "Fixed Income",
+      href: "/practice/cfa-level-1/fixed-income/fixed-income-instrument-features",
+      badge: "Duration & Convexity",
+    },
+  ],
+  ielts: [
+    {
+      name: "True / False / Not Given",
+      section: "Academic Reading",
+      href: "/practice/ielts-academic/reading/inferences",
+      badge: "Textual Fact Check",
+    },
+    {
+      name: "Central Ideas & Details",
+      section: "Academic Reading",
+      href: "/practice/ielts-academic/reading/central-ideas-and-details",
+      badge: "Paraphrase Traps",
+    },
+    {
+      name: "Craft & Structure",
+      section: "Academic Reading",
+      href: "/practice/ielts-academic/reading/craft-and-structure",
+      badge: "Tone & Qualifiers",
+    },
+    {
+      name: "Information & Ideas",
+      section: "Academic Reading",
+      href: "/practice/ielts-academic/reading/information-and-ideas",
+      badge: "Factual Retrieval",
+    },
+  ],
+  toefl: [
+    {
+      name: "Sentence Insertion Flow",
+      section: "iBT Reading",
+      href: "/practice/toefl-ibt/reading/transitions-and-logical-flow",
+      badge: "Transition Logic",
+    },
+    {
+      name: "Rhetorical Purpose",
+      section: "iBT Reading",
+      href: "/practice/toefl-ibt/reading/text-structure-and-purpose",
+      badge: "Author Objective",
+    },
+    {
+      name: "Negative Factual ('EXCEPT')",
+      section: "iBT Reading",
+      href: "/practice/toefl-ibt/reading/information-and-ideas",
+      badge: "Inversion Traps",
+    },
+    {
+      name: "Vocabulary in Context",
+      section: "iBT Reading",
+      href: "/practice/toefl-ibt/reading/craft-and-structure",
+      badge: "Secondary Meanings",
+    },
+  ],
+};
+
 export function TrapsAndProofSection({
   activeExam,
 }: TrapsAndProofSectionProps) {
   const examConfig = ARENA_EXAMS[activeExam] || ARENA_EXAMS.gmat;
+  const highYieldTopics = HIGH_YIELD_TOPICS[activeExam] || HIGH_YIELD_TOPICS.gmat;
 
   return (
     <section className="relative py-12 sm:py-16 border-t border-border/70 px-4 sm:px-6">
@@ -157,6 +320,52 @@ export function TrapsAndProofSection({
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
               <span>{examConfig.verificationStamp.activePoolStatus}</span>
             </div>
+          </div>
+        </div>
+
+        {/* High-Yield Topic Drill Index: Direct internal PageRank pass & search query pairing */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-heading text-lg sm:text-xl font-normal text-foreground">
+                High-Yield {examConfig.shortName} Topic Drills
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Jump directly into topic-specific adaptive questions and distractor breakdowns.
+              </p>
+            </div>
+            <Link
+              href={`/practice/${EXAM_SLUGS[activeExam]}`}
+              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+            >
+              <span>View all modules</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {highYieldTopics.map((topic) => (
+              <Link
+                key={topic.name}
+                href={topic.href}
+                className="group rounded-xl border border-border/80 bg-card p-4 space-y-2 hover:border-primary/50 hover:bg-secondary/40 transition-all flex flex-col justify-between"
+              >
+                <div className="space-y-1">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                    {topic.section}
+                  </span>
+                  <p className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                    {topic.name}
+                  </p>
+                </div>
+                <div className="pt-2 flex items-center justify-between border-t border-border/60">
+                  <span className="text-[11px] font-mono text-muted-foreground">
+                    {topic.badge}
+                  </span>
+                  <ArrowRight className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
 

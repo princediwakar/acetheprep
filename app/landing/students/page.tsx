@@ -1,12 +1,15 @@
-// Path: app/landing/students/page.tsx
 import { Suspense } from "react";
-import OutOfTheBoxLanding from "@/components/landing/OutOfTheBoxLanding";
+import PublicLanding from "@/components/landing/PublicLanding";
 
-export default function StudentsLanding() {
+interface StudentsLandingProps {
+  initialExam?: string;
+}
+
+export default function StudentsLanding({ initialExam }: StudentsLandingProps) {
   return (
     <main className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
       <Suspense fallback={<div className="min-h-screen" />}>
-        <OutOfTheBoxLanding />
+        <PublicLanding initialExam={initialExam} />
       </Suspense>
     </main>
   );

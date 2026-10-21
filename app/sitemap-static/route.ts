@@ -12,7 +12,12 @@ interface StaticRoute {
 
 export async function GET() {
   const routes: StaticRoute[] = [
-    { url: "", changeFrequency: "daily", priority: 1.0 }, // Homepage
+    { url: "", changeFrequency: "daily", priority: 1.0 }, // Homepage (GMAT Focus default)
+    { url: "/?exam=sat", changeFrequency: "daily", priority: 0.95 }, // Digital SAT Trap Arena
+    { url: "/?exam=gre", changeFrequency: "daily", priority: 0.95 }, // GRE General Trap Arena
+    { url: "/?exam=cfa", changeFrequency: "daily", priority: 0.95 }, // CFA Level 1 Trap Arena
+    { url: "/?exam=ielts", changeFrequency: "daily", priority: 0.95 }, // IELTS Academic Trap Arena
+    { url: "/?exam=toefl", changeFrequency: "daily", priority: 0.95 }, // TOEFL iBT Trap Arena
     { url: "/practice", changeFrequency: "daily", priority: 0.95 }, // Practice Portal
     { url: "/pricing", changeFrequency: "daily", priority: 0.95 }, // Pro Pricing & Pass
     { url: "/blog", changeFrequency: "daily", priority: 0.9 }, // Blog Index
