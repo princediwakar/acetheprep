@@ -19,7 +19,7 @@ import {
 import type { SessionQuestion } from "@/types/tutor";
 import type { QuestionAttemptRecord } from "../SessionPlayer";
 
-const OPTION_LETTERS = ["A", "B", "C", "D", "E"] as const;
+const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F"] as const;
 
 interface SessionResultsViewProps {
   examName?: string;

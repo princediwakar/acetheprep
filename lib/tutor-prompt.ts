@@ -61,9 +61,9 @@ interface Response {
     passage?: string; // Authentic multi-paragraph reading passage (300-500 words) for RC
     passage_id?: string; // Unique shared identifier if multiple questions reference the same passage
     question_text: string; // The question stem alone
-    options: { A: string; B: string; C: string; D: string; E?: string };
-    correct_option: "A" | "B" | "C" | "D" | "E";
-    distractor_analysis: { A: string; B: string; C: string; D: string; E?: string };
+    options: { A: string; B: string; C: string; D: string; E?: string; F?: string };
+    correct_option: "A" | "B" | "C" | "D" | "E" | "F";
+    distractor_analysis: { A: string; B: string; C: string; D: string; E?: string; F?: string };
     skill_domain: string; // MUST perfectly match a provided Target Domain
     difficulty_tier: "foundation" | "application" | "advanced" | "expert";
     time_estimate_seconds: number;
@@ -135,6 +135,22 @@ export function buildTutorUserMessage(params: TutorPromptParams): string {
    - E: Statements (1) and (2) TOGETHER are NOT sufficient.
 3. CRITICAL REASONING & TRAP LABELS: Formulate authentic GMAT reasoning structures (Premise, Unstated Assumption, Conclusion). In "misconception", classify the specific trap (e.g., "C-Trap in DS", "Reverse Causality", "Out of Scope", "Extreme Quantifier").`
     : "";
+  const isGRE = /gre/i.test(examName);
+  const greDirective = isGRE
+    ? `\n\nGRE GENERAL 2026 SPECIFICATION MANDATE:
+1. QUANTITATIVE COMPARISON (QC):
+   For any "Quantitative Comparison" questions, provide Quantity A and Quantity B in the prompt, with the 4 canonical ETS options:
+   - A: Quantity A is greater.
+   - B: Quantity B is greater.
+   - C: The two quantities are equal.
+   - D: The relationship cannot be determined from the information given.
+2. SENTENCE EQUIVALENCE (SE):
+   Sentence Equivalence questions MUST provide 6 answer options (A, B, C, D, E, F). Target two synonymous words that both complete the sentence coherently.
+3. PROBLEM SOLVING & TEXT COMPLETION:
+   Quant Problem Solving and single-blank Text Completion MUST provide 5 answer options (A, B, C, D, E).
+4. MISCONCEPTION ANALYSIS:
+   In "misconception", classify the specific cognitive trap (e.g., "QC Zero/Negative Trap", "False Synonym in SE", "Extreme Degree Modifier in RC", "Failure to test fractional values").`
+    : "";
 
   return `CONTEXT: ${examName} ${examYear} | Mode: ${timeMode} | ${daysRemaining} days remaining.
 
@@ -145,7 +161,7 @@ EXECUTION DIRECTIVE:
 Generate exactly ${questionCount} questions strictly at exam-grade difficulty:
 - ${difficultyDistribution.easy} "foundation" tier (Trivial recall forbidden)
 - ${difficultyDistribution.medium} "application" tier (Rigorous multi-step problem solving)
-- ${difficultyDistribution.hard} "advanced" / "expert" tier (Deceptive distractors, analytical synthesis, calculus/derivation)${exclusions}${seedDirective}${rcDirective}${gmatDirective}
+- ${difficultyDistribution.hard} "advanced" / "expert" tier (Deceptive distractors, analytical synthesis, calculus/derivation)${exclusions}${seedDirective}${rcDirective}${gmatDirective}${greDirective}
 
 CRITICAL: Every question MUST BE COMPLETELY NOVEL and distinct from previous sessions. Strictly use the exact TARGET DOMAIN names provided above for the \`skill_domain\` field.`;
 }

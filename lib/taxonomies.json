@@ -5,9 +5,39 @@
     "Mathematics": ["Algebra", "Advanced Math", "Problem-Solving and Data Analysis", "Geometry and Trigonometry"]
   },
   "GRE": {
-    "Verbal Reasoning": ["Text Completion", "Sentence Equivalence", "Reading Comprehension"],
-    "Quantitative Reasoning": ["Arithmetic", "Algebra", "Geometry", "Data Analysis"],
-    "Analytical Writing": ["Analyze an Issue"]
+    "Quantitative Reasoning": [
+      "Arithmetic",
+      "Algebra",
+      "Geometry",
+      "Data Analysis",
+      "Quantitative Comparison",
+      "QC: Arithmetic & Number Properties",
+      "QC: Algebra & Inequalities",
+      "QC: Geometry & Coordinate Traps",
+      "Number Properties & Divisibility",
+      "Word Problems & Applied Math",
+      "Counting Methods & Probability",
+      "Statistics & Data Interpretation"
+    ],
+    "Verbal Reasoning": [
+      "Text Completion",
+      "Sentence Equivalence",
+      "Reading Comprehension",
+      "TC: Single-Blank Vocabulary",
+      "TC: Two-Blank Contrast & Shift",
+      "TC: Three-Blank Complex Logic",
+      "SE: Synonym Pairs & Secondary Meanings",
+      "SE: Context Clues & Tone",
+      "RC: Main Idea & Primary Purpose",
+      "RC: Inference & Specific Detail",
+      "RC: Argument Analysis & Paradox",
+      "RC: Structure, Tone & Author Stance"
+    ],
+    "Analytical Writing": [
+      "Analyze an Issue",
+      "Issue: Thesis & Supporting Evidence",
+      "Issue: Counterargument & Rebuttal"
+    ]
   },
   "GMAT Focus": {
     "Quantitative Reasoning": [

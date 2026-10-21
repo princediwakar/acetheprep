@@ -104,6 +104,15 @@ export const PREREQUISITE_WEIGHTS: Record<string, number> = {
   'Table Analysis': 1.1,
   'Graphics Interpretation': 1.1,
   'Multi-Source Reasoning': 1.1,
+  // GRE General
+  'Quantitative Comparison': 1.5,
+  'Text Completion': 1.4,
+  'Sentence Equivalence': 1.4,
+  'Geometry': 1.3,
+  'Data Analysis': 1.2,
+  'Number Properties & Divisibility': 1.4,
+  'Counting Methods & Probability': 1.3,
+  'Statistics & Data Interpretation': 1.2,
 };
 
 export const TUTOR_AI_CONFIG = {

@@ -8,10 +8,10 @@ export interface SeedQuestion {
   question_text: string;
   passage?: string;
   passage_id?: string;
-  options: { A: string; B: string; C: string; D?: string; E?: string };
-  correct_option: "A" | "B" | "C" | "D" | "E";
+  options: { A: string; B: string; C: string; D?: string; E?: string; F?: string };
+  correct_option: "A" | "B" | "C" | "D" | "E" | "F";
   explanation: string;
-  distractor_analysis: { A: string; B: string; C: string; D?: string; E?: string };
+  distractor_analysis: { A: string; B: string; C: string; D?: string; E?: string; F?: string };
   misconception: string;
   time_estimate_seconds: number;
 }

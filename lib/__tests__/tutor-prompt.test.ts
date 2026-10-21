@@ -136,4 +136,37 @@ describe("buildTutorUserMessage — Uniqueness and Negative Constraints", () => 
       "Must enforce canonical GMAC DS stems"
     );
   });
+
+  it("injects GRE GENERAL 2026 DIRECTIVE when exam is GRE", () => {
+    const qcDomain: TargetDomain = {
+      skillDomain: "Quantitative Comparison",
+      masteryScore: 0.5,
+      recentErrors: [],
+      isOverdue: true,
+      lastSeenAt: null,
+    };
+
+    const message = buildTutorUserMessage({
+      examName: "GRE",
+      examYear: "2026",
+      timeMode: "acceleration",
+      daysRemaining: 68,
+      targetDomains: [qcDomain],
+      questionCount: 5,
+      difficultyDistribution: { easy: 0, medium: 1, hard: 4 },
+    });
+
+    assert.ok(
+      message.includes("GRE GENERAL 2026 SPECIFICATION MANDATE:"),
+      "Must include GRE specification mandate"
+    );
+    assert.ok(
+      message.includes("QUANTITATIVE COMPARISON (QC)"),
+      "Must include QC directive"
+    );
+    assert.ok(
+      message.includes("SENTENCE EQUIVALENCE (SE)"),
+      "Must include SE directive with 6 options"
+    );
+  });
 });

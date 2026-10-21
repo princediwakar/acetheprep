@@ -236,6 +236,106 @@ const GMAT_DEFAULT_DIFFICULTY_TIER: Record<string, DifficultyTier> = {
   "Multi-Source Reasoning": "expert",
 };
 
+// GRE General Exam section topic weights (calibrated to ETS 2024–2026 Shorter GRE)
+const GRE_EXAM_WEIGHTS: Record<string, number> = {
+  // Quantitative Reasoning (~27 Qs total across 2 sections)
+  Arithmetic: 0.08,
+  Algebra: 0.09,
+  Geometry: 0.08,
+  "Data Analysis": 0.08,
+  "Quantitative Comparison": 0.14,
+  "QC: Arithmetic & Number Properties": 0.08,
+  "QC: Algebra & Inequalities": 0.09,
+  "QC: Geometry & Coordinate Traps": 0.07,
+  "Number Properties & Divisibility": 0.09,
+  "Word Problems & Applied Math": 0.08,
+  "Counting Methods & Probability": 0.07,
+  "Statistics & Data Interpretation": 0.08,
+
+  // Verbal Reasoning (~27 Qs total across 2 sections)
+  "Text Completion": 0.14,
+  "Sentence Equivalence": 0.12,
+  "Reading Comprehension": 0.16,
+  "TC: Single-Blank Vocabulary": 0.07,
+  "TC: Two-Blank Contrast & Shift": 0.08,
+  "TC: Three-Blank Complex Logic": 0.08,
+  "SE: Synonym Pairs & Secondary Meanings": 0.08,
+  "SE: Context Clues & Tone": 0.07,
+  "RC: Main Idea & Primary Purpose": 0.08,
+  "RC: Inference & Specific Detail": 0.09,
+  "RC: Argument Analysis & Paradox": 0.08,
+  "RC: Structure, Tone & Author Stance": 0.07,
+
+  // Analytical Writing
+  "Analyze an Issue": 0.06,
+  "Issue: Thesis & Supporting Evidence": 0.05,
+  "Issue: Counterargument & Rebuttal": 0.05,
+};
+
+const GRE_DOMAIN_TO_SUBJECT: Record<string, string> = {
+  Arithmetic: "Quantitative Reasoning",
+  Algebra: "Quantitative Reasoning",
+  Geometry: "Quantitative Reasoning",
+  "Data Analysis": "Quantitative Reasoning",
+  "Quantitative Comparison": "Quantitative Reasoning",
+  "QC: Arithmetic & Number Properties": "Quantitative Reasoning",
+  "QC: Algebra & Inequalities": "Quantitative Reasoning",
+  "QC: Geometry & Coordinate Traps": "Quantitative Reasoning",
+  "Number Properties & Divisibility": "Quantitative Reasoning",
+  "Word Problems & Applied Math": "Quantitative Reasoning",
+  "Counting Methods & Probability": "Quantitative Reasoning",
+  "Statistics & Data Interpretation": "Quantitative Reasoning",
+
+  "Text Completion": "Verbal Reasoning",
+  "Sentence Equivalence": "Verbal Reasoning",
+  "Reading Comprehension": "Verbal Reasoning",
+  "TC: Single-Blank Vocabulary": "Verbal Reasoning",
+  "TC: Two-Blank Contrast & Shift": "Verbal Reasoning",
+  "TC: Three-Blank Complex Logic": "Verbal Reasoning",
+  "SE: Synonym Pairs & Secondary Meanings": "Verbal Reasoning",
+  "SE: Context Clues & Tone": "Verbal Reasoning",
+  "RC: Main Idea & Primary Purpose": "Verbal Reasoning",
+  "RC: Inference & Specific Detail": "Verbal Reasoning",
+  "RC: Argument Analysis & Paradox": "Verbal Reasoning",
+  "RC: Structure, Tone & Author Stance": "Verbal Reasoning",
+
+  "Analyze an Issue": "Analytical Writing",
+  "Issue: Thesis & Supporting Evidence": "Analytical Writing",
+  "Issue: Counterargument & Rebuttal": "Analytical Writing",
+};
+
+const GRE_DEFAULT_DIFFICULTY_TIER: Record<string, DifficultyTier> = {
+  Arithmetic: "foundation",
+  Algebra: "application",
+  Geometry: "application",
+  "Data Analysis": "application",
+  "Quantitative Comparison": "advanced",
+  "QC: Arithmetic & Number Properties": "application",
+  "QC: Algebra & Inequalities": "advanced",
+  "QC: Geometry & Coordinate Traps": "advanced",
+  "Number Properties & Divisibility": "advanced",
+  "Word Problems & Applied Math": "application",
+  "Counting Methods & Probability": "advanced",
+  "Statistics & Data Interpretation": "application",
+
+  "Text Completion": "advanced",
+  "Sentence Equivalence": "advanced",
+  "Reading Comprehension": "advanced",
+  "TC: Single-Blank Vocabulary": "application",
+  "TC: Two-Blank Contrast & Shift": "advanced",
+  "TC: Three-Blank Complex Logic": "expert",
+  "SE: Synonym Pairs & Secondary Meanings": "advanced",
+  "SE: Context Clues & Tone": "application",
+  "RC: Main Idea & Primary Purpose": "application",
+  "RC: Inference & Specific Detail": "advanced",
+  "RC: Argument Analysis & Paradox": "advanced",
+  "RC: Structure, Tone & Author Stance": "application",
+
+  "Analyze an Issue": "application",
+  "Issue: Thesis & Supporting Evidence": "application",
+  "Issue: Counterargument & Rebuttal": "advanced",
+};
+
 // Forgetting curve parameters by time mode
 const FORGETTING_PARAMS = {
   foundation: { halfLifeDays: 30, steepness: 0.8 },
@@ -361,19 +461,40 @@ async function getExamTopicWeights(examName: string): Promise<ExamTopicWeight[]>
 
   // Build defaults from taxonomy + exam-specific weights
   const isGMAT = /gmat/i.test(examName);
+  const isGRE = /gre/i.test(examName);
   const domains = getDomainsForExam(examName);
-  return domains.map((domain) => ({
-    id: crypto.randomUUID(),
-    exam_name: examName,
-    subject: (isGMAT ? GMAT_DOMAIN_TO_SUBJECT[domain] : DOMAIN_TO_SUBJECT[domain]) || "General",
-    topic: domain,
-    skill_domain: domain,
-    difficulty_tier: (isGMAT ? GMAT_DEFAULT_DIFFICULTY_TIER[domain] : DEFAULT_DIFFICULTY_TIER[domain]) || "application",
-    exam_weight: (isGMAT ? GMAT_EXAM_WEIGHTS[domain] : JEE_EXAM_WEIGHTS[domain]) || 0.08,
-    question_frequency_10yr: 0,
-    c_tier_cap: null,
-    estimated_minutes_to_mastery: null,
-  }));
+  return domains.map((domain) => {
+    let subject = "General";
+    let difficultyTier: DifficultyTier = "application";
+    let examWeight = 0.08;
+
+    if (isGRE) {
+      subject = GRE_DOMAIN_TO_SUBJECT[domain] || "General";
+      difficultyTier = GRE_DEFAULT_DIFFICULTY_TIER[domain] || "application";
+      examWeight = GRE_EXAM_WEIGHTS[domain] || 0.08;
+    } else if (isGMAT) {
+      subject = GMAT_DOMAIN_TO_SUBJECT[domain] || "General";
+      difficultyTier = GMAT_DEFAULT_DIFFICULTY_TIER[domain] || "application";
+      examWeight = GMAT_EXAM_WEIGHTS[domain] || 0.08;
+    } else {
+      subject = DOMAIN_TO_SUBJECT[domain] || "General";
+      difficultyTier = DEFAULT_DIFFICULTY_TIER[domain] || "application";
+      examWeight = JEE_EXAM_WEIGHTS[domain] || 0.08;
+    }
+
+    return {
+      id: crypto.randomUUID(),
+      exam_name: examName,
+      subject,
+      topic: domain,
+      skill_domain: domain,
+      difficulty_tier: difficultyTier,
+      exam_weight: examWeight,
+      question_frequency_10yr: 0,
+      c_tier_cap: null,
+      estimated_minutes_to_mastery: null,
+    };
+  });
 }
 
 /**

@@ -12,7 +12,7 @@ export type CardType = 'session' | 'recovery';
 
 export type DifficultyTier = 1 | 2 | 3;
 
-export type SelectedOption = 'A' | 'B' | 'C' | 'D' | 'E';
+export type SelectedOption = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 
 export interface ExamProfile {
   profile_id: string;

@@ -11,6 +11,7 @@ import type { ExamProfile, TimeMode, SessionRow } from "@/types/tutor";
 import type { ProjectionHeroProps } from "@/components/tutor/ProjectionHero";
 import { marksToPercentile, getColdStartBand, computeCompositePercentile } from "@/lib/predictor/nta-priors";
 import { computeGMATPrediction } from "@/lib/predictor/gmat-score-engine";
+import { computeGREPrediction } from "@/lib/predictor/gre-score-engine";
 import { getUserSubscriptionStatus, syncCheckoutSession } from "@/lib/billing";
 import taxonomy from "@/lib/taxonomies.json";
 
@@ -307,10 +308,50 @@ async function HomePageContent({
   const sessionsCompleted = completedSessionsRes.count ?? 0;
 
   const isGMAT = /gmat/i.test(profile.exam_name);
+  const isGRE = /gre/i.test(profile.exam_name);
 
   let prediction: ProjectionHeroProps["prediction"] = null;
 
-  if (isGMAT) {
+  if (isGRE) {
+    const quantDomains = examSubjects?.["Quantitative Reasoning"] ?? [];
+    const verbalDomains = examSubjects?.["Verbal Reasoning"] ?? [];
+    const writingDomains = examSubjects?.["Analytical Writing"] ?? [];
+
+    const getSectionMastery = (domains: string[], defaultMastery = 0.45) => {
+      let sum = 0;
+      let count = 0;
+      for (const d of domains) {
+        if (domainAttempted[d] && domainAttempted[d] > 0) {
+          sum += masteryMap[d] ?? 0;
+          count++;
+        }
+      }
+      return count > 0 ? sum / count : defaultMastery;
+    };
+
+    const grePred = computeGREPrediction({
+      quantMastery: getSectionMastery(quantDomains),
+      verbalMastery: getSectionMastery(verbalDomains),
+      writingMastery: getSectionMastery(writingDomains, 0.5),
+      totalTrackedSessions: sessionsCompleted,
+      quantDomainsTracked: quantDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+      verbalDomainsTracked: verbalDomains.filter((d) => (domainAttempted[d] ?? 0) > 0).length,
+    });
+
+    prediction = {
+      overallPercentile: grePred.overallPercentile,
+      overallBandLower: grePred.scoreBandLower,
+      overallBandUpper: grePred.scoreBandUpper,
+      overallBandWidth: grePred.scoreBandWidth,
+      calibrationSource: grePred.calibrationSource,
+      disclaimer: grePred.disclaimer,
+      isFrozen: false,
+      totalTrackedSessions: grePred.totalTrackedSessions,
+      metricLabel: "Projected GRE General Score (260–340)",
+      displayValue: `${grePred.scoreBandLower}–${grePred.scoreBandUpper}`,
+      secondaryLabel: `~${grePred.overallPercentile}th %ile`,
+    };
+  } else if (isGMAT) {
     const quantDomains = examSubjects?.["Quantitative Reasoning"] ?? [];
     const verbalDomains = examSubjects?.["Verbal Reasoning"] ?? [];
     const diDomains = examSubjects?.["Data Insights"] ?? [];

@@ -36,6 +36,7 @@ function getCalibrationBadge(source: string) {
     case "proprietary": return "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
     case "blended": return "bg-amber-500/20 text-amber-400 border-amber-500/30";
     case "gmac_focus_tables": return "bg-indigo-500/20 text-indigo-400 border-indigo-500/30";
+    case "ets_gre_tables": return "bg-cyan-500/20 text-cyan-400 border-cyan-500/30";
     default: return "bg-slate-500/20 text-slate-400 border-slate-500/30";
   }
 }
@@ -155,6 +156,8 @@ export function ProjectionHero({ prediction, examName }: ProjectionHeroProps) {
                     ? "NTA Prior"
                     : prediction.calibrationSource === "gmac_focus_tables"
                     ? "GMAC Norms"
+                    : prediction.calibrationSource === "ets_gre_tables"
+                    ? "ETS Norms"
                     : "Blended"}
                 </span>
               )}

@@ -146,6 +146,61 @@ const GMAT_DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
   },
 ];
 
+const GRE_DIAGNOSTIC_STRATA: DiagnosticStrata[] = [
+  {
+    name: "Quantitative Comparison & Algebra",
+    domains: [
+      "Algebra",
+      "Arithmetic",
+      "Quantitative Comparison",
+      "QC: Arithmetic & Number Properties",
+      "QC: Algebra & Inequalities",
+      "QC: Geometry & Coordinate Traps",
+      "Number Properties & Divisibility",
+      "Word Problems & Applied Math",
+    ],
+  },
+  {
+    name: "Geometry & Data Interpretation",
+    domains: [
+      "Geometry",
+      "Data Analysis",
+      "Statistics & Data Interpretation",
+      "Counting Methods & Probability",
+    ],
+  },
+  {
+    name: "Text Completion Logic",
+    domains: [
+      "Text Completion",
+      "TC: Single-Blank Vocabulary",
+      "TC: Two-Blank Contrast & Shift",
+      "TC: Three-Blank Complex Logic",
+    ],
+  },
+  {
+    name: "Sentence Equivalence & Vocab",
+    domains: [
+      "Sentence Equivalence",
+      "SE: Synonym Pairs & Secondary Meanings",
+      "SE: Context Clues & Tone",
+    ],
+  },
+  {
+    name: "Reading Comprehension & Critical Analysis",
+    domains: [
+      "Reading Comprehension",
+      "RC: Main Idea & Primary Purpose",
+      "RC: Inference & Specific Detail",
+      "RC: Argument Analysis & Paradox",
+      "RC: Structure, Tone & Author Stance",
+      "Analyze an Issue",
+      "Issue: Thesis & Supporting Evidence",
+      "Issue: Counterargument & Rebuttal",
+    ],
+  },
+];
+
 const JEE_DOMAIN_TO_STRATUM: Record<string, string> = (() => {
   const map: Record<string, string> = {};
   for (const stratum of JEE_DIAGNOSTIC_STRATA) {
@@ -166,9 +221,22 @@ const GMAT_DOMAIN_TO_STRATUM: Record<string, string> = (() => {
   return map;
 })();
 
+const GRE_DOMAIN_TO_STRATUM: Record<string, string> = (() => {
+  const map: Record<string, string> = {};
+  for (const stratum of GRE_DIAGNOSTIC_STRATA) {
+    for (const domain of stratum.domains) {
+      map[domain.toLowerCase()] = stratum.name;
+    }
+  }
+  return map;
+})();
+
 // ----- Exported Accessors -----
 
 export function getDiagnosticStrata(examName?: string): DiagnosticStrata[] {
+  if (examName && /gre/i.test(examName)) {
+    return GRE_DIAGNOSTIC_STRATA;
+  }
   if (examName && /gmat/i.test(examName)) {
     return GMAT_DIAGNOSTIC_STRATA;
   }
@@ -177,7 +245,23 @@ export function getDiagnosticStrata(examName?: string): DiagnosticStrata[] {
 
 export function getStratumForDomain(domain: string, examName?: string): string | null {
   const norm = domain.trim().toLowerCase();
+  const isGRE = examName && /gre/i.test(examName);
   const isGMAT = examName && /gmat/i.test(examName);
+
+  if (isGRE) {
+    if (GRE_DOMAIN_TO_STRATUM[norm]) return GRE_DOMAIN_TO_STRATUM[norm];
+    if (norm.startsWith("tc:") || norm.includes("text completion")) return "Text Completion Logic";
+    if (norm.startsWith("se:") || norm.includes("sentence equivalence")) return "Sentence Equivalence & Vocab";
+    if (norm.startsWith("rc:") || norm.includes("reading comprehension")) return "Reading Comprehension & Critical Analysis";
+    if (norm.startsWith("qc:") || norm.includes("quantitative comparison")) return "Quantitative Comparison & Algebra";
+    if (norm.includes("geometry") || norm.includes("data analysis") || norm.includes("statistics") || norm.includes("probability")) {
+      return "Geometry & Data Interpretation";
+    }
+    if (norm.includes("arithmetic") || norm.includes("algebra") || norm.includes("number properties") || norm.includes("word problem")) {
+      return "Quantitative Comparison & Algebra";
+    }
+    return "Reading Comprehension & Critical Analysis";
+  }
 
   if (isGMAT) {
     if (GMAT_DOMAIN_TO_STRATUM[norm]) return GMAT_DOMAIN_TO_STRATUM[norm];
@@ -194,8 +278,8 @@ export function getStratumForDomain(domain: string, examName?: string): string |
     return null;
   }
 
-  // Default to JEE mapping, fallback to checking both
-  return JEE_DOMAIN_TO_STRATUM[norm] ?? GMAT_DOMAIN_TO_STRATUM[norm] ?? null;
+  // Default to JEE mapping, fallback to checking others
+  return JEE_DOMAIN_TO_STRATUM[norm] ?? GMAT_DOMAIN_TO_STRATUM[norm] ?? GRE_DOMAIN_TO_STRATUM[norm] ?? null;
 }
 
 // ----- Scoring Constants -----
