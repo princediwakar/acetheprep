@@ -20,9 +20,14 @@ export async function GET() {
     { url: "/predictor", changeFrequency: "weekly", priority: 0.85 }, // Diagnostic Percentile Predictor
     { url: "/tools", changeFrequency: "daily", priority: 0.9 }, // Micro-Tools Hub
     { url: "/tools/gmat-focus-score-calculator", changeFrequency: "daily", priority: 0.95 }, // GMAT Focus Calculator
+    { url: "/tools/digital-sat-score-calculator", changeFrequency: "daily", priority: 0.95 }, // Digital SAT Calculator
+    { url: "/tools/ielts-band-score-calculator", changeFrequency: "daily", priority: 0.95 }, // IELTS Band Calculator
+    { url: "/tools/toefl-to-ielts-converter", changeFrequency: "daily", priority: 0.95 }, // TOEFL to IELTS Converter
+    { url: "/tools/cfa-level-1-score-calculator", changeFrequency: "daily", priority: 0.95 }, // CFA Level 1 Calculator
     { url: "/tools/gre-to-gmat-converter", changeFrequency: "daily", priority: 0.95 }, // GRE to GMAT Converter
     { url: "/compare", changeFrequency: "weekly", priority: 0.85 }, // Exam Comparisons Hub
     { url: "/compare/gmat-focus-vs-gre", changeFrequency: "weekly", priority: 0.9 }, // GMAT Focus vs GRE
+    { url: "/compare/ielts-vs-toefl", changeFrequency: "weekly", priority: 0.9 }, // IELTS vs TOEFL
     { url: "/privacy", changeFrequency: "yearly", priority: 0.3 },
     { url: "/terms", changeFrequency: "yearly", priority: 0.3 },
   ];

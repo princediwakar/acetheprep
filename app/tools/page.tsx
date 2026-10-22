@@ -34,6 +34,42 @@ const TOOLS = [
     tags: ["GMAT Focus", "Score Calculator", "Percentiles", "MBA Admissions"],
   },
   {
+    title: "Digital SAT Score Calculator & Adaptive Curve Simulator",
+    slug: "/tools/digital-sat-score-calculator",
+    description:
+      "Calculate your composite Digital SAT score (400–1600), Reading & Writing (200-800), Math (200-800), and simulate Module 2 adaptive routing penalties in 0ms.",
+    icon: Calculator,
+    badge: "Multistage Adaptive",
+    tags: ["Digital SAT", "Score Estimator", "Adaptive Routing", "College Admissions"],
+  },
+  {
+    title: "IELTS Band Score Calculator & Rounding Simulator",
+    slug: "/tools/ielts-band-score-calculator",
+    description:
+      "Convert raw Reading and Listening marks out of 40 to official IELTS bands (0–9.0) and calculate overall scores with British Council & IDP half-band rounding algorithms.",
+    icon: Calculator,
+    badge: "Official Rounding Model",
+    tags: ["IELTS Academic", "Band Calculator", "CEFR Converter", "Study Abroad"],
+  },
+  {
+    title: "TOEFL to IELTS Score Converter",
+    slug: "/tools/toefl-to-ielts-converter",
+    description:
+      "Translate TOEFL iBT composite scores (0–120) to IELTS Academic band levels (0–9.0) using official ETS research concordance tables for university admissions.",
+    icon: ArrowLeftRight,
+    badge: "ETS Concordance",
+    tags: ["TOEFL iBT", "IELTS", "Score Translation", "University Cutoffs"],
+  },
+  {
+    title: "CFA Level 1 Score Calculator & MPS Estimator",
+    slug: "/tools/cfa-level-1-score-calculator",
+    description:
+      "Estimate your weighted exam percentage across the 10 CFA Institute curriculum topics and model pass/fail odds against historical ~69% Minimum Passing Scores.",
+    icon: Calculator,
+    badge: "10-Topic Weighted MPS",
+    tags: ["CFA Level 1", "MPS Estimator", "Ethics Adjustment", "Chartered Financial Analyst"],
+  },
+  {
     title: "GRE to GMAT Focus Score Converter",
     slug: "/tools/gre-to-gmat-converter",
     description:

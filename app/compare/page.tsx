@@ -32,6 +32,14 @@ const COMPARISONS = [
     badge: "Most Popular",
     tags: ["GMAT Focus", "GRE", "MBA Admissions", "Calculator Policy"],
   },
+  {
+    title: "IELTS vs TOEFL: Which English Test Should You Take in 2026?",
+    slug: "/compare/ielts-vs-toefl",
+    description:
+      "Architectural comparison of IELTS Academic and TOEFL iBT. Human 1-on-1 speaking interview vs computer microphone, scoring scales, typing requirements, and university acceptance in the US, UK, and Canada.",
+    badge: "Global Study Abroad",
+    tags: ["IELTS Academic", "TOEFL iBT", "Speaking Test", "Study Abroad", "Visas"],
+  },
 ];
 
 export default function CompareHubPage() {
