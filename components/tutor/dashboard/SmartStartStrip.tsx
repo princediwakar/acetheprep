@@ -4,7 +4,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Zap, ArrowRight, Play, AlertCircle, Clock, Sparkles } from "lucide-react";
+import { Zap, ArrowRight, Play, AlertCircle, Clock, Sparkles, BookOpen } from "lucide-react";
 import type { SyllabusDomain, WeakSpotItem } from "@/app/home/page";
 import { cn } from "@/lib/utils";
 
@@ -118,13 +118,13 @@ export function SmartStartStrip({
       </Card>
 
       {/* Card 2: Next in Curriculum */}
-      <Card className="border-border bg-card hover:border-border/80 transition-all shadow-xs flex flex-col justify-between">
+      <Card className="border-blue-500/20 bg-gradient-to-br from-card via-card to-blue-500/[0.04] hover:border-blue-500/40 transition-all shadow-xs flex flex-col justify-between">
         <CardContent className="p-5 flex flex-col h-full justify-between gap-4">
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                  <ArrowRight className="w-4 h-4 text-blue-500" />
+                  <BookOpen className="w-4 h-4 text-blue-500" />
                 </div>
                 <div>
                   <h3 className="font-bold text-base sm:text-lg text-foreground tracking-tight">
@@ -141,31 +141,60 @@ export function SmartStartStrip({
             </div>
 
             <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              {nextLinearDomain ? (
-                <>
-                  Next topic in official sequence:{" "}
-                  <strong className="text-foreground font-semibold">{nextLinearDomain.name}</strong>.
-                  Master all syllabus topics systematically.
-                </>
-              ) : (
-                "You have completed all curriculum topics! Focus on daily weak-spot drills to protect your score."
-              )}
+              Master syllabus topics systematically in official sequence.
             </p>
 
-            {nextLinearDomain && (
-              <div className="p-3 rounded-lg bg-background/50 border border-border/60 flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Topic Mastery:</span>
-                <span className="font-bold text-foreground">
-                  {Math.round(nextLinearDomain.masteryScore * 100)}%
-                </span>
+            {nextLinearDomain ? (
+              <div className="p-3.5 rounded-lg bg-background/70 border border-border/70 space-y-2.5">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-xs font-medium text-muted-foreground">Current:</span>
+                    <span className="font-bold text-sm text-foreground truncate">
+                      {nextLinearDomain.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="text-xs font-bold text-foreground font-mono tabular-nums">
+                      {Math.round(nextLinearDomain.masteryScore * 100)}%
+                    </span>
+                    <span className="text-[11px] text-muted-foreground font-medium">mastery</span>
+                  </div>
+                </div>
+
+                {/* Visual Progress Bar */}
+                <div className="h-2 w-full rounded-full bg-muted/60 overflow-hidden">
+                  <div
+                    className="h-full bg-blue-500 rounded-full transition-all duration-500"
+                    style={{
+                      width: `${Math.max(
+                        4,
+                        Math.min(100, Math.round(nextLinearDomain.masteryScore * 100))
+                      )}%`,
+                    }}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                  <span>
+                    {nextLinearDomain.totalAttempted > 0
+                      ? `${nextLinearDomain.totalAttempted} questions attempted`
+                      : "Not started yet"}
+                  </span>
+                  <span className="font-medium text-muted-foreground/80">Target: 80%+</span>
+                </div>
+              </div>
+            ) : (
+              <div className="p-3.5 rounded-lg bg-background/50 border border-border/60 text-xs text-muted-foreground flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-blue-500 shrink-0" />
+                <span>All curriculum topics complete! Keep your score sharp with daily drills.</span>
               </div>
             )}
           </div>
 
           <Button
             size="lg"
-            variant="secondary"
-            className="w-full cursor-pointer font-semibold mt-2"
+            variant="outline"
+            className="w-full cursor-pointer font-bold border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-all shadow-xs mt-2"
             onClick={onLinearNext}
             disabled={!nextLinearDomain}
           >

@@ -385,6 +385,18 @@ async function HomePageContent({
   const isSAT = /sat/i.test(profile.exam_name);
   const isCFA = /cfa/i.test(profile.exam_name);
 
+  const formatPercentileLabel = (percentile: number) => {
+    const mod100 = percentile % 100;
+    let suffix = "th";
+    if (mod100 < 11 || mod100 > 13) {
+      const lastDigit = percentile % 10;
+      if (lastDigit === 1) suffix = "st";
+      else if (lastDigit === 2) suffix = "nd";
+      else if (lastDigit === 3) suffix = "rd";
+    }
+    return `~${percentile}${suffix} %ile`;
+  };
+
   let prediction: ProjectionHeroProps["prediction"] = null;
 
   const getSectionMastery = (domains: string[], defaultMastery = 0.5) => {
@@ -428,7 +440,7 @@ async function HomePageContent({
       totalTrackedSessions: ieltsPred.totalTrackedSessions,
       metricLabel: "Projected IELTS Band (1.0–9.0)",
       displayValue: `${ieltsPred.overallBand.toFixed(1)} (${ieltsPred.bandLower.toFixed(1)}–${ieltsPred.bandUpper.toFixed(1)})`,
-      secondaryLabel: `~${ieltsPred.overallPercentile}th %ile`,
+      secondaryLabel: formatPercentileLabel(ieltsPred.overallPercentile),
     };
   } else if (isTOEFL) {
     const readingDomains = examSubjects?.["Reading"] ?? [];
@@ -459,7 +471,7 @@ async function HomePageContent({
       totalTrackedSessions: toeflPred.totalTrackedSessions,
       metricLabel: "Projected TOEFL iBT Score (0–120)",
       displayValue: `${toeflPred.compositeScore} (${toeflPred.scoreBandLower}–${toeflPred.scoreBandUpper})`,
-      secondaryLabel: `~${toeflPred.overallPercentile}th %ile`,
+      secondaryLabel: formatPercentileLabel(toeflPred.overallPercentile),
     };
   } else if (isGRE) {
     const quantDomains = examSubjects?.["Quantitative Reasoning"] ?? [];
@@ -486,7 +498,7 @@ async function HomePageContent({
       totalTrackedSessions: grePred.totalTrackedSessions,
       metricLabel: "Projected GRE General Score (260–340)",
       displayValue: `${grePred.scoreBandLower}–${grePred.scoreBandUpper}`,
-      secondaryLabel: `~${grePred.overallPercentile}th %ile`,
+      secondaryLabel: formatPercentileLabel(grePred.overallPercentile),
     };
   } else if (isGMAT) {
     const quantDomains = examSubjects?.["Quantitative Reasoning"] ?? [];
@@ -514,7 +526,7 @@ async function HomePageContent({
       totalTrackedSessions: gmatPred.totalTrackedSessions,
       metricLabel: "Projected GMAT Focus Score (205–805)",
       displayValue: `${gmatPred.scoreBandLower}–${gmatPred.scoreBandUpper}`,
-      secondaryLabel: `~${gmatPred.overallPercentile}th %ile`,
+      secondaryLabel: formatPercentileLabel(gmatPred.overallPercentile),
     };
   } else if (isSAT) {
     const rwDomains = examSubjects?.["Reading and Writing"] ?? [];
@@ -539,7 +551,7 @@ async function HomePageContent({
       totalTrackedSessions: satPred.totalTrackedSessions,
       metricLabel: "Projected Digital SAT Score (400–1600)",
       displayValue: `${satPred.scoreBandLower}–${satPred.scoreBandUpper}`,
-      secondaryLabel: `~${satPred.overallPercentile}th %ile`,
+      secondaryLabel: formatPercentileLabel(satPred.overallPercentile),
     };
   } else if (isCFA) {
     const allDomains = Object.values(examSubjects ?? {}).flat();
