@@ -17,8 +17,9 @@ import { cn } from "@/lib/utils";
 const QUIZ_ROUTES = ["/quiz/", "/play/", "/session/", "/edit/", "/create"];
 
 const NAV_ITEMS = [
-  { label: "Curriculum", href: "/#curriculum" },
+  { label: "Practice", href: "/practice" },
   { label: "Insights", href: "/insights" },
+  { label: "Predictor", href: "/predictor" },
   { label: "Pricing", href: "/pricing" },
 ];
 

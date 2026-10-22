@@ -28,6 +28,7 @@ import {
   CheckCircle2,
   TrendingUp,
   ArrowRight,
+  ArrowLeft,
   Sparkles,
 } from "lucide-react";
 import { DomainCorePrinciples } from "@/components/practice/DomainCorePrinciples";
@@ -260,10 +261,17 @@ export default async function PracticePage({ params }: PracticePageProps) {
   // Get rich curriculum domain knowledge & FAQs
   const knowledge = getDomainKnowledge(examName, subjectName, domainName);
 
+  // Get all domains in this subject and compute sequential progression
+  const domainsInSubject = taxonomyMap[examName]?.[subjectName] || [];
+  const currentIndex = domainsInSubject.indexOf(domainName);
+  const prevDomain = currentIndex > 0 ? domainsInSubject[currentIndex - 1] : null;
+  const nextDomain =
+    currentIndex >= 0 && currentIndex < domainsInSubject.length - 1
+      ? domainsInSubject[currentIndex + 1]
+      : null;
+
   // Get other sibling domains in this subject for topological internal linking
-  const siblingDomains = (taxonomyMap[examName]?.[subjectName] || []).filter(
-    (d) => d !== domainName,
-  );
+  const siblingDomains = domainsInSubject.filter((d) => d !== domainName);
 
   // Build breadcrumb items with clean canonical URLs
   const breadcrumbItems = [
@@ -404,7 +412,7 @@ export default async function PracticePage({ params }: PracticePageProps) {
         </div>
 
         {/* Center-Stage Interactive Topic Practice Drill */}
-        <div className="mb-10">
+        <div className="mb-8">
           <TopicPracticeDrill
             questions={questions}
             examName={examName}
@@ -412,6 +420,51 @@ export default async function PracticePage({ params }: PracticePageProps) {
             domainName={domainName}
           />
         </div>
+
+        {/* Sequential Syllabus Traversal (Prev / Next Topic) */}
+        {(prevDomain || nextDomain) && (
+          <div className="mb-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {prevDomain ? (
+              <Link
+                href={`/practice/${examSlug}/${subjectSlug}/${domainToSlug(prevDomain)}`}
+                className="group rounded-2xl border border-border/80 bg-card p-4 hover:border-primary/50 transition-all flex items-center gap-3"
+              >
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                  <ArrowLeft className="h-4 w-4" />
+                </div>
+                <div className="space-y-0.5 overflow-hidden">
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase block">
+                    Previous: {subjectName}
+                  </span>
+                  <p className="text-xs sm:text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                    {prevDomain}
+                  </p>
+                </div>
+              </Link>
+            ) : (
+              <div className="hidden sm:block" />
+            )}
+
+            {nextDomain && (
+              <Link
+                href={`/practice/${examSlug}/${subjectSlug}/${domainToSlug(nextDomain)}`}
+                className="group rounded-2xl border border-primary/30 bg-primary/5 p-4 hover:border-primary/60 transition-all flex items-center justify-between gap-3"
+              >
+                <div className="space-y-0.5 overflow-hidden text-left sm:text-right flex-1">
+                  <span className="text-[10px] font-mono text-primary font-semibold uppercase block">
+                    Next Topic in {subjectName} →
+                  </span>
+                  <p className="text-xs sm:text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                    {nextDomain}
+                  </p>
+                </div>
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-transform group-hover:translate-x-0.5">
+                  <ArrowRight className="h-4 w-4" />
+                </div>
+              </Link>
+            )}
+          </div>
+        )}
 
         {/* Core Principles & Key Formulas & Primary Exam Trap */}
         <div className="mb-10">
