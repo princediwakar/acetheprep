@@ -23,6 +23,7 @@ import {
   CheckCircle2,
   HelpCircle,
 } from "lucide-react";
+import { PageHero, HeroBadge } from "@/components/shared/PageHero";
 
 type TaxonomyData = Record<string, Record<string, string[]>>;
 const taxonomy = taxonomyRaw as unknown as TaxonomyData;
@@ -129,27 +130,24 @@ export default function PracticeCatalogPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pt-24 pb-20 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background pt-8 sm:pt-10 pb-20 px-4 sm:px-6 lg:px-8">
       <StructuredData schema={breadcrumbSchema(breadcrumbs)} />
       <StructuredData schema={itemListSchema as any} />
       <StructuredData schema={faqSchema as any} />
 
       <div className="max-w-6xl mx-auto space-y-12">
         {/* Page Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Official Syllabus Practice Catalog</span>
-          </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground font-heading">
-            Practice Questions by Exam &amp; Topic
-          </h1>
-          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-            Select any exam below to explore its official blueprint, or search 100+ topic modules to practice authentic questions with first-principles solutions.
-          </p>
-
+        <PageHero
+          badge={
+            <HeroBadge icon={Sparkles}>
+              Official Syllabus Practice Catalog
+            </HeroBadge>
+          }
+          title="Practice Questions by Exam & Topic"
+          subtitle="Select any exam below to explore its official blueprint, or search 100+ topic modules to practice authentic questions with first-principles solutions."
+        >
           {/* Quick Cross-Tool Navigation Badges */}
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/insights"
               className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3.5 py-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-all"
@@ -165,7 +163,7 @@ export default function PracticeCatalogPage() {
               <span>Adaptive Score Calculator &amp; Study Planner</span>
             </Link>
           </div>
-        </div>
+        </PageHero>
 
         {/* Instant Topic Filter Component (Edge Client Component) */}
         <PracticeCatalogFilter

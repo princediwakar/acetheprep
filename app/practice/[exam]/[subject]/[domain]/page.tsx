@@ -30,7 +30,9 @@ import {
   ArrowRight,
   ArrowLeft,
   Sparkles,
+  BookOpen,
 } from "lucide-react";
+import { getGuidesForCurriculum } from "@/lib/mdx";
 import { DomainCorePrinciples } from "@/components/practice/DomainCorePrinciples";
 import { DomainFaqSection } from "@/components/practice/DomainFaqSection";
 
@@ -273,6 +275,9 @@ export default async function PracticePage({ params }: PracticePageProps) {
   // Get other sibling domains in this subject for topological internal linking
   const siblingDomains = domainsInSubject.filter((d) => d !== domainName);
 
+  // In-memory retrieval of authoritative psychometric guides for this curriculum track (0ms latency)
+  const relatedGuides = await getGuidesForCurriculum(examName, domainName, 2);
+
   // Build breadcrumb items with clean canonical URLs
   const breadcrumbItems = [
     { name: "Home", url: baseUrl },
@@ -511,6 +516,57 @@ export default async function PracticePage({ params }: PracticePageProps) {
           examName={examName}
           faqs={knowledge.faqs}
         />
+
+        {/* Authoritative Guides & Psychometric Teardowns */}
+        {relatedGuides.length > 0 && (
+          <div className="mb-10 rounded-2xl border border-border bg-card p-6 shadow-xs">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-primary" />
+                <h3 className="text-base font-bold text-foreground">
+                  {examName} Strategy &amp; Trap Teardowns
+                </h3>
+              </div>
+              <Link
+                href="/blog"
+                className="text-xs font-medium text-primary hover:underline flex items-center gap-1"
+              >
+                All research guides
+                <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {relatedGuides.map((guide) => (
+                <Link
+                  key={guide.slug}
+                  href={`/blog/${guide.slug}`}
+                  className="group rounded-xl border border-border/70 bg-background/50 p-4 hover:border-primary/40 hover:bg-background transition-all flex flex-col justify-between"
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-primary/10 text-primary font-semibold">
+                        {guide.category}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-mono">
+                        {guide.readTime}
+                      </span>
+                    </div>
+                    <h4 className="text-xs sm:text-sm font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                      {guide.title}
+                    </h4>
+                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      {guide.description}
+                    </p>
+                  </div>
+                  <div className="mt-3 pt-2 border-t border-border/50 flex items-center text-[11px] font-semibold text-primary gap-1">
+                    <span>Read deconstruction</span>
+                    <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* CTA Banner */}
         <div className="mt-10">

@@ -35,6 +35,8 @@ import {
 } from "./landing-data";
 import { signInWithGoogle } from "@/lib/supabase/auth";
 import { InstantTopicSearch } from "./InstantTopicSearch";
+import { PageHero, HeroBadge } from "@/components/shared/PageHero";
+import { ExamSelectorStrip, EXAM_TABS } from "@/components/shared/ExamSelectorStrip";
 
 interface PracticeHeroSectionProps {
   activeExam: ExamKey;
@@ -48,15 +50,6 @@ interface QuestionAttempt {
   isCorrect: boolean;
   revealedWithoutAnswering?: boolean;
 }
-
-const EXAM_TABS: Array<{ key: ExamKey; title: string; subtitle: string }> = [
-  { key: "gmat", title: "GMAT Focus", subtitle: "GMAC" },
-  { key: "sat", title: "Digital SAT", subtitle: "College Board" },
-  { key: "gre", title: "GRE General", subtitle: "ETS" },
-  { key: "cfa", title: "CFA Level 1", subtitle: "CFA Institute" },
-  { key: "ielts", title: "IELTS", subtitle: "British Council" },
-  { key: "toefl", title: "TOEFL", subtitle: "ETS iBT" },
-];
 
 const EXAM_HERO_COPY: Record<
   ExamKey,
@@ -264,66 +257,28 @@ export function PracticeHeroSection({
 
       <div className="mx-auto max-w-4xl space-y-8">
         {/* Exam Switcher Strip */}
-        <div id="exam-selector" className="space-y-2.5 max-w-3xl mx-auto">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-            {EXAM_TABS.map((item) => {
-              const isSelected = activeExam === item.key;
-              const href = item.key === "gmat" ? "/" : `/?exam=${item.key}`;
-              return (
-                <a
-                  key={item.key}
-                  href={href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onExamChange(item.key);
-                  }}
-                  className={cn(
-                    "flex flex-col items-center text-center p-2.5 rounded-xl border text-xs transition-all cursor-pointer relative",
-                    isSelected
-                      ? "border-foreground bg-foreground text-background shadow-xs font-semibold ring-1 ring-foreground/20"
-                      : "border-border/80 bg-card hover:bg-secondary text-muted-foreground hover:text-foreground",
-                  )}
-                >
-                  {isSelected && (
-                    <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                  )}
-                  <span className="font-semibold text-xs">{item.title}</span>
-                  <span
-                    className={cn(
-                      "text-[10px] mt-0.5 font-mono",
-                      isSelected ? "text-background/80" : "text-muted-foreground",
-                    )}
-                  >
-                    {item.subtitle}
-                  </span>
-                </a>
-              );
-            })}
-          </div>
+        <div id="exam-selector">
+          <ExamSelectorStrip
+            activeExam={activeExam}
+            onExamChange={onExamChange}
+          />
         </div>
 
         {/* Dynamic Exam-Specific Hero Messaging */}
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/60 px-3 py-0.5 text-[11px] font-medium text-foreground/80">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            <span>Configured for {examConfig.name}</span>
-            <span className="text-muted-foreground/40">•</span>
-            <span>{heroCopy.org}</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-medium tracking-tight text-foreground leading-[1.14]">
-            {heroCopy.headline}
-          </h1>
-
-          <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            {heroCopy.subhead}
-          </p>
-
-          {/* Instant 0ms Topic & Trap Search Bar */}
-          <div className="pt-2">
-            <InstantTopicSearch activeExam={activeExam} />
-          </div>
-        </div>
+        <PageHero
+          badge={
+            <HeroBadge className="border-border bg-muted/60 text-foreground/80 font-medium">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span>Configured for {examConfig.name}</span>
+              <span className="text-muted-foreground/40">•</span>
+              <span>{heroCopy.org}</span>
+            </HeroBadge>
+          }
+          title={heroCopy.headline}
+          subtitle={heroCopy.subhead}
+        >
+          <InstantTopicSearch activeExam={activeExam} />
+        </PageHero>
 
         {/* High-Precision Practice Workspace Terminal */}
         <div

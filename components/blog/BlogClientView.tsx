@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Sparkles, Filter, X, BookOpen, Calendar, Clock, ArrowRight } from "lucide-react";
 import { BlogTechnicalDiagram } from "./BlogTechnicalDiagram";
+import { PageHero, HeroBadge } from "@/components/shared/PageHero";
 import type { BlogPostMetadata } from "@/lib/mdx";
 import { getExamPriorityRank } from "@/lib/mdx";
 
@@ -35,55 +36,52 @@ export function BlogClientView({ allPosts, filterOptions }: BlogClientViewProps)
     : allPosts;
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto space-y-10">
       {/* Header */}
-      <div className="mb-10 text-center sm:text-left border-b border-border pb-8">
-        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary mb-4">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Cognitive Science & Exam Architecture</span>
-        </div>
-        <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground">
-          Research & Strategy
-        </h1>
-        <p className="mt-3 text-lg text-muted-foreground max-w-2xl">
-          First-principles engineering breakdowns of spaced repetition mathematics, distractor psychometrics, and cognitive load reduction for serious aspirants across SAT, GRE, GMAT Focus, CFA, IELTS, and global competitive examinations.
-        </p>
+      <div className="space-y-6">
+        <PageHero
+          badge={
+            <HeroBadge icon={Sparkles}>
+              Cognitive Science &amp; Exam Architecture
+            </HeroBadge>
+          }
+          title="Research & Strategy"
+          subtitle="First-principles engineering breakdowns of spaced repetition mathematics, distractor psychometrics, and cognitive load reduction for serious aspirants across SAT, GRE, GMAT Focus, CFA, IELTS, and global competitive examinations."
+        >
+          <div className="flex items-center justify-center gap-2 pt-2">
+            <div className="flex items-center justify-center flex-wrap gap-2">
+              {filterOptions.map((opt) => {
+                const isActive =
+                  opt.value === "" ? activeExam === "" : activeExam === opt.value;
+                const href = opt.value ? `/blog?exam=${encodeURIComponent(opt.value)}` : "/blog";
 
-        {/* Filter Pills Bar */}
-        <div className="mt-8 flex items-center gap-2">
-          <Filter className="w-4 h-4 text-muted-foreground hidden sm:block shrink-0" />
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none w-full">
-            {filterOptions.map((opt) => {
-              const isActive =
-                opt.value === "" ? activeExam === "" : activeExam === opt.value;
-              const href = opt.value ? `/blog?exam=${encodeURIComponent(opt.value)}` : "/blog";
-
-              return (
-                <Link
-                  key={opt.value}
-                  href={href}
-                  prefetch
-                  className={`inline-flex whitespace-nowrap items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                    isActive
-                      ? "bg-primary text-primary-foreground shadow-sm ring-2 ring-primary/30"
-                      : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/80"
-                  }`}
-                >
-                  <span>{opt.label}</span>
-                  <span
-                    className={`rounded-full px-1.5 py-0.2 text-[10px] font-mono ${
+                return (
+                  <Link
+                    key={opt.value}
+                    href={href}
+                    prefetch
+                    className={`inline-flex whitespace-nowrap items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
                       isActive
-                        ? "bg-primary-foreground/20 text-primary-foreground"
-                        : "bg-background text-muted-foreground border border-border/50"
+                        ? "bg-primary text-primary-foreground shadow-sm ring-2 ring-primary/30"
+                        : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/80"
                     }`}
                   >
-                    {opt.count}
-                  </span>
-                </Link>
-              );
-            })}
+                    <span>{opt.label}</span>
+                    <span
+                      className={`rounded-full px-1.5 py-0.2 text-[10px] font-mono ${
+                        isActive
+                          ? "bg-primary-foreground/20 text-primary-foreground"
+                          : "bg-background text-muted-foreground border border-border/50"
+                      }`}
+                    >
+                      {opt.count}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        </PageHero>
 
         {/* Active Filter Indicator */}
         {activeExam && (
@@ -134,7 +132,12 @@ export function BlogClientView({ allPosts, filterOptions }: BlogClientViewProps)
               }`}
             >
               <div>
-                <BlogTechnicalDiagram examTag={post.examTag} category={post.category} />
+                <BlogTechnicalDiagram
+                  slug={post.slug}
+                  diagramType={post.diagramType}
+                  examTag={post.examTag}
+                  category={post.category}
+                />
                 <div className="flex flex-wrap items-center gap-2 mb-3">
                   <span className="rounded-md bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
                     {post.category}

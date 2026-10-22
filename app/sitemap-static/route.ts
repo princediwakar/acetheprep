@@ -23,7 +23,6 @@ export async function GET() {
     { url: "/blog", changeFrequency: "daily", priority: 0.9 }, // Blog Index
     { url: "/insights", changeFrequency: "weekly", priority: 0.85 }, // Insights & Hardest Topics
     { url: "/predictor", changeFrequency: "weekly", priority: 0.8 }, // Diagnostic Percentile Predictor
-    { url: "/feedback", changeFrequency: "monthly", priority: 0.5 },
     { url: "/privacy", changeFrequency: "yearly", priority: 0.3 },
     { url: "/terms", changeFrequency: "yearly", priority: 0.3 },
   ];

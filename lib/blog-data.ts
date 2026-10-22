@@ -1,4 +1,5 @@
 // Path: lib/blog-data.ts
+import { STUDENT_QUERY_BLOGS } from "./student-query-blogs";
 
 export interface BlogPost {
   slug: string;
@@ -11,9 +12,11 @@ export interface BlogPost {
   readTime: string;
   published: boolean;
   content: string;
+  diagramType?: string;
 }
 
 export const BLOG_POSTS: BlogPost[] = [
+  ...STUDENT_QUERY_BLOGS,
   {
     slug: "ielts-academic-reading-true-false-not-given-traps",
     title: "The 4 Critical Traps in IELTS Academic Reading: True-False-Not Given & Heading Matching",

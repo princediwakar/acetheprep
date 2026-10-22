@@ -148,7 +148,7 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
             <span>Curriculum & Questions</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground font-heading">
-            {examName} Syllabus &amp; Practice Questions
+            {examName} {" "}Syllabus &amp; Practice Questions
           </h1>
           <p className="mt-3 text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed">
             Explore the official blueprint and choose any topic module below to practice authentic questions with step-by-step first-principles solutions.

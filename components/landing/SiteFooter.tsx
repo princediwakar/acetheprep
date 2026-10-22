@@ -47,7 +47,6 @@ export default function SiteFooter({ className }: React.HTMLAttributes<HTMLEleme
         { title: "Plans & Pricing", href: "/pricing" },
         { title: "Privacy Policy", href: "/privacy" },
         { title: "Terms of Service", href: "/terms" },
-        { title: "Feedback & Bug Report", href: "/feedback" },
       ],
     },
   ];
@@ -92,7 +91,6 @@ export default function SiteFooter({ className }: React.HTMLAttributes<HTMLEleme
         <div className="flex flex-col items-center justify-between gap-4 border-t border-border py-6 sm:flex-row text-xs text-muted-foreground">
           <p>© {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <span>Server-First • Sub-100ms TTFB</span>
             <ThemeToggle />
           </div>
         </div>

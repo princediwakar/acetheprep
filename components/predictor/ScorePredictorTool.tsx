@@ -20,15 +20,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { LANDING_EXAMS, type ExamKey } from "@/components/landing/landing-data";
-
-const EXAM_PREDICTOR_KEYS: Array<{ key: ExamKey; label: string; org: string }> = [
-  { key: "gmat", label: "GMAT Focus", org: "GMAC" },
-  { key: "sat", label: "Digital SAT", org: "College Board" },
-  { key: "gre", label: "GRE General", org: "ETS" },
-  { key: "cfa", label: "CFA Level 1", org: "CFA Institute" },
-  { key: "ielts", label: "IELTS", org: "British Council" },
-  { key: "toefl", label: "TOEFL", org: "ETS iBT" },
-];
+import { ExamSelectorStrip } from "@/components/shared/ExamSelectorStrip";
 
 export function ScorePredictorTool() {
   const searchParams = useSearchParams();
@@ -140,28 +132,12 @@ export function ScorePredictorTool() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" suppressHydrationWarning>
       {/* Exam Selector Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-        {EXAM_PREDICTOR_KEYS.map((item) => {
-          const isSelected = activeExam === item.key;
-          return (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => handleExamChange(item.key)}
-              className={cn(
-                "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold shrink-0 transition-all cursor-pointer border flex items-center gap-2 shadow-xs",
-                isSelected
-                  ? "bg-foreground text-background border-foreground shadow-sm"
-                  : "bg-card text-muted-foreground border-border hover:bg-secondary hover:text-foreground"
-              )}
-            >
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
-      </div>
+      <ExamSelectorStrip
+        activeExam={activeExam}
+        onExamChange={handleExamChange}
+      />
 
       {/* Main Tool Card */}
       <div className="rounded-2xl border border-border/80 bg-card p-6 sm:p-8 shadow-sm space-y-8">

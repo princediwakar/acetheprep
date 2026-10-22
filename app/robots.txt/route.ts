@@ -16,7 +16,6 @@ Allow: /pricing
 Allow: /predictor
 Allow: /insights/
 Allow: /blog/
-Allow: /feedback
 Allow: /privacy
 Allow: /terms
 Allow: /api/og

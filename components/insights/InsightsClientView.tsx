@@ -17,15 +17,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LANDING_EXAMS, type ExamKey } from "@/components/landing/landing-data";
-
-const EXAMS_ORDER: Array<{ key: ExamKey; title: string; subtitle: string; slug: string }> = [
-  { key: "gmat", title: "GMAT Focus", subtitle: "GMAC", slug: "gmat-focus" },
-  { key: "sat", title: "Digital SAT", subtitle: "College Board", slug: "sat" },
-  { key: "gre", title: "GRE General", subtitle: "ETS", slug: "gre" },
-  { key: "cfa", title: "CFA Level 1", subtitle: "CFA Institute", slug: "cfa-level-1" },
-  { key: "ielts", title: "IELTS", subtitle: "British Council", slug: "ielts-academic" },
-  { key: "toefl", title: "TOEFL", subtitle: "ETS iBT", slug: "toefl-ibt" },
-];
+import { ExamSelectorStrip, EXAM_TABS } from "@/components/shared/ExamSelectorStrip";
 
 interface InsightsClientViewProps {
   initialExam?: ExamKey;
@@ -42,44 +34,11 @@ export function InsightsClientView({ initialExam = "gmat" }: InsightsClientViewP
   return (
     <div className="space-y-12">
       {/* Exam Switcher Tabs */}
-      <div className="space-y-3 max-w-4xl mx-auto">
-        <div className="flex items-center justify-between text-xs font-mono text-muted-foreground px-1">
-          <span>Select Exam to View Hardest Topics:</span>
-          <span className="text-foreground font-semibold">{examConfig.name}</span>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-          {EXAMS_ORDER.map((item) => {
-            const isSelected = activeExam === item.key;
-            return (
-              <button
-                key={item.key}
-                type="button"
-                onClick={() => setActiveExam(item.key)}
-                className={cn(
-                  "flex flex-col items-center text-center p-3 rounded-xl border text-xs transition-all cursor-pointer relative",
-                  isSelected
-                    ? "border-foreground bg-foreground text-background shadow-xs font-semibold ring-1 ring-foreground/20"
-                    : "border-border/80 bg-card hover:bg-secondary text-muted-foreground hover:text-foreground",
-                )}
-              >
-                {isSelected && (
-                  <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                )}
-                <span className="font-semibold text-xs">{item.title}</span>
-                <span
-                  className={cn(
-                    "text-[10px] mt-0.5 font-mono",
-                    isSelected ? "text-background/80" : "text-muted-foreground",
-                  )}
-                >
-                  {item.subtitle}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <ExamSelectorStrip
+        activeExam={activeExam}
+        onExamChange={setActiveExam}
+        label="Select Exam to View Hardest Topics:"
+      />
 
       {/* Active Exam Spotlight: 3 Hardest Topics & Empirical Miss Rates */}
       <div className="rounded-2xl border border-border/80 bg-card p-6 sm:p-8 space-y-8 shadow-xs max-w-4xl mx-auto">
@@ -264,7 +223,7 @@ export function InsightsClientView({ initialExam = "gmat" }: InsightsClientViewP
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {EXAMS_ORDER.map((item) => {
+          {EXAM_TABS.map((item) => {
             const config = LANDING_EXAMS[item.key];
             const slug = config.curriculum?.slug || item.key;
             return (
@@ -292,7 +251,7 @@ export function InsightsClientView({ initialExam = "gmat" }: InsightsClientViewP
 
                 <div className="pt-3 border-t border-border/60 flex items-center justify-between text-xs">
                   <Link
-                    href={`/insights/${item.slug}/hardest-topics`}
+                    href={`/insights/${slug}/hardest-topics`}
                     className="font-medium text-foreground hover:underline inline-flex items-center gap-1"
                   >
                     <span>Hardest Topics</span>
@@ -300,7 +259,7 @@ export function InsightsClientView({ initialExam = "gmat" }: InsightsClientViewP
                   </Link>
 
                   <Link
-                    href={`/practice/${item.slug}`}
+                    href={`/practice/${slug}`}
                     className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground font-medium"
                   >
                     <span>Syllabus</span>

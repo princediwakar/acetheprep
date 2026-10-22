@@ -9,6 +9,7 @@ import { ThreePillarsSection } from "./ThreePillarsSection";
 import { GlobalExamsSection } from "./GlobalExamsSection";
 import { ScorePlannerSection } from "./ScorePlannerSection";
 import { StudentQueriesSection } from "./StudentQueriesSection";
+import { TopicalAuthorityHub } from "./TopicalAuthorityHub";
 import { SimpleCTASection } from "./SimpleCTASection";
 import { LANDING_EXAMS, type ExamKey } from "./landing-data";
 
@@ -76,6 +77,9 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
 
       {/* 5. The 6 Global Exams (Curriculum Cards Blueprint) */}
       <GlobalExamsSection onSelectExam={handleExamChange} />
+
+      {/* 5b. Topical Authority Hub (High-Yield Drills & Trap Teardowns) */}
+      <TopicalAuthorityHub />
 
       {/* 6. Real Student Query FAQs (High-Yield Verification & Trap Answers) */}
       <StudentQueriesSection initialExam={activeExam} />

@@ -1,6 +1,7 @@
 // Path: components/blog/MarkdownRenderer.tsx
 import React from "react";
 import { slugify } from "@/lib/slugs";
+import { BlogTechnicalDiagram } from "./BlogTechnicalDiagram";
 
 /**
  * Parses bold, code, and inline formatting
@@ -47,7 +48,7 @@ export function MarkdownRenderer({ content }: { content: string }) {
   const flushTable = (key: number) => {
     if (tableHeader.length > 0) {
       elements.push(
-        <div key={`table-${key}`} className="my-6 overflow-x-auto rounded-xl border border-border">
+        <div key={`table-${key}`} className="my-6 overflow-x-auto rounded-xl border border-border shadow-sm">
           <table className="min-w-full divide-y divide-border text-sm">
             <thead className="bg-muted/50">
               <tr>
@@ -63,7 +64,7 @@ export function MarkdownRenderer({ content }: { content: string }) {
                 <tr key={rIdx} className="hover:bg-muted/20">
                   {row.map((cell, cIdx) => (
                     <td key={cIdx} className="px-4 py-3 text-muted-foreground">
-                      {cell}
+                      {renderFormattedText(cell)}
                     </td>
                   ))}
                 </tr>
@@ -101,6 +102,59 @@ export function MarkdownRenderer({ content }: { content: string }) {
 
     if (inCodeBlock) {
       codeBuffer.push(line);
+      continue;
+    }
+
+    // Inline Technical Diagram Directive: [diagram:type "Optional Caption"] or :::diagram type
+    const diagramMatch = line.trim().match(/^(?:\[diagram:([\w-]+)(?:\s+"([^"]+)")?\]|:::diagram\s+([\w-]+))$/i);
+    if (diagramMatch) {
+      if (inTable) {
+        inTable = false;
+        flushTable(i);
+      }
+      const type = diagramMatch[1] || diagramMatch[3];
+      const caption = diagramMatch[2];
+      elements.push(
+        <figure key={`diagram-${i}`} className="my-8 overflow-hidden rounded-2xl border border-border shadow-sm bg-card/60">
+          <BlogTechnicalDiagram diagramType={type} category="" className="h-44 sm:h-52 w-full border-none shadow-none rounded-none" />
+          {caption && (
+            <figcaption className="px-4 py-2.5 text-center text-xs text-muted-foreground border-t border-border bg-muted/20 font-mono">
+              Figure: {caption}
+            </figcaption>
+          )}
+        </figure>
+      );
+      continue;
+    }
+
+    // Markdown Image: ![alt](src "Optional Caption")
+    const imgMatch = line.trim().match(/^!\[(.*?)\]\((.*?)(?:\s+"(.*?)")?\)$/);
+    if (imgMatch) {
+      if (inTable) {
+        inTable = false;
+        flushTable(i);
+      }
+      const alt = imgMatch[1];
+      const src = imgMatch[2];
+      const caption = imgMatch[3] || alt;
+      elements.push(
+        <figure key={`img-${i}`} className="my-8 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          <div className="relative aspect-video w-full overflow-hidden bg-muted">
+            <img
+              src={src}
+              alt={alt}
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          {caption && (
+            <figcaption className="px-4 py-2.5 text-center text-xs text-muted-foreground border-t border-border bg-muted/20">
+              {caption}
+            </figcaption>
+          )}
+        </figure>
+      );
       continue;
     }
 

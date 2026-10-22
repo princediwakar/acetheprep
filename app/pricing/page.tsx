@@ -11,6 +11,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Check, Sparkles, X } from "lucide-react";
+import { PageHero, HeroBadge } from "@/components/shared/PageHero";
 import { siteConfig } from "@/config/site";
 import StructuredData, {
   faqPageSchema,
@@ -131,7 +132,7 @@ export default function PricingPage() {
   }));
 
   return (
-    <main className="min-h-screen bg-background text-foreground pt-24 pb-20 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-background text-foreground pt-8 sm:pt-10 pb-20 px-4 sm:px-6 lg:px-8">
       <StructuredData schema={productOfferSchema()} />
       <StructuredData schema={faqPageSchema(pricingFaqs)} />
       <StructuredData
@@ -142,17 +143,16 @@ export default function PricingPage() {
       />
 
       {/* Hero Section */}
-      <div className="max-w-4xl mx-auto text-center space-y-4 mb-16">
-        <Badge className="bg-primary/10 text-primary border-primary/20 text-xs uppercase tracking-wider font-semibold py-1 px-3">
-          <Sparkles className="w-3.5 h-3.5 mr-1 inline" />
-          Transparent & Simple Pricing
-        </Badge>
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
-          Invest in Your Target Score, Not Generic Prep.
-        </h1>
-        <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Start free with 10-question practice sets. Upgrade to AceThePrep Pro when you are ready for full 25Q practice sets and 50Q mock tests.
-        </p>
+      <div className="mb-14">
+        <PageHero
+          badge={
+            <HeroBadge icon={Sparkles}>
+              Transparent &amp; Simple Pricing
+            </HeroBadge>
+          }
+          title="Invest in Your Target Score, Not Generic Prep."
+          subtitle="Start free with 10-question practice sets. Upgrade to AceThePrep Pro when you are ready for full 25Q practice sets and 50Q mock tests."
+        />
       </div>
 
       {/* Pricing Cards */}
@@ -166,7 +166,7 @@ export default function PricingPage() {
       {/* Comparison Matrix */}
       <div className="max-w-4xl mx-auto mt-24 space-y-8">
         <div className="text-center space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-heading font-medium tracking-tight text-foreground">
             Compare Plan Features
           </h2>
           <p className="text-sm text-muted-foreground">

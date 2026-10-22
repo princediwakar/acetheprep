@@ -51,7 +51,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = [
     { url: `${baseUrl}/`, lastModified: new Date().toISOString() },
     { url: `${baseUrl}/quizzes`, lastModified: new Date().toISOString() },
-    { url: `${baseUrl}/feedback`, lastModified: new Date().toISOString() },
     { url: `${baseUrl}/privacy`, lastModified: new Date().toISOString() },
     { url: `${baseUrl}/terms`, lastModified: new Date().toISOString() },
   ];

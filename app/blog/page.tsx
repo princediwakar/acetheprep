@@ -54,7 +54,7 @@ export default async function BlogIndexPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background pt-8 sm:pt-10 pb-20 px-4 sm:px-6 lg:px-8">
       <StructuredData schema={breadcrumbSchema(breadcrumbs)} />
       <Suspense fallback={<div className="max-w-5xl mx-auto py-12" />}>
         <BlogClientView allPosts={allPosts} filterOptions={filterOptions} />

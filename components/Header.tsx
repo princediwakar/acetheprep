@@ -20,6 +20,7 @@ const NAV_ITEMS = [
   { label: "Practice", href: "/practice" },
   { label: "Insights", href: "/insights" },
   { label: "Predictor", href: "/predictor" },
+  { label: "Guides", href: "/blog" },
   { label: "Pricing", href: "/pricing" },
 ];
 

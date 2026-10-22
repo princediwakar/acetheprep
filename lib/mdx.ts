@@ -122,4 +122,63 @@ export async function getBlogFilterOptions(): Promise<{ label: string; value: st
   return options;
 }
 
+/**
+ * Retrieves top authoritative psychometric guides matching a given exam track and optional domain.
+ * Provides 0ms in-memory resolution for server-rendered practice pages to pass link equity bi-directionally.
+ */
+export async function getGuidesForCurriculum(
+  examName: string,
+  domainName?: string,
+  limit: number = 3,
+): Promise<BlogPostMetadata[]> {
+  const allPosts = await getAllBlogPosts();
+  const normExam = examName.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const domainTokens = domainName
+    ? domainName
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, " ")
+        .split(/\s+/)
+        .filter((w) => w.length > 3)
+    : [];
+
+  const scored = allPosts.map((post) => {
+    let score = 0;
+    const postExam = (post.examTag || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    
+    if (postExam && normExam) {
+      if (postExam === normExam) {
+        score += 20;
+      } else if (postExam.includes(normExam) || normExam.includes(postExam)) {
+        score += 15;
+      }
+    }
+
+    if (domainTokens.length > 0) {
+      const searchTarget = `${post.title} ${post.description} ${post.slug}`.toLowerCase();
+      for (const token of domainTokens) {
+        if (searchTarget.includes(token)) {
+          score += 5;
+        }
+      }
+    }
+
+    return { post, score };
+  });
+
+  // Filter to posts with matching exam or positive score
+  const matches = scored
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map((s) => s.post);
+
+  if (matches.length >= limit) {
+    return matches.slice(0, limit);
+  }
+
+  // Fallback to top priority posts to guarantee link equity flow
+  const seen = new Set(matches.map((m) => m.slug));
+  const fallback = allPosts.filter((p) => !seen.has(p.slug)).slice(0, limit - matches.length);
+  return [...matches, ...fallback];
+}
+
 

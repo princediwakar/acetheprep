@@ -45,23 +45,21 @@ export const metadata: Metadata = {
 
 
 import { InsightsClientView } from "@/components/insights/InsightsClientView";
+import { PageHero, HeroBadge } from "@/components/shared/PageHero";
 
 export default async function InsightsPage() {
   return (
-    <div className="min-h-[calc(100vh-4rem)] px-4 py-8 sm:py-12 bg-background">
+    <div className="min-h-screen pt-8 sm:pt-10 pb-20 px-4 sm:px-6 lg:px-8 bg-background">
       <div className="max-w-5xl mx-auto space-y-10">
-        <div className="text-center max-w-2xl mx-auto space-y-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
-            <Activity className="h-3.5 w-3.5" />
-            Exam Topic Insights &amp; Error Benchmarks
-          </span>
-          <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-foreground">
-            Hardest Exam Topics &amp; Common Mistakes
-          </h1>
-          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Empirical error rates, cognitive blindspots, and first-principles solution rules across all 6 competitive exams. Available immediately for all students without requiring prior question attempts.
-          </p>
-        </div>
+        <PageHero
+          badge={
+            <HeroBadge icon={Activity}>
+              Exam Topic Insights &amp; Error Benchmarks
+            </HeroBadge>
+          }
+          title="Hardest Exam Topics & Common Mistakes"
+          subtitle="Empirical error rates, cognitive blindspots, and first-principles solution rules across all 6 competitive exams. Available immediately for all students without requiring prior question attempts."
+        />
 
         <InsightsClientView initialExam="gmat" />
       </div>

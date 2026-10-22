@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
 import { getAllBlogPosts, getBlogPost, getRelatedBlogPosts } from "@/lib/mdx";
-import { slugify, examToSlug, GLOBAL_EXAM_PRIORITY } from "@/lib/slugs";
+import { slugify, examToSlug, GLOBAL_EXAM_PRIORITY, getAllTaxonomyEntries } from "@/lib/slugs";
 import StructuredData, { breadcrumbSchema } from "@/components/seo/StructuredData";
 import { ArrowLeft, Calendar, Clock, User, Sparkles, ListTree, ArrowRight, BookOpen } from "lucide-react";
 import { siteConfig } from "@/config/site";
@@ -100,6 +100,33 @@ export default async function BlogPostPage({ params }: PageProps) {
     practiceSlug = examToSlug(targetExamName);
   }
 
+  // Resolve relevant leaf domain drills for this post's exam (0ms in-memory resolution)
+  let topDomainDrills: Array<{ examSlug: string; subjectSlug: string; domain: string; domainSlug: string }> = [];
+  if (practiceSlug && targetExamName) {
+    const allEntries = getAllTaxonomyEntries();
+    const examEntries = allEntries.filter(
+      (e) =>
+        e.examSlug === practiceSlug ||
+        e.exam.toLowerCase().includes(targetExamName.toLowerCase()) ||
+        targetExamName.toLowerCase().includes(e.exam.toLowerCase()),
+    );
+
+    const searchTarget = `${post.title} ${post.description}`.toLowerCase();
+    const scoredEntries = examEntries.map((e) => {
+      let score = 0;
+      const domainLower = e.domain.toLowerCase();
+      if (searchTarget.includes(domainLower)) score += 10;
+      const tokens = domainLower.split(/\s+/).filter((t) => t.length > 3);
+      for (const t of tokens) {
+        if (searchTarget.includes(t)) score += 3;
+      }
+      return { entry: e, score };
+    });
+
+    scoredEntries.sort((a, b) => b.score - a.score);
+    topDomainDrills = scoredEntries.slice(0, 4).map((s) => s.entry);
+  }
+
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -184,6 +211,8 @@ export default async function BlogPostPage({ params }: PageProps) {
         {/* Article Figure Banner */}
         <div className="mb-10">
           <BlogTechnicalDiagram
+            slug={post.slug}
+            diagramType={post.diagramType}
             examTag={post.examTag}
             category={post.category}
             className="h-44 sm:h-56 rounded-2xl shadow-sm"
@@ -225,25 +254,47 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Direct Practice Launchpad */}
         {practiceSlug && (
-          <div className="mt-12 rounded-2xl border border-primary/30 bg-primary/5 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
-                Instant Interactive Calibration
-              </span>
-              <h4 className="text-base font-bold text-foreground mt-0.5">
-                Practice {targetExamName} Distractor Traps Free
-              </h4>
-              <p className="text-xs text-muted-foreground mt-1 max-w-md">
-                Experience adaptive test-taking under real exam timing with immediate mistake breakdowns.
-              </p>
+          <div className="mt-12 rounded-2xl border border-primary/30 bg-primary/5 p-6 space-y-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                  Instant Interactive Calibration
+                </span>
+                <h4 className="text-base font-bold text-foreground mt-0.5">
+                  Practice {targetExamName} Distractor Traps Free
+                </h4>
+                <p className="text-xs text-muted-foreground mt-1 max-w-md">
+                  Experience adaptive test-taking under real exam timing with immediate mistake breakdowns.
+                </p>
+              </div>
+              <Link
+                href={`/practice/${practiceSlug}`}
+                className="inline-flex whitespace-nowrap items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow transition hover:opacity-90 shrink-0"
+              >
+                Start Full Diagnostic
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
-            <Link
-              href={`/practice/${practiceSlug}`}
-              className="inline-flex whitespace-nowrap items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow transition hover:opacity-90"
-            >
-              Start Diagnostic
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+
+            {topDomainDrills.length > 0 && (
+              <div className="pt-3 border-t border-primary/20 space-y-2">
+                <span className="text-[11px] font-mono text-muted-foreground uppercase block font-semibold">
+                  Specific {targetExamName} Topic Drills:
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {topDomainDrills.map((drill) => (
+                    <Link
+                      key={drill.domainSlug}
+                      href={`/practice/${drill.examSlug}/${drill.subjectSlug}/${drill.domainSlug}`}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-border/80 bg-card hover:bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary/50 transition-all shadow-2xs"
+                    >
+                      <Sparkles className="w-3 h-3 text-primary" />
+                      <span>{drill.domain}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
