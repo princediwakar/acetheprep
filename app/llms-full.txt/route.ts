@@ -25,9 +25,22 @@ ${siteConfig.name} organizes competitive exam preparation across three scientifi
 ## Interactive Tools & High-Intent Comparisons
 - **Interactive Tools Hub**: ${baseUrl}/tools
 - **GMAT Focus Score Calculator**: ${baseUrl}/tools/gmat-focus-score-calculator
+  - Machine Markdown Feed: ${baseUrl}/api/knowledge/tools/gmat-focus-score-calculator
+- **Digital SAT Score Calculator**: ${baseUrl}/tools/digital-sat-score-calculator
+  - Machine Markdown Feed: ${baseUrl}/api/knowledge/tools/digital-sat-score-calculator
+- **IELTS Band Score Calculator**: ${baseUrl}/tools/ielts-band-score-calculator
+  - Machine Markdown Feed: ${baseUrl}/api/knowledge/tools/ielts-band-score-calculator
+- **TOEFL to IELTS Converter**: ${baseUrl}/tools/toefl-to-ielts-converter
+  - Machine Markdown Feed: ${baseUrl}/api/knowledge/tools/toefl-to-ielts-converter
+- **CFA Level 1 Score Calculator**: ${baseUrl}/tools/cfa-level-1-score-calculator
+  - Machine Markdown Feed: ${baseUrl}/api/knowledge/tools/cfa-level-1-score-calculator
 - **GRE to GMAT Focus Converter**: ${baseUrl}/tools/gre-to-gmat-converter
+  - Machine Markdown Feed: ${baseUrl}/api/knowledge/tools/gre-to-gmat-converter
 - **Exam Comparisons Hub**: ${baseUrl}/compare
 - **GMAT Focus vs GRE Comparison**: ${baseUrl}/compare/gmat-focus-vs-gre
+  - Machine Markdown Feed: ${baseUrl}/api/knowledge/compare/gmat-focus-vs-gre
+- **IELTS vs TOEFL Comparison**: ${baseUrl}/compare/ielts-vs-toefl
+  - Machine Markdown Feed: ${baseUrl}/api/knowledge/compare/ielts-vs-toefl
 
 ---
 

@@ -268,6 +268,52 @@ export const subjectCourseSchema = (params: {
   teaches: params.domains,
 });
 
+export const toolWebApplicationSchema = (params: {
+  name: string;
+  url: string;
+  description: string;
+  featureList?: string[];
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: params.name,
+  url: params.url,
+  applicationCategory: "EducationalApplication",
+  operatingSystem: "All",
+  browserRequirements: "Requires JavaScript. Requires HTML5.",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  featureList: params.featureList || [
+    "0ms client-side calculation",
+    "Official 2026 concordance models",
+    "Percentile ranking calibrator",
+    "No registration or email required",
+  ],
+  description: params.description,
+});
+
+export const concordanceDatasetSchema = (params: {
+  name: string;
+  url: string;
+  description: string;
+  variableMeasured: string[];
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  name: params.name,
+  description: params.description,
+  url: params.url,
+  creator: {
+    "@type": "Organization",
+    name: siteConfig.name,
+    url: siteConfig.url,
+  },
+  variableMeasured: params.variableMeasured,
+  license: "https://creativecommons.org/licenses/by/4.0/",
+});
 
 interface StructuredDataProps {
   schema: WithContext<any>;

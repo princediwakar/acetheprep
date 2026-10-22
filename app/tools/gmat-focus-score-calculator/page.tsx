@@ -3,7 +3,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GmatFocusScoreCalculator } from "@/components/tools/GmatFocusScoreCalculator";
-import StructuredData, { breadcrumbSchema, faqPageSchema } from "@/components/seo/StructuredData";
+import StructuredData, {
+  breadcrumbSchema,
+  faqPageSchema,
+  toolWebApplicationSchema,
+  concordanceDatasetSchema,
+} from "@/components/seo/StructuredData";
+import { DirectAnswerCard } from "@/components/seo/DirectAnswerCard";
 import { siteConfig } from "@/config/site";
 import { CheckCircle2, ChevronRight, Calculator, BookOpen, Target, Sparkles } from "lucide-react";
 import type { WithContext } from "schema-dts";
@@ -22,6 +28,9 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: `${siteConfig.url}/tools/gmat-focus-score-calculator`,
+    types: {
+      "text/markdown": `${siteConfig.url}/api/knowledge/tools/gmat-focus-score-calculator`,
+    },
   },
   openGraph: {
     title: "GMAT Focus Score Calculator & Percentile Converter (2026)",
@@ -62,27 +71,37 @@ export default function GmatScoreCalculatorPage() {
     { name: "GMAT Focus Score Calculator", url: `${siteConfig.url}/tools/gmat-focus-score-calculator` },
   ];
 
-  const appSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
+  const appSchema = toolWebApplicationSchema({
     name: "GMAT Focus Score Calculator & Percentile Calibrator",
     url: `${siteConfig.url}/tools/gmat-focus-score-calculator`,
-    applicationCategory: "EducationalApplication",
-    operatingSystem: "All",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
     description:
       "Instant, interactive GMAT Focus score and percentile calculator based on official GMAC scoring concordance tables.",
-  };
+    featureList: [
+      "Total score range 205–805 calculation",
+      "Equal 33.3% weighting for Quant, Verbal, and Data Insights",
+      "Official GMAC global percentile calibration",
+      "Target M7 business school tier breakdown",
+    ],
+  });
+
+  const datasetSchema = concordanceDatasetSchema({
+    name: "Official GMAT Focus Score and Percentile Concordance Table",
+    url: `${siteConfig.url}/tools/gmat-focus-score-calculator`,
+    description: "Official GMAC scoring distribution mapping composite 205-805 scores to global percentiles and legacy 200-800 equivalents.",
+    variableMeasured: [
+      "GMAT Focus Score",
+      "Global Percentile",
+      "Legacy GMAT Equivalent",
+      "Target Business School Tier",
+    ],
+  });
 
   return (
     <>
       <StructuredData schema={breadcrumbSchema(breadcrumbs) as WithContext<any>} />
       <StructuredData schema={faqPageSchema(FAQS) as WithContext<any>} />
       <StructuredData schema={appSchema as WithContext<any>} />
+      <StructuredData schema={datasetSchema as WithContext<any>} />
 
       <main className="min-h-screen pt-20 sm:pt-24 pb-20 px-4 sm:px-6">
         <div className="mx-auto max-w-4xl">
@@ -123,6 +142,30 @@ export default function GmatScoreCalculatorPage() {
               Calculate your composite GMAT Focus score (205–805), official global percentile ranking, and target business school tier based on your Quant, Verbal, and Data Insights sections.
             </p>
           </div>
+
+          {/* AI Overview / Featured Snippet Direct Answer Card */}
+          <DirectAnswerCard
+            title="How GMAT Focus Scoring Works"
+            summary="The GMAT Focus Edition composite score ranges from 205 to 805, always ending in a 5. It is computed equally from three sections (Quantitative Reasoning, Verbal Reasoning, and Data Insights, 60–90 each), with each section contributing exactly 33.3% to your final score."
+            formulaOrRule="Composite (205–805) = (Quant + Verbal + Data Insights) × (20 / 3) + 5, rounded to nearest 5 ending in 5"
+            facts={[
+              {
+                label: "M7 Ultra-Competitive (98.6th %ile)",
+                value: "705 - 805",
+                subtext: "Stanford GSB, Harvard, Wharton, Booth",
+              },
+              {
+                label: "Top 15 Competitive Baseline (91.3th %ile)",
+                value: "655 - 695",
+                subtext: "Kellogg, Columbia, MIT Sloan, INSEAD",
+              },
+              {
+                label: "Legacy 700 Equivalence",
+                value: "645 Focus",
+                subtext: "GMAC recentered the bell curve to remove compression",
+              },
+            ]}
+          />
 
           {/* Interactive Calculator - Placed Above the Fold */}
           <div className="mb-12">

@@ -3,7 +3,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { DigitalSatScoreCalculator } from "@/components/tools/DigitalSatScoreCalculator";
-import StructuredData, { breadcrumbSchema, faqPageSchema } from "@/components/seo/StructuredData";
+import StructuredData, {
+  breadcrumbSchema,
+  faqPageSchema,
+  toolWebApplicationSchema,
+  concordanceDatasetSchema,
+} from "@/components/seo/StructuredData";
+import { DirectAnswerCard } from "@/components/seo/DirectAnswerCard";
 import { siteConfig } from "@/config/site";
 import { Calculator, CheckCircle2, ChevronRight, BookOpen, Target, Sparkles } from "lucide-react";
 import type { WithContext } from "schema-dts";
@@ -22,6 +28,9 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: `${siteConfig.url}/tools/digital-sat-score-calculator`,
+    types: {
+      "text/markdown": `${siteConfig.url}/api/knowledge/tools/digital-sat-score-calculator`,
+    },
   },
   openGraph: {
     title: "Digital SAT Score Calculator & Module 2 Simulator (2026)",
@@ -65,27 +74,37 @@ export default function DigitalSatScoreCalculatorPage() {
     },
   ];
 
-  const appSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
+  const appSchema = toolWebApplicationSchema({
     name: "Digital SAT Score Calculator & Adaptive Routing Simulator",
     url: `${siteConfig.url}/tools/digital-sat-score-calculator`,
-    applicationCategory: "EducationalApplication",
-    operatingSystem: "All",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
     description:
       "Free interactive Digital SAT score calculator with multistage adaptive module routing simulation and College Board percentile conversion.",
-  };
+    featureList: [
+      "Composite scale 400–1600 raw to scaled conversion",
+      "Reading & Writing and Math section breakdown",
+      "Module 2 adaptive routing penalty simulation",
+      "College Board national percentile benchmarking",
+    ],
+  });
+
+  const datasetSchema = concordanceDatasetSchema({
+    name: "Digital SAT Score and College Board Percentile Benchmark Table",
+    url: `${siteConfig.url}/tools/digital-sat-score-calculator`,
+    description: "Official College Board composite percentile benchmarks and competitive university target profiles.",
+    variableMeasured: [
+      "Composite Score",
+      "National Percentile",
+      "Competitive Target Colleges",
+      "Recommended Study Action",
+    ],
+  });
 
   return (
     <>
       <StructuredData schema={breadcrumbSchema(breadcrumbs) as WithContext<any>} />
       <StructuredData schema={faqPageSchema(FAQS) as WithContext<any>} />
       <StructuredData schema={appSchema as WithContext<any>} />
+      <StructuredData schema={datasetSchema as WithContext<any>} />
 
       <main className="min-h-screen pt-20 sm:pt-24 pb-20 px-4 sm:px-6">
         <div className="mx-auto max-w-4xl">
@@ -126,6 +145,30 @@ export default function DigitalSatScoreCalculatorPage() {
               Calculate your Digital SAT scaled composite score (400–1600) and national percentile from raw correct questions. Toggle Module 2 difficulty to simulate College Board’s adaptive routing penalty in 0ms.
             </p>
           </div>
+
+          {/* AI Overview / Featured Snippet Direct Answer Card */}
+          <DirectAnswerCard
+            title="How Digital SAT Scoring & Adaptive Routing Works"
+            summary="The Digital SAT composite score ranges from 400 to 1600, composed of Reading & Writing (200–800) and Math (200–800). Each section consists of two modules. Your performance on Module 1 dynamically routes you to an easier or harder Module 2. Getting routed to the easier Module 2 caps your maximum section score at 580–600."
+            formulaOrRule="Composite (400–1600) = Scaled Reading & Writing (200–800) + Scaled Math (200–800) via Item Response Theory (IRT)"
+            facts={[
+              {
+                label: "Ivy League / Elite Target (99th+ %ile)",
+                value: "1550 - 1600",
+                subtext: "MIT, Stanford, Harvard, Princeton",
+              },
+              {
+                label: "Top 25 Universities (93rd - 96th %ile)",
+                value: "1400 - 1470",
+                subtext: "NYU, Michigan, UVA, UNC Chapel Hill",
+              },
+              {
+                label: "Module 2 Easy Penalty",
+                value: "~590 Cap",
+                subtext: "Missing >6-7 in Module 1 blocks scores above 600",
+              },
+            ]}
+          />
 
           {/* Interactive Calculator Client Component */}
           <div className="mb-12">

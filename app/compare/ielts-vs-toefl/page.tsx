@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import StructuredData, { breadcrumbSchema, faqPageSchema } from "@/components/seo/StructuredData";
+import { DirectAnswerCard } from "@/components/seo/DirectAnswerCard";
 import { Scale, CheckCircle2, ChevronRight, Check, X, ArrowRight, BookOpen, Sparkles, Mic, Volume2 } from "lucide-react";
 import type { WithContext } from "schema-dts";
 
@@ -21,6 +22,9 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: `${siteConfig.url}/compare/ielts-vs-toefl`,
+    types: {
+      "text/markdown": `${siteConfig.url}/api/knowledge/compare/ielts-vs-toefl`,
+    },
   },
   openGraph: {
     title: "IELTS vs TOEFL (2026): Definitive Head-to-Head Comparison",
@@ -111,40 +115,29 @@ export default function IeltsVsToeflComparisonPage() {
             </p>
           </div>
 
-          {/* Quick Verdict Callout - Direct Answer */}
-          <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6 mb-10 space-y-3">
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary shrink-0" />
-              <h2 className="text-base font-bold text-foreground">
-                The 60-Second Verdict: Which Test Is Better for You?
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm text-muted-foreground">
-              <div className="rounded-xl border border-border/80 bg-card p-4 space-y-1.5">
-                <strong className="text-foreground font-semibold block text-sm">
-                  Take IELTS Academic if:
-                </strong>
-                <ul className="space-y-1 list-disc pl-4">
-                  <li>You communicate more comfortably talking to a live human examiner rather than speaking into a microphone with a timer.</li>
-                  <li>You prefer varied question formats (matching headings, diagram labelling, short answers, fill-in-the-blank).</li>
-                  <li>You understand British, Australian, and New Zealand accents easily.</li>
-                  <li>You are applying primarily to the UK, Canada, Australia, or Commonwealth countries.</li>
-                </ul>
-              </div>
-
-              <div className="rounded-xl border border-border/80 bg-card p-4 space-y-1.5">
-                <strong className="text-foreground font-semibold block text-sm">
-                  Take TOEFL iBT if:
-                </strong>
-                <ul className="space-y-1 list-disc pl-4">
-                  <li>You want a shorter exam (under 2 hours total).</li>
-                  <li>You type fast on a standard QWERTY keyboard and prefer multiple-choice questions.</li>
-                  <li>You are comfortable with American campus academic accents and rapid lecture note-taking.</li>
-                  <li>You excel at integrated tasks (listening to a lecture and writing/speaking about how it refutes a reading passage).</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          {/* AI Overview / Featured Snippet Direct Answer Card */}
+          <DirectAnswerCard
+            title="Executive Verdict: IELTS Academic vs TOEFL iBT"
+            summary="Both IELTS Academic and TOEFL iBT are accepted with zero distinction at 100% of Ivy League and global top 100 universities. Take IELTS if you communicate more comfortably talking face-to-face with a human examiner and prefer diverse question formats. Take TOEFL if you type faster than you write, prefer speaking into a computer microphone with exact countdown timers, and want a shorter 2-hour testing session."
+            formulaOrRule="Admissions Policy: Equal global acceptance across US, UK, Canada, Australia; neither test confers an admissions preference."
+            facts={[
+              {
+                label: "Speaking Evaluation",
+                value: "IELTS (Human) vs TOEFL (AI + Mic)",
+                subtext: "IELTS is a 1-on-1 conversational interview",
+              },
+              {
+                label: "Testing Duration",
+                value: "IELTS (~2h 45m) vs TOEFL (<2h)",
+                subtext: "TOEFL restructured to under 2 hours in 2023",
+              },
+              {
+                label: "Question Modality",
+                value: "IELTS (Mixed formats) vs TOEFL (Multiple Choice)",
+                subtext: "IELTS tests fill-in-blanks & True/False/Not Given",
+              },
+            ]}
+          />
 
           {/* Side-by-Side Architectural Comparison Table */}
           <div className="space-y-4 mb-12">

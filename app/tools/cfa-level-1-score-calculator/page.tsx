@@ -3,7 +3,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CfaLevel1ScoreCalculator } from "@/components/tools/CfaLevel1ScoreCalculator";
-import StructuredData, { breadcrumbSchema, faqPageSchema } from "@/components/seo/StructuredData";
+import StructuredData, {
+  breadcrumbSchema,
+  faqPageSchema,
+  toolWebApplicationSchema,
+  concordanceDatasetSchema,
+} from "@/components/seo/StructuredData";
+import { DirectAnswerCard } from "@/components/seo/DirectAnswerCard";
 import { siteConfig } from "@/config/site";
 import { Calculator, CheckCircle2, ChevronRight, BookOpen, Target, Sparkles } from "lucide-react";
 import type { WithContext } from "schema-dts";
@@ -22,6 +28,9 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: `${siteConfig.url}/tools/cfa-level-1-score-calculator`,
+    types: {
+      "text/markdown": `${siteConfig.url}/api/knowledge/tools/cfa-level-1-score-calculator`,
+    },
   },
   openGraph: {
     title: "CFA Level 1 Score & MPS Estimator (2026 Model)",
@@ -65,27 +74,37 @@ export default function CfaLevel1ScoreCalculatorPage() {
     },
   ];
 
-  const appSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
+  const appSchema = toolWebApplicationSchema({
     name: "CFA Level 1 Score & MPS Estimator",
     url: `${siteConfig.url}/tools/cfa-level-1-score-calculator`,
-    applicationCategory: "EducationalApplication",
-    operatingSystem: "All",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
     description:
       "Interactive 0ms weighted score calculator for CFA Level 1 candidates. Models official topic weights and historical Minimum Passing Score boundaries.",
-  };
+    featureList: [
+      "10 CFA curriculum topic weight modeler",
+      "Historical 68–70% Minimum Passing Score (MPS) simulator",
+      "Ethics Adjustment borderline pass/fail evaluation",
+      "Per-topic target scoring recommendations",
+    ],
+  });
+
+  const datasetSchema = concordanceDatasetSchema({
+    name: "CFA Institute Level 1 Topic Weights & MPS Threshold Dataset",
+    url: `${siteConfig.url}/tools/cfa-level-1-score-calculator`,
+    description: "Official CFA Institute topic weight ranges for Level 1 examination sessions and historical passing thresholds.",
+    variableMeasured: [
+      "Curriculum Topic",
+      "Topic Weight Range",
+      "Exam Session",
+      "Strategic Exam Priority",
+    ],
+  });
 
   return (
     <>
       <StructuredData schema={breadcrumbSchema(breadcrumbs) as WithContext<any>} />
       <StructuredData schema={faqPageSchema(FAQS) as WithContext<any>} />
       <StructuredData schema={appSchema as WithContext<any>} />
+      <StructuredData schema={datasetSchema as WithContext<any>} />
 
       <main className="min-h-screen pt-20 sm:pt-24 pb-20 px-4 sm:px-6">
         <div className="mx-auto max-w-4xl">
@@ -126,6 +145,30 @@ export default function CfaLevel1ScoreCalculatorPage() {
               Calculate your weighted aggregate percentage across all 10 CFA Institute curriculum topics. Compare your projected performance against the historical ~69% Minimum Passing Score (MPS) threshold with real-time Ethics adjustment simulation.
             </p>
           </div>
+
+          {/* AI Overview / Featured Snippet Direct Answer Card */}
+          <DirectAnswerCard
+            title="How CFA Level 1 Scoring & MPS Works"
+            summary="CFA Level 1 passing decisions are based on a Minimum Passing Score (MPS) determined by the CFA Institute Board of Governors, historically falling between 68% and 70%. Your score is the weighted average across 10 curriculum topics. Candidates scoring right on the MPS threshold are evaluated via the Ethics Adjustment: scoring >70% in Ethics can turn a borderline fail into a pass."
+            formulaOrRule="Aggregate % = Sum( Topic Score % × Topic Weight ) | Pass Benchmark: >= 70.0% Aggregate"
+            facts={[
+              {
+                label: "Safe Passing Threshold",
+                value: "70.0%+ Weighted",
+                subtext: "Historically corresponds to 99.9% pass probability",
+              },
+              {
+                label: "Big 4 Topics (>50% Exam)",
+                value: "Ethics, FSA, Equity, Fixed Inc",
+                subtext: "Ethics is 15-20%; FSA is 11-14%",
+              },
+              {
+                label: "Exam Architecture",
+                value: "180 Questions (2 × 135m)",
+                subtext: "No negative marking for incorrect choices",
+              },
+            ]}
+          />
 
           {/* Interactive Calculator */}
           <div className="mb-12">

@@ -3,7 +3,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ToeflToIeltsConverter } from "@/components/tools/ToeflToIeltsConverter";
-import StructuredData, { breadcrumbSchema, faqPageSchema } from "@/components/seo/StructuredData";
+import StructuredData, {
+  breadcrumbSchema,
+  faqPageSchema,
+  toolWebApplicationSchema,
+  concordanceDatasetSchema,
+} from "@/components/seo/StructuredData";
+import { DirectAnswerCard } from "@/components/seo/DirectAnswerCard";
 import { siteConfig } from "@/config/site";
 import { ArrowLeftRight, CheckCircle2, ChevronRight, BookOpen, Target, Sparkles } from "lucide-react";
 import type { WithContext } from "schema-dts";
@@ -22,6 +28,9 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: `${siteConfig.url}/tools/toefl-to-ielts-converter`,
+    types: {
+      "text/markdown": `${siteConfig.url}/api/knowledge/tools/toefl-to-ielts-converter`,
+    },
   },
   openGraph: {
     title: "TOEFL to IELTS Score Converter (2026 Concordance)",
@@ -65,27 +74,37 @@ export default function ToeflToIeltsConverterPage() {
     },
   ];
 
-  const appSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
+  const appSchema = toolWebApplicationSchema({
     name: "TOEFL to IELTS Score Converter",
     url: `${siteConfig.url}/tools/toefl-to-ielts-converter`,
-    applicationCategory: "EducationalApplication",
-    operatingSystem: "All",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
     description:
       "Instant interactive converter between TOEFL iBT composite scores and IELTS Academic band levels based on ETS concordance studies.",
-  };
+    featureList: [
+      "Official ETS research concordance translation",
+      "Composite (0–120) to IELTS Band (0–9.0) mapping",
+      "CEFR language framework calibration",
+      "University admissions minimum cutoffs",
+    ],
+  });
+
+  const datasetSchema = concordanceDatasetSchema({
+    name: "Official TOEFL iBT to IELTS Academic Concordance Table",
+    url: `${siteConfig.url}/tools/toefl-to-ielts-converter`,
+    description: "Verified concordance dataset developed by Educational Testing Service (ETS) for international student university admissions.",
+    variableMeasured: [
+      "IELTS Band",
+      "TOEFL iBT Total Score",
+      "CEFR Level",
+      "University Admissions Baseline",
+    ],
+  });
 
   return (
     <>
       <StructuredData schema={breadcrumbSchema(breadcrumbs) as WithContext<any>} />
       <StructuredData schema={faqPageSchema(FAQS) as WithContext<any>} />
       <StructuredData schema={appSchema as WithContext<any>} />
+      <StructuredData schema={datasetSchema as WithContext<any>} />
 
       <main className="min-h-screen pt-20 sm:pt-24 pb-20 px-4 sm:px-6">
         <div className="mx-auto max-w-4xl">
@@ -126,6 +145,30 @@ export default function ToeflToIeltsConverterPage() {
               Convert your TOEFL iBT score (0–120) into the equivalent IELTS Academic band score (0–9.0). Grounded in empirical ETS concordance tables for graduate and undergraduate admissions.
             </p>
           </div>
+
+          {/* AI Overview / Featured Snippet Direct Answer Card */}
+          <DirectAnswerCard
+            title="How TOEFL iBT and IELTS Scores Compare"
+            summary="TOEFL iBT (0–120) and IELTS Academic (0–9.0) concordance is based on official ETS empirical research. A TOEFL score of 100 corresponds to IELTS Band 7.0 (scores 94–101 map to 7.0). Scores of 102–109 correspond to IELTS 7.5, and 110–114 map to IELTS 8.0."
+            formulaOrRule="ETS Concordance: TOEFL 100 = IELTS Band 7.0 | TOEFL 105 = IELTS Band 7.5 | TOEFL 110 = IELTS Band 8.0"
+            facts={[
+              {
+                label: "TOEFL 100 Equivalent",
+                value: "IELTS Band 7.0",
+                subtext: "Universal cutoff for Top 50-100 US & UK colleges",
+              },
+              {
+                label: "TOEFL 105+ Equivalent",
+                value: "IELTS Band 7.5",
+                subtext: "Required for Ivy League & elite graduate degrees",
+              },
+              {
+                label: "TOEFL 115+ Equivalent",
+                value: "IELTS Band 8.5 - 9.0",
+                subtext: "CEFR C2 Mastery (Oxford, Cambridge, HBS)",
+              },
+            ]}
+          />
 
           {/* Interactive Component */}
           <div className="mb-12">

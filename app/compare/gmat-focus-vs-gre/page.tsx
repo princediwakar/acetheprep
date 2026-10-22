@@ -5,6 +5,7 @@ import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { ExamDecisionQuiz } from "@/components/compare/ExamDecisionQuiz";
 import StructuredData, { breadcrumbSchema, faqPageSchema } from "@/components/seo/StructuredData";
+import { DirectAnswerCard } from "@/components/seo/DirectAnswerCard";
 import { Scale, CheckCircle2, ChevronRight, Check, X, ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import type { WithContext } from "schema-dts";
 
@@ -22,6 +23,9 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: `${siteConfig.url}/compare/gmat-focus-vs-gre`,
+    types: {
+      "text/markdown": `${siteConfig.url}/api/knowledge/compare/gmat-focus-vs-gre`,
+    },
   },
   openGraph: {
     title: "GMAT Focus vs GRE (2026): Definitive Head-to-Head Comparison",
@@ -111,6 +115,30 @@ export default function GmatVsGreComparisonPage() {
               Choosing between the GMAT Focus Edition and ETS GRE General is the most crucial strategic decision for prospective graduate and business school candidates. Here is the physical breakdown of test structure, calculator policies, adaptive mechanics, and admissions ROI.
             </p>
           </div>
+
+          {/* AI Overview / Featured Snippet Direct Answer Card */}
+          <DirectAnswerCard
+            title="Executive Verdict: GMAT Focus vs GRE"
+            summary="Both exams are accepted 100% equally at all M7 and global business schools (over 35% of Stanford GSB and Harvard MBA admits submitted GRE scores). Choose GMAT Focus if you excel in mental math, data interpretation, and critical logic without formal geometry. Choose GRE if you need an on-screen calculator for math, prefer skipping questions freely within sections, or are applying to dual-degree programs."
+            formulaOrRule="Admissions Standard: 100% equal acceptance across Top 25 MBA programs; finance & consulting tracks expect an 80th+ percentile Quantitative profile regardless of exam."
+            facts={[
+              {
+                label: "Calculator Policy",
+                value: "GMAT (DI Only) vs GRE (All Quant)",
+                subtext: "GMAT Quant forbids calculators completely",
+              },
+              {
+                label: "Euclidean Geometry",
+                value: "GMAT (Removed) vs GRE (Full)",
+                subtext: "No triangle or circle proofs on GMAT Focus",
+              },
+              {
+                label: "Navigation Model",
+                value: "GMAT (Edit 3) vs GRE (Skip freely)",
+                subtext: "GMAT allows bookmarking & editing up to 3 answers",
+              },
+            ]}
+          />
 
           {/* Interactive Decision Quiz - Above the Fold */}
           <div className="mb-12">

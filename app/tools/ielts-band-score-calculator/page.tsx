@@ -3,7 +3,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { IeltsBandScoreCalculator } from "@/components/tools/IeltsBandScoreCalculator";
-import StructuredData, { breadcrumbSchema, faqPageSchema } from "@/components/seo/StructuredData";
+import StructuredData, {
+  breadcrumbSchema,
+  faqPageSchema,
+  toolWebApplicationSchema,
+  concordanceDatasetSchema,
+} from "@/components/seo/StructuredData";
+import { DirectAnswerCard } from "@/components/seo/DirectAnswerCard";
 import { siteConfig } from "@/config/site";
 import { Calculator, CheckCircle2, ChevronRight, BookOpen, Target, Sparkles } from "lucide-react";
 import type { WithContext } from "schema-dts";
@@ -22,6 +28,9 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: `${siteConfig.url}/tools/ielts-band-score-calculator`,
+    types: {
+      "text/markdown": `${siteConfig.url}/api/knowledge/tools/ielts-band-score-calculator`,
+    },
   },
   openGraph: {
     title: "IELTS Band Score Calculator & Rounding Simulator (2026)",
@@ -65,27 +74,37 @@ export default function IeltsBandScoreCalculatorPage() {
     },
   ];
 
-  const appSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
+  const appSchema = toolWebApplicationSchema({
     name: "IELTS Band Score Calculator & CEFR Converter",
     url: `${siteConfig.url}/tools/ielts-band-score-calculator`,
-    applicationCategory: "EducationalApplication",
-    operatingSystem: "All",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
     description:
       "Free interactive IELTS Academic band score calculator with raw-to-band conversion and official upward half-band rounding algorithms.",
-  };
+    featureList: [
+      "Official IDP and British Council upward rounding algorithm",
+      "Academic Reading and Listening raw mark converters (out of 40)",
+      "CEFR European framework proficiency translation",
+      "Section sub-score averaging with 0ms latency",
+    ],
+  });
+
+  const datasetSchema = concordanceDatasetSchema({
+    name: "Official IELTS Academic Reading and Listening Raw-to-Band Concordance Table",
+    url: `${siteConfig.url}/tools/ielts-band-score-calculator`,
+    description: "Official marks required out of 40 questions to achieve each respective band score (0 to 9.0) and CEFR proficiency classification.",
+    variableMeasured: [
+      "IELTS Band Score",
+      "Listening Raw Score (out of 40)",
+      "Academic Reading Raw Score (out of 40)",
+      "CEFR Level",
+    ],
+  });
 
   return (
     <>
       <StructuredData schema={breadcrumbSchema(breadcrumbs) as WithContext<any>} />
       <StructuredData schema={faqPageSchema(FAQS) as WithContext<any>} />
       <StructuredData schema={appSchema as WithContext<any>} />
+      <StructuredData schema={datasetSchema as WithContext<any>} />
 
       <main className="min-h-screen pt-20 sm:pt-24 pb-20 px-4 sm:px-6">
         <div className="mx-auto max-w-4xl">
@@ -126,6 +145,30 @@ export default function IeltsBandScoreCalculatorPage() {
               Calculate your overall IELTS band score (0–9.0) and CEFR proficiency level. Input raw Listening and Reading marks out of 40 to simulate the official upward half-band rounding algorithm in 0ms.
             </p>
           </div>
+
+          {/* AI Overview / Featured Snippet Direct Answer Card */}
+          <DirectAnswerCard
+            title="How IELTS Band Scoring & Official Rounding Works"
+            summary="The overall IELTS band score is calculated by taking the average of all four sub-scores (Listening, Reading, Writing, Speaking), weighted at 25% each. The average is rounded to the nearest half or whole band: an average ending in .25 rounds UP to .50, and an average ending in .75 rounds UP to the next whole band."
+            formulaOrRule="Overall Band = OfficialRound( (Listening + Reading + Writing + Speaking) / 4 ) where .25 -> .5 and .75 -> 1.0"
+            facts={[
+              {
+                label: "Upward Rounding Rule",
+                value: "6.25 → 6.5 / 6.75 → 7.0",
+                subtext: "Only averages under .125 or .625 round down",
+              },
+              {
+                label: "Band 7.0 Target Marks",
+                value: "30 - 32 / 40",
+                subtext: "Required for Tier 1 US/UK universities",
+              },
+              {
+                label: "Band 8.0+ Target Marks",
+                value: "35 - 36 / 40",
+                subtext: "C1 Proficient / Oxford & Cambridge baseline",
+              },
+            ]}
+          />
 
           {/* Interactive Calculator Client Component */}
           <div className="mb-12">
