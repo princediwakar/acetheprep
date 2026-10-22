@@ -200,7 +200,7 @@ export function PracticeDirectory({ exams }: PracticeDirectoryProps) {
                       className="inline-flex items-center gap-1.5 font-bold text-xs bg-primary text-primary-foreground px-3.5 py-2 rounded-xl shadow-xs hover:opacity-90 transition-opacity"
                     >
                       <Zap className="w-3.5 h-3.5" />
-                      <span>Start 10Q Drill</span>
+                      <span>Practice Questions</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   ) : (

@@ -63,7 +63,6 @@ const EXAM_HERO_COPY: Record<
     org: string;
     headline: string;
     subhead: string;
-    drillLabel: string;
   }
 > = {
   sat: {
@@ -71,42 +70,36 @@ const EXAM_HERO_COPY: Record<
     headline: "Adaptive practice for the Digital SAT.",
     subhead:
       "Master Reading & Writing and Math modules with authentic Desmos-integrated questions, step-by-step solutions, and spaced retention review.",
-    drillLabel: "Start SAT Diagnostic Drill",
   },
   gmat: {
     org: "GMAC Focus Edition",
     headline: "Adaptive practice for the GMAT Focus.",
     subhead:
       "Target high-yield Data Insights, Quantitative, and Verbal questions with first-principles derivations and percentile-calibrated spaced review.",
-    drillLabel: "Start GMAT Diagnostic Drill",
   },
   gre: {
     org: "ETS GRE General",
     headline: "Adaptive practice for the GRE General.",
     subhead:
-      "Drill Quantitative Comparison, Text Completion contrast clues, and timed problem sets with clean step-by-step logic.",
-    drillLabel: "Start GRE Diagnostic Drill",
+      "Practice Quantitative Comparison, Text Completion contrast clues, and timed problem sets with clean step-by-step logic.",
   },
   cfa: {
     org: "CFA Institute Level 1",
     headline: "Adaptive practice for CFA Level 1.",
     subhead:
       "Master FSA, Quantitative Methods, and Corporate Issuers with BA II Plus formulas, clear derivations, and spaced review.",
-    drillLabel: "Start CFA Diagnostic Drill",
   },
   ielts: {
     org: "British Council & IDP",
     headline: "Adaptive practice for IELTS Academic.",
     subhead:
       "Master True / False / Not Given passage logic, paraphrase synthesis, and vocabulary precision with un-gated practice.",
-    drillLabel: "Start IELTS Diagnostic Drill",
   },
   toefl: {
     org: "ETS TOEFL iBT",
     headline: "Adaptive practice for TOEFL iBT.",
     subhead:
-      "Drill sentence insertion flow, rhetorical purpose analysis, and academic reading comprehension under authentic timing.",
-    drillLabel: "Start TOEFL Diagnostic Drill",
+      "Practice sentence insertion flow, rhetorical purpose analysis, and academic reading comprehension under authentic timing.",
   },
 };
 

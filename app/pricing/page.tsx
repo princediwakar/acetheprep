@@ -57,7 +57,7 @@ const COMPARISON_ROWS = [
     feature: "10-Question Quick Practice Sets",
     starter: true,
     pro: true,
-    description: "Targeted quick drills across any subject domain",
+    description: "Targeted practice questions across any subject domain",
   },
   {
     feature: "Step-by-Step Solutions & Mistake Explanations",
@@ -72,10 +72,10 @@ const COMPARISON_ROWS = [
     description: "Calibrated diagnostic score based on accuracy and solving speed",
   },
   {
-    feature: "Official Sectional Practice Drills",
+    feature: "Official Sectional Practice Modules",
     starter: false,
     pro: true,
-    description: "Realistic sectional stamina drills matching official module lengths and timed pressure",
+    description: "Timed practice modules matching official section lengths and time limits",
   },
   {
     feature: "Official Full Mock Exam Simulations",

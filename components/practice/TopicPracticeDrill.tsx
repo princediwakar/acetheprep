@@ -109,7 +109,7 @@ export function TopicPracticeDrill({
             </span>
           </div>
           <h2 className="text-lg sm:text-xl font-bold text-foreground">
-            {domainName} Practice Drill
+            {domainName} Practice Questions
           </h2>
         </div>
 
@@ -127,7 +127,7 @@ export function TopicPracticeDrill({
               type="button"
               onClick={handleReset}
               className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-md hover:bg-muted cursor-pointer"
-              title="Reset Drill"
+              title="Reset Questions"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Reset</span>

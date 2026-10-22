@@ -170,10 +170,10 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
             <span>Curriculum & Questions</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground font-heading">
-            {examName} Syllabus &amp; Practice Drills
+            {examName} Syllabus &amp; Practice Questions
           </h1>
           <p className="mt-3 text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed">
-            Explore the official blueprint and choose any topic module below to launch an authentic 10-question practice drill with immediate distractor autopsies.
+            Explore the official blueprint and choose any topic module below to practice authentic questions with step-by-step first-principles solutions.
           </p>
 
           {/* Topological Cross-Links to Analytics & Insights */}
@@ -235,19 +235,19 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
             <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-1">
               <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
                 <Timer className="w-4 h-4 text-amber-500" />
-                <span>Daily Quick Drill</span>
+                <span>Quick Practice Set</span>
               </div>
               <div className="text-2xl font-extrabold text-foreground">
                 {blueprint.quickDrillCount} Questions
               </div>
               <p className="text-xs text-muted-foreground">
-                {blueprint.quickDrillMinutes} minutes • Zero-friction topic sprints
+                {blueprint.quickDrillMinutes} minutes • 10-question topic practice sets
               </p>
             </div>
           </div>
         </div>
 
-        {/* Highest-Yield Diagnostic Drills (1-Click Start) */}
+        {/* Highest-Yield Practice Sets (1-Click Start) */}
         {featuredDrills && featuredDrills.length > 0 && (
           <div className="mb-12 rounded-2xl border border-primary/30 bg-primary/5 p-6 sm:p-7 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
@@ -256,7 +256,7 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
                   Recommended Starting Points
                 </span>
                 <h2 className="text-xl font-bold text-foreground">
-                  Highest-Yield Diagnostic Drills
+                  High-Yield Practice Sets
                 </h2>
               </div>
               <span className="text-xs text-muted-foreground font-medium">
@@ -280,7 +280,7 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
                     </p>
                   </div>
                   <span className="text-xs font-semibold text-primary inline-flex items-center gap-1 pt-1">
-                    Start Drill <ArrowRight className="h-3 w-3" />
+                    Practice Questions <ArrowRight className="h-3 w-3" />
                   </span>
                 </Link>
               ))}
@@ -345,7 +345,7 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
                           {domainName}
                         </span>
                         <span className="mt-3 text-xs text-primary inline-flex items-center gap-1 font-semibold group-hover:translate-x-0.5 transition-transform">
-                          Start Drill <ArrowRight className="w-3 h-3" />
+                          Practice Questions <ArrowRight className="w-3 h-3" />
                         </span>
                       </Link>
                     );
