@@ -137,7 +137,7 @@ export function TopicPracticeDrill({
       </div>
 
       {/* Question Stepper Buttons */}
-      <div className="flex items-center justify-between gap-2 overflow-x-auto pb-1">
+      <div className="flex items-center justify-between gap-2 overflow-x-auto p-1.5">
         <div className="flex items-center gap-1.5 flex-wrap">
           {questions.map((_, idx) => {
             const att = attempts[idx];
@@ -150,7 +150,7 @@ export function TopicPracticeDrill({
                 : "border-rose-500/40 bg-rose-500/15 text-rose-700 dark:text-rose-400 font-bold";
             }
             if (isCurrent) {
-              pillStyle += " ring-2 ring-primary ring-offset-1 ring-offset-background font-bold text-foreground";
+              pillStyle += " ring-2 ring-primary ring-offset-1 ring-offset-background font-bold text-foreground relative z-10";
             }
 
             return (
