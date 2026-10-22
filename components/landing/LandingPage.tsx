@@ -2,7 +2,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useUser } from "@/hooks/useUser";
 import { PracticeHeroSection } from "./PracticeHeroSection";
 import { ThreePillarsSection } from "./ThreePillarsSection";
 import { GlobalExamsSection } from "./GlobalExamsSection";
@@ -16,6 +17,8 @@ interface LandingPageProps {
 }
 
 export default function LandingPage({ initialExam }: LandingPageProps) {
+  const router = useRouter();
+  const { user, isUserLoading } = useUser();
   const searchParams = useSearchParams();
   const paramExam = (searchParams.get("exam") || initialExam)?.toLowerCase() as ExamKey | undefined;
 
@@ -26,6 +29,13 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
 
   const [activeExam, setActiveExam] = useState<ExamKey>(validExam);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number>(0);
+
+  // Instant client-side redirect for authenticated returning students
+  useEffect(() => {
+    if (!isUserLoading && user) {
+      router.replace("/home");
+    }
+  }, [user, isUserLoading, router]);
 
   // Keep state in sync if SSR initialExam changes or URL changes externally
   useEffect(() => {

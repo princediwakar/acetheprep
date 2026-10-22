@@ -4,8 +4,6 @@ import { ThemeProvider } from "@/components/ThemeProvider"
 import { AppShell } from "@/components/AppShell";
 import { Toaster } from "@/components/ui/sonner"
 import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
-import { createClient } from "@/lib/supabase/server";
-import { computeStreak } from "@/lib/utils";
 import { Metadata, Viewport } from "next";
 import StructuredData, { websiteSchema, organizationSchema, educationalOrgSchema, educationalAppSchema } from "@/components/seo/StructuredData";
 import "./globals.css";
@@ -67,59 +65,11 @@ export const viewport: Viewport = {
     initialScale: 1,
 };
 
-export interface SidebarData {
-  examName: string;
-  daysRemaining: number;
-  streak: number;
-}
-
-export default async function RootLayout({
+export default function RootLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    const supabase = await createClient();
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
-
-    let sidebarData: SidebarData | null = null;
-
-    if (user) {
-        const [profileRes, answersRes] = await Promise.all([
-            supabase
-                .from("exam_profiles")
-                .select("exam_name, target_date")
-                .eq("user_id", user.id)
-                .eq("is_active", true)
-                .maybeSingle(),
-            supabase
-                .from("session_answers")
-                .select("answered_at")
-                .eq("user_id", user.id)
-                .order("answered_at", { ascending: false })
-                .limit(500),
-        ]);
-
-        if (profileRes.data) {
-            const now = new Date();
-            const targetDate = new Date(profileRes.data.target_date);
-            const daysRemaining = Math.max(
-                0,
-                Math.ceil((targetDate.getTime() - now.getTime()) / 86400000),
-            );
-            const streak = computeStreak(
-                (answersRes.data || []) as { answered_at: string }[],
-            );
-
-            sidebarData = {
-                examName: profileRes.data.exam_name,
-                daysRemaining,
-                streak,
-            };
-        }
-    }
-
     return (
         <html lang="en" suppressHydrationWarning>
             <body>
@@ -133,7 +83,7 @@ export default async function RootLayout({
                     <StructuredData schema={organizationSchema} />
                     <StructuredData schema={educationalOrgSchema} />
                     <StructuredData schema={educationalAppSchema} />
-                    <AppShell sidebarData={sidebarData}>
+                    <AppShell>
                         {children}
                         <FeedbackWidget />
                         <Toaster position="top-center" richColors />

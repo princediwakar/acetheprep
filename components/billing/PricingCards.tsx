@@ -12,13 +12,18 @@ import { createCheckoutSession } from "@/lib/actions/billing";
 import { cn } from "@/lib/utils";
 import { CompactPaymentTrust } from "./PaymentTrustBadge";
 
+import { useUser } from "@/hooks/useUser";
+
 interface PricingCardsProps {
   userEmail?: string | null;
   isPro?: boolean;
 }
 
-export function PricingCards({ userEmail, isPro }: PricingCardsProps) {
+export function PricingCards({ userEmail: propEmail, isPro: propIsPro }: PricingCardsProps) {
   const router = useRouter();
+  const { user } = useUser();
+  const userEmail = propEmail ?? user?.email ?? null;
+  const isPro = propIsPro ?? false;
   const [loadingPlan, setLoadingPlan] = useState<"monthly" | "quarterly" | null>(null);
 
   async function handlePlanCheckout(planType: "monthly" | "quarterly") {

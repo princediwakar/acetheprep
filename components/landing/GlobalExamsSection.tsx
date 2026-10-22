@@ -7,7 +7,7 @@ interface GlobalExamsSectionProps {
   onSelectExam?: (exam: ExamKey) => void;
 }
 
-const EXAMS_ORDER: ExamKey[] = ["gmat", "sat", "gre", "cfa", "ielts", "toefl"];
+import { EXAM_KEYS as EXAMS_ORDER } from "@/lib/constants/exams";
 
 export function GlobalExamsSection({ onSelectExam }: GlobalExamsSectionProps) {
   return (

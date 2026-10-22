@@ -11,7 +11,8 @@ import { Header } from "./Header";
 import { UserMenu } from "./UserMenu";
 import { BrandLogo } from "@/components/shared/BrandLogo";
 import SiteFooter from "@/components/landing/SiteFooter";
-import type { SidebarData } from "@/app/layout";
+import { supabase } from "@/lib/supabase/client";
+import { computeStreak } from "@/lib/utils";
 import {
   History,
   Compass,
@@ -23,17 +24,27 @@ import {
   Flame,
 } from "lucide-react";
 
+export interface SidebarData {
+  examName: string;
+  daysRemaining: number;
+  streak: number;
+}
+
 const mainItems = [
   { title: "Home", url: "/home", icon: Home },
   { title: "History", url: "/history", icon: History },
 ];
 
-export function AppShell({ children, sidebarData }: { children: React.ReactNode; sidebarData?: SidebarData | null }) {
+export function AppShell({ children, sidebarData: initialSidebarData }: { children: React.ReactNode; sidebarData?: SidebarData | null }) {
   const pathname = usePathname();
   const { user, isUserLoading } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [sidebarData, setSidebarData] = useState<SidebarData | null>(initialSidebarData || null);
+
+  const showOnRoutes = ["/create", "/quizzes", "/home", "/dashboard", "/history", "/setup"];
+  const shouldShowSidebar = showOnRoutes.includes(pathname) && !!user;
 
   useEffect(() => {
     setMounted(true);
@@ -43,6 +54,57 @@ export function AppShell({ children, sidebarData }: { children: React.ReactNode;
     mql.addEventListener("change", handler);
     return () => mql.removeEventListener("change", handler);
   }, []);
+
+  useEffect(() => {
+    if (!user || !shouldShowSidebar) return;
+    const userId = user.id;
+    let cancelled = false;
+
+    async function fetchSidebarTelemetry() {
+      try {
+        const [profileRes, answersRes] = await Promise.all([
+          supabase
+            .from("exam_profiles")
+            .select("exam_name, target_date")
+            .eq("user_id", userId)
+            .eq("is_active", true)
+            .maybeSingle(),
+          supabase
+            .from("session_answers")
+            .select("answered_at")
+            .eq("user_id", userId)
+            .order("answered_at", { ascending: false })
+            .limit(500),
+        ]);
+
+        if (!cancelled && profileRes.data) {
+          const now = new Date();
+          const targetDate = new Date(profileRes.data.target_date);
+          const daysRemaining = Math.max(
+            0,
+            Math.ceil((targetDate.getTime() - now.getTime()) / 86400000)
+          );
+          const streak = computeStreak(
+            (answersRes.data || []) as { answered_at: string }[]
+          );
+
+          setSidebarData({
+            examName: profileRes.data.exam_name,
+            daysRemaining,
+            streak,
+          });
+        }
+      } catch {
+        // Fallback silently if offline or uninitialized
+      }
+    }
+
+    fetchSidebarTelemetry();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user, shouldShowSidebar]);
 
   const handleSignOut = async () => {
     try {
@@ -60,8 +122,6 @@ export function AppShell({ children, sidebarData }: { children: React.ReactNode;
     pathname === "/create" ? "Create a Quiz" :
     pathname === "/quizzes" ? "Public Quizzes" : "";
 
-  const showOnRoutes = ["/create", "/quizzes", "/home", "/dashboard", "/history", "/setup"];
-  const shouldShowSidebar = showOnRoutes.includes(pathname) && !!user;
   const isQuizPage = pathname.startsWith("/quiz/") || pathname.startsWith("/play/") || pathname.startsWith("/session/");
 
   // On active exam/quiz sessions, grant 100% full-screen without website navbar or user menu

@@ -3,8 +3,14 @@
 import { permanentRedirect } from "next/navigation";
 import { examToSlug, slugToExam } from "@/lib/slugs";
 
+import { SUPPORTED_EXAMS } from "@/lib/constants/exams";
+
 interface PageProps {
   params: Promise<{ exam: string }>;
+}
+
+export async function generateStaticParams() {
+  return SUPPORTED_EXAMS.map((e) => ({ exam: e.slug }));
 }
 
 export default async function ExamInsightsRedirectPage({ params }: PageProps) {

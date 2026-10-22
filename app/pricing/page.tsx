@@ -1,8 +1,6 @@
 // Path: app/pricing/page.tsx
 import { Metadata } from "next";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
-import { getUserSubscriptionStatus } from "@/lib/billing";
 import { PricingCards } from "@/components/billing/PricingCards";
 import { FullPaymentTrustBanner } from "@/components/billing/PaymentTrustBadge";
 import { Badge } from "@/components/ui/badge";
@@ -126,16 +124,7 @@ const FAQS = [
   },
 ];
 
-export default async function PricingPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const subscriptionStatus = user
-    ? await getUserSubscriptionStatus(user.id)
-    : { isPro: false, planType: null };
-
+export default function PricingPage() {
   const pricingFaqs = FAQS.map((f) => ({
     question: f.q,
     answer: f.a,
@@ -167,7 +156,7 @@ export default async function PricingPage() {
       </div>
 
       {/* Pricing Cards */}
-      <PricingCards userEmail={user?.email} isPro={subscriptionStatus.isPro} />
+      <PricingCards />
 
       {/* Institutional Trust & Security Banner */}
       <div className="max-w-4xl mx-auto mt-12">
@@ -256,10 +245,10 @@ export default async function PricingPage() {
         </p>
         <div className="pt-2">
           <Link
-            href={user ? "/home" : "/setup"}
+            href="/setup"
             className="inline-flex items-center justify-center font-bold px-8 py-3.5 rounded-xl bg-primary text-primary-foreground shadow-md hover:bg-primary/90 transition-all text-sm"
           >
-            {user ? "Go to Home" : "Set Up Free Profile"}
+            Set Up Free Profile
           </Link>
         </div>
       </div>

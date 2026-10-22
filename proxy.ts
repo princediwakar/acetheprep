@@ -27,6 +27,12 @@ export async function proxy(request: NextRequest) {
     request.nextUrl.pathname.startsWith(prefix)
   );
 
+  // If this route is public (e.g. /, /practice/*, /insights/*, /blog/*),
+  // do not invoke remote Supabase auth network calls on edge/compute. Pass through immediately.
+  if (!isProtected) {
+    return response;
+  }
+
   const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseUrl =
     rawUrl && (rawUrl.startsWith("http://") || rawUrl.startsWith("https://"))

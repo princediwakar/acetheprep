@@ -7,17 +7,17 @@ import MaxWidthWrapper from "../shared/MaxWidthWrapper";
 import { siteConfig } from "@/config/site";
 import { BrandLogo } from "@/components/shared/BrandLogo";
 
+import { SUPPORTED_EXAMS } from "@/lib/constants/exams";
+
 export default function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
   const footerSections = [
     {
       title: "Supported Exams",
       items: [
-        { title: "GMAT Focus", href: "/practice/gmat-focus" },
-        { title: "Digital SAT", href: "/practice/sat" },
-        { title: "GRE General", href: "/practice/gre" },
-        { title: "CFA Level 1", href: "/practice/cfa-level-1" },
-        { title: "IELTS Academic", href: "/practice/ielts-academic" },
-        { title: "TOEFL iBT", href: "/practice/toefl-ibt" },
+        ...SUPPORTED_EXAMS.map((exam) => ({
+          title: exam.title,
+          href: exam.practiceHref,
+        })),
         { title: "View All 6 Global Exams", href: "/practice" },
       ],
     },
