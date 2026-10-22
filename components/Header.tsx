@@ -19,7 +19,7 @@ const QUIZ_ROUTES = ["/quiz/", "/play/", "/session/", "/edit/", "/create"];
 const NAV_ITEMS = [
   { label: "Practice", href: "/practice" },
   { label: "Insights", href: "/insights" },
-  { label: "Predictor", href: "/predictor" },
+  { label: "Tools", href: "/tools" },
   { label: "Guides", href: "/blog" },
   { label: "Pricing", href: "/pricing" },
 ];

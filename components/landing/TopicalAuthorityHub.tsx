@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Layers, Sparkles, CheckCircle2 } from "lucide-react";
+import { ArrowRight, BookOpen, Layers, Sparkles, CheckCircle2, Calculator, Scale, ArrowLeftRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ExamKey } from "./landing-data";
 
@@ -363,6 +363,101 @@ export function TopicalAuthorityHub() {
                 </div>
               </Link>
             ))}
+          </div>
+        </div>
+
+        {/* 3. Interactive Student Tools & Comparisons */}
+        <div className="pt-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-bold text-foreground">
+                Interactive Student Tools &amp; Comparisons
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Score calibrators, concordance converters, and head-to-head admissions comparisons.
+              </p>
+            </div>
+            <Link
+              href="/tools"
+              className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+            >
+              <span>All free tools</span>
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <Link
+              href="/tools/gmat-focus-score-calculator"
+              className="group rounded-2xl border border-border/80 bg-card p-5 hover:border-primary/40 transition-all shadow-2xs hover:shadow-sm flex flex-col justify-between"
+            >
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-primary/10 text-primary font-semibold">
+                    Calculator
+                  </span>
+                  <Calculator className="h-4 w-4 text-primary" />
+                </div>
+                <h4 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors leading-snug">
+                  GMAT Focus Score Calculator
+                </h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Calculate composite 205–805 score, official percentile rank, and M7 business school target tiers.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between text-xs font-semibold text-primary">
+                <span>Launch Calculator</span>
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+              </div>
+            </Link>
+
+            <Link
+              href="/tools/gre-to-gmat-converter"
+              className="group rounded-2xl border border-border/80 bg-card p-5 hover:border-primary/40 transition-all shadow-2xs hover:shadow-sm flex flex-col justify-between"
+            >
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-primary/10 text-primary font-semibold">
+                    Concordance
+                  </span>
+                  <ArrowLeftRight className="h-4 w-4 text-primary" />
+                </div>
+                <h4 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors leading-snug">
+                  GRE to GMAT Focus Converter
+                </h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Translate GRE Verbal &amp; Quant scores into GMAT Focus composite scores with admissions benchmarks.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between text-xs font-semibold text-primary">
+                <span>Launch Converter</span>
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+              </div>
+            </Link>
+
+            <Link
+              href="/compare/gmat-focus-vs-gre"
+              className="group rounded-2xl border border-border/80 bg-card p-5 hover:border-primary/40 transition-all shadow-2xs hover:shadow-sm flex flex-col justify-between"
+            >
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-primary/10 text-primary font-semibold">
+                    Comparison
+                  </span>
+                  <Scale className="h-4 w-4 text-primary" />
+                </div>
+                <h4 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors leading-snug">
+                  GMAT Focus vs GRE (2026)
+                </h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Side-by-side section analysis, calculator policies, adaptive mechanics, and MBA acceptance data.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between text-xs font-semibold text-primary">
+                <span>Read Comparison</span>
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+              </div>
+            </Link>
           </div>
         </div>
       </div>

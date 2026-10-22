@@ -22,7 +22,12 @@ export async function GET() {
     { url: "/pricing", changeFrequency: "daily", priority: 0.95 }, // Pro Pricing & Pass
     { url: "/blog", changeFrequency: "daily", priority: 0.9 }, // Blog Index
     { url: "/insights", changeFrequency: "weekly", priority: 0.85 }, // Insights & Hardest Topics
-    { url: "/predictor", changeFrequency: "weekly", priority: 0.8 }, // Diagnostic Percentile Predictor
+    { url: "/predictor", changeFrequency: "weekly", priority: 0.85 }, // Diagnostic Percentile Predictor
+    { url: "/tools", changeFrequency: "daily", priority: 0.9 }, // Micro-Tools Hub
+    { url: "/tools/gmat-focus-score-calculator", changeFrequency: "daily", priority: 0.95 }, // GMAT Focus Calculator
+    { url: "/tools/gre-to-gmat-converter", changeFrequency: "daily", priority: 0.95 }, // GRE to GMAT Converter
+    { url: "/compare", changeFrequency: "weekly", priority: 0.85 }, // Exam Comparisons Hub
+    { url: "/compare/gmat-focus-vs-gre", changeFrequency: "weekly", priority: 0.9 }, // GMAT Focus vs GRE
     { url: "/privacy", changeFrequency: "yearly", priority: 0.3 },
     { url: "/terms", changeFrequency: "yearly", priority: 0.3 },
   ];

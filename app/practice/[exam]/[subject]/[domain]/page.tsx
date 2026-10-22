@@ -349,10 +349,10 @@ export default async function PracticePage({ params }: PracticePageProps) {
         schema={faqPageSchema(knowledge.faqs) as WithContext<any>}
       />
 
-      <div className="mx-auto max-w-4xl pt-28 pb-16 px-4 sm:px-6">
+      <div className="mx-auto max-w-4xl pt-20 sm:pt-22 pb-16 px-4 sm:px-6">
         {/* Breadcrumb navigation */}
-        <nav aria-label="Breadcrumb" className="mb-6">
-          <ol className="flex flex-wrap items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
+        <nav aria-label="Breadcrumb" className="mb-3">
+          <ol className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
             <li>
               <Link href="/" className="hover:text-primary transition-colors">
                 Home
@@ -392,14 +392,14 @@ export default async function PracticePage({ params }: PracticePageProps) {
           </ol>
         </nav>
 
-        {/* Page heading */}
-        <div className="mb-8">
-          <div className="flex flex-wrap items-center gap-2 mb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-0.5 text-xs font-semibold text-primary">
+        {/* Compact Page Heading */}
+        <div className="mb-5">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
               <CheckCircle2 className="h-3.5 w-3.5" />
               Verified Syllabus
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-0.5 text-xs font-semibold text-amber-500">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-0.5 text-xs font-semibold text-amber-500">
               <TrendingUp className="h-3.5 w-3.5" />
               {knowledge.weightageTier}
             </span>
@@ -408,10 +408,10 @@ export default async function PracticePage({ params }: PracticePageProps) {
             </span>
           </div>
 
-          <h1 className="mb-3 text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 font-heading">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 font-heading">
             {domainName} Practice Questions & Solutions
           </h1>
-          <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl">
+          <p className="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl">
             Authentic {examName} ({subjectName}) practice problems with step-by-step solutions showing you exactly why common wrong choices are traps.
           </p>
         </div>

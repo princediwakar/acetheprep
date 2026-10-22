@@ -42,6 +42,17 @@ export default function SiteFooter({ className }: React.HTMLAttributes<HTMLEleme
       ],
     },
     {
+      title: "Tools & Comparisons",
+      items: [
+        { title: "GMAT Focus Calculator", href: "/tools/gmat-focus-score-calculator" },
+        { title: "GRE to GMAT Converter", href: "/tools/gre-to-gmat-converter" },
+        { title: "GMAT Focus vs GRE", href: "/compare/gmat-focus-vs-gre" },
+        { title: "Percentile Predictor", href: "/predictor" },
+        { title: "All Free Tools", href: "/tools" },
+        { title: "All Comparisons", href: "/compare" },
+      ],
+    },
+    {
       title: "Pricing & Legal",
       items: [
         { title: "Plans & Pricing", href: "/pricing" },

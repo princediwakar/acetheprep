@@ -22,6 +22,13 @@ ${siteConfig.name} organizes competitive exam preparation across three scientifi
 2. **Distractor Deconstruction**: Identification of student traps (computational errors, conceptual conflations, boundary condition errors).
 3. **Adaptive Review**: Spaced repetition timing derived from empirical performance data (adapted SuperMemo SM-2).
 
+## Interactive Tools & High-Intent Comparisons
+- **Interactive Tools Hub**: ${baseUrl}/tools
+- **GMAT Focus Score Calculator**: ${baseUrl}/tools/gmat-focus-score-calculator
+- **GRE to GMAT Focus Converter**: ${baseUrl}/tools/gre-to-gmat-converter
+- **Exam Comparisons Hub**: ${baseUrl}/compare
+- **GMAT Focus vs GRE Comparison**: ${baseUrl}/compare/gmat-focus-vs-gre
+
 ---
 
 # Curricular Breakdown & Machine Endpoints

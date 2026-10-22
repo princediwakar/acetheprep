@@ -26,6 +26,11 @@ ${exams.map((exam) => `- **${exam}**: ${baseUrl}/practice/${examToSlug(exam)}`).
 - **Interactive Exam Setup**: ${baseUrl}/setup
 - **Platform Performance & Difficulty Index**: ${baseUrl}/insights
 - **Curriculum & Practice Portal**: ${baseUrl}/practice
+- **Interactive Tools & Calculators**: ${baseUrl}/tools
+  - GMAT Focus Score Calculator: ${baseUrl}/tools/gmat-focus-score-calculator
+  - GRE to GMAT Score Converter: ${baseUrl}/tools/gre-to-gmat-converter
+- **Exam & Platform Comparisons**: ${baseUrl}/compare
+  - GMAT Focus vs GRE Comparison: ${baseUrl}/compare/gmat-focus-vs-gre
 - **Cognitive Science Guides & Articles**: ${baseUrl}/blog
 - **Complete Machine-Readable Curriculum**: ${baseUrl}/llms-full.txt
 - **XML Sitemap Index**: ${baseUrl}/sitemap.xml
