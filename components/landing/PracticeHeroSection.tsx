@@ -34,6 +34,7 @@ import {
   getSolutionBreakdown,
 } from "./landing-data";
 import { signInWithGoogle } from "@/lib/supabase/auth";
+import { InstantTopicSearch } from "./InstantTopicSearch";
 
 interface PracticeHeroSectionProps {
   activeExam: ExamKey;
@@ -49,8 +50,8 @@ interface QuestionAttempt {
 }
 
 const EXAM_TABS: Array<{ key: ExamKey; title: string; subtitle: string }> = [
-  { key: "sat", title: "Digital SAT", subtitle: "College Board" },
   { key: "gmat", title: "GMAT Focus", subtitle: "GMAC" },
+  { key: "sat", title: "Digital SAT", subtitle: "College Board" },
   { key: "gre", title: "GRE General", subtitle: "ETS" },
   { key: "cfa", title: "CFA Level 1", subtitle: "CFA Institute" },
   { key: "ielts", title: "IELTS", subtitle: "British Council" },
@@ -65,17 +66,17 @@ const EXAM_HERO_COPY: Record<
     subhead: string;
   }
 > = {
+    gmat: {
+    org: "GMAC Focus Edition",
+    headline: "Adaptive practice for the GMAT Focus.",
+    subhead:
+      "Target high-yield Data Insights, Quantitative, and Verbal questions with first-principles derivations and percentile-calibrated spaced review.",
+  },
   sat: {
     org: "College Board 2026",
     headline: "Adaptive practice for the Digital SAT.",
     subhead:
       "Master Reading & Writing and Math modules with authentic Desmos-integrated questions, step-by-step solutions, and spaced retention review.",
-  },
-  gmat: {
-    org: "GMAC Focus Edition",
-    headline: "Adaptive practice for the GMAT Focus.",
-    subhead:
-      "Target high-yield Data Insights, Quantitative, and Verbal questions with first-principles derivations and percentile-calibrated spaced review.",
   },
   gre: {
     org: "ETS GRE General",
@@ -109,9 +110,9 @@ export function PracticeHeroSection({
   selectedQuestionIndex = 0,
   onSelectQuestionIndex,
 }: PracticeHeroSectionProps) {
-  const examConfig = LANDING_EXAMS[activeExam] || LANDING_EXAMS.sat;
+  const examConfig = LANDING_EXAMS[activeExam] || LANDING_EXAMS.gmat;
   const questions = examConfig.questions;
-  const heroCopy = EXAM_HERO_COPY[activeExam] || EXAM_HERO_COPY.sat;
+  const heroCopy = EXAM_HERO_COPY[activeExam] || EXAM_HERO_COPY.gmat;
 
   const [questionIndex, setQuestionIndex] = useState<number>(selectedQuestionIndex);
   const [attempts, setAttempts] = useState<Record<number, QuestionAttempt>>({});
@@ -261,18 +262,13 @@ export function PracticeHeroSection({
         onClose={() => setShowFormulaSheet(false)}
       />
 
-      <div className="mx-auto max-w-4xl space-y-10">
-        {/* Step 1: Explicit Target Exam Selector */}
-        <div id="exam-selector" className="space-y-3 max-w-3xl mx-auto">
-          <div className="flex items-center justify-center gap-2 text-xs font-mono font-medium text-muted-foreground uppercase tracking-wider">
-            <Target className="h-3.5 w-3.5 text-foreground" />
-            <span>Step 1: Choose the exam you are preparing for</span>
-          </div>
-
+      <div className="mx-auto max-w-4xl space-y-8">
+        {/* Exam Switcher Strip */}
+        <div id="exam-selector" className="space-y-2.5 max-w-3xl mx-auto">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
             {EXAM_TABS.map((item) => {
               const isSelected = activeExam === item.key;
-              const href = item.key === "sat" ? "/" : `/?exam=${item.key}`;
+              const href = item.key === "gmat" ? "/" : `/?exam=${item.key}`;
               return (
                 <a
                   key={item.key}
@@ -282,7 +278,7 @@ export function PracticeHeroSection({
                     onExamChange(item.key);
                   }}
                   className={cn(
-                    "flex flex-col items-center text-center p-3 rounded-xl border text-xs transition-all cursor-pointer relative",
+                    "flex flex-col items-center text-center p-2.5 rounded-xl border text-xs transition-all cursor-pointer relative",
                     isSelected
                       ? "border-foreground bg-foreground text-background shadow-xs font-semibold ring-1 ring-foreground/20"
                       : "border-border/80 bg-card hover:bg-secondary text-muted-foreground hover:text-foreground",
@@ -307,50 +303,25 @@ export function PracticeHeroSection({
         </div>
 
         {/* Dynamic Exam-Specific Hero Messaging */}
-        <div className="text-center space-y-4 max-w-2xl mx-auto pt-1">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/60 px-3.5 py-1 text-xs font-medium text-foreground/80">
+        <div className="text-center space-y-3 max-w-2xl mx-auto">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/60 px-3 py-0.5 text-[11px] font-medium text-foreground/80">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
             <span>Configured for {examConfig.name}</span>
             <span className="text-muted-foreground/40">•</span>
             <span>{heroCopy.org}</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-heading font-medium tracking-tight text-foreground leading-[1.12]">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-medium tracking-tight text-foreground leading-[1.14]">
             {heroCopy.headline}
           </h1>
 
-          <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
             {heroCopy.subhead}
           </p>
 
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <a
-              href="#practice-workspace"
-              className="inline-flex items-center gap-2 rounded-xl bg-foreground text-background px-4 py-2.5 text-xs font-semibold hover:opacity-90 transition-opacity shadow-xs cursor-pointer"
-            >
-              <span>Practice in Workspace</span>
-              <ArrowRight className="h-3.5 w-3.5" />
-            </a>
-
-            <button
-              type="button"
-              onClick={() =>
-                signInWithGoogle(`/setup?exam=${encodeURIComponent(examConfig.name)}`)
-              }
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card hover:bg-secondary px-4 py-2.5 text-xs font-semibold text-foreground transition-colors cursor-pointer"
-            >
-              <Target className="h-3.5 w-3.5 text-foreground" />
-              <span>Create {examConfig.shortName} Profile</span>
-            </button>
-
-            <Link
-              href={blueprintUrl}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-card/60 px-4 py-2.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
-              <span>View Syllabus Blueprint</span>
-            </Link>
+          {/* Instant 0ms Topic & Trap Search Bar */}
+          <div className="pt-2">
+            <InstantTopicSearch activeExam={activeExam} />
           </div>
         </div>
 

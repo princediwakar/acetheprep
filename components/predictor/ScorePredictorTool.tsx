@@ -22,8 +22,8 @@ import { cn } from "@/lib/utils";
 import { LANDING_EXAMS, type ExamKey } from "@/components/landing/landing-data";
 
 const EXAM_PREDICTOR_KEYS: Array<{ key: ExamKey; label: string; org: string }> = [
-  { key: "sat", label: "Digital SAT", org: "College Board" },
   { key: "gmat", label: "GMAT Focus", org: "GMAC" },
+  { key: "sat", label: "Digital SAT", org: "College Board" },
   { key: "gre", label: "GRE General", org: "ETS" },
   { key: "cfa", label: "CFA Level 1", org: "CFA Institute" },
   { key: "ielts", label: "IELTS", org: "British Council" },
@@ -33,10 +33,10 @@ const EXAM_PREDICTOR_KEYS: Array<{ key: ExamKey; label: string; org: string }> =
 export function ScorePredictorTool() {
   const searchParams = useSearchParams();
   const rawExam = searchParams.get("exam")?.toLowerCase() as ExamKey | undefined;
-  const initialExamKey: ExamKey = rawExam && LANDING_EXAMS[rawExam] ? rawExam : "sat";
+  const initialExamKey: ExamKey = rawExam && LANDING_EXAMS[rawExam] ? rawExam : "gmat";
 
   const [activeExam, setActiveExam] = useState<ExamKey>(initialExamKey);
-  const examConfig = LANDING_EXAMS[activeExam] || LANDING_EXAMS.sat;
+  const examConfig = LANDING_EXAMS[activeExam] || LANDING_EXAMS.gmat;
   const scale = examConfig.scoreScale;
   const gapLogic = examConfig.scoreGapLogic;
   const curr = examConfig.curriculum;
@@ -364,7 +364,7 @@ export function ScorePredictorTool() {
               High-Yield Topics to Close This Gap for {examConfig.shortName}:
             </span>
             <Link
-              href={`/practice/${examConfig.curriculum?.blueprintUrl.split("/").pop() || "sat"}`}
+              href={`/practice/${examConfig.curriculum?.blueprintUrl.split("/").pop() || "gmat-focus"}`}
               className="text-xs font-medium text-primary hover:underline flex items-center gap-1"
             >
               <span>View full syllabus</span>

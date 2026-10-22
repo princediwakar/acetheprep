@@ -12,9 +12,9 @@ export default function SiteFooter({ className }: React.HTMLAttributes<HTMLEleme
     {
       title: "Supported Exams",
       items: [
+        { title: "GMAT Focus", href: "/practice/gmat-focus" },
         { title: "Digital SAT", href: "/practice/sat" },
         { title: "GRE General", href: "/practice/gre" },
-        { title: "GMAT Focus", href: "/practice/gmat-focus" },
         { title: "CFA Level 1", href: "/practice/cfa-level-1" },
         { title: "IELTS Academic", href: "/practice/ielts-academic" },
         { title: "TOEFL iBT", href: "/practice/toefl-ibt" },
@@ -24,9 +24,9 @@ export default function SiteFooter({ className }: React.HTMLAttributes<HTMLEleme
     {
       title: "Hardest Topics & Mistakes",
       items: [
+        { title: "GMAT Data Sufficiency Traps", href: "/insights/gmat-focus/hardest-topics" },
         { title: "SAT Desmos & Geometry Traps", href: "/insights/sat/hardest-topics" },
         { title: "GRE Quant Comparison Pitfalls", href: "/insights/gre/hardest-topics" },
-        { title: "GMAT Data Sufficiency Traps", href: "/insights/gmat-focus/hardest-topics" },
         { title: "CFA Financial Analysis Errors", href: "/insights/cfa-level-1/hardest-topics" },
         { title: "IELTS True/False/Not Given Nuances", href: "/insights/ielts-academic/hardest-topics" },
         { title: "All Topic Insights", href: "/insights" },

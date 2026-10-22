@@ -15,13 +15,13 @@ import { LANDING_EXAMS, type ExamKey } from "@/components/landing/landing-data";
 
 function getExamKey(name: string): ExamKey {
   const lower = name.toLowerCase();
-  if (lower.includes("sat")) return "sat";
   if (lower.includes("gmat")) return "gmat";
+  if (lower.includes("sat")) return "sat";
   if (lower.includes("gre")) return "gre";
   if (lower.includes("cfa")) return "cfa";
   if (lower.includes("ielts")) return "ielts";
   if (lower.includes("toefl")) return "toefl";
-  return "sat";
+  return "gmat";
 }
 
 async function getData(examName: string): Promise<{

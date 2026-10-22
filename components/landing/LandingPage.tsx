@@ -7,6 +7,7 @@ import { PracticeHeroSection } from "./PracticeHeroSection";
 import { ThreePillarsSection } from "./ThreePillarsSection";
 import { GlobalExamsSection } from "./GlobalExamsSection";
 import { ScorePlannerSection } from "./ScorePlannerSection";
+import { StudentQueriesSection } from "./StudentQueriesSection";
 import { SimpleCTASection } from "./SimpleCTASection";
 import { LANDING_EXAMS, type ExamKey } from "./landing-data";
 
@@ -21,7 +22,7 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
   const validExam: ExamKey =
     paramExam && LANDING_EXAMS[paramExam]
       ? paramExam
-      : "sat";
+      : "gmat";
 
   const [activeExam, setActiveExam] = useState<ExamKey>(validExam);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number>(0);
@@ -41,7 +42,7 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
 
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
-      if (newExam === "sat") {
+      if (newExam === "gmat") {
         url.searchParams.delete("exam");
       } else {
         url.searchParams.set("exam", newExam);
@@ -66,10 +67,13 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
       {/* 5. The 6 Global Exams (Curriculum Cards Blueprint) */}
       <GlobalExamsSection onSelectExam={handleExamChange} />
 
-      {/* 6. Score Estimator & Study Planner */}
+      {/* 6. Real Student Query FAQs (High-Yield Verification & Trap Answers) */}
+      <StudentQueriesSection initialExam={activeExam} />
+
+      {/* 7. Score Estimator & Study Planner */}
       <ScorePlannerSection activeExam={activeExam} />
 
-      {/* 7. Simple, Honest Call To Action */}
+      {/* 8. Simple, Honest Call To Action */}
       <SimpleCTASection />
     </div>
   );

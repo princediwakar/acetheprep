@@ -19,8 +19,8 @@ import { cn } from "@/lib/utils";
 import { LANDING_EXAMS, type ExamKey } from "@/components/landing/landing-data";
 
 const EXAMS_ORDER: Array<{ key: ExamKey; title: string; subtitle: string; slug: string }> = [
-  { key: "sat", title: "Digital SAT", subtitle: "College Board", slug: "sat" },
   { key: "gmat", title: "GMAT Focus", subtitle: "GMAC", slug: "gmat-focus" },
+  { key: "sat", title: "Digital SAT", subtitle: "College Board", slug: "sat" },
   { key: "gre", title: "GRE General", subtitle: "ETS", slug: "gre" },
   { key: "cfa", title: "CFA Level 1", subtitle: "CFA Institute", slug: "cfa-level-1" },
   { key: "ielts", title: "IELTS", subtitle: "British Council", slug: "ielts-academic" },
@@ -31,9 +31,9 @@ interface InsightsClientViewProps {
   initialExam?: ExamKey;
 }
 
-export function InsightsClientView({ initialExam = "sat" }: InsightsClientViewProps) {
+export function InsightsClientView({ initialExam = "gmat" }: InsightsClientViewProps) {
   const [activeExam, setActiveExam] = useState<ExamKey>(initialExam);
-  const examConfig = LANDING_EXAMS[activeExam] || LANDING_EXAMS.sat;
+  const examConfig = LANDING_EXAMS[activeExam] || LANDING_EXAMS.gmat;
   const hardest = examConfig.hardestQuestions || [];
   const traps = examConfig.trapsGuide || [];
   const mistakes = examConfig.scoreGapLogic?.mistakes || [];

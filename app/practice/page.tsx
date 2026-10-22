@@ -51,8 +51,8 @@ export const metadata: Metadata = {
 };
 
 const EXAM_DISPLAY_ORDER = [
-  { name: "SAT", title: "Digital SAT", org: "College Board 2026", slug: "sat" },
   { name: "GMAT Focus", title: "GMAT Focus", org: "GMAC Focus Edition", slug: "gmat-focus" },
+  { name: "SAT", title: "Digital SAT", org: "College Board 2026", slug: "sat" },
   { name: "GRE", title: "GRE General", org: "ETS GRE", slug: "gre" },
   { name: "CFA Level 1", title: "CFA Level 1", org: "CFA Institute", slug: "cfa-level-1" },
   { name: "IELTS Academic", title: "IELTS Academic", org: "British Council & IDP", slug: "ielts-academic" },

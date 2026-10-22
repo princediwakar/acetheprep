@@ -12,6 +12,7 @@ import StructuredData, {
   educationalOrgSchema,
   practiceQuizSchema,
 } from "@/components/seo/StructuredData";
+import { EXAM_STUDENT_FAQS } from "@/components/landing/student-faqs";
 
 interface PageProps {
   searchParams: Promise<{ exam?: string }>;
@@ -19,11 +20,11 @@ interface PageProps {
 
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
   const resolvedParams = await searchParams;
-  const examKey = resolvedParams?.exam?.toLowerCase() as ExamKey | undefined;
-  const examConfig = examKey && LANDING_EXAMS[examKey] ? LANDING_EXAMS[examKey] : null;
+  const examKey = (resolvedParams?.exam?.toLowerCase() as ExamKey | undefined) || "gmat";
+  const examConfig = examKey && LANDING_EXAMS[examKey] ? LANDING_EXAMS[examKey] : LANDING_EXAMS.gmat;
 
   if (examConfig) {
-    const canonicalPath = examKey === "sat" ? "/" : `/?exam=${examKey}`;
+    const canonicalPath = examKey === "gmat" ? "/" : `/?exam=${examKey}`;
     const pageTitle = `Free ${examConfig.name} Practice Questions & Step-by-Step Solutions | AceThePrep`;
     const pageDesc = `Adaptive practice for the ${examConfig.name}. Solve authentic questions, understand core principles with clean step-by-step solutions, and retain concepts with smart spaced review.`;
 
@@ -70,12 +71,12 @@ export default async function IndexPage({ searchParams }: PageProps) {
   const activeExamKey: ExamKey =
     initialExamParam && LANDING_EXAMS[initialExamParam as ExamKey]
       ? (initialExamParam as ExamKey)
-      : "sat";
+      : "gmat";
   const activeConfig = LANDING_EXAMS[activeExamKey];
 
   if (!user) {
     const quizSchema = practiceQuizSchema({
-      url: `${siteConfig.url}${activeExamKey === "sat" ? "" : `/?exam=${activeExamKey}`}`,
+      url: `${siteConfig.url}${activeExamKey === "gmat" ? "" : `/?exam=${activeExamKey}`}`,
       examName: activeConfig.name,
       domain: activeConfig.questions[0]?.topic || activeConfig.name,
       subject: activeConfig.questions[0]?.section || "Adaptive Practice",
@@ -92,35 +93,19 @@ export default async function IndexPage({ searchParams }: PageProps) {
       })),
     });
 
+    const activeFaqs = EXAM_STUDENT_FAQS[activeExamKey] || EXAM_STUDENT_FAQS.sat;
+
     const faqSchema = {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      mainEntity: [
-        {
-          "@type": "Question",
-          name: `How does adaptive practice work on AceThePrep for ${activeConfig.name}?`,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: `AceThePrep breaks down authentic ${activeConfig.name} questions into their core principle, step-by-step mathematical or logical derivation, and common misconceptions. You focus on mastering individual skills before taking full adaptive mocks.`,
-          },
+      mainEntity: activeFaqs.map((faq) => ({
+        "@type": "Question",
+        name: faq.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: faq.answer,
         },
-        {
-          "@type": "Question",
-          name: `Can I practice ${activeConfig.name} questions for free with zero sign-up?`,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: `Yes. AceThePrep provides un-gated practice questions with authentic test timing, official formula sheets, test calculators, and immediate step-by-step solutions.`,
-          },
-        },
-        {
-          "@type": "Question",
-          name: `How does spaced review help retain concepts until test day?`,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: `Questions and topics you miss or find difficult are algorithmically queued for re-review right before your memory decays, defeating the forgetting curve and ensuring retention on test day.`,
-          },
-        },
-      ],
+      })),
     };
 
     return (

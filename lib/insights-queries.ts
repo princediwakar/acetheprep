@@ -23,19 +23,19 @@ type TaxonomyData = Record<string, Record<string, string[]>>;
 const taxonomyData = taxonomies as unknown as TaxonomyData;
 
 export const EMPIRICAL_BASELINE_TOPICS: Record<string, HardTopic[]> = {
-  "SAT": [
-    { skill_domain: "Inference & Rhetorical Synthesis", total_attempts: 12450, total_correct: 3237, avg_time_spent_ms: 84000, incorrect_rate: 74.0 },
-    { skill_domain: "Advanced Math: Extraneous Solutions & Quadratics", total_attempts: 14120, total_correct: 4518, avg_time_spent_ms: 96000, incorrect_rate: 68.0 },
-    { skill_domain: "Craft & Structure: Words in Context", total_attempts: 11890, total_correct: 4518, avg_time_spent_ms: 52000, incorrect_rate: 62.0 },
-    { skill_domain: "Algebra: Systems of Nonlinear Equations", total_attempts: 13540, total_correct: 5686, avg_time_spent_ms: 78000, incorrect_rate: 58.0 },
-    { skill_domain: "Standard English Conventions: Boundaries", total_attempts: 10850, total_correct: 4991, avg_time_spent_ms: 44000, incorrect_rate: 54.0 },
-  ],
   "GMAT Focus": [
     { skill_domain: "Data Sufficiency: Number Properties & Parity", total_attempts: 9840, total_correct: 3148, avg_time_spent_ms: 118000, incorrect_rate: 68.0 },
     { skill_domain: "Multi-Source Reasoning: Tabular Synthesis", total_attempts: 8420, total_correct: 3031, avg_time_spent_ms: 145000, incorrect_rate: 64.0 },
     { skill_domain: "Critical Reasoning: Boldface & Unstated Assumptions", total_attempts: 11200, total_correct: 4480, avg_time_spent_ms: 112000, incorrect_rate: 60.0 },
     { skill_domain: "Quantitative: Combinatorics & Conditional Probability", total_attempts: 9650, total_correct: 4149, avg_time_spent_ms: 108000, incorrect_rate: 57.0 },
     { skill_domain: "Two-Part Analysis: Linear Optimization", total_attempts: 7920, total_correct: 3643, avg_time_spent_ms: 132000, incorrect_rate: 54.0 },
+  ],
+  "SAT": [
+    { skill_domain: "Inference & Rhetorical Synthesis", total_attempts: 12450, total_correct: 3237, avg_time_spent_ms: 84000, incorrect_rate: 74.0 },
+    { skill_domain: "Advanced Math: Extraneous Solutions & Quadratics", total_attempts: 14120, total_correct: 4518, avg_time_spent_ms: 96000, incorrect_rate: 68.0 },
+    { skill_domain: "Craft & Structure: Words in Context", total_attempts: 11890, total_correct: 4518, avg_time_spent_ms: 52000, incorrect_rate: 62.0 },
+    { skill_domain: "Algebra: Systems of Nonlinear Equations", total_attempts: 13540, total_correct: 5686, avg_time_spent_ms: 78000, incorrect_rate: 58.0 },
+    { skill_domain: "Standard English Conventions: Boundaries", total_attempts: 10850, total_correct: 4991, avg_time_spent_ms: 44000, incorrect_rate: 54.0 },
   ],
   "GRE": [
     { skill_domain: "Advanced Rate, Work & Mixture Problems", total_attempts: 10450, total_correct: 3030, avg_time_spent_ms: 105000, incorrect_rate: 71.0 },
@@ -70,7 +70,7 @@ export function getBaselineTopics(examName: string): { topics: HardTopic[]; tota
   const key = Object.keys(EMPIRICAL_BASELINE_TOPICS).find(
     (k) => k.toLowerCase() === examName.toLowerCase() || examName.toLowerCase().includes(k.toLowerCase())
   );
-  const topics = key ? EMPIRICAL_BASELINE_TOPICS[key] : (EMPIRICAL_BASELINE_TOPICS["SAT"] || []);
+  const topics = key ? EMPIRICAL_BASELINE_TOPICS[key] : (EMPIRICAL_BASELINE_TOPICS["GMAT Focus"] || []);
   const totalSessions = topics.reduce((acc, t) => acc + t.total_attempts, 0);
   return { topics, totalSessions };
 }

@@ -20,7 +20,7 @@ export function slugify(str: string): string {
     .replace(/-+/g, "-");
 }
 
-interface TaxonomyEntry {
+export interface TaxonomyEntry {
   exam: string;
   examSlug: string;
   subject: string;
@@ -73,9 +73,9 @@ for (const [exam, subjects] of Object.entries(taxonomy)) {
 }
 
 export const GLOBAL_EXAM_PRIORITY = [
+  "GMAT Focus",
   "SAT",
   "GRE",
-  "GMAT Focus",
   "CFA Level 1",
   "IELTS Academic",
   "TOEFL iBT",

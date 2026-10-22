@@ -63,7 +63,7 @@ export default async function InsightsPage() {
           </p>
         </div>
 
-        <InsightsClientView initialExam="sat" />
+        <InsightsClientView initialExam="gmat" />
       </div>
     </div>
   );

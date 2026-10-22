@@ -9,9 +9,16 @@ Rather than treating practice tests as static PDFs or uncalibrated rote question
 ### Supported Curricula & Exam Taxonomies
 AceThePrep provides structured, multi-tier syllabus taxonomies covering 6 premier global standardized exams:
 - **Undergraduate & College Admissions**: Digital SAT (Reading & Writing, Mathematics).
-- **Graduate & Business School Admissions**: GMAT Focus (Quantitative Reasoning, Verbal Reasoning, Data Insights), GRE General (Verbal Reasoning, Quantitative Reasoning).
+- **Graduate & Business School Admissions**: 
+  - GMAT Focus Edition (Quantitative Reasoning, Verbal Reasoning, Data Insights).
+  - GRE General (Verbal Reasoning, Quantitative Reasoning, Analytical Writing).
 - **Professional Finance**: CFA Level 1 (Ethical and Professional Standards, Quantitative Methods, Economics, Financial Statement Analysis, Corporate Issuers, Equity Investments, Fixed Income, Derivatives, Alternative Investments, Portfolio Management).
-- **Language Proficiency & Global Mobility**: IELTS Academic (Reading, Listening), TOEFL iBT (Reading, Listening).
+- **Language Proficiency & Global Mobility**: 
+  - IELTS Academic (Reading, Listening with acoustic audio, Writing, Speaking).
+  - TOEFL iBT (Reading, Listening with acoustic audio, Speaking, Writing).
+
+### Strategic Global Realignment
+All legacy references to Indian national entrance exams (JEE, NEET, GATE, CAT) have been permanently decommissioned. The platform architecture, scoring models, diagnostic algorithms, and question banks are 100% focused on premier international standardized tests governed by College Board, GMAC, ETS, CFA Institute, and Cambridge/British Council.
 
 ---
 
@@ -23,7 +30,7 @@ The platform is designed for near zero-friction, minimal round-trip latency, edg
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
 │                                   CLIENT (Browser)                                     │
 │  Next.js 16 (React 19) • Tailwind CSS • Radix UI • KaTeX Math • Exam Calculator (AST)  │
-│                   HeaderPortal Action Teleportation • Oxford Editorial Theme           │
+│      Acoustic Audio Player • HeaderPortal Action Teleportation • Oxford Editorial       │
 └───────────────────────────────────────────┬────────────────────────────────────────────┘
                                             │ HTTPS / WSS
                                             ▼
@@ -38,8 +45,9 @@ The platform is designed for near zero-friction, minimal round-trip latency, edg
 │   • page.tsx (Parallel Promise.all Fetch)    │  │   • /api/session/start               │
 │   • lib/actions/tutor.ts (Discard/Cleanup)   │  │   • /api/session/answer              │
 │   • lib/actions/billing.ts (Checkout/Portal) │  │   • /api/session/complete            │
-│   • lib/actions/auth.ts (Sign-in/Sign-out)   │  │   • /api/predictor/*                 │
-│                                              │  │   • /api/comeback/*                  │
+│   • lib/actions/auth.ts (Sign-in/Sign-out)   │  │   • /api/tutor/evaluate-writing      │
+│                                              │  │   • /api/tutor/evaluate-semantic     │
+│                                              │  │   • /api/comeback/due & /retry       │
 │                                              │  │   • /api/webhooks/dodo               │
 │                                              │  │   • /api/og (Dynamic Card OG Gen)    │
 └───────────────────────────┬──────────────────┘  └──────────────────┬───────────────────┘
@@ -50,7 +58,7 @@ The platform is designed for near zero-friction, minimal round-trip latency, edg
 │  ┌────────────────────────┐  ┌──────────────────────────┐  ┌────────────────────────┐  │
 │  │  Supabase PostgreSQL  │  │   AI Engine & Pipeline   │  │     Dodo Payments      │  │
 │  │  - Auth (Google OAuth) │  │   - Pre-Materialized     │  │   - Recurring Cards    │  │
-│  │  - Row Level Security  │  │     Question Bank (0% dup)│  │   - Indian UPI / Net   │  │
+│  │  - Row Level Security  │  │     Master Banks (0% dup)│  │   - Indian UPI / Net   │  │
 │  │  - Atomic Stored RPCs  │  │   - DeepSeek Flash (Pri) │  │   - Automated Webhook  │  │
 │  │  - 18 Relational Tables│  │   - OpenAI GPT-4o (Sec)  │  │     Subscription Sync  │  │
 │  │  - types/supabase.ts   │  │   - DeepSeek Web Search  │  │   - Customer Portal    │  │
@@ -62,13 +70,14 @@ The platform is designed for near zero-friction, minimal round-trip latency, edg
 - **Framework**: Next.js 16.2 with Turbopack, React 19, TypeScript 5.8.
 - **Styling & Design System**: Tailwind CSS, shadcn/ui (Radix UI primitives), Lucide React icons, Framer Motion for micro-interactions, Recharts for analytics data visualization.
 - **Typography & Theme Engine**: Oxford Editorial typographic system (`font-heading`, `font-sans`, `font-mono`), system dark/light theme switching with smooth transitions and brand color preservation.
-- **Mathematics & Formula Rendering**: KaTeX with `@matejmazur/react-katex` for high-performance rendering of algebraic expressions, chemistry equations, and LaTeX physics notations.
-- **Backend & Database**: Supabase (PostgreSQL 15+) with Row Level Security (RLS), custom RPC functions (`submit_answer`, `get_public_quizzes_with_min_count`), and automated TypeScript schema generation (`types/supabase.ts`).
+- **Mathematics & Formula Rendering**: KaTeX with `@matejmazur/react-katex` for high-performance rendering of algebraic expressions, financial formulas, and LaTeX notations.
+- **Acoustic Audio System**: HTML5 audio streaming and player controls for IELTS and TOEFL listening sections with variable speed, replay limits, and transcript sync.
+- **Backend & Database**: Supabase (PostgreSQL 15+) with Row Level Security (RLS), custom RPC functions (`submit_answer`, `update_quiz_question_count`, `get_public_quizzes_with_min_count`), and automated TypeScript schema generation (`types/supabase.ts`).
 - **Edge Routing & Auth Guard**: `proxy.ts` protecting sensitive application routes (`/home`, `/analytics`, `/history`, `/session/*`, `/create`, `/setup`) with server-side cookie verification.
 - **Portal Architecture**: `HeaderPortal.tsx` rendering interactive metrics and quick actions into the global `AppShell` header dynamically without prop-drilling or client re-renders.
-- **Dual-Engine Question Delivery**: Pre-materialized high-yield `question_bank` with parallel $O(1)$ deduplication against `session_answers`, seamlessly falling back to DeepSeek Flash / OpenAI GPT-4o with automatic background bank materialization.
+- **Dual-Engine Question Delivery**: Pre-materialized high-yield question banks (`lib/data/banks/*` across SAT, GMAT, GRE, CFA, IELTS, TOEFL) with parallel $O(1)$ deduplication against `session_answers`, seamlessly falling back to DeepSeek Flash / OpenAI GPT-4o with automatic background bank materialization.
 - **Payment Processing**: Dodo Payments (`@dodopayments/nextjs`, SDK v2) supporting global cards, Indian UPI, NetBanking, and automated subscription lifecycle management via webhooks.
-- **Document Processing**: `pdf-parse`, `pdfjs-dist`, `pdf-lib` for reading source materials, and `exceljs` / `@react-pdf/renderer` for quiz exporting.
+- **Document Processing**: `pdf-parse`, `pdfjs-dist`, `pdf-lib` for reading source materials, and `exceljs` / `@react-pdf/renderer` for test exporting.
 
 ---
 
@@ -114,7 +123,7 @@ To maximize exam marks per unit of study time, topics are selected via an optimi
 
 $$\text{Priority Score} = \frac{\text{Exam Weight} \times \text{Knowledge Gap} \times \text{Forgetting Risk}}{\min(\text{Estimated Minutes to Mastery}, \; C_{\text{tier}})}$$
 
-- **Exam Weight ($W$)**: Historical question frequency extracted from official exam blueprints (e.g., SAT / CFA topic frequency weights in `exam_topic_weights`).
+- **Exam Weight ($W$)**: Historical question frequency extracted from official exam blueprints (e.g., SAT, GMAT, GRE micro-skills, and CFA topic frequency weights in `exam_topic_weights`).
 - **Knowledge Gap ($G$)**: $1 - \text{MasteryScore}$.
 - **Forgetting Risk ($R$)**:
   $$R = 1 - \exp\left(-\frac{\ln(2) \times \text{DaysSinceReview}}{\text{HalfLife}}\right) \times \text{ProximityFactor}$$
@@ -139,17 +148,25 @@ When a student makes an error or reveals an answer, the question enters the **Co
 
 ---
 
-### 3.4 Hybrid Question Bank & Deduplication Engine
-Files: `lib/services/question-bank-service.ts`, `app/api/session/start/route.ts`
+### 3.4 Hybrid Question Bank & Master Repository
+Files: `lib/services/question-bank-service.ts`, `app/api/session/start/route.ts`, `lib/data/banks/*`
 
 To deliver 0ms query latency while guaranteeing zero duplicate questions:
-1. **Parallel Fetch & Deduplication**:
-   When a session starts, the engine executes a parallel fetch:
+1. **Curated Master Repositories (`ALL_BANKS`)**:
+   Compiles deep, verified question sets across 6 domains:
+   - `lib/data/banks/sat`: Reading, Writing, Algebra, Advanced Math, Geometry.
+   - `lib/data/banks/gmat`: Data Insights (Data Sufficiency, Multi-Source), Quant, Verbal.
+   - `lib/data/banks/gre`: Quantitative Comparison, Text Completion, Sentence Equivalence (6 options), Reading Comprehension.
+   - `lib/data/banks/cfa`: Ethics, Quantitative Methods, FSA, Fixed Income, Corporate Issuers.
+   - `lib/data/banks/ielts`: Academic Reading, Listening (Acoustic Audio), Writing Task 1 & 2.
+   - `lib/data/banks/toefl`: Reading Comprehension, Listening Conversations/Lectures, Academic Writing.
+2. **Parallel Fetch & Deduplication**:
+   When a session starts:
    - Fetches all `question_id` records previously answered by this user from `session_answers` into an in-memory `Set<string>` ($O(1)$ lookup).
    - Fetches candidate pre-materialized questions from `question_bank` matching the target exam and skill domains.
-2. **Stratified Selection**:
-   Filters out any previously seen questions, matching requested difficulty tiers.
-3. **AI Generation Fallback & Auto-Materialization**:
+3. **Stratified Selection**:
+   Filters out previously seen questions, matching requested difficulty tiers.
+4. **AI Generation Fallback & Auto-Materialization**:
    If the bank has unmet targets, the engine invokes DeepSeek Flash or OpenAI GPT-4o with structured JSON schema enforcement. Newly synthesized questions are automatically upserted into `question_bank` in the background, continuously enriching the communal repository.
 
 ---
@@ -157,25 +174,80 @@ To deliver 0ms query latency while guaranteeing zero duplicate questions:
 ### 3.5 Safe Shunting-Yard Formula Evaluator (Virtual Exam Calculator)
 File: `components/tutor/ExamCalculator.tsx`
 
-To comply with official testing standards (e.g. GATE virtual calculator, CAT on-screen calculator, GRE onscreen math tools) without exposing the client to code injection vulnerabilities:
+To comply with official testing standards (e.g. GRE onscreen calculator, CFA BA II Plus calculation standards) without exposing the client to code injection vulnerabilities:
 - **Zero `eval()` Security**: Implements a pure AST tokenizer and Dijkstra's Shunting-Yard algorithm with operator precedence queues and operand evaluation stacks.
 - **Scientific Operations**: Handles parenthetical expressions, unary negation, floating-point precision stabilization, powers ($x^2$), square roots ($\sqrt{x}$), reciprocal ($1/x$), percentages ($\%$) and memory registers (`MC`, `MR`, `M+`, `M-`).
 - **Draggable Floating Window**: Responsive floating modal with client-side mouse boundary constraints and full keyboard shortcut mapping (digits, operators, Enter, Backspace, Esc).
 
 ---
 
-### 3.6 Percentile & Score Prediction Engine
-Files: `lib/predictor/engine.ts`, `lib/predictor/nta-priors.ts`, `lib/calibration.ts`
+### 3.6 Official Percentile & Score Prediction Engines
+Files: `lib/predictor/engine.ts`, `lib/predictor/*-score-engine.ts`
 
-Predicts official exam percentiles and marks with narrowing confidence intervals:
-- **Cold-Start Phase**: Uses official public NTA (National Testing Agency) normalization tables linking marks to percentiles.
-- **Dynamic Blending Weight ($\alpha$)**:
-  $$\alpha = \min\left(1.0, \; \sqrt{\frac{\text{Sessions Completed}}{20}}\right)$$
-  - Session 0: 100% public baseline prior.
-  - Session 5: 50% public, 50% personal performance.
-  - Session 20+: 100% personal calibrated performance.
-- **Band Shrinkage**: Initial confidence bands span $\pm 5-8$ percentile points. As sessions accumulate, the confidence band contracts to sharp bounds ($\pm 1.5-2$ points).
-- **Calibration Snapshots**: Before major exam dates, predictions freeze into `calibration_snapshots` to evaluate prediction sharpness against actual released exam scores (`actual_results`).
+AceThePrep implements official psychometric scoring engines for all 6 supported curricula:
+
+1. **Digital SAT (`sat-score-engine.ts`)**:
+   - Composite scale: 400 to 1600 (in 10-point increments).
+   - Section scales: 200 to 800 for Reading & Writing and Mathematics.
+   - Standard Error of Measurement (SEM): ~±30 to ±40 points.
+2. **GMAT Focus Edition (`gmat-score-engine.ts`)**:
+   - Composite scale: 205 to 805 (in 10-point increments, ending in 5).
+   - Section scales: 60 to 90 for Quantitative Reasoning, Verbal Reasoning, and Data Insights.
+   - Official GMAC 2024–2026 Focus percentile concordance tables.
+3. **ETS GRE General (`gre-score-engine.ts`)**:
+   - Section scales: 130 to 170 for Quantitative Reasoning and Verbal Reasoning (1-point increments).
+   - Composite scale: 260 to 340 (sum of QR + VR).
+   - Analytical Writing: 0.0 to 6.0 in half-point increments.
+   - Official ETS percentile distribution curves.
+4. **CFA Level 1 (`cfa-score-engine.ts`)**:
+   - Minimum Passing Score (MPS) model (~70% benchmark threshold).
+   - Ethics adjustment buffer: High ethics scores break borderline results into passes.
+   - 10-topic weighted mastery matrix.
+5. **Cambridge IELTS Academic (`ielts-score-engine.ts`)**:
+   - Band scale: 0.0 to 9.0 in half-band increments.
+   - Cambridge official rounding algorithm: decimals ending in `.25` round up to `.5`, decimals ending in `.75` round up to next whole band.
+6. **ETS TOEFL iBT (`toefl-score-engine.ts`)**:
+   - Total score: 0 to 120.
+   - Section scores: 0 to 30 for Reading, Listening, Speaking, and Writing.
+
+#### Dynamic Blending Weight ($\alpha$)
+$$\alpha = \min\left(1.0, \; \sqrt{\frac{\text{Sessions Completed}}{20}}\right)$$
+- **Session 0**: 100% official normative prior tables.
+- **Session 5**: 50% prior, 50% personal performance.
+- **Session 20+**: 100% personal calibrated performance.
+- **Band Shrinkage**: Initial confidence bands contract from broad spans to sharp $\pm 1.5-2\%$ bounds as sessions accumulate.
+
+---
+
+### 3.7 Acoustic Audio & Listening Proctoring
+File: `components/tutor/player/QuestionCard.tsx`
+
+For IELTS Academic and TOEFL iBT Listening modules:
+- Embedded acoustic player with HTML5 audio streaming.
+- Playback controls: Play/Pause, Replay (gated according to exam rules), Volume, and 1.0x / 1.25x speed adjustments.
+- Synchronized passage transcript toggling for post-answer review mode.
+
+---
+
+### 3.8 6-Choice Multi-Option Engine (GRE Sentence Equivalence)
+File: `components/tutor/player/QuestionCard.tsx`
+
+To support authentic ETS GRE 2026 testing specifications:
+- Supports option letters `A`, `B`, `C`, `D`, `E`, and `F`.
+- Handles Sentence Equivalence dual-option selections (selecting exactly two words that produce equivalent sentence meanings).
+- Validates paired choices and highlights distractor traps (e.g. synonym traps without context fit).
+
+---
+
+### 3.9 Socratic AI Writing Evaluation
+Files: `app/api/tutor/evaluate-writing/route.ts`, `components/tutor/player/QuestionCard.tsx`
+
+For IELTS and TOEFL writing sections:
+- Socratic rubric evaluation:
+  - IELTS: Task Achievement, Coherence & Cohesion, Lexical Resource, Grammatical Accuracy (0-9 scale).
+  - TOEFL: Topic Development, Organization, Language Use (0-30 scale).
+- Word count analysis and penalty detection.
+- Line-by-line sentence corrections with pedagogical rationales.
 
 ---
 
@@ -191,6 +263,7 @@ Predicts official exam percentiles and marks with narrowing confidence intervals
              │                                ├──────────────────────<┌───────────────────┐
              │                                │                       │  mastery_history  │
              │                                │                       └───────────────────┘
+             │                                │
              │                                ├──────────────────────<┌───────────────────┐
              │                                │                       │    predictions    │
              │                                │                       └─────────┬─────────┘
@@ -266,7 +339,7 @@ Predicts official exam percentiles and marks with narrowing confidence intervals
     - `id` (UUID, PK), `exam_name` (Text), `exam_date` (Date), `freeze_date` (Date), `session_label` (Text), `total_users_frozen` (Int), `sharpness_median_width` (Float), `coverage` (Float), `coverage_segmented` (JSONB), `report_json` (JSONB).
 
 12. **`exam_topic_weights`**:
-    - Historical 10-year official question distribution and frequency weightings per domain.
+    - Historical question distribution and frequency weightings per domain.
 
 13. **`subscriptions`**:
     - `id` (UUID, PK), `user_id` (UUID, FK), `dodo_subscription_id` (Text, Unique), `dodo_customer_id` (Text), `status` (`active` | `past_due` | `cancelled` | `expired` | `inactive`), `plan_type` (`monthly` | `quarterly`), `product_id` (Text), `current_period_end` (Timestamptz).
@@ -293,7 +366,7 @@ Predicts official exam percentiles and marks with narrowing confidence intervals
 ## 5. User Journey & Feature Specifications
 
 ### 5.1 Onboarding & Setup (`/setup`)
-- **Exam Picker**: Select target exam from the 13 supported taxonomies.
+- **Exam Picker**: Select target exam from the 6 premier global standardized exams (Digital SAT, GMAT Focus, GRE General, CFA Level 1, IELTS Academic, TOEFL iBT).
 - **Target Date**: Exam date picker that automatically classifies prep timeline into **Foundation** ($>90$ days), **Acceleration** ($30-90$ days), or **Triage** ($<30$ days).
 - **Self-Assessment Priors**: User rates subjects as Weak (prior: 0.25), Okay (prior: 0.50), or Strong (prior: 0.75), initializing their prior distribution without requiring a 3-hour diagnostic exam.
 - **Auth Guard**: If not signed in, routes through Google OAuth and redirects back to complete profile initialization.
@@ -309,6 +382,7 @@ The practice runner is a distraction-free, 100% full-viewport proctoring interfa
 - **Module Indicator**: Displays the current exam name and specific skill domain.
 - **Timer / Stopwatch**: Toggleable elapsed time counter (`formatTime`). Can be hidden during testing to simulate low-anxiety drilling.
 - **Draggable Scientific Exam Calculator**: Floating modal powered by an AST parser (`ExamCalculator.tsx`) with scientific keys, memory registers, and keyboard shortcuts.
+- **Acoustic Audio Player**: Integrated audio controls for IELTS and TOEFL listening comprehension tasks.
 - **Theme Switcher**: In-place light/dark mode toggle.
 - **End Test Modal**: Provides safe choices:
   - *Discard Session*: Calls `discardSessionAction` to delete session records and child telemetry, redirecting back to `/home`.
@@ -318,7 +392,7 @@ The practice runner is a distraction-free, 100% full-viewport proctoring interfa
 1. **Tutor Drill Mode**:
    - Instant feedback on every option selection.
    - Highlights the correct option in emerald and trap selections in rose.
-   - Displays full **Examiner Trap Breakdown**, identifying cognitive errors (e.g. *Cartesian sign inversion*, *neglecting rotational kinetic energy*).
+   - Displays full **Examiner Trap Breakdown**, identifying cognitive errors (e.g. *Cartesian sign inversion*, *Data Sufficiency C vs E traps*, *false synonym pairs*).
    - Provides step-by-step mathematical derivation rendered via KaTeX.
    - Implements a mandatory 3-second pacing delay to prevent impulsive blind guessing.
 2. **Exam Simulation Mode**:
@@ -326,9 +400,10 @@ The practice runner is a distraction-free, 100% full-viewport proctoring interfa
    - Answers remain masked throughout the test.
    - Question Flagging ("Mark for Review") with visual indicators.
    - Bottom Dock Question Navigator palette allowing rapid jumping between questions.
+   - Supports 6-choice option layouts for GRE Sentence Equivalence.
 
 #### C. Section Review ("Check Your Work") Screen
-- Accessible prior to submission or via the Question Palette:
+- Accessible prior to submission or via the Question Palette.
 - Displays complete summary strip: Total, Answered, Unanswered, and Flagged counts.
 - Highlights unanswered questions with warning callouts and quick-jump actions.
 - Interactive question card grid allowing students to revisit and change any response with one click.
@@ -362,7 +437,7 @@ Files: `app/home/page.tsx`, `components/tutor/DashboardView.tsx`
   - Configurable question volume (10, 25, or 50 questions).
   - Domain selector to drill specific syllabus sections under timed exam conditions.
 - **ProjectionHero**:
-  - Visual gauge displaying the calibrated percentile prediction band (e.g., $97.2 - 98.8\%$).
+  - Visual gauge displaying the calibrated percentile and score prediction band tailored to the specific exam (e.g. 1420–1480 for SAT, 695–735 for GMAT, 322–328 for GRE, Band 7.5–8.0 for IELTS, 102–108 for TOEFL).
   - Confidence tracker showing sessions completed toward sharp calibration (20+ sessions).
 - **Interactive Syllabus Mastery Matrix**:
   - Grouped by subject and sub-domains.
@@ -376,7 +451,7 @@ Files: `app/home/page.tsx`, `components/tutor/DashboardView.tsx`
 Files: `app/history/page.tsx`, `components/tutor/HistoryTabsView.tsx`, `components/quiz-results/QuizHistory.tsx`
 
 - **Dual-Tab Architecture**:
-  - *Practice Sessions Tab*: Tracks adaptive drills, mock simulations, and spaced review sessions.
+  - *Practice Sessions Tab*: Tracks adaptive practice sets, mock simulations, and spaced review sessions.
   - *Custom Quizzes Tab*: Tracks user-generated and community quizzes.
 - **HeaderPortal Telemetry**: Collapses session count and average accuracy percentage into the top navbar.
 - **Session History Cards**:
@@ -386,44 +461,109 @@ Files: `app/history/page.tsx`, `components/tutor/HistoryTabsView.tsx`, `componen
 
 ---
 
-### 5.5 Analytics Redirection (`/analytics`)
+### 5.5 Analytics Unified Dashboard (`/analytics`)
 Files: `app/analytics/page.tsx`
 
 - To prevent UI clutter and eliminate duplicate database queries, metrics (Readiness Index, Day Streak, Questions Answered) and the Syllabus Mastery Map are unified directly on the **Home** dashboard (`/home`).
-- `/analytics` automatically redirects directly to `/home`. Active/unfinished sessions are elevated directly to the Home dashboard via `ActiveSessionsBanner`.
+- `/analytics` permanently redirects directly to `/home`. Active/unfinished sessions are elevated directly to the Home dashboard via `ActiveSessionsBanner`.
 
 ---
 
-### 5.6 Custom Quiz Generator (`/create`, `/edit/[slug]`, `/quiz/[slug]`)
+### 5.6 Interactive Study Workstation Homepage (`/`)
+Files: `app/page.tsx`, `components/landing/LandingPage.tsx`
+
+The homepage is structured as an interactive, distraction-free study workstation:
+1. **`PracticeHeroSection`**:
+   - Above-the-fold authentic terminal with real test questions for each of the 6 exams.
+   - Interactive answering with instant distractor trap breakdown, formula sheet modal, AST calculator, and timer.
+   - Exam selector with 0ms URL query state synchronization (`?exam=gmat`).
+   - Seamless bridge: question attempts are saved to `localStorage` (`landingPrefill`) and migrated to the user's active session upon login.
+2. **`ThreePillarsSection`**:
+   - 01. **Targeted Practice**: Skill-by-skill isolation over random mixed question sets.
+   - 02. **First-Principles Solutions**: Core principles, clean derivations, and trap autopsies.
+   - 03. **Spaced Repetition**: Automatic recall queues before memory decays.
+3. **`GlobalExamsSection`**:
+   - Complete architectural overview of the 6 standardized curricula.
+   - Links directly to syllabus pages and 10-question diagnostic practice sets.
+4. **`ScorePlannerSection`**:
+   - Real-time score gap estimator with interactive baseline and target score sliders.
+   - Empirical study hours multiplier and required question volume calculations.
+5. **`SimpleCTASection`**:
+   - High-contrast, clean CTA for immediate study plan creation.
+   - Permanent redirect: `/landing/students` routes directly to the canonical `/`.
+
+---
+
+### 5.7 Practice Catalog & Syllabus Hub (`/practice`, `/practice/[exam]`, `/practice/[exam]/[subject]/[domain]`)
+Files: `app/practice/page.tsx`, `components/practice/PracticeCatalogFilter.tsx`, `components/practice/TopicPracticeDrill.tsx`
+
+- **Practice Catalog (`/practice`)**:
+  - Comprehensive searchable directory of 100+ syllabus topics across all 6 exams.
+  - Interactive `PracticeCatalogFilter` supporting real-time text search and exam category filtering.
+  - Curated featured practice sets (`FEATURED_DRILLS`).
+- **Exam Syllabus Hub (`/practice/[exam]`)**:
+  - Authoritative breakdown of subjects, timing blueprints, scoring structures, and topic lists (`ExamTopicsList`).
+- **In-Page Topic Practice Sets (`/practice/[exam]/[subject]/[domain]`)**:
+  - Interactive zero-friction topic questions powered by `TopicPracticeDrill` and `ALL_BANKS`.
+  - Curriculum knowledge base (`lib/curriculum-knowledge.ts`): Weightage tier, core principles, primary distractor traps, and topic FAQs.
+  - Complete Schema.org JSON-LD BreadcrumbList and FAQPage structured data for rich search engine snippets.
+
+---
+
+### 5.8 Authoritative Error Benchmarks & Peer Insights (`/insights`, `/insights/[exam]/hardest-topics`)
+Files: `app/insights/page.tsx`, `app/insights/[exam]/hardest-topics/page.tsx`, `components/insights/InsightsClientView.tsx`
+
+- **Immediate Benchmarks Without Empty States**:
+  - Pre-calibrated empirical error baselines across all 6 curricula (`lib/insights-queries.ts`).
+  - Displays top 5 hardest topics, empirical failure rates, primary trap patterns, and average solving time.
+  - Direct 1-click launch into topic-specific practice questions.
+- **Architectural Redirects**:
+  - Legacy `/insights/[exam]/most-failed-concepts` permanently redirects to `/insights/[exam]/hardest-topics` to consolidate SEO crawl equity.
+
+---
+
+### 5.9 Interactive Exam Score Estimator & Study Planner (`/predictor`)
+Files: `app/predictor/page.tsx`, `components/predictor/ScorePredictorTool.tsx`
+
+- Replaced legacy mobile/OTP phone gates with an open, client-side interactive tool.
+- Supports all 6 global exam scoring scales:
+  - Digital SAT (400–1600, 10-pt steps)
+  - GMAT Focus (205–805, 10-pt steps ending in 5)
+  - GRE General (260–340, 1-pt steps)
+  - CFA Level 1 (50–90% MPS scale)
+  - IELTS Academic (4.0–9.0, 0.5-band steps)
+  - TOEFL iBT (40–120, 1-pt steps)
+- Real-time score gap analysis, empirical study hour calculations, question count projections, and high-yield focus topics.
+- Full two-way URL query parameter synchronization (`?exam=sat&current=1150&target=1450`) enabling instant plan sharing and bookmarking.
+- Comprehensive Schema.org WebApplication and FAQPage structured data.
+
+---
+
+### 5.10 Custom Quiz Generator (`/create`, `/edit/[slug]`, `/quiz/[slug]`)
 - Allows generating custom tests via three modalities:
   1. **Text Prompt**: Instant AI question generation on any topic.
   2. **Raw Notes**: Paste study notes or textbook excerpts.
   3. **PDF Upload**: Client-side parsing via `pdfjs-dist` to generate structured multiple-choice tests.
-- Quizzes can be edited, published to the public catalog (`/quizzes`), or exported as PDF and Excel files.
+- Quizzes can be edited, published to the public catalog (`/quizzes`), or exported as PDF (`@react-pdf/renderer`) and Excel (`exceljs`) files.
 
 ---
 
-### 5.7 Programmatic SEO & Content Flywheel
+### 5.11 Programmatic SEO, Multi-Sitemap Architecture & LLM Agents
 AceThePrep implements high-performance programmatic SEO architectures:
-- **Practice Directories**: `/practice/[exam]` and `/practice/[exam]/[subject]` with dynamic static generation and Schema.org JSON-LD markup.
-- **Peer Insight Hubs**:
-  - `/insights/[exam]/hardest-topics`: Top challenging concepts ranked by student failure rates.
-  - `/insights/[exam]/most-failed-concepts`: In-depth autopsy of examiner distractor traps.
+- **Dedicated Sitemaps**:
+  - `/sitemap.xml`: Primary index routing to modular child sitemaps.
+  - `/(sitemap)/sitemap-practice`: All syllabus and topic practice pages.
+  - `/(sitemap)/sitemap-insights`: Authoritative hardest-topic benchmark pages.
+  - `/(sitemap)/sitemap-blog`: Engineering and study methodology articles.
 - **Engineering & Prep Blog**: `/blog`, `/blog/[slug]`, with dynamic RSS feeds at `/blog/rss.xml`.
 - **LLM Agent Discoverability**: Complete machine-readable endpoints at `/llms.txt` and `/llms-full.txt`.
 
 ---
 
-### 5.8 Viral Growth Loop (`/s/[token]`) & Result Cards
+### 5.12 Viral Growth Loop (`/s/[token]`) & Dynamic Result Cards
 - Generates a shareable **Result Card** with a unique 30-day TTL token upon session completion.
 - Displays percentile forecast, mastery delta, and hardest question conquered.
 - Features dynamic OpenGraph card generation via Next.js Edge Route `/api/og`.
-
----
-
-### 5.9 Baseline Percentile Predictor (`/predictor`)
-- Funnel diagnostic tool allowing new students to enter their target exam and baseline scores.
-- Incorporates OTP mobile verification and outputs initial confidence bands using NTA prior tables.
 
 ---
 
@@ -435,10 +575,10 @@ Billing is powered by **Dodo Payments** (`lib/billing.ts`, `lib/actions/billing.
 
 | Feature | Free Tier | Pro Tier (Monthly / Quarterly) |
 |---|---|---|
-| **Daily Questions** | Capped at 10 Questions / Day | **Unlimited Questions** |
-| **Session Sizes** | 10 Questions only | **10, 25, or 50 Question Full Simulations** |
+| **Daily Questions** | Capped at 10 Questions / Day | **Unlimited Practice Questions** |
+| **Session Sizes** | 10 Questions only | **10, 25, or 50 Question Practice Sets & Mocks** |
 | **Custom Mock Tests** | Locked | **Unlocked (Custom domain selection)** |
-| **Step-by-Step Distractor Analysis** | Basic | **Full Socratic breakdowns & Traps** |
+| **Step-by-Step Distractor Analysis** | Basic | **Full Socratic breakdowns & Examiner Traps** |
 | **Comeback Queue 3-Stage Reviews** | Standard | **Priority Spaced Automation** |
 | **Percentile Calibration Forecast** | Single Baseline Band | **Deep Subject Breakdown & Band Shrinkage** |
 
@@ -465,7 +605,7 @@ The webhook endpoint at `/api/webhooks/dodo` validates signatures and synchroniz
 
 ### 7.2 Zero-Latency Performance Principles
 - **Server Components at Root**: All top-level routes (`page.tsx`) are React Server Components that fetch parallel data via `Promise.all()` directly from Supabase.
-- **Client Boundaries at the Edge**: `"use client"` is isolated to interactive leaves (`SessionPlayer`, `ExamCalculator`, `DashboardView`, `HistoryTabsView`).
+- **Client Boundaries at the Edge**: `"use client"` is isolated to interactive leaves (`SessionPlayer`, `ExamCalculator`, `DashboardView`, `PracticeCatalogFilter`, `ScorePredictorTool`, `PracticeHeroSection`).
 - **Optimistic UI**: Answer clicks, session deletions, and flag toggles update client state immediately (0ms perceived latency) while submitting RPCs asynchronously in the background.
 
 ---

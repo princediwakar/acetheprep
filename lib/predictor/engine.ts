@@ -72,7 +72,7 @@ export async function generatePrediction(
     .eq('profile_id', examProfileId)
     .maybeSingle()
 
-  const examName = profile?.exam_name || 'SAT'
+  const examName = profile?.exam_name || 'GMAT Focus'
 
   // 2. Fetch concept mastery
   const { data: masteryRows } = await supabase
@@ -89,7 +89,7 @@ export async function generatePrediction(
   }
 
   // 3. Derive subjects and domains from canonical taxonomy
-  const examSubjects = taxonomy[examName] || taxonomy['SAT'] || {}
+  const examSubjects = taxonomy[examName] || taxonomy['GMAT Focus'] || {}
   const subjectDomains: Record<string, string[]> = {}
   for (const [subj, doms] of Object.entries(examSubjects)) {
     if (Array.isArray(doms)) {

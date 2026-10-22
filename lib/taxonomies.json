@@ -1,5 +1,40 @@
 {
   "_schema_version": 1,
+  "GMAT Focus": {
+    "Quantitative Reasoning": [
+      "Arithmetic",
+      "Algebra",
+      "Number Properties",
+      "Inequalities & Absolute Values",
+      "Word Problems (Rates & Work)",
+      "Word Problems (Overlapping Sets)",
+      "Counting & Probability",
+      "Applied Statistics"
+    ],
+    "Verbal Reasoning": [
+      "Critical Reasoning",
+      "Reading Comprehension",
+      "CR: Assumption & Flaw",
+      "CR: Strengthen & Weaken",
+      "CR: Inference & Conclusion",
+      "CR: Boldface & Method of Reasoning",
+      "RC: Main Idea & Primary Purpose",
+      "RC: Inference & Specific Detail",
+      "RC: Structure, Tone & Organization"
+    ],
+    "Data Insights": [
+      "Data Sufficiency",
+      "Two-Part Analysis",
+      "Table Analysis",
+      "Graphics Interpretation",
+      "Multi-Source Reasoning",
+      "DS: Value Questions (Unique Solution)",
+      "DS: Yes/No Questions (Invariant Answer)",
+      "DS: Number Properties & Inequalities",
+      "Two-Part Analysis: Quantitative",
+      "Two-Part Analysis: Logical"
+    ]
+  },
   "SAT": {
     "Reading and Writing": [
       "Craft and Structure",
@@ -73,41 +108,6 @@
       "Analyze an Issue",
       "Issue: Thesis & Supporting Evidence",
       "Issue: Counterargument & Rebuttal"
-    ]
-  },
-  "GMAT Focus": {
-    "Quantitative Reasoning": [
-      "Arithmetic",
-      "Algebra",
-      "Number Properties",
-      "Inequalities & Absolute Values",
-      "Word Problems (Rates & Work)",
-      "Word Problems (Overlapping Sets)",
-      "Counting & Probability",
-      "Applied Statistics"
-    ],
-    "Verbal Reasoning": [
-      "Critical Reasoning",
-      "Reading Comprehension",
-      "CR: Assumption & Flaw",
-      "CR: Strengthen & Weaken",
-      "CR: Inference & Conclusion",
-      "CR: Boldface & Method of Reasoning",
-      "RC: Main Idea & Primary Purpose",
-      "RC: Inference & Specific Detail",
-      "RC: Structure, Tone & Organization"
-    ],
-    "Data Insights": [
-      "Data Sufficiency",
-      "Two-Part Analysis",
-      "Table Analysis",
-      "Graphics Interpretation",
-      "Multi-Source Reasoning",
-      "DS: Value Questions (Unique Solution)",
-      "DS: Yes/No Questions (Invariant Answer)",
-      "DS: Number Properties & Inequalities",
-      "Two-Part Analysis: Quantitative",
-      "Two-Part Analysis: Logical"
     ]
   },
   "CFA Level 1": {

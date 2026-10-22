@@ -6,11 +6,11 @@ export const metadata: Metadata = {
 		template: "%s | AceThePrep",
 	},
 	description:
-		"Coverage is not readiness. Master common mistakes, build fast recall under exam conditions, and lock concepts into long-term memory for Digital SAT, GRE, GMAT Focus, CFA Level 1, IELTS, and TOEFL.",
+		"Coverage is not readiness. Master common mistakes, build fast recall under exam conditions, and lock concepts into long-term memory for GMAT Focus, Digital SAT, GRE, CFA Level 1, IELTS, and TOEFL.",
 	keywords: [
+		"GMAT Focus prep",
 		"Digital SAT prep",
 		"GRE preparation",
-		"GMAT Focus prep",
 		"CFA Level 1 exam",
 		"IELTS Academic practice",
 		"TOEFL iBT prep",

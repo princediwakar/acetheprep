@@ -1,9 +1,9 @@
 // Path: lib/constants/practice.ts
 
 export const EXAM_DATES: Record<string, string> = {
+  "GMAT Focus": "2026-12-31",
   "SAT": "2026-12-31",
   "GRE": "2026-12-31",
-  "GMAT Focus": "2026-12-31",
   "CFA Level 1": "2026-11-15",
   "IELTS Academic": "2026-12-31",
   "TOEFL iBT": "2026-12-31",
