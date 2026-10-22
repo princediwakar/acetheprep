@@ -127,11 +127,14 @@ export default async function BlogPostPage({ params }: PageProps) {
     topDomainDrills = scoredEntries.slice(0, 4).map((s) => s.entry);
   }
 
+  const ogImage = `${baseUrl}/api/og?type=blog&title=${encodeURIComponent(post.title)}&topic=${encodeURIComponent(post.examTag || post.category || "Cognitive Science")}`;
+
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
     description: post.description,
+    image: [ogImage],
     author: {
       "@type": "Organization",
       name: post.author,

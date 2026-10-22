@@ -46,11 +46,6 @@ function getAllInsightsEntries(): SitemapEntry[] {
       lastModified,
       priority: 0.8,
     });
-    entries.push({
-      url: `/insights/${examSlug}/most-failed-concepts`,
-      lastModified,
-      priority: 0.8,
-    });
   }
 
   return entries;

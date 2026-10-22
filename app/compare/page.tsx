@@ -8,7 +8,7 @@ import StructuredData, { breadcrumbSchema } from "@/components/seo/StructuredDat
 import type { WithContext } from "schema-dts";
 
 export const metadata: Metadata = {
-  title: "Exam & Platform Comparisons (2026) | AceThePrep",
+  title: "Exam & Platform Comparisons (2026)",
   description:
     "Authoritative head-to-head comparisons for competitive examinations. Compare GMAT Focus vs GRE, scoring scales, calculator policies, and preparation methodologies.",
   alternates: {

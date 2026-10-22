@@ -1,6 +1,7 @@
 // Path: app/predictor/page.tsx
 
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { ScorePredictorTool } from "@/components/predictor/ScorePredictorTool";
 import StructuredData, { breadcrumbSchema } from "@/components/seo/StructuredData";
@@ -8,6 +9,46 @@ import { Calculator, Sparkles, BookOpen, TrendingUp, HelpCircle } from "lucide-r
 import { PageHero, HeroBadge } from "@/components/shared/PageHero";
 
 const baseUrl = siteConfig.url;
+
+export const metadata: Metadata = {
+  title: "Exam Score Estimator & Study Planner (2026)",
+  description:
+    "Free adaptive score predictor and preparation timeline planner for Digital SAT, GMAT Focus, GRE, and CFA Level 1. Calculate question volume and study hours needed to hit your target score.",
+  keywords: [
+    "exam score predictor",
+    "SAT score calculator",
+    "GMAT Focus study planner",
+    "GRE score estimator",
+    "study hours score improvement",
+    "MBA test prep calculator",
+    "exam readiness diagnostic",
+  ],
+  alternates: {
+    canonical: `${baseUrl}/predictor`,
+  },
+  openGraph: {
+    title: `Exam Score Estimator & Study Planner | ${siteConfig.name}`,
+    description:
+      "Determine realistic preparation time, question volume, and high-yield focus topics to close your target score gap.",
+    url: `${baseUrl}/predictor`,
+    type: "website",
+    images: [
+      {
+        url: `${baseUrl}/api/og?type=home&title=Exam%20Score%20Predictor&topic=Diagnostic%20Engine`,
+        width: 1200,
+        height: 630,
+        alt: "AceThePrep Exam Score Estimator",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Exam Score Estimator & Study Planner | ${siteConfig.name}`,
+    description:
+      "Calculate study hours, question volume, and targeted focus topics to close your exam score gap.",
+    images: [`${baseUrl}/api/og?type=home&title=Exam%20Score%20Predictor&topic=Diagnostic%20Engine`],
+  },
+};
 
 export default function PredictorPage() {
   const breadcrumbs = [

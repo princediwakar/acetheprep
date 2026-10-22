@@ -8,7 +8,7 @@ import StructuredData, { breadcrumbSchema } from "@/components/seo/StructuredDat
 import type { WithContext } from "schema-dts";
 
 export const metadata: Metadata = {
-  title: "Free Student Preparation & Score Calculators | AceThePrep",
+  title: "Free Student Preparation & Score Calculators",
   description:
     "Free interactive exam calculators and concordance tools for GMAT Focus, GRE, SAT, and graduate admissions. Calibrate scores, percentiles, and MBA admission odds in 0ms.",
   alternates: {

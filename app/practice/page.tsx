@@ -30,7 +30,7 @@ const taxonomy = taxonomyRaw as unknown as TaxonomyData;
 const baseUrl = siteConfig.url;
 
 export const metadata: Metadata = {
-  title: "Free Exam Practice Questions & Topic Tests — All 6 Curricula | AceThePrep",
+  title: "Free Exam Practice Questions & Topic Tests — All 6 Curricula",
   description:
     "Free diagnostic question banks and adaptive topic tests for Digital SAT, GMAT Focus, GRE General, CFA Level 1, IELTS Academic, and TOEFL iBT. Authentic timing, Desmos, and step-by-step solutions.",
   alternates: {
