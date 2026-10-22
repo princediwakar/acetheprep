@@ -1,11 +1,11 @@
 // Path: lib/data/banks/index.ts
 import { QUESTION_BANK_SEED as BASE_SEED, type SeedQuestion } from "../question-bank-seed";
-import { SAT_BANK } from "./sat";
-import { CFA_BANK } from "./cfa";
-import { GMAT_BANK } from "./gmat";
-import { GRE_BANK } from "./gre";
-import { IELTS_BANK } from "./ielts";
-import { TOEFL_BANK } from "./toefl";
+import { SAT_BANK } from "./sat/index";
+import { CFA_BANK } from "./cfa/index";
+import { GMAT_BANK } from "./gmat/index";
+import { GRE_BANK } from "./gre/index";
+import { IELTS_BANK } from "./ielts/index";
+import { TOEFL_BANK } from "./toefl/index";
 
 export {
   SAT_BANK,

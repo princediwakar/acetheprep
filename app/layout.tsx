@@ -1,5 +1,4 @@
 import { ThemeProvider } from "@/components/ThemeProvider"
-// import { ClarityProvider } from '@/components/ClarityProvider';
 
 import { AppShell } from "@/components/AppShell";
 import { Toaster } from "@/components/ui/sonner"

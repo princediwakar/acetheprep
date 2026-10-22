@@ -1,7 +1,6 @@
 // Path: app/page.tsx
 import { Suspense } from "react";
 import LandingPage from "@/components/landing/LandingPage";
-import { metadata as defaultMetadata } from "./metadata";
 import type { Metadata } from "next";
 import { LANDING_EXAMS, type ExamKey } from "@/components/landing/landing-data";
 import { siteConfig } from "@/config/site";
@@ -25,7 +24,18 @@ export const metadata: Metadata = {
     `${defaultExamConfig.name} question bank`,
     `${defaultExamConfig.name} curriculum`,
     `${defaultExamConfig.shortName} study planner`,
-    ...((defaultMetadata.keywords as string[]) || []),
+    "GMAT Focus prep",
+    "Digital SAT prep",
+    "GRE preparation",
+    "CFA Level 1 exam",
+    "IELTS Academic practice",
+    "TOEFL iBT prep",
+    "exam readiness",
+    "active recall",
+    "spaced repetition",
+    "free test prep",
+    "distractor analysis",
+    "competitive exams",
   ],
   alternates: {
     canonical: siteConfig.url,
