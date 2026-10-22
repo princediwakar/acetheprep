@@ -1,0 +1,71 @@
+// Path: components/landing/SimpleCTASection.tsx
+import Link from "next/link";
+import { ArrowRight, Check, BookOpen } from "lucide-react";
+
+export function SimpleCTASection() {
+  const commitments = [
+    {
+      title: "100% Free Fundamentals",
+      description: "Diagnostic drills and complete step-by-step solutions are always un-gated.",
+    },
+    {
+      title: "Verified 2026 Standards",
+      description: "Format, timing, and question types matched to current official exam blueprints.",
+    },
+    {
+      title: "Calm & Distraction-Free",
+      description: "No advertisements, no marketing spam, and zero friction to practice.",
+    },
+  ];
+
+  return (
+    <section className="relative py-16 sm:py-24 border-t border-border/80 px-4 sm:px-6">
+      <div className="mx-auto max-w-4xl text-center space-y-8">
+        <div className="space-y-4 max-w-2xl mx-auto">
+          <h2 className="font-heading text-3xl sm:text-4xl font-normal tracking-tight text-foreground">
+            Start practicing today. <br className="hidden sm:inline" />
+            No credit card, no paywall on fundamentals.
+          </h2>
+
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+            Solve authentic problems, understand the underlying concept, and retain it until test day with smart spaced review.
+          </p>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <a
+            href="#practice-workspace"
+            className="inline-flex items-center gap-2 rounded-xl bg-foreground text-background px-5 py-3 text-xs sm:text-sm font-semibold hover:opacity-90 transition-opacity shadow-xs"
+          >
+            <span>Start Practice Workspace</span>
+            <ArrowRight className="h-4 w-4" />
+          </a>
+
+          <a
+            href="#curriculum"
+            className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-3 text-xs sm:text-sm font-medium text-foreground/85 hover:bg-secondary transition-colors"
+          >
+            <BookOpen className="h-4 w-4 text-muted-foreground" />
+            <span>Explore All Curricula</span>
+          </a>
+        </div>
+
+        {/* 3 Trust Commitments */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-10 text-left border-t border-border/60">
+          {commitments.map((c) => (
+            <div key={c.title} className="space-y-1.5">
+              <div className="flex items-center gap-2 text-foreground font-medium text-xs sm:text-sm">
+                <Check className="h-4 w-4 text-foreground/70 shrink-0" />
+                <span>{c.title}</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed pl-6">
+                {c.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -156,11 +156,11 @@ export default async function ExamPracticeHubPage({ params }: PageProps) {
       <div className="max-w-5xl mx-auto">
         {/* Navigation */}
         <Link
-          href="/practice"
+          href="/#curriculum"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to all exams
+          Back to all curricula
         </Link>
 
         {/* Header */}

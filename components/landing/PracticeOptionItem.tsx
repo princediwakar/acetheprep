@@ -2,7 +2,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { CheckCircle2, TrendingUp } from "lucide-react";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 
 interface PracticeOptionItemProps {
   letter: string;
@@ -42,20 +42,20 @@ export function PracticeOptionItem({
   };
 
   let borderClasses =
-    "border-border/80 bg-card hover:border-[#002B49]/40 dark:hover:border-blue-400/40";
+    "border-border/90 bg-card/70 hover:bg-secondary/50 hover:border-foreground/40 dark:bg-card/40 dark:hover:bg-muted/30";
 
   if (isSelected && !isRevealed) {
     borderClasses =
-      "border-[#002B49] bg-blue-50/40 dark:bg-blue-950/30 dark:border-blue-400 ring-1 ring-[#002B49] dark:ring-blue-400";
+      "border-foreground bg-secondary/80 ring-1 ring-foreground/20";
   }
 
   if (isRevealed) {
     if (isSelected && isCorrect) {
       borderClasses =
-        "border-emerald-600 bg-emerald-50/60 dark:bg-emerald-950/30 dark:border-emerald-500 ring-1 ring-emerald-600";
+        "border-emerald-600 bg-emerald-50/60 dark:bg-emerald-950/40 dark:border-emerald-500 ring-1 ring-emerald-600";
     } else if (isSelected && !isCorrect) {
       borderClasses =
-        "border-rose-600 bg-rose-50/60 dark:bg-rose-950/30 dark:border-rose-500 ring-1 ring-rose-600";
+        "border-rose-500/80 bg-rose-50/50 dark:bg-rose-950/30 dark:border-rose-500/80 ring-1 ring-rose-500/60";
     } else if (isCorrect) {
       borderClasses =
         "border-emerald-600/70 bg-emerald-50/30 dark:bg-emerald-950/20";
@@ -68,33 +68,33 @@ export function PracticeOptionItem({
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
+        if (e.key === "Enter" || e.key === " " || e.key.toUpperCase() === letter) {
           e.preventDefault();
           handleClick();
         }
       }}
       className={cn(
-        "group flex w-full items-center justify-between gap-3 rounded-xl border p-3 sm:px-4 sm:py-3.5 transition-all text-left relative overflow-hidden select-none",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+        "group flex w-full items-center justify-between gap-3 rounded-xl border p-3.5 sm:px-4 sm:py-4 transition-all text-left relative overflow-hidden select-none shadow-2xs",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground",
         !isRevealed && "cursor-pointer active:scale-[0.995]",
         isRevealed && "cursor-default",
         borderClasses,
-        isStruck && "opacity-50 bg-secondary/40",
+        isStruck && "opacity-40 bg-secondary/30",
       )}
     >
       <div className="flex items-center gap-3.5 min-w-0">
         <span
           className={cn(
-            "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold font-mono border transition-colors",
+            "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-semibold font-mono border transition-colors",
             isSelected && !isRevealed
-              ? "border-[#002B49] bg-[#002B49] text-white dark:border-blue-400 dark:bg-blue-500"
+              ? "border-foreground bg-foreground text-background"
               : isRevealed && isSelected && isCorrect
-                ? "border-emerald-600 bg-emerald-600 text-white"
+                ? "border-emerald-600 bg-emerald-600 text-white font-bold"
                 : isRevealed && isSelected && !isCorrect
-                  ? "border-rose-600 bg-rose-600 text-white"
+                  ? "border-rose-600 bg-rose-600 text-white font-bold"
                   : isRevealed && isCorrect
                     ? "border-emerald-600 text-emerald-700 dark:text-emerald-300 font-bold"
-                    : "border-border text-foreground/80 group-hover:border-primary group-hover:text-primary",
+                    : "border-border/80 bg-muted/40 text-foreground/80 group-hover:border-foreground/60 group-hover:text-foreground",
           )}
         >
           {letter}
@@ -103,7 +103,7 @@ export function PracticeOptionItem({
         <span
           className={cn(
             "text-sm font-medium text-foreground leading-snug transition-all",
-            isStruck && "line-through decoration-rose-600 decoration-2 text-muted-foreground",
+            isStruck && "line-through decoration-rose-500 decoration-2 text-muted-foreground",
           )}
         >
           {text}
@@ -111,6 +111,12 @@ export function PracticeOptionItem({
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
+        {!isRevealed && (
+          <kbd className="hidden sm:inline-block font-mono text-[10px] text-muted-foreground/40 border border-border/60 rounded px-1.5 py-0.5 group-hover:text-muted-foreground transition-colors">
+            {letter}
+          </kbd>
+        )}
+
         {isStruck && !isRevealed && (
           <span className="text-[10px] font-mono text-rose-600 dark:text-rose-400 font-semibold uppercase tracking-wider">
             [Eliminated]
@@ -118,9 +124,9 @@ export function PracticeOptionItem({
         )}
 
         {isRevealed && isTrap && (
-          <span className="flex items-center gap-1 shrink-0 rounded-full bg-rose-500/15 border border-rose-500/30 px-2 py-0.5 text-[10px] font-semibold text-rose-700 dark:text-rose-300 uppercase tracking-wide">
-            <TrendingUp className="h-3 w-3" />
-            Distractor Trap
+          <span className="flex items-center gap-1 shrink-0 rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-300 uppercase tracking-wide">
+            <AlertCircle className="h-3 w-3" />
+            Common Pitfall
           </span>
         )}
 

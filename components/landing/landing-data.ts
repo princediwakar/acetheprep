@@ -15,6 +15,9 @@ export interface LandingQuestion {
   whyCorrectWorks: string;
   tenSecondRule: string;
   timeEstimateSeconds: number;
+  corePrinciple?: string;
+  stepByStepSolution?: string;
+  commonMisconceptions?: string;
 }
 
 export type ArenaQuestion = LandingQuestion;
@@ -50,6 +53,45 @@ export interface HardestCommunityQuestion {
   practiceUrl: string;
 }
 
+export interface ExamCurriculumSection {
+  name: string;
+  questionCount: number;
+  durationMinutes: number;
+  topics: string[];
+}
+
+export interface ExamCurriculumInfo {
+  slug: string;
+  duration: string;
+  questionCount: string;
+  format: string;
+  scoring: string;
+  diagnosticDrillUrl: string;
+  blueprintUrl: string;
+  studyHoursMultiplier: number;
+  sections: ExamCurriculumSection[];
+}
+
+export function getSolutionBreakdown(q: LandingQuestion) {
+  const corePrinciple =
+    q.corePrinciple ||
+    q.tenSecondRule ||
+    "Verify foundational mathematical and logical constraints before evaluating superficial answer patterns.";
+
+  const stepByStepSolution =
+    q.stepByStepSolution ||
+    q.whyCorrectWorks ||
+    "Step 1: Identify given constraints. Step 2: Formulate the equation or evaluate the argument premise. Step 3: Solve rigorously without premature rounding.";
+
+  const commonMisconceptions =
+    q.commonMisconceptions ||
+    (q.trapName && q.whyTrapFooled
+      ? `${q.trapName}: ${q.whyTrapFooled}`
+      : q.whyTrapFooled || "Candidates frequently overlook boundary conditions, negative numbers, or unstated assumptions.");
+
+  return { corePrinciple, stepByStepSolution, commonMisconceptions };
+}
+
 export interface ExamArenaConfig {
   id: ExamKey;
   name: string;
@@ -75,6 +117,7 @@ export interface ExamArenaConfig {
     getSummary: (current: number, target: number, questionsCount: number) => string;
     mistakes: ScoreMistakePattern[];
   };
+  curriculum: ExamCurriculumInfo;
   trapsGuide: ExamTrapInfo[];
   hardestQuestions: HardestCommunityQuestion[];
   verificationStamp: {
@@ -135,6 +178,36 @@ export const ARENA_EXAMS: Record<ExamKey, ExamArenaConfig> = {
           description: "Dividing total remaining work by the wrong rate on two-part analysis questions.",
           questionIndex: 2,
           practiceUrl: "/practice/gmat-focus/data-insights/two-part-analysis",
+        },
+      ],
+    },
+    curriculum: {
+      slug: "gmat-focus",
+      duration: "2h 15m",
+      questionCount: "64 questions",
+      format: "Computer-Adaptive • Select Section Order • Review up to 3 answers/section",
+      scoring: "205 – 805 Scale (1-pt increments)",
+      diagnosticDrillUrl: "/practice/gmat-focus/data-insights/data-sufficiency",
+      blueprintUrl: "/practice/gmat-focus",
+      studyHoursMultiplier: 0.5,
+      sections: [
+        {
+          name: "Quantitative Reasoning",
+          questionCount: 21,
+          durationMinutes: 45,
+          topics: ["Number Properties", "Algebra", "Arithmetic", "Word Problems"],
+        },
+        {
+          name: "Verbal Reasoning",
+          questionCount: 23,
+          durationMinutes: 45,
+          topics: ["Critical Reasoning", "Reading Comprehension"],
+        },
+        {
+          name: "Data Insights",
+          questionCount: 20,
+          durationMinutes: 45,
+          topics: ["Data Sufficiency", "Multi-Source Reasoning", "Table Analysis", "Two-Part Analysis"],
         },
       ],
     },
@@ -312,6 +385,30 @@ export const ARENA_EXAMS: Record<ExamKey, ExamArenaConfig> = {
         },
       ],
     },
+    curriculum: {
+      slug: "sat",
+      duration: "2h 14m",
+      questionCount: "98 questions",
+      format: "Multistage Adaptive • 2 Modules per Section",
+      scoring: "400 – 1600 Total (200–800 RW, 200–800 Math)",
+      diagnosticDrillUrl: "/practice/sat/mathematics/advanced-math",
+      blueprintUrl: "/practice/sat",
+      studyHoursMultiplier: 0.25,
+      sections: [
+        {
+          name: "Reading & Writing",
+          questionCount: 54,
+          durationMinutes: 64,
+          topics: ["Craft & Structure", "Information & Ideas", "Standard English", "Expression of Ideas"],
+        },
+        {
+          name: "Mathematics",
+          questionCount: 44,
+          durationMinutes: 70,
+          topics: ["Algebra", "Advanced Math", "Problem-Solving & Data Analysis", "Geometry & Trig"],
+        },
+      ],
+    },
     trapsGuide: [
       {
         trapNumber: "01",
@@ -482,6 +579,36 @@ export const ARENA_EXAMS: Record<ExamKey, ExamArenaConfig> = {
           description: "Picking synonyms instead of opposites when a contrast word is present.",
           questionIndex: 2,
           practiceUrl: "/practice/gre/verbal-reasoning/text-completion",
+        },
+      ],
+    },
+    curriculum: {
+      slug: "gre",
+      duration: "1h 58m",
+      questionCount: "55 questions + 1 Essay",
+      format: "Section-Level Adaptive • Official Shortened Format",
+      scoring: "260 – 340 Scale (130–170 Quant, 130–170 Verbal)",
+      diagnosticDrillUrl: "/practice/gre/quantitative-reasoning/quantitative-comparison",
+      blueprintUrl: "/practice/gre",
+      studyHoursMultiplier: 2.5,
+      sections: [
+        {
+          name: "Quantitative Reasoning",
+          questionCount: 27,
+          durationMinutes: 47,
+          topics: ["Quantitative Comparison", "Arithmetic", "Algebra", "Data Interpretation"],
+        },
+        {
+          name: "Verbal Reasoning",
+          questionCount: 27,
+          durationMinutes: 41,
+          topics: ["Text Completion", "Sentence Equivalence", "Reading Comprehension"],
+        },
+        {
+          name: "Analytical Writing",
+          questionCount: 1,
+          durationMinutes: 30,
+          topics: ["Analyze an Issue Essay"],
         },
       ],
     },
@@ -659,6 +786,30 @@ export const ARENA_EXAMS: Record<ExamKey, ExamArenaConfig> = {
         },
       ],
     },
+    curriculum: {
+      slug: "cfa-level-1",
+      duration: "4h 30m (Two Sessions)",
+      questionCount: "180 questions (90/session)",
+      format: "Linear Computer-Based • Financial Calculator Permitted",
+      scoring: "Minimum Passing Score (MPS ~ 70%)",
+      diagnosticDrillUrl: "/practice/cfa-level-1/quantitative-methods/time-value-of-money",
+      blueprintUrl: "/practice/cfa-level-1",
+      studyHoursMultiplier: 3.0,
+      sections: [
+        {
+          name: "Session 1: Foundational Tools",
+          questionCount: 90,
+          durationMinutes: 135,
+          topics: ["Ethical & Professional Standards", "Quantitative Methods", "Economics", "FSA"],
+        },
+        {
+          name: "Session 2: Asset Classes & Portfolio",
+          questionCount: 90,
+          durationMinutes: 135,
+          topics: ["Corporate Issuers", "Equity", "Fixed Income", "Derivatives", "Portfolio Management"],
+        },
+      ],
+    },
     trapsGuide: [
       {
         trapNumber: "01",
@@ -833,6 +984,42 @@ export const ARENA_EXAMS: Record<ExamKey, ExamArenaConfig> = {
         },
       ],
     },
+    curriculum: {
+      slug: "ielts-academic",
+      duration: "2h 45m",
+      questionCount: "4 Modules",
+      format: "Paper or Computer-Delivered • Standardized Global Banding",
+      scoring: "Band 1.0 – 9.0 (0.5 Band Increments)",
+      diagnosticDrillUrl: "/practice/ielts-academic/reading/inferences",
+      blueprintUrl: "/practice/ielts-academic",
+      studyHoursMultiplier: 30,
+      sections: [
+        {
+          name: "Academic Reading",
+          questionCount: 40,
+          durationMinutes: 60,
+          topics: ["True / False / Not Given", "Heading Matching", "Sentence Completion"],
+        },
+        {
+          name: "Listening",
+          questionCount: 40,
+          durationMinutes: 30,
+          topics: ["Dialogues", "Monologues", "Academic Discussions", "Lectures"],
+        },
+        {
+          name: "Academic Writing",
+          questionCount: 2,
+          durationMinutes: 60,
+          topics: ["Task 1 Visual Data Synthesis", "Task 2 Discursive Essay"],
+        },
+        {
+          name: "Speaking",
+          questionCount: 3,
+          durationMinutes: 14,
+          topics: ["Introduction", "Individual Long Turn", "Two-Way Discussion"],
+        },
+      ],
+    },
     trapsGuide: [
       {
         trapNumber: "01",
@@ -1004,6 +1191,42 @@ export const ARENA_EXAMS: Record<ExamKey, ExamArenaConfig> = {
           description: "Forgetting to invert your selection when the prompt asks for what is NOT stated.",
           questionIndex: 2,
           practiceUrl: "/practice/toefl-ibt/reading/information-and-ideas",
+        },
+      ],
+    },
+    curriculum: {
+      slug: "toefl-ibt",
+      duration: "1h 56m",
+      questionCount: "4 Sections",
+      format: "Computer-Delivered • Shortened 2026 Format",
+      scoring: "0 – 120 Total Scale (0–30 per section)",
+      diagnosticDrillUrl: "/practice/toefl-ibt/reading/text-structure-and-purpose",
+      blueprintUrl: "/practice/toefl-ibt",
+      studyHoursMultiplier: 1.5,
+      sections: [
+        {
+          name: "Reading",
+          questionCount: 20,
+          durationMinutes: 35,
+          topics: ["Factual Information", "Negative Factual (EXCEPT)", "Rhetorical Purpose", "Sentence Insertion"],
+        },
+        {
+          name: "Listening",
+          questionCount: 28,
+          durationMinutes: 36,
+          topics: ["Campus Conversations", "Academic Lectures", "Attitude Questions"],
+        },
+        {
+          name: "Speaking",
+          questionCount: 4,
+          durationMinutes: 16,
+          topics: ["Independent Speaking", "Integrated Campus Task", "Integrated Academic Task"],
+        },
+        {
+          name: "Writing",
+          questionCount: 2,
+          durationMinutes: 29,
+          topics: ["Integrated Writing Task", "Academic Discussion Task"],
         },
       ],
     },

@@ -23,9 +23,9 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   const examConfig = examKey && LANDING_EXAMS[examKey] ? LANDING_EXAMS[examKey] : null;
 
   if (examConfig) {
-    const canonicalPath = examKey === "gmat" ? "/" : `/?exam=${examKey}`;
-    const pageTitle = `Free ${examConfig.name} Practice Questions & Trap Autopsies | AceThePrep`;
-    const pageDesc = `Practice authentic ${examConfig.name} questions with zero sign-up. Deconstruct psychometric distractor traps, test timing, and calculate your real score gap.`;
+    const canonicalPath = examKey === "sat" ? "/" : `/?exam=${examKey}`;
+    const pageTitle = `Free ${examConfig.name} Practice Questions & Step-by-Step Solutions | AceThePrep`;
+    const pageDesc = `Adaptive practice for the ${examConfig.name}. Solve authentic questions, understand core principles with clean step-by-step solutions, and retain concepts with smart spaced review.`;
 
     return {
       title: pageTitle,
@@ -34,8 +34,8 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
         `${examConfig.name} practice questions`,
         `${examConfig.name} free prep`,
         `${examConfig.name} question bank`,
-        `${examConfig.name} traps`,
-        `${examConfig.shortName} score calculator`,
+        `${examConfig.name} curriculum`,
+        `${examConfig.shortName} study planner`,
         ...((defaultMetadata.keywords as string[]) || []),
       ],
       alternates: {
@@ -70,16 +70,16 @@ export default async function IndexPage({ searchParams }: PageProps) {
   const activeExamKey: ExamKey =
     initialExamParam && LANDING_EXAMS[initialExamParam as ExamKey]
       ? (initialExamParam as ExamKey)
-      : "gmat";
+      : "sat";
   const activeConfig = LANDING_EXAMS[activeExamKey];
 
   if (!user) {
     const quizSchema = practiceQuizSchema({
-      url: `${siteConfig.url}${activeExamKey === "gmat" ? "" : `/?exam=${activeExamKey}`}`,
+      url: `${siteConfig.url}${activeExamKey === "sat" ? "" : `/?exam=${activeExamKey}`}`,
       examName: activeConfig.name,
       domain: activeConfig.questions[0]?.topic || activeConfig.name,
       subject: activeConfig.questions[0]?.section || "Adaptive Practice",
-      description: `Authentic ${activeConfig.name} question bank with distractor autopsies and timed simulation.`,
+      description: `Authentic ${activeConfig.name} practice questions with step-by-step solutions and misconception breakdowns.`,
       questions: activeConfig.questions.map((q) => ({
         questionText: q.questionText,
         options: Object.entries(q.options).map(([label, text]) => ({ label, text })),
@@ -88,7 +88,7 @@ export default async function IndexPage({ searchParams }: PageProps) {
         distractorAnalysis: {
           [q.trapOption]: `${q.trapName}: ${q.whyTrapFooled}`,
         },
-        explanation: `${q.whyCorrectWorks} 10-Second Rule: ${q.tenSecondRule}`,
+        explanation: `${q.whyCorrectWorks} Core Principle: ${q.tenSecondRule}`,
       })),
     });
 
@@ -98,10 +98,10 @@ export default async function IndexPage({ searchParams }: PageProps) {
       mainEntity: [
         {
           "@type": "Question",
-          name: `How do distractor traps work on the ${activeConfig.name}?`,
+          name: `How does adaptive practice work on AceThePrep for ${activeConfig.name}?`,
           acceptedAnswer: {
             "@type": "Answer",
-            text: `Distractor traps on the ${activeConfig.name} are mathematically or syntactically designed choices that anticipate the most common shortcuts and calculation errors made under test pressure. AceThePrep provides distractor autopsies for every question to train active trap recognition.`,
+            text: `AceThePrep breaks down authentic ${activeConfig.name} questions into their core principle, step-by-step mathematical or logical derivation, and common misconceptions. You focus on mastering individual skills before taking full adaptive mocks.`,
           },
         },
         {
@@ -109,15 +109,15 @@ export default async function IndexPage({ searchParams }: PageProps) {
           name: `Can I practice ${activeConfig.name} questions for free with zero sign-up?`,
           acceptedAnswer: {
             "@type": "Answer",
-            text: `Yes. AceThePrep provides instant, un-gated practice questions with authentic timing, official formula sheets, test calculators, and immediate trap explanations.`,
+            text: `Yes. AceThePrep provides un-gated practice questions with authentic test timing, official formula sheets, test calculators, and immediate step-by-step solutions.`,
           },
         },
         {
           "@type": "Question",
-          name: `How is the score penalty calculated on the ${activeConfig.name}?`,
+          name: `How does spaced review help retain concepts until test day?`,
           acceptedAnswer: {
             "@type": "Answer",
-            text: `Because exams like the Digital SAT and GMAT Focus use adaptive multistage routing or item response theory, missing early questions severely caps your maximum possible score. Our Score Gap tool calculates the exact point penalty per missed problem.`,
+            text: `Questions and topics you miss or find difficult are algorithmically queued for re-review right before your memory decays, defeating the forgetting curve and ensuring retention on test day.`,
           },
         },
       ],

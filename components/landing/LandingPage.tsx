@@ -4,8 +4,10 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { PracticeHeroSection } from "./PracticeHeroSection";
-import { ScoreGapCalculator } from "./ScoreGapCalculator";
-import { ExamTrapsSection } from "./ExamTrapsSection";
+import { ThreePillarsSection } from "./ThreePillarsSection";
+import { GlobalExamsSection } from "./GlobalExamsSection";
+import { ScorePlannerSection } from "./ScorePlannerSection";
+import { SimpleCTASection } from "./SimpleCTASection";
 import { LANDING_EXAMS, type ExamKey } from "./landing-data";
 
 interface LandingPageProps {
@@ -19,7 +21,7 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
   const validExam: ExamKey =
     paramExam && LANDING_EXAMS[paramExam]
       ? paramExam
-      : "gmat";
+      : "sat";
 
   const [activeExam, setActiveExam] = useState<ExamKey>(validExam);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number>(0);
@@ -39,7 +41,7 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
 
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
-      if (newExam === "gmat") {
+      if (newExam === "sat") {
         url.searchParams.delete("exam");
       } else {
         url.searchParams.set("exam", newExam);
@@ -49,8 +51,8 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
-      {/* 1. Practice Hero: Problem first, zero sign-up gate, instant trap autopsy, crawlable <a> exam tabs */}
+    <div className="min-h-screen bg-background text-foreground antialiased selection:bg-foreground/10 selection:text-foreground">
+      {/* 1 & 2 & 3. Calm Hero & Distraction-Free Practice Workspace */}
       <PracticeHeroSection
         activeExam={activeExam}
         onExamChange={handleExamChange}
@@ -58,11 +60,17 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
         onSelectQuestionIndex={setSelectedQuestionIndex}
       />
 
-      {/* 2. Score Gap Calculator: Exact math of score points translated to missed questions */}
-      <ScoreGapCalculator activeExam={activeExam} />
+      {/* 4. The Three Pillars (Targeted Practice, First-Principles Solutions, Spaced Repetition) */}
+      <ThreePillarsSection />
 
-      {/* 3. Exam Traps & High-Yield Topics: Real test traps, error rates, and topic bridges */}
-      <ExamTrapsSection activeExam={activeExam} />
+      {/* 5. The 6 Global Exams (Curriculum Cards Blueprint) */}
+      <GlobalExamsSection onSelectExam={handleExamChange} />
+
+      {/* 6. Score Estimator & Study Planner */}
+      <ScorePlannerSection activeExam={activeExam} />
+
+      {/* 7. Simple, Honest Call To Action */}
+      <SimpleCTASection />
     </div>
   );
 }
