@@ -15,6 +15,7 @@ import {
   ChevronUp,
   ChevronRight,
   Flag,
+  Zap,
 } from "lucide-react";
 import type { SessionQuestion } from "@/types/tutor";
 import type { QuestionAttemptRecord } from "../SessionPlayer";
@@ -59,6 +60,16 @@ export function SessionResultsView({
   const incorrectCount = Object.values(userAttempts).filter((a) => !a.isCorrect).length;
   const trapsCaughtCount = Object.values(userAttempts).filter((a) => !a.isCorrect && !a.wasRevealed).length;
   const flaggedCount = flaggedQuestions.size;
+  const missedDomains = Array.from(
+    new Set(
+      questions
+        .filter((q) => {
+          const attempt = userAttempts[q.question_id];
+          return attempt && !attempt.isCorrect && q.skill_domain;
+        })
+        .map((q) => q.skill_domain),
+    ),
+  );
 
   const filteredQuestions = questions.filter((q, idx) => {
     const attempt = userAttempts[q.question_id];
@@ -129,6 +140,44 @@ export function SessionResultsView({
             <div className="text-xs text-muted-foreground mt-1">Traps Missed</div>
           </div>
         </div>
+
+        {/* Score Leak Elimination Alert */}
+        {missedDomains.length > 0 && (
+          <div className="p-4 rounded-xl border border-rose-500/25 bg-rose-500/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
+                <h4 className="font-bold text-sm text-foreground">
+                  {incorrectCount} Score Leak{incorrectCount > 1 ? "s" : ""} Detected
+                </h4>
+                <Badge
+                  variant="outline"
+                  className="text-[10px] uppercase font-bold text-rose-600 dark:text-rose-400 border-rose-500/30 bg-rose-500/10"
+                >
+                  Targeted Fix
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Mistakes detected in:{" "}
+                <strong className="text-foreground font-semibold">
+                  {missedDomains.join(", ")}
+                </strong>
+                . Fix them now while test traps are fresh in memory.
+              </p>
+            </div>
+            {nextDomain && (
+              <Button
+                size="sm"
+                onClick={onStartNextTopic}
+                disabled={startingNext}
+                className="cursor-pointer shrink-0 font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-xs"
+              >
+                <Zap className="w-3.5 h-3.5 mr-1 fill-white" />
+                Drill Weak Spots (10Q)
+              </Button>
+            )}
+          </div>
+        )}
 
         {/* Post-Exam Filter Tabs */}
         <div className="flex items-center justify-between flex-wrap gap-2 pt-4 border-t border-border/80">

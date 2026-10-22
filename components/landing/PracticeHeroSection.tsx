@@ -59,41 +59,41 @@ const EXAM_HERO_COPY: Record<
     subhead: string;
   }
 > = {
-    gmat: {
-    org: "GMAC Focus Edition",
-    headline: "Adaptive practice for the GMAT Focus.",
+  gmat: {
+    org: "GMAC GMAT Focus",
+    headline: "Break your score ceiling. Hit 740+.",
     subhead:
-      "Target high-yield Data Insights, Quantitative, and Verbal questions with first-principles derivations and percentile-calibrated spaced review.",
+      "Pinpoint your score leaks across Data Insights, Quant, and Verbal. Stop studying passively—fix your trap mistakes in 15 minutes a day.",
   },
   sat: {
-    org: "College Board 2026",
-    headline: "Adaptive practice for the Digital SAT.",
+    org: "College Board Digital SAT",
+    headline: "Stop losing points to test traps. Hit 1500+.",
     subhead:
-      "Master Reading & Writing and Math modules with authentic Desmos-integrated questions, step-by-step solutions, and spaced retention review.",
+      "Target your exact weak spots across Reading & Writing and Math. Authentic Desmos-integrated questions that build real exam instinct.",
   },
   gre: {
     org: "ETS GRE General",
-    headline: "Adaptive practice for the GRE General.",
+    headline: "Eliminate your error patterns. Hit 330+.",
     subhead:
-      "Practice Quantitative Comparison, Text Completion contrast clues, and timed problem sets with clean step-by-step logic.",
+      "Target high-yield Quantitative Comparison traps and Text Completion logic shifts with step-by-step first principles.",
   },
   cfa: {
     org: "CFA Institute Level 1",
-    headline: "Adaptive practice for CFA Level 1.",
+    headline: "Master high-weight concepts. Secure the 90th percentile.",
     subhead:
-      "Master FSA, Quantitative Methods, and Corporate Issuers with BA II Plus formulas, clear derivations, and spaced review.",
+      "Zero in on Financial Statement Analysis, Quant Methods, and Corporate Issuers with formula derivations and active recall.",
   },
   ielts: {
     org: "British Council & IDP",
-    headline: "Adaptive practice for IELTS Academic.",
+    headline: "Master test traps. Target Band 8.0+.",
     subhead:
-      "Master True / False / Not Given passage logic, paraphrase synthesis, and vocabulary precision with un-gated practice.",
+      "Demystify True / False / Not Given passage traps, paraphrase synthesis, and lexical accuracy with timed practice.",
   },
   toefl: {
     org: "ETS TOEFL iBT",
-    headline: "Adaptive practice for TOEFL iBT.",
+    headline: "Precision practice. Target 110+ on the iBT.",
     subhead:
-      "Practice sentence insertion flow, rhetorical purpose analysis, and academic reading comprehension under authentic timing.",
+      "Master high-speed academic reading inferences, acoustic distractors, and structured expression with immediate feedback.",
   },
 };
 

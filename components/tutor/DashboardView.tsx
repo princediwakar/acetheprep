@@ -81,10 +81,15 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
   }
 
   function handleAlgorithmicReview() {
+    const focusDomains = (data.topWeakSpots || []).map((w) => w.domain);
     setActiveConfig({
-      title: "Daily Practice",
-      subtitle: "Adaptive practice set optimized to boost your readiness score",
+      title: "Today's Weak-Spot Fix",
+      subtitle:
+        focusDomains.length > 0
+          ? `10 timed questions targeted at repairing ${focusDomains.join(" and ")}`
+          : "Adaptive 10-question set calibrated to locate your score leaks and boost readiness",
       intent: "spaced_review",
+      focusDomains: focusDomains.length > 0 ? focusDomains : undefined,
     });
     setModalQuestionCount(10);
     setModalMode("exam");
@@ -133,9 +138,11 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
     if (!activeConfig) return;
     setIsLaunching(true);
     try {
+      const focusDomainsToPass =
+        activeConfig.focusDomains ?? (activeConfig.domain ? [activeConfig.domain] : undefined);
       const sessionId = await startSession(
         activeConfig.intent,
-        activeConfig.domain ? [activeConfig.domain] : undefined,
+        focusDomainsToPass,
         modalQuestionCount,
       );
       router.push(`${TUTOR_ROUTES.SESSION(sessionId)}?mode=${modalMode}&autostart=true`);
@@ -192,6 +199,8 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
       {/* Section 2: Smart Start Strip */}
       <SmartStartStrip
         nextLinearDomain={nextLinearDomain}
+        topWeakSpots={data.topWeakSpots}
+        examName={data.examName}
         onAlgorithmicReview={handleAlgorithmicReview}
         onLinearNext={handleLinearNext}
       />

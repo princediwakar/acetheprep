@@ -471,14 +471,16 @@ export const GRE_VERBAL_QUESTIONS: SeedQuestion[] = [
   },
 
   // -------------------------------------------------------------
-  // READING COMPREHENSION (10 Questions)
+  // READING COMPREHENSION (10 Upgraded Passages & Questions)
   // -------------------------------------------------------------
   {
     exam_name: "GRE",
     subject: "Verbal Reasoning",
     skill_domain: "Reading Comprehension",
     difficulty_tier: 2,
-    question_text: "According to the passage, what accounted for the rapid collapse of the Bronze Age eastern Mediterranean civilization network?\n\nHistorians traditionally attributed the Late Bronze Age collapse (c. 1200 BCE) solely to barbarian invasions by the enigmatic 'Sea Peoples.' However, contemporary archaeological consensus recognizes a complex 'systems collapse.' Dendrochronological and palynological records reveal a multi-century megadrought across the Aegean and Levant, triggering widespread crop failures, urban famine, and internal peasant revolts that shattered fragile redistributive palatial economies before foreign raiders even arrived.",
+    passage_id: "gre_rc_bronze_age_collapse",
+    passage: "Historians traditionally attributed the Late Bronze Age collapse (c. 1200 BCE) solely to barbarian invasions by the enigmatic 'Sea Peoples.' However, contemporary archaeological consensus recognizes a complex 'systems collapse.' Dendrochronological and palynological records reveal a multi-century megadrought across the Aegean and Levant, triggering widespread crop failures, urban famine, and internal peasant revolts that shattered fragile redistributive palatial economies before foreign raiders even arrived.",
+    question_text: "According to the passage, what accounted for the rapid collapse of the Bronze Age eastern Mediterranean civilization network?",
     options: {
       A: "Solely catastrophic maritime raids conducted by the Sea Peoples.",
       B: "A multi-faceted systems collapse initiated by prolonged megadrought and social upheaval that undermined palace economies.",
@@ -501,7 +503,9 @@ export const GRE_VERBAL_QUESTIONS: SeedQuestion[] = [
     subject: "Verbal Reasoning",
     skill_domain: "Reading Comprehension",
     difficulty_tier: 3,
-    question_text: "The author implies that early twentieth-century anthropologists who categorized foraging societies as 'primitive' committed which intellectual error?\n\nEarly twentieth-century ethnographic accounts frequently characterized hunter-gatherer bands as living on the precipice of starvation, trapped in a relentless, brutal struggle for caloric subsistence. Anthropologist Marshall Sahlins radically dismantled this paradigm in his 1972 work 'Stone Age Economics,' demonstrating that foragers typically worked only three to five hours daily to satisfy material needs, enjoying extensive leisure and cultural autonomy. By imposing industrial capitalistic definitions of scarcity and boundless material desire onto societies organized around voluntary restraint, earlier observers had misconstrued contentment as deprivation.",
+    passage_id: "gre_rc_sahlins_stone_age_economics",
+    passage: "Early twentieth-century ethnographic accounts frequently characterized hunter-gatherer bands as living on the precipice of starvation, trapped in a relentless, brutal struggle for caloric subsistence. Anthropologist Marshall Sahlins radically dismantled this paradigm in his 1972 work 'Stone Age Economics,' demonstrating that foragers typically worked only three to five hours daily to satisfy material needs, enjoying extensive leisure and cultural autonomy. By imposing industrial capitalistic definitions of scarcity and boundless material desire onto societies organized around voluntary restraint, earlier observers had misconstrued contentment as deprivation.",
+    question_text: "The author implies that early twentieth-century anthropologists who categorized foraging societies as 'primitive' committed which intellectual error?",
     options: {
       A: "They failed to calculate the precise caloric yields of game animals.",
       B: "They projected modern capitalistic assumptions about infinite material acquisition onto cultures with culturally bounded wants.",
@@ -524,7 +528,9 @@ export const GRE_VERBAL_QUESTIONS: SeedQuestion[] = [
     subject: "Verbal Reasoning",
     skill_domain: "Reading Comprehension",
     difficulty_tier: 2,
-    question_text: "Which choice best describes the primary rhetorical function of the author's mention of 'epigenetic tags' in the passage?\n\nFor nearly a century, the Central Dogma of molecular biology held that genetic inheritance flows unidirectionally from static DNA sequences to RNA to proteins. However, the emerging discipline of epigenetics complicates this mechanistic view. Environmental stressors—such as severe caloric deprivation or chemical exposure—can affix chemical methyl groups directly to chromatin. <u>These epigenetic tags regulate whether genes are silenced or expressed without altering the underlying nucleotide sequence</u>, and in some mammalian lineages, these alterations persist across multiple generations.",
+    passage_id: "gre_rc_epigenetics_molecular_biology",
+    passage: "For nearly a century, the Central Dogma of molecular biology held that genetic inheritance flows unidirectionally from static DNA sequences to RNA to proteins. However, the emerging discipline of epigenetics complicates this mechanistic view. Environmental stressors—such as severe caloric deprivation or chemical exposure—can affix chemical methyl groups directly to chromatin. These epigenetic tags regulate whether genes are silenced or expressed without altering the underlying nucleotide sequence, and in some mammalian lineages, these alterations persist across multiple generations.",
+    question_text: "Which choice best describes the primary rhetorical function of the author's mention of 'epigenetic tags' in the passage?",
     options: {
       A: "To refute the claim that chemical methyl groups exist in nature.",
       B: "To explain the biochemical mechanism through which environmental factors can influence gene expression and transgenerational heredity without altering DNA code.",
@@ -532,7 +538,7 @@ export const GRE_VERBAL_QUESTIONS: SeedQuestion[] = [
       D: "To propose a therapeutic regimen for curing congenital genetic disorders.",
     },
     correct_option: "B",
-    explanation: "The underlined sentence explains how methyl tags regulate gene silencing/expression without mutating nucleotide sequences, providing the concrete biochemical mechanism for epigenetic inheritance.",
+    explanation: "The text explains how methyl tags regulate gene silencing/expression without mutating nucleotide sequences, providing the concrete biochemical mechanism for epigenetic inheritance.",
     distractor_analysis: {
       A: "Incorrect. The text affirms their existence.",
       B: "Correct. Articulates the explanatory role of epigenetic tags in bridging environmental input and transgenerational gene expression.",
@@ -547,7 +553,9 @@ export const GRE_VERBAL_QUESTIONS: SeedQuestion[] = [
     subject: "Verbal Reasoning",
     skill_domain: "Reading Comprehension",
     difficulty_tier: 3,
-    question_text: "The author's attitude toward the 'standard model of cosmic inflation' can best be described as:\n\nWhile the inflationary paradigm successfully resolves the horizon and flatness problems that afflicted standard Big Bang cosmology, its reliance on an unobserved scalar 'inflaton field' with finely tuned potential energy landscapes remains an acute theoretical liability. Without direct observational confirmation of primordial B-mode polarization patterns in the cosmic microwave background, inflation teeters on the border between empirical physics and unfalsifiable mathematical conjecture.",
+    passage_id: "gre_rc_cosmic_inflation",
+    passage: "While the inflationary paradigm successfully resolves the horizon and flatness problems that afflicted standard Big Bang cosmology, its reliance on an unobserved scalar 'inflaton field' with finely tuned potential energy landscapes remains an acute theoretical liability. Without direct observational confirmation of primordial B-mode polarization patterns in the cosmic microwave background, inflation teeters on the border between empirical physics and unfalsifiable mathematical conjecture.",
+    question_text: "The author's attitude toward the 'standard model of cosmic inflation' can best be described as:",
     options: {
       A: "unqualified endorsement",
       B: "dismissive rejection",
@@ -570,7 +578,9 @@ export const GRE_VERBAL_QUESTIONS: SeedQuestion[] = [
     subject: "Verbal Reasoning",
     skill_domain: "Reading Comprehension",
     difficulty_tier: 2,
-    question_text: "According to the passage, how do mycorrhizal fungal networks benefit forest ecosystems?\n\nBeneath the temperate forest floor lies the 'wood-wide web'—dense subterranean mycorrhizal networks that establish mutualistic symbiosis with tree root systems. The fungal hyphae absorb soil phosphorus and water far beyond the reach of plant roots, trading these vital minerals with host trees in exchange for photosynthetic carbon sugars. Crucially, these hyphal networks also serve as conduits through which mature 'mother trees' transfer carbon resources and biochemical defense signals to shaded saplings.",
+    passage_id: "gre_rc_mycorrhizal_networks",
+    passage: "Beneath the temperate forest floor lies the 'wood-wide web'—dense subterranean mycorrhizal networks that establish mutualistic symbiosis with tree root systems. The fungal hyphae absorb soil phosphorus and water far beyond the reach of plant roots, trading these vital minerals with host trees in exchange for photosynthetic carbon sugars. Crucially, these hyphal networks also serve as conduits through which mature 'mother trees' transfer carbon resources and biochemical defense signals to shaded saplings.",
+    question_text: "According to the passage, how do mycorrhizal fungal networks benefit forest ecosystems?",
     options: {
       A: "By decomposing living tree roots to release atmospheric methane.",
       B: "By supplying host trees with expanded mineral uptake and facilitating inter-plant nutrient and signaling transport.",
@@ -593,7 +603,9 @@ export const GRE_VERBAL_QUESTIONS: SeedQuestion[] = [
     subject: "Verbal Reasoning",
     skill_domain: "Reading Comprehension",
     difficulty_tier: 3,
-    question_text: "Which finding, if true, would most directly undermine the author's critique of algorithmic credit-scoring models?\n\nCritics argue that machine-learning credit scoring algorithms inevitably replicate and entrench historical racial discrimination. Because training datasets reflect decades of discriminatory mortgage redlining and systemic wealth disparities, the algorithms learn to utilize innocuous proxies—such as zip codes or educational institutions—to penalize minority loan applicants, cloaking institutional bias in an aura of mathematical objectivity.",
+    passage_id: "gre_rc_algorithmic_bias",
+    passage: "Critics argue that machine-learning credit scoring algorithms inevitably replicate and entrench historical racial discrimination. Because training datasets reflect decades of discriminatory mortgage redlining and systemic wealth disparities, the algorithms learn to utilize innocuous proxies—such as zip codes or educational institutions—to penalize minority loan applicants, cloaking institutional bias in an aura of mathematical objectivity.",
+    question_text: "Which finding, if true, would most directly undermine the author's critique of algorithmic credit-scoring models?",
     options: {
       A: "Credit scoring algorithms require substantial server computing power to evaluate complex neural networks.",
       B: "Commercial lenders using blinded algorithmic models with proxy-variable exclusions approve minority loan applications at rates 28% higher than human loan officers evaluating the same portfolios.",
@@ -616,7 +628,9 @@ export const GRE_VERBAL_QUESTIONS: SeedQuestion[] = [
     subject: "Verbal Reasoning",
     skill_domain: "Reading Comprehension",
     difficulty_tier: 1,
-    question_text: "What is the central focus of the passage?\n\nThe development of the Bessemer process in the 1850s revolutionized the metallurgy of the Industrial Revolution. Prior to Henry Bessemer's patented converter, producing malleable steel required laborious, small-scale crucible smelting that was prohibitively costly for structural engineering. By blasting atmospheric air through molten pig iron to oxidize impurities, the Bessemer process collapsed production times from weeks to twenty minutes and dropped steel prices by over 80%, inaugurating the modern era of skyscrapers and transcontinental railroads.",
+    passage_id: "gre_rc_bessemer_process",
+    passage: "The development of the Bessemer process in the 1850s revolutionized the metallurgy of the Industrial Revolution. Prior to Henry Bessemer's patented converter, producing malleable steel required laborious, small-scale crucible smelting that was prohibitively costly for structural engineering. By blasting atmospheric air through molten pig iron to oxidize impurities, the Bessemer process collapsed production times from weeks to twenty minutes and dropped steel prices by over 80%, inaugurating the modern era of skyscrapers and transcontinental railroads.",
+    question_text: "What is the central focus of the passage?",
     options: {
       A: "The personal patent disputes between Henry Bessemer and rival American metallurgists.",
       B: "How a technological manufacturing breakthrough transformed steel production from an expensive specialty craft into an abundant industrial commodity.",
@@ -639,7 +653,9 @@ export const GRE_VERBAL_QUESTIONS: SeedQuestion[] = [
     subject: "Verbal Reasoning",
     skill_domain: "Reading Comprehension",
     difficulty_tier: 2,
-    question_text: "Based on the text, what can be inferred about the relationship between sleep deprivation and neurodegenerative pathology?\n\nDuring deep slow-wave sleep, the mammalian brain's glymphatic system initiates a convective surge of cerebrospinal fluid through the interstitial space, flushing out toxic metabolic waste products accumulated during waking neuronal metabolism. Prominent among these cleared solutes is amyloid-beta, an aggregating peptide strongly implicated in the pathogenesis of Alzheimer's disease. Chronic sleep fragmentation suppresses this clearance pathway, leading to accelerated neurotoxic plaque accumulation.",
+    passage_id: "gre_rc_glymphatic_system",
+    passage: "During deep slow-wave sleep, the mammalian brain's glymphatic system initiates a convective surge of cerebrospinal fluid through the interstitial space, flushing out toxic metabolic waste products accumulated during waking neuronal metabolism. Prominent among these cleared solutes is amyloid-beta, an aggregating peptide strongly implicated in the pathogenesis of Alzheimer's disease. Chronic sleep fragmentation suppresses this clearance pathway, leading to accelerated neurotoxic plaque accumulation.",
+    question_text: "Based on the text, what can be inferred about the relationship between sleep deprivation and neurodegenerative pathology?",
     options: {
       A: "Sleep deprivation directly enhances cerebral blood flow, neutralizing amyloid plaques.",
       B: "Adequate slow-wave sleep is essential for the glymphatic clearance of metabolic toxins like amyloid-beta that contribute to neurodegeneration.",
@@ -662,7 +678,9 @@ export const GRE_VERBAL_QUESTIONS: SeedQuestion[] = [
     subject: "Verbal Reasoning",
     skill_domain: "Reading Comprehension",
     difficulty_tier: 3,
-    question_text: "In the passage, the word 'unmediated' most nearly means:\n\nRomantic poets argued that genuine aesthetic communion required an unmediated encounter with sublime nature, asserting that scholastic analysis and scientific taxonomy only fractured the soul's holistic apprehension of the divine.",
+    passage_id: "gre_rc_romantic_nature",
+    passage: "Romantic poets argued that genuine aesthetic communion required an unmediated encounter with sublime nature, asserting that scholastic analysis and scientific taxonomy only fractured the soul's holistic apprehension of the divine.",
+    question_text: "In the passage, the word 'unmediated' most nearly means:",
     options: {
       A: "direct and unfiltered",
       B: "negotiated by a third party",
@@ -685,7 +703,9 @@ export const GRE_VERBAL_QUESTIONS: SeedQuestion[] = [
     subject: "Verbal Reasoning",
     skill_domain: "Reading Comprehension",
     difficulty_tier: 2,
-    question_text: "Which choice best summarizes the author's primary argument regarding the 'tragedy of the commons'?\n\nEcologist Garrett Hardin famously argued in 1968 that shared common-pool resources are doomed to inevitable overexploitation because individual rational actors will maximize their private extraction at the expense of communal sustainability. However, Nobel laureate Elinor Ostrom proved that Hardin's bleak prognosis overlooked empirical reality. Surveying centuries of alpine pastures, irrigation syndicates, and coastal fisheries, Ostrom demonstrated that local communities frequently design sophisticated, self-enforcing customary institutions that sustainably govern common resources without requiring privatized ownership or top-down state coercion.",
+    passage_id: "gre_rc_tragedy_of_commons",
+    passage: "Ecologist Garrett Hardin famously argued in 1968 that shared common-pool resources are doomed to inevitable overexploitation because individual rational actors will maximize their private extraction at the expense of communal sustainability. However, Nobel laureate Elinor Ostrom proved that Hardin's bleak prognosis overlooked empirical reality. Surveying centuries of alpine pastures, irrigation syndicates, and coastal fisheries, Ostrom demonstrated that local communities frequently design sophisticated, self-enforcing customary institutions that sustainably govern common resources without requiring privatized ownership or top-down state coercion.",
+    question_text: "Which choice best summarizes the author's primary argument regarding the 'tragedy of the commons'?",
     options: {
       A: "All common resources must be immediately nationalized by central state authorities to avoid environmental collapse.",
       B: "Hardin's theory of inevitable commons degradation was disproven by Ostrom's documentation of successful local community self-governance.",

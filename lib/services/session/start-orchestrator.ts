@@ -224,7 +224,14 @@ export async function generateAndCreateSession(
       daysRemaining,
     });
 
-    const topDomains = priorities.slice(0, questionCount).map((p) => p.skillDomain);
+    let topDomains = priorities.slice(0, questionCount).map((p) => p.skillDomain);
+    if (focusDomains && focusDomains.length > 0) {
+      const explicit = focusDomains.filter(
+        (d) => priorities.some((p) => p.skillDomain === d) || concepts.some((c) => c.skill_domain === d),
+      );
+      const remaining = topDomains.filter((d) => !explicit.includes(d));
+      topDomains = [...explicit, ...remaining].slice(0, questionCount);
+    }
     const conceptByDomain = new Map(concepts.map((c) => [c.skill_domain, c]));
     const nowIso = new Date().toISOString();
 

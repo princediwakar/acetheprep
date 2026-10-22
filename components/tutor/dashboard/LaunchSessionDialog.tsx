@@ -20,6 +20,7 @@ export interface SessionConfig {
   intent: "spaced_review" | "custom_mock";
   domain?: string;
   subjectName?: string;
+  focusDomains?: string[];
 }
 
 export const QUESTION_COUNT_OPTIONS = [
@@ -84,6 +85,18 @@ export function LaunchSessionDialog({
           <DialogDescription className="text-sm text-muted-foreground">
             {activeConfig?.subtitle}
           </DialogDescription>
+          {activeConfig?.focusDomains && activeConfig.focusDomains.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mr-1">
+                Targeting:
+              </span>
+              {activeConfig.focusDomains.map((d) => (
+                <Badge key={d} variant="secondary" className="text-xs font-semibold px-2 py-0.5">
+                  {d}
+                </Badge>
+              ))}
+            </div>
+          )}
         </div>
 
         {isLaunching ? (

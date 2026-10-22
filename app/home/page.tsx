@@ -16,6 +16,7 @@ import { computeGREPrediction } from "@/lib/predictor/gre-score-engine";
 import { computeIELTSPrediction } from "@/lib/predictor/ielts-score-engine";
 import { computeTOEFLPrediction } from "@/lib/predictor/toefl-score-engine";
 import { getUserSubscriptionStatus, syncCheckoutSession } from "@/lib/billing";
+import { getSubjectForDomain } from "@/lib/services/taxonomy";
 import taxonomy from "@/lib/taxonomies.json";
 
 export const metadata: Metadata = {
@@ -47,6 +48,14 @@ export interface SyllabusSubject {
   domains: SyllabusDomain[];
 }
 
+export interface WeakSpotItem {
+  domain: string;
+  subjectName?: string;
+  masteryScore: number;
+  reason: "recent_errors" | "low_accuracy" | "due_for_review" | "untested";
+  badgeText: string;
+}
+
 export interface DashboardPageData {
   readinessIndex: number;
   daysRemaining: number;
@@ -66,6 +75,7 @@ export interface DashboardPageData {
   prediction: ProjectionHeroProps["prediction"];
   isPro?: boolean;
   activeSessions: SessionRow[];
+  topWeakSpots: WeakSpotItem[];
 }
 
 export default async function HomePage({
@@ -152,7 +162,7 @@ async function HomePageContent({
       .eq("exam_profile_id", profile.profile_id),
     supabase
       .from("session_answers")
-      .select("answered_at")
+      .select("answered_at, is_correct, skill_domain")
       .eq("user_id", user.id)
       .eq("exam_profile_id", profile.profile_id)
       .order("answered_at", { ascending: false })
@@ -194,7 +204,11 @@ async function HomePageContent({
       : getUserSubscriptionStatus(user.id),
   ]);
   const concepts = (conceptsRes.data || []) as ConceptRow[];
-  const questionResults = (questionResultsRes.data || []) as { answered_at: string }[];
+  const questionResults = (questionResultsRes.data || []) as {
+    answered_at: string;
+    is_correct?: boolean;
+    skill_domain?: string;
+  }[];
 
   const activeSessionsRaw = (activeSessionsRes.data || []) as {
     id: string;
@@ -306,6 +320,60 @@ async function HomePageContent({
     overdueConcepts.length > 0
       ? [...overdueConcepts].sort((a, b) => a.mastery_score - b.mastery_score)[0].skill_domain
       : null;
+
+  // --- Top Weak Spots for Transparent Daily Weak-Spot Fix ---
+  const recentErrorsByDomain: Record<string, number> = {};
+  for (const ans of questionResults.slice(0, 50)) {
+    if (ans.is_correct === false && ans.skill_domain) {
+      recentErrorsByDomain[ans.skill_domain] = (recentErrorsByDomain[ans.skill_domain] || 0) + 1;
+    }
+  }
+
+  const domainWeaknessList = concepts.map((c) => {
+    const errorCount = recentErrorsByDomain[c.skill_domain] || 0;
+    const isOverdue = new Date(c.next_review_at) < now;
+    const mastery = c.mastery_score;
+
+    let priorityScore = 0;
+    let reason: WeakSpotItem["reason"] = "untested";
+    let badgeText = "Topic practice";
+
+    if (errorCount > 0) {
+      priorityScore += 100 + errorCount * 25 + (1 - mastery) * 50;
+      reason = "recent_errors";
+      badgeText = `${errorCount} recent mistake${errorCount > 1 ? "s" : ""} • ${Math.round(mastery * 100)}% accuracy`;
+    } else if (isOverdue && c.total_attempted > 0) {
+      priorityScore += 70 + (1 - mastery) * 30;
+      reason = "due_for_review";
+      badgeText = `Review due • ${Math.round(mastery * 100)}% accuracy`;
+    } else if (mastery < 0.70 && c.total_attempted > 0) {
+      priorityScore += 40 + (1 - mastery) * 20;
+      reason = "low_accuracy";
+      badgeText = `Low accuracy (${Math.round(mastery * 100)}%)`;
+    } else if (c.total_attempted === 0) {
+      priorityScore += 10;
+      reason = "untested";
+      badgeText = "Unpracticed";
+    }
+
+    return {
+      domain: c.skill_domain,
+      subjectName: getSubjectForDomain(profile.exam_name, c.skill_domain),
+      masteryScore: c.mastery_score,
+      reason,
+      badgeText,
+      priorityScore,
+    };
+  });
+
+  domainWeaknessList.sort((a, b) => b.priorityScore - a.priorityScore);
+  const topWeakSpots: WeakSpotItem[] = domainWeaknessList.slice(0, 2).map((item) => ({
+    domain: item.domain,
+    subjectName: item.subjectName,
+    masteryScore: item.masteryScore,
+    reason: item.reason,
+    badgeText: item.badgeText,
+  }));
 
   const streak = computeStreak(questionResults);
   const sessionsCompleted = completedSessionsRes.count ?? 0;
@@ -547,6 +615,7 @@ async function HomePageContent({
     prediction,
     isPro: subscriptionStatus.isPro,
     activeSessions,
+    topWeakSpots,
   };
 
   return <DashboardView data={data} />;
