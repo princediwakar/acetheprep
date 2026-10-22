@@ -22,7 +22,7 @@ export function PricingCards({ userEmail: propEmail, isPro: propIsPro }: Pricing
   const { user } = useUser();
   const userEmail = propEmail ?? user?.email ?? null;
   const isPro = propIsPro ?? false;
-  const [billingCycle, setBillingCycle] = useState<"quarterly" | "monthly">("quarterly");
+  const [billingCycle, setBillingCycle] = useState<"quarterly" | "monthly">("monthly");
   const [loadingPlan, setLoadingPlan] = useState<"monthly" | "quarterly" | null>(null);
 
   const isQuarterly = billingCycle === "quarterly";
