@@ -4,12 +4,12 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
-import { PracticeHeroSection } from "./PracticeHeroSection";
-import { ThreePillarsSection } from "./ThreePillarsSection";
-import { GlobalExamsSection } from "./GlobalExamsSection";
+import { HeroSection } from "./HeroSection";
+import { ProductImpactSection } from "./ProductImpactSection";
+import { AIWritingShowcase } from "./AIWritingShowcase";
 import { ScorePlannerSection } from "./ScorePlannerSection";
-import { StudentQueriesSection } from "./StudentQueriesSection";
-import { TopicalAuthorityHub } from "./TopicalAuthorityHub";
+import { AITechnologySection } from "./AITechnologySection";
+import { GlobalExamsSection } from "./GlobalExamsSection";
 import { SimpleCTASection } from "./SimpleCTASection";
 import { LANDING_EXAMS, type ExamKey } from "./landing-data";
 
@@ -29,7 +29,6 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
       : "gmat";
 
   const [activeExam, setActiveExam] = useState<ExamKey>(validExam);
-  const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number>(0);
 
   // Instant client-side redirect for authenticated returning students
   useEffect(() => {
@@ -42,14 +41,12 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
   useEffect(() => {
     if (paramExam && LANDING_EXAMS[paramExam] && paramExam !== activeExam) {
       setActiveExam(paramExam);
-      setSelectedQuestionIndex(0);
     }
   }, [paramExam, activeExam]);
 
   // Sync URL query string cleanly without full page reloads for instant 0ms transitions
   const handleExamChange = (newExam: ExamKey) => {
     setActiveExam(newExam);
-    setSelectedQuestionIndex(0);
 
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
@@ -64,30 +61,28 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
 
   return (
     <div className="min-h-screen bg-background text-foreground antialiased selection:bg-foreground/10 selection:text-foreground">
-      {/* 1 & 2 & 3. Calm Hero & Distraction-Free Practice Workspace */}
-      <PracticeHeroSection
+      {/* 1. Clear, Human Product Hero with 6-Exam Switcher */}
+      <HeroSection
         activeExam={activeExam}
         onExamChange={handleExamChange}
-        selectedQuestionIndex={selectedQuestionIndex}
-        onSelectQuestionIndex={setSelectedQuestionIndex}
       />
 
-      {/* 4. The Three Pillars (Targeted Practice, First-Principles Solutions, Spaced Repetition) */}
-      <ThreePillarsSection />
+      {/* 2. The 4 AI Engines (Score Leak Diagnostic, Trap Forensics, Socratic Hinting, Spaced Retention) */}
+      <ProductImpactSection />
 
-      {/* 5. The 6 Global Exams (Curriculum Cards Blueprint) */}
-      <GlobalExamsSection onSelectExam={handleExamChange} />
+      {/* 3. Live Proof: Real-Time AI Essay & Writing Evaluation */}
+      <AIWritingShowcase />
 
-      {/* 5b. Topical Authority Hub (High-Yield Drills & Trap Teardowns) */}
-      <TopicalAuthorityHub />
-
-      {/* 6. Real Student Query FAQs (High-Yield Verification & Trap Answers) */}
-      <StudentQueriesSection initialExam={activeExam} />
-
-      {/* 7. Score Estimator & Study Planner */}
+      {/* 4. Interactive Score Estimator & AI Study Planner */}
       <ScorePlannerSection activeExam={activeExam} />
 
-      {/* 8. Simple, Honest Call To Action */}
+      {/* 5. System Architecture: How It Works Under The Hood */}
+      <AITechnologySection />
+
+      {/* 6. The 6 Global Exam Standards */}
+      <GlobalExamsSection onSelectExam={handleExamChange} />
+
+      {/* 7. Minimal, Honest Call To Action */}
       <SimpleCTASection />
     </div>
   );

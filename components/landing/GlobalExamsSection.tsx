@@ -105,27 +105,20 @@ export function GlobalExamsSection({ onSelectExam }: GlobalExamsSectionProps) {
 
                 {/* Card Actions */}
                 <div className="pt-4 border-t border-border/60 space-y-2">
-                  {onSelectExam && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onSelectExam(key);
-                        const el = document.getElementById("practice-workspace");
-                        if (el) el.scrollIntoView({ behavior: "smooth" });
-                      }}
-                      className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-foreground text-background hover:opacity-90 px-4 py-2.5 text-xs font-semibold transition-opacity cursor-pointer shadow-xs"
-                    >
-                      <span>Practice {config.shortName} in Workspace ↑</span>
-                    </button>
-                  )}
+                  <Link
+                    href={drillUrl}
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-foreground text-background hover:opacity-90 px-4 py-2.5 text-xs font-semibold transition-opacity shadow-xs"
+                  >
+                    <span>Start {config.shortName} Diagnostic Drill</span>
+                    <ArrowRight className="h-3 w-3" />
+                  </Link>
 
                   <Link
                     href={blueprintUrl}
                     className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 py-2 text-xs font-medium text-foreground hover:bg-secondary transition-colors"
                   >
                     <BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span>View Curriculum Blueprint &amp; Topics</span>
-                    <ArrowRight className="h-3 w-3 ml-1 text-muted-foreground" />
+                    <span>View Curriculum Blueprint</span>
                   </Link>
                 </div>
               </div>

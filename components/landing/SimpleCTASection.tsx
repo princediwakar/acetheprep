@@ -34,13 +34,13 @@ export function SimpleCTASection() {
 
         {/* Buttons */}
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-          <a
-            href="#practice-workspace"
+          <Link
+            href="/practice"
             className="inline-flex items-center gap-2 rounded-xl bg-foreground text-background px-5 py-3 text-xs sm:text-sm font-semibold hover:opacity-90 transition-opacity shadow-xs"
           >
-            <span>Start Practice Workspace</span>
+            <span>Start Diagnostic Drill</span>
             <ArrowRight className="h-4 w-4" />
-          </a>
+          </Link>
 
           <a
             href="#curriculum"

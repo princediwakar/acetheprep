@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Calculator, Clock, Target, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Calculator, Clock, Target, CheckCircle2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LANDING_EXAMS, type ExamKey } from "./landing-data";
 
@@ -43,8 +43,9 @@ export function ScorePlannerSection({ activeExam }: ScorePlannerSectionProps) {
       <div className="mx-auto max-w-4xl space-y-10">
         {/* Section Heading */}
         <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/60 px-3.5 py-1 text-xs font-mono font-medium text-muted-foreground uppercase tracking-wider">
-            Diagnostic Planner
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/60 px-3.5 py-1 text-xs font-medium text-foreground">
+            <Sparkles className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>AI Study Planner</span>
           </div>
           <h2 className="font-heading text-2xl sm:text-4xl font-normal tracking-tight text-foreground">
             {examConfig.name} Score Estimator &amp; Study Planner
@@ -158,7 +159,7 @@ export function ScorePlannerSection({ activeExam }: ScorePlannerSectionProps) {
                 ~{estimatedHours} Hours
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Focused concept practice & review
+                Focused concept practice &amp; review
               </p>
             </div>
 
