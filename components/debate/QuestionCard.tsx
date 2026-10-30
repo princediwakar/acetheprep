@@ -1,28 +1,24 @@
+// Path: components/debate/QuestionCard.tsx
 "use client";
 
-import { useState, useOptimistic, useTransition } from "react";
+import { useState } from "react";
 import { renderMathContent } from "@/lib/quiz-utils";
+import { RichContentRenderer } from "@/components/ui/rich-content/RichContentRenderer";
 import { cn } from "@/lib/utils";
-import { CommunityVoteBar } from "./CommunityVoteBar";
 import { SubredditExportButton } from "./SubredditExportButton";
 import { ErrorLogInboundCTA } from "./ErrorLogInboundCTA";
-import {
-  recordCommunityVoteAction,
-  type CommunityVoteStats,
-} from "@/lib/actions/debate";
+import { StumpAFriendCard } from "./StumpAFriendCard";
 import {
   CheckCircle2,
   XCircle,
   AlertTriangle,
   Sparkles,
-  HelpCircle,
-  Share2,
-  ArrowRight,
   BookOpen,
   Info,
+  Swords,
 } from "lucide-react";
 
-interface QuestionDebateCardProps {
+interface QuestionCardProps {
   questionId: string;
   examName: string;
   subject?: string;
@@ -35,11 +31,12 @@ interface QuestionDebateCardProps {
   explanation: string;
   distractorAnalysis: Record<string, string>;
   misconception?: string | null;
-  initialStats: CommunityVoteStats;
   isAuthenticated?: boolean;
+  isPeerChallenge?: boolean;
+  initialSelectedOption?: string | null;
 }
 
-export function QuestionDebateCard({
+export function QuestionCard({
   questionId,
   examName,
   subject,
@@ -52,54 +49,17 @@ export function QuestionDebateCard({
   explanation,
   distractorAnalysis,
   misconception,
-  initialStats,
   isAuthenticated = false,
-}: QuestionDebateCardProps) {
-  const [isPending, startTransition] = useTransition();
-  const [stats, setStats] = useState<CommunityVoteStats>(initialStats);
-  const [selectedOption, setSelectedOption] = useState<string | null>(
-    initialStats.userVotedOption
-  );
-  const [hasVoted, setHasVoted] = useState<boolean>(
-    Boolean(initialStats.userVotedOption)
-  );
+  isPeerChallenge = false,
+  initialSelectedOption = null,
+}: QuestionCardProps) {
+  const [selectedOption, setSelectedOption] = useState<string | null>(initialSelectedOption);
+  const [hasAnswered, setHasAnswered] = useState<boolean>(Boolean(initialSelectedOption));
 
-  // Optimistic UI for 0ms perceived voting latency
-  const [optimisticStats, setOptimisticStats] = useOptimistic(
-    stats,
-    (current, newChoice: string) => {
-      const nextDist = { ...current.distribution };
-      nextDist[newChoice] = (nextDist[newChoice] || 0) + 1;
-      const nextTotal = current.totalVotes + 1;
-      const nextPct: Record<string, number> = {};
-      for (const [k, v] of Object.entries(nextDist)) {
-        nextPct[k] = Math.round((v / nextTotal) * 100);
-      }
-      return {
-        distribution: nextDist,
-        percentages: nextPct,
-        totalVotes: nextTotal,
-        userVotedOption: newChoice,
-      };
-    }
-  );
-
-  const handleVote = (optionKey: string) => {
-    if (hasVoted) return;
-
+  const handleSelect = (optionKey: string) => {
+    if (hasAnswered) return;
     setSelectedOption(optionKey);
-    setHasVoted(true);
-
-    startTransition(async () => {
-      setOptimisticStats(optionKey);
-      const res = await recordCommunityVoteAction({
-        questionId,
-        selectedOption: optionKey,
-      });
-      if (res.success) {
-        setStats(res.stats);
-      }
-    });
+    setHasAnswered(true);
   };
 
   const isSelectedCorrect = selectedOption === correctOption;
@@ -109,6 +69,23 @@ export function QuestionDebateCard({
 
   return (
     <div className="space-y-6">
+      {/* Peer Challenge Inbound Banner */}
+      {isPeerChallenge && !hasAnswered && (
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-indigo-500/15 to-purple-500/15 border border-amber-500/30 flex items-center gap-3.5 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center shrink-0 text-amber-300">
+            <Swords className="w-5 h-5" />
+          </div>
+          <div className="text-xs sm:text-sm">
+            <span className="font-bold text-foreground block">
+              Peer Challenge Active!
+            </span>
+            <p className="text-muted-foreground mt-0.5">
+              A study partner challenged you to solve this question without getting tricked. Select your answer below to see if you avoid the trap.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Top Question Meta Banner */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-border/60 text-xs">
         <div className="flex items-center gap-2 flex-wrap">
@@ -127,7 +104,7 @@ export function QuestionDebateCard({
 
         <div className="flex items-center gap-2">
           <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
-            Level {difficultyTier} Practice
+            Level {difficultyTier} Trap Drill
           </span>
           <SubredditExportButton
             questionId={questionId}
@@ -156,7 +133,7 @@ export function QuestionDebateCard({
             <span>Passage Reference</span>
           </div>
           <div className="text-sm leading-relaxed text-slate-300 max-h-60 overflow-y-auto pr-2">
-            {renderMathContent(passage)}
+            <RichContentRenderer content={passage} />
           </div>
         </div>
       )}
@@ -165,15 +142,15 @@ export function QuestionDebateCard({
       <div className="p-5 sm:p-6 rounded-2xl bg-card border border-border/80 shadow-md space-y-5">
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span className="font-semibold text-foreground">
-            {hasVoted ? "Debate & Trap Forensics" : "Anonymous Peer Poll: Which choice is correct?"}
+            {hasAnswered ? "Trap & Solution Analysis" : "Can you avoid the examiner's trap?"}
           </span>
           <span className="text-[11px] font-mono">
-            {hasVoted ? "Cognitive Analysis Below" : "Select an answer to reveal community stats"}
+            {hasAnswered ? "Analysis Below" : "Select an option to evaluate"}
           </span>
         </div>
 
         <div className="text-base sm:text-lg font-medium leading-relaxed text-foreground">
-          {renderMathContent(questionText)}
+          <RichContentRenderer content={questionText} />
         </div>
 
         {/* Option Selectors */}
@@ -187,7 +164,7 @@ export function QuestionDebateCard({
               let style =
                 "border-border/80 bg-secondary/30 hover:bg-secondary/70 hover:border-indigo-500/50 text-foreground cursor-pointer";
 
-              if (hasVoted) {
+              if (hasAnswered) {
                 if (isOptionCorrect) {
                   style =
                     "border-emerald-500/80 bg-emerald-500/10 text-emerald-200 shadow-sm shadow-emerald-500/10";
@@ -204,8 +181,8 @@ export function QuestionDebateCard({
                 <button
                   key={letter}
                   type="button"
-                  onClick={() => handleVote(letter)}
-                  disabled={hasVoted}
+                  onClick={() => handleSelect(letter)}
+                  disabled={hasAnswered}
                   className={cn(
                     "w-full text-left p-3.5 sm:p-4 rounded-xl border transition-all flex items-start justify-between gap-3 group",
                     style
@@ -215,9 +192,9 @@ export function QuestionDebateCard({
                     <span
                       className={cn(
                         "h-6 w-6 rounded-lg flex items-center justify-center font-mono text-xs font-bold shrink-0 mt-0.5 border transition-all",
-                        hasVoted && isOptionCorrect
+                        hasAnswered && isOptionCorrect
                           ? "bg-emerald-500 text-white border-emerald-500"
-                          : hasVoted && isOptionSelected
+                          : hasAnswered && isOptionSelected
                           ? "bg-rose-500 text-white border-rose-500"
                           : "bg-slate-800 text-slate-300 border-slate-700 group-hover:border-indigo-500/60"
                       )}
@@ -230,10 +207,10 @@ export function QuestionDebateCard({
                   </div>
 
                   <div className="shrink-0 pt-0.5">
-                    {hasVoted && isOptionCorrect && (
+                    {hasAnswered && isOptionCorrect && (
                       <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                     )}
-                    {hasVoted && isOptionSelected && !isOptionCorrect && (
+                    {hasAnswered && isOptionSelected && !isOptionCorrect && (
                       <XCircle className="w-5 h-5 text-rose-400" />
                     )}
                   </div>
@@ -243,44 +220,29 @@ export function QuestionDebateCard({
         </div>
       </div>
 
-      {/* Post-Vote Reveal: Live Distribution & Socratic Distractor Analysis */}
-      {hasVoted && (
+      {/* Post-Answer Reveal: Socratic Distractor Analysis & Solution */}
+      {hasAnswered && (
         <div className="space-y-6 animate-in fade-in slide-in-from-top-3 duration-400">
-          {/* Peer Distribution Bar */}
-          <CommunityVoteBar
-            distribution={optimisticStats.distribution}
-            percentages={optimisticStats.percentages}
-            totalVotes={optimisticStats.totalVotes}
-            correctOption={correctOption}
-            userVotedOption={selectedOption}
-            distractorOption={
-              Object.keys(distractorAnalysis).find(
-                (k) => k !== correctOption && (distractorAnalysis[k]?.length || 0) > 0
-              ) || null
-            }
-          />
-
-          {/* Socratic Distractor Breakdown Card */}
           <div className="p-5 sm:p-6 rounded-2xl bg-card border border-border/80 shadow-lg space-y-4">
             <div className="flex items-center gap-2">
               {isSelectedCorrect ? (
                 <>
                   <Sparkles className="w-5 h-5 text-emerald-400" />
                   <h3 className="font-bold text-base text-foreground">
-                    Conquered! Mastered Core Mechanism
+                    Correct! Mastered Core Concept
                   </h3>
                 </>
               ) : (
                 <>
-                  <AlertTriangle className="w-5 h-5 text-amber-400" />
+                  <AlertTriangle className="w-5 h-5 text-rose-400" />
                   <h3 className="font-bold text-base text-foreground">
-                    Why Option ({selectedOption}) is Incorrect
+                    Examiner Trap Triggered on Option ({selectedOption})
                   </h3>
                 </>
               )}
             </div>
 
-            {/* If wrong choice was selected: explain the specific trap */}
+            {/* Distractor Trap Breakdown */}
             {!isSelectedCorrect && chosenDistractorAnalysis && (
               <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs sm:text-sm text-foreground leading-relaxed space-y-1">
                 <span className="font-bold text-rose-400 block uppercase tracking-wider text-[11px]">
@@ -296,7 +258,7 @@ export function QuestionDebateCard({
                 <Info className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <div className="space-y-0.5">
                   <span className="font-semibold text-amber-300 block">
-                    Common Misconception:
+                    Examiner Trap Mechanism:
                   </span>
                   <p className="text-slate-300">{misconception}</p>
                 </div>
@@ -306,15 +268,23 @@ export function QuestionDebateCard({
             {/* Full Step-by-Step Proof / Explanation */}
             <div className="space-y-2 pt-2 border-t border-border/60">
               <span className="font-bold text-xs uppercase tracking-wider text-muted-foreground">
-                Step-by-Step Mathematical & Logical Solution:
+                Step-by-Step Solution:
               </span>
               <div className="text-xs sm:text-sm text-slate-200 leading-relaxed space-y-2 bg-slate-950/40 p-4 rounded-xl border border-border/40">
-                {renderMathContent(explanation)}
+                <RichContentRenderer content={explanation} />
               </div>
             </div>
           </div>
 
-          {/* Retention Conversion Engine Hook */}
+          {/* Stump a Friend: Viral Acquisition Hook */}
+          <StumpAFriendCard
+            questionId={questionId}
+            examName={examName}
+            skillDomain={skillDomain}
+            difficultyTier={difficultyTier}
+          />
+
+          {/* Save to Mistake Vault Hook */}
           <ErrorLogInboundCTA
             questionId={questionId}
             examName={examName}

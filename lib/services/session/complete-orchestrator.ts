@@ -160,6 +160,18 @@ export async function processSessionCompletion(
       mastery_deltas: [],
       readiness_before: Math.round(readinessBefore),
       readiness_after: Math.round(readinessIndex),
+      questions: (questions || []).map((q) => ({
+        question_id: q.question_id,
+        question_text: q.question_text,
+        passage: q.passage,
+        options: q.options,
+        correct_option: q.correct_option,
+        explanation: q.explanation,
+        distractor_analysis: q.distractor_analysis,
+        skill_domain: q.skill_domain,
+        difficulty_tier: q.difficulty_tier,
+        misconception: q.misconception,
+      })),
     };
 
     const sevenDays = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -380,39 +392,6 @@ export async function processSessionCompletion(
   const correctCount = results.filter((qr) => qr.is_correct).length;
   const domainsCovered = [...new Set(results.map((qr) => qr.skill_domain))];
 
-  const resultByQid = new Map<string, QuestionResultRow>();
-  for (const qr of results) {
-    resultByQid.set(qr.question_id, qr);
-  }
-
-  let hardestQuestion: { question: SessionQuestion; result: QuestionResultRow } | null = null;
-  for (const q of questions) {
-    const result = resultByQid.get(q.question_id);
-    if (!result) continue;
-
-    if (!hardestQuestion) {
-      hardestQuestion = { question: q, result };
-    } else {
-      const currTier = q.difficulty_tier;
-      const bestTier = hardestQuestion.question.difficulty_tier;
-      if (currTier > bestTier) {
-        hardestQuestion = { question: q, result };
-      } else if (currTier === bestTier) {
-        const currTime = result.time_to_answer_ms ?? 0;
-        const bestTime = hardestQuestion.result.time_to_answer_ms ?? 0;
-        if (currTime > bestTime) {
-          hardestQuestion = { question: q, result };
-        } else if (
-          currTime === bestTime &&
-          !result.is_correct &&
-          hardestQuestion.result.is_correct
-        ) {
-          hardestQuestion = { question: q, result };
-        }
-      }
-    }
-  }
-
   const masteredDomains: string[] = [];
   const completionTimeLogs: Array<{
     user_id: string;
@@ -463,17 +442,18 @@ export async function processSessionCompletion(
     mastery_deltas: masteryDeltas,
     readiness_before: Math.round(readinessBefore),
     readiness_after: Math.round(readinessAfter),
-    hardest_question: hardestQuestion
-      ? {
-          question_text: hardestQuestion.question.question_text,
-          options: hardestQuestion.question.options,
-          correct_option: hardestQuestion.question.correct_option,
-          explanation: hardestQuestion.question.explanation,
-          distractor_analysis: hardestQuestion.question.distractor_analysis,
-          skill_domain: hardestQuestion.question.skill_domain,
-          difficulty_tier: hardestQuestion.question.difficulty_tier,
-        }
-      : null,
+    questions: (questions || []).map((q) => ({
+      question_id: q.question_id,
+      question_text: q.question_text,
+      passage: q.passage,
+      options: q.options,
+      correct_option: q.correct_option,
+      explanation: q.explanation,
+      distractor_analysis: q.distractor_analysis,
+      skill_domain: q.skill_domain,
+      difficulty_tier: q.difficulty_tier,
+      misconception: q.misconception,
+    })),
     mastered_domains: masteredDomains.length > 0 ? masteredDomains : null,
   };
 

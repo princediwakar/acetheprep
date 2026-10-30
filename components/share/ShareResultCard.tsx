@@ -6,23 +6,14 @@ import {
   Award,
   Target,
   CheckCircle2,
+  Swords,
 } from "lucide-react";
-import { InteractiveChallenge } from "./InteractiveChallenge";
+import { QuizDuelPlayer, type QuizDuelQuestion } from "./QuizDuelPlayer";
 
 export interface MasteryDelta {
   domain: string;
   before: number;
   after: number;
-}
-
-export interface HardestQuestion {
-  question_text: string;
-  options: Record<string, string>;
-  correct_option: string;
-  explanation: string;
-  distractor_analysis?: Record<string, string>;
-  skill_domain: string;
-  difficulty_tier: number;
 }
 
 export interface ShareResultCardProps {
@@ -31,9 +22,9 @@ export interface ShareResultCardProps {
   total: number;
   pct: number;
   masteryDelta: MasteryDelta[];
-  hardestQuestion: HardestQuestion | null;
   masteredDomains: string[] | null;
   shareToken?: string;
+  questions: QuizDuelQuestion[];
 }
 
 function getScoreGradient(pct: number) {
@@ -66,9 +57,9 @@ export function ShareResultCard({
   total,
   pct,
   masteryDelta,
-  hardestQuestion,
   masteredDomains,
   shareToken,
+  questions,
 }: ShareResultCardProps) {
   const improvedTopics = masteryDelta.filter((d) => d.after > d.before);
 
@@ -88,12 +79,18 @@ export function ShareResultCard({
             </div>
           </div>
 
+          {/* Challenger Benchmark Score Header */}
           <div
             className={`rounded-xl border p-6 mb-8 ${getScoreRing(pct)} ${getScoreGlow(pct)} shadow-lg`}
           >
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-400 mb-1">Your Score</p>
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="text-sm font-semibold text-slate-300">Challenger Benchmark</p>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    Peer Score
+                  </span>
+                </div>
                 <div className="flex items-baseline gap-1">
                   <span
                     className={`text-5xl font-bold tracking-tight ${getScoreTextColor(pct)}`}
@@ -102,7 +99,7 @@ export function ShareResultCard({
                   </span>
                 </div>
                 <p className="text-sm text-slate-500 mt-1">
-                  {score} / {total} correct
+                  {score} / {total} correct on this drill
                 </p>
               </div>
               <div
@@ -113,62 +110,14 @@ export function ShareResultCard({
             </div>
           </div>
 
-          {improvedTopics.length > 0 && (
-            <div className="mb-8">
-              <div className="flex items-center gap-2 mb-4">
-                <TrendingUp className="w-4 h-4 text-emerald-400" />
-                <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
-                  Mastery Improvements
-                </h2>
-              </div>
-              <div className="space-y-3">
-                {improvedTopics.map((item) => {
-                  const improvement = Math.round((item.after - item.before) * 100);
-                  const beforePct = Math.round(item.before * 100);
-                  const afterPct = Math.round(item.after * 100);
-                  return (
-                    <div key={item.domain} className="group">
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-sm font-medium text-slate-300">
-                          {item.domain}
-                        </span>
-                        <span className="text-xs font-semibold text-emerald-400">
-                          +{improvement}%
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 rounded-full transition-all"
-                            style={{ width: `${afterPct}%` }}
-                          />
-                        </div>
-                        <span className="text-xs text-slate-500 w-20 text-right tabular-nums">
-                          {beforePct}% &rarr; {afterPct}%
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {masteryDelta.length > 0 && improvedTopics.length === 0 && (
-            <div className="mb-8 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
-              <p className="text-sm text-slate-400 text-center">
-                Practice complete. Keep going to see mastery improvements.
-              </p>
-            </div>
-          )}
-
-          {hardestQuestion && (
-            <InteractiveChallenge
-              hardestQuestion={hardestQuestion}
+          {/* Interactive Quiz Duel: Take the entire quiz to beat the score */}
+          {questions && questions.length > 0 && (
+            <QuizDuelPlayer
+              questions={questions}
+              challengerScore={score}
+              totalQuestions={total}
               examName={examName}
               shareToken={shareToken}
-              peerScore={score}
-              totalQuestions={total}
             />
           )}
 

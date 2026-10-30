@@ -5,6 +5,7 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
 import type { Question } from "@/lib/schemas/quiz";
 import { renderMathContent, extractPassageContent } from "@/lib/quiz-utils";
+import { RichContentRenderer } from "@/components/ui/rich-content/RichContentRenderer";
 import { signInWithGoogle } from "@/lib/supabase/auth";
 import { useUser } from "@/hooks/useUser";
 import {
@@ -424,12 +425,8 @@ export function TopicPracticeDrill({
               </span>
               <span>{wordCount} words</span>
             </div>
-            <div className="space-y-3 max-h-72 overflow-y-auto pr-2">
-              {passage.split(/\n\n+/).filter(Boolean).map((p, pIdx) => (
-                <p key={pIdx} className="indent-2">
-                  {renderMathContent(p)}
-                </p>
-              ))}
+            <div className="max-h-72 overflow-y-auto pr-2">
+              <RichContentRenderer content={passage} />
             </div>
           </div>
         )}
@@ -446,9 +443,9 @@ export function TopicPracticeDrill({
               </span>
             )}
           </div>
-          <p className="text-base text-foreground leading-relaxed font-normal pt-1 whitespace-pre-line">
-            {renderMathContent(prompt)}
-          </p>
+          <div className="text-base text-foreground leading-relaxed font-normal pt-1">
+            <RichContentRenderer content={prompt} />
+          </div>
         </div>
 
         {/* Answer Choices */}
@@ -564,10 +561,8 @@ export function TopicPracticeDrill({
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground font-mono block">
                   Step-by-Step Solution
                 </span>
-                <div className="text-xs sm:text-sm text-foreground/90 leading-relaxed space-y-2">
-                  {currentQuestion.explanation.split(/\n\n+/).map((para, pIdx) => (
-                    <p key={pIdx}>{renderMathContent(para)}</p>
-                  ))}
+                <div className="text-xs sm:text-sm text-foreground/90 leading-relaxed">
+                  <RichContentRenderer content={currentQuestion.explanation} />
                 </div>
               </div>
             )}

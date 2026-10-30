@@ -31,9 +31,9 @@ export async function GET(request: Request) {
         score = cd.correct_count ?? cd.score ?? 0;
         total = cd.total_questions ?? 0;
         pct = total > 0 ? Math.round((score / total) * 100) : 0;
-        if (cd.hardest_question) {
-          hardestTopic = cd.hardest_question.skill_domain || hardestTopic;
-          tier = cd.hardest_question.difficulty_tier || tier;
+        if (Array.isArray(cd.questions) && cd.questions.length > 0) {
+          hardestTopic = cd.questions[0].skill_domain || hardestTopic;
+          tier = cd.questions[0].difficulty_tier || tier;
         }
       }
     } catch (e) {

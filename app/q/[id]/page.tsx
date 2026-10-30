@@ -4,13 +4,13 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { ALL_BANKS } from "@/lib/data/banks";
-import { QuestionDebateCard } from "@/components/debate/QuestionDebateCard";
-import { getQuestionCommunityStatsAction } from "@/lib/actions/debate";
+import { QuestionCard } from "@/components/debate/QuestionCard";
 import StructuredData, { breadcrumbSchema } from "@/components/seo/StructuredData";
 import { ArrowLeft } from "lucide-react";
 
 interface PageProps {
   params: Promise<{ id: string }>;
+  searchParams?: Promise<{ answer?: string; ref?: string }>;
 }
 
 interface QuestionRecord {
@@ -126,21 +126,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function QuestionDebatePage({ params }: PageProps) {
-  const { id } = await params;
+export default async function QuestionPage({ params, searchParams }: PageProps) {
+  const [{ id }, queryParams] = await Promise.all([
+    params,
+    searchParams ? searchParams : Promise.resolve({} as { answer?: string; ref?: string }),
+  ]);
   const question = await findQuestion(id);
 
   if (!question) {
     notFound();
   }
 
-  const supabase = await createClient();
-  const [{ data: authData }, initialStats] = await Promise.all([
-    supabase.auth.getUser(),
-    getQuestionCommunityStatsAction(id, Object.keys(question.options)),
-  ]);
+  const rawAnswer = queryParams?.answer?.toUpperCase();
+  const initialSelectedOption = rawAnswer && question.options[rawAnswer] ? rawAnswer : null;
+  const isPeerChallenge = queryParams?.ref === "stump";
 
-  const isAuthenticated = Boolean(authData?.user);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const isAuthenticated = Boolean(user);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com";
 
   const questionSchema = {
@@ -196,7 +202,7 @@ export default async function QuestionDebatePage({ params }: PageProps) {
             <span className="text-indigo-500 font-mono">Ace</span>
             <span>ThePrep</span>
             <span className="text-[10px] uppercase font-mono px-1.5 py-0.2 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-              Community Forensics
+              Trap Forensics
             </span>
           </Link>
 
@@ -209,9 +215,9 @@ export default async function QuestionDebatePage({ params }: PageProps) {
         </div>
       </header>
 
-      {/* Main Debate Stage */}
+      {/* Main Question Stage */}
       <main className="max-w-3xl mx-auto px-4 py-8 sm:py-12">
-        <QuestionDebateCard
+        <QuestionCard
           questionId={question.id}
           examName={question.exam_name}
           subject={question.subject}
@@ -224,8 +230,9 @@ export default async function QuestionDebatePage({ params }: PageProps) {
           explanation={question.explanation}
           distractorAnalysis={question.distractor_analysis}
           misconception={question.misconception}
-          initialStats={initialStats}
           isAuthenticated={isAuthenticated}
+          isPeerChallenge={isPeerChallenge}
+          initialSelectedOption={initialSelectedOption}
         />
       </main>
     </div>

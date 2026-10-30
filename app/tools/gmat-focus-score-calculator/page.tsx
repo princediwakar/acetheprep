@@ -3,6 +3,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GmatFocusScoreCalculator } from "@/components/tools/GmatFocusScoreCalculator";
+import {
+  ToolBenchmarkChallenge,
+  type ToolBenchmarkQuestion,
+} from "@/components/tools/ToolBenchmarkChallenge";
 import StructuredData, {
   breadcrumbSchema,
   faqPageSchema,
@@ -63,6 +67,31 @@ const FAQS = [
       "Yes. Unlike the legacy GMAT where Integrated Reasoning did not count towards the 800-point total, Data Insights is fully integrated into the 205-805 score. A drop in Data Insights penalizes your composite score identically to a drop in Quantitative or Verbal.",
   },
 ];
+
+const GMAT_BENCHMARK_QUESTION: ToolBenchmarkQuestion = {
+  skillDomain: "Data Insights & Critical Reasoning",
+  trapType: "Confounding Variable / Selection Bias Trap",
+  passage:
+    "A regional hospital study found that surgical patients who received a nurse follow-up phone call within 48 hours of discharge reported 35% fewer readmissions than those who did not receive a call. The hospital administration concluded that follow-up calls directly reduce post-discharge complications.",
+  questionText:
+    "Which of the following, if true, most seriously weakens the administration's conclusion?",
+  options: {
+    A: "Nurse follow-up calls took an average of 4 minutes per patient.",
+    B: "Follow-up calls were systematically placed only to patients undergoing low-risk outpatient procedures.",
+    C: "Patients with higher health literacy were more likely to answer calls from unknown hospital numbers.",
+    D: "Hospital readmission costs were covered by private insurance for most patients.",
+    E: "Surveys assessing post-discharge recovery were distributed 30 days after hospital release.",
+  },
+  correctOption: "B",
+  distractorAnalysis: {
+    A: "Fails because nurse call duration is an operational metric that has no bearing on causal efficacy.",
+    C: "Suggests a correlation with answer rates, but does not provide an independent causal driver for the 35% fewer readmissions.",
+    D: "Insurance reimbursement details are out of scope regarding physiological complications.",
+    E: "Survey timing affects measurement reporting, not the underlying clinical readmission rate.",
+  },
+  explanation:
+    "Selection bias destroys causal conclusions. If follow-up calls were only assigned to low-risk outpatient procedures, procedure severity—not the phone call—explains the lower readmission rate. Spotting hidden confounding variables is the hallmark of 80th+ percentile performance on GMAT Focus Data Insights and Critical Reasoning.",
+};
 
 export default function GmatScoreCalculatorPage() {
   const breadcrumbs = [
@@ -168,9 +197,17 @@ export default function GmatScoreCalculatorPage() {
           />
 
           {/* Interactive Calculator - Placed Above the Fold */}
-          <div className="mb-12">
+          <div className="mb-6">
             <GmatFocusScoreCalculator />
           </div>
+
+          {/* Interactive Benchmark Onramp Challenge */}
+          <ToolBenchmarkChallenge
+            examName="GMAT Focus"
+            targetBenchmarkText="655+ (91st %ile) Benchmark"
+            question={GMAT_BENCHMARK_QUESTION}
+            diagnosticHref="/practice/gmat"
+          />
 
           {/* Authoritative Technical Reference & Concordance Table */}
           <section className="mb-12 rounded-3xl border border-border bg-card p-6 sm:p-8 space-y-6">

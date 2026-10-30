@@ -4,6 +4,7 @@ import { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { renderMathContent } from "@/lib/quiz-utils";
+import { RichContentRenderer } from "@/components/ui/rich-content/RichContentRenderer";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -86,6 +87,7 @@ export function ZeroClickDrillView({
   const [timeLeft, setTimeLeft] = useState(45);
   const [timerActive, setTimerActive] = useState(true);
   const [clearedTrapsCount, setClearedTrapsCount] = useState(0);
+  const [salvagedPointsTotal, setSalvagedPointsTotal] = useState(0);
 
   const currentTrap = traps[currentIndex];
   const totalRemaining = traps.length - currentIndex;
@@ -133,6 +135,7 @@ export function ZeroClickDrillView({
 
     if (correct) {
       setClearedTrapsCount((c) => c + 1);
+      setSalvagedPointsTotal((pts) => pts + (currentTrap.lostProjectedPoints || 5));
       toast.success("Mastered! Removed from your daily review queue.", {
         icon: <Sparkles className="w-4 h-4 text-emerald-400" />,
       });
@@ -143,11 +146,14 @@ export function ZeroClickDrillView({
     }
 
     startTransition(async () => {
-      await submitTrapReviewAction({
+      const res = await submitTrapReviewAction({
         queueItemId: currentTrap.queueItemId,
         selectedOption,
         correctOption: currentTrap.question.correct_option,
       });
+      if (res?.success) {
+        window.dispatchEvent(new CustomEvent("mistake-vault-updated"));
+      }
     });
   };
 
@@ -165,9 +171,12 @@ export function ZeroClickDrillView({
     toast.info("Reminding you in 2 hours. Moving to next overdue trap.");
 
     startTransition(async () => {
-      await postponeTrapReviewAction({
+      const res = await postponeTrapReviewAction({
         queueItemId: currentTrap.queueItemId,
       });
+      if (res?.success) {
+        window.dispatchEvent(new CustomEvent("mistake-vault-updated"));
+      }
     });
 
     handleNextTrap();
@@ -182,21 +191,52 @@ export function ZeroClickDrillView({
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-8 sm:py-12">
         <div className="max-w-2xl w-full space-y-6">
-          <div className="text-center space-y-3 p-8 rounded-3xl bg-card border border-emerald-500/30 shadow-2xl relative overflow-hidden">
+          <div className="text-center space-y-4 p-8 rounded-3xl bg-card border border-emerald-500/30 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-500" />
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-400">
               <Sparkles className="h-7 w-7" />
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-              All Caught Up! Zero Mistakes Due
-            </h2>
+            
+            <div className="space-y-1">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-500">
+                Retention Loop Complete
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+                All Caught Up! Zero Mistakes Due
+              </h2>
+            </div>
+
             <p className="text-sm text-muted-foreground max-w-md mx-auto">
-              You have reviewed all{" "}
-              <span className="font-bold text-foreground">{initialTraps.length}</span> questions
-              in your mistake vault today. Your daily review queue is clear.
+              You reviewed all{" "}
+              <span className="font-bold text-foreground">{initialTraps.length}</span> question traps
+              in your vault today. Your Leitner memory curve has been reset.
             </p>
 
-            <div className="pt-4 flex items-center justify-center gap-3">
+            {/* Compounding Payoff Metrics */}
+            <div className="grid grid-cols-2 gap-3 pt-2 max-w-sm mx-auto">
+              <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-3.5 text-center">
+                <span className="block text-2xl font-black font-mono text-emerald-500">
+                  +{salvagedPointsTotal > 0 ? salvagedPointsTotal : Math.max(5, clearedTrapsCount * 5)} pts
+                </span>
+                <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                  Score Leaks Plugged
+                </span>
+              </div>
+              <div className="rounded-2xl border border-border bg-secondary/30 p-3.5 text-center">
+                <span className="block text-2xl font-black font-mono text-foreground">
+                  {clearedTrapsCount}/{initialTraps.length}
+                </span>
+                <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                  Traps Cleared
+                </span>
+              </div>
+            </div>
+
+            <p className="text-xs text-muted-foreground italic">
+              Next micro-review will only trigger when Leitner retention decays below threshold.
+            </p>
+
+            <div className="pt-2 flex items-center justify-center gap-3">
               <Button
                 asChild
                 className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2.5 rounded-xl shadow-xs cursor-pointer"
@@ -270,15 +310,15 @@ export function ZeroClickDrillView({
 
         {/* Passage (if any) */}
         {currentTrap.question.passage && (
-          <div className="p-4 rounded-xl bg-muted/30 border border-border/80 text-xs sm:text-sm text-foreground/90 leading-relaxed max-h-56 overflow-y-auto">
-            {renderMathContent(currentTrap.question.passage)}
+          <div className="p-4 rounded-xl bg-muted/30 border border-border/80 text-xs sm:text-sm text-foreground/90 leading-relaxed max-h-64 overflow-y-auto">
+            <RichContentRenderer content={currentTrap.question.passage} />
           </div>
         )}
 
         {/* Question Prompt */}
         <div className="p-5 sm:p-6 rounded-2xl bg-card border border-border/80 shadow-2xs space-y-5">
           <div className="text-base sm:text-lg font-medium leading-relaxed text-foreground">
-            {renderMathContent(currentTrap.question.question_text)}
+            <RichContentRenderer content={currentTrap.question.question_text} />
           </div>
 
           {/* Options */}
@@ -431,7 +471,7 @@ export function ZeroClickDrillView({
                 Step-by-Step Solution:
               </span>
               <div className="text-foreground leading-relaxed">
-                {renderMathContent(currentTrap.question.explanation)}
+                <RichContentRenderer content={currentTrap.question.explanation} />
               </div>
             </div>
           </div>

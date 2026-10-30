@@ -114,10 +114,16 @@ export function AppShell({ children, sidebarData: initialSidebarData }: { childr
 
     fetchSidebarTelemetry();
 
+    const handleVaultUpdate = () => {
+      fetchSidebarTelemetry();
+    };
+    window.addEventListener("mistake-vault-updated", handleVaultUpdate);
+
     return () => {
       cancelled = true;
+      window.removeEventListener("mistake-vault-updated", handleVaultUpdate);
     };
-  }, [user, shouldShowSidebar]);
+  }, [user, shouldShowSidebar, pathname]);
 
   const handleSignOut = async () => {
     try {

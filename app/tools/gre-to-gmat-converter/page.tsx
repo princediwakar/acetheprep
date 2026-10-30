@@ -3,6 +3,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GreToGmatConverter } from "@/components/tools/GreToGmatConverter";
+import {
+  ToolBenchmarkChallenge,
+  type ToolBenchmarkQuestion,
+} from "@/components/tools/ToolBenchmarkChallenge";
 import StructuredData, {
   breadcrumbSchema,
   faqPageSchema,
@@ -63,6 +67,28 @@ const FAQS = [
       "Our converter uses the official regression model developed for MBA admissions: Predicted Legacy GMAT = -2080.75 + 8.59 * GRE_V + 7.63 * GRE_Q, mapped directly to the GMAC 2024-2026 Focus Edition percentile concordance table.",
   },
 ];
+
+const BENCHMARK_QUESTION: ToolBenchmarkQuestion = {
+  skillDomain: "Quantitative Reasoning & Number Properties",
+  trapType: "The Absolute Value & Sign Inversion Trap",
+  questionText: "If x and y are nonzero integers such that x² = y², which of the following MUST be true?",
+  options: {
+    A: "x = y",
+    B: "x = -y",
+    C: "|x| = |y|",
+    D: "x + y = 0",
+    E: "xy > 0",
+  },
+  correctOption: "C",
+  distractorAnalysis: {
+    A: "Fails when x = 3 and y = -3. While (3)² = (-3)², 3 ≠ -3.",
+    B: "Fails when x = 3 and y = 3. While (3)² = (3)², 3 ≠ -3.",
+    D: "Fails when x and y share the same sign (e.g., x = 4, y = 4 gives sum = 8 ≠ 0).",
+    E: "Fails when x and y have opposite signs (e.g., x = 4, y = -4 gives product -16 < 0).",
+  },
+  explanation:
+    "The algebraic condition x² = y² guarantees that the magnitudes of x and y are identical, which means |x| = |y| (or x = ±y). Assuming either x = y or x = -y represents the classic single-case cognitive trap tested in 80th+ percentile GRE and GMAT Quant questions.",
+};
 
 export default function GreToGmatConverterPage() {
   const breadcrumbs = [
@@ -168,9 +194,17 @@ export default function GreToGmatConverterPage() {
           />
 
           {/* Interactive Tool - Above the Fold */}
-          <div className="mb-12">
+          <div className="mb-6">
             <GreToGmatConverter />
           </div>
+
+          {/* Interactive Benchmark Onramp Challenge */}
+          <ToolBenchmarkChallenge
+            examName="GMAT Focus & GRE"
+            targetBenchmarkText="Q82+ / 164+ GRE Benchmark"
+            question={BENCHMARK_QUESTION}
+            diagnosticHref="/practice/gmat"
+          />
 
           {/* Concordance Matrix */}
           <section className="mb-12 rounded-3xl border border-border bg-card p-6 sm:p-8 space-y-6">

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/ThemeToggleButton";
 import { renderMathContent } from "@/lib/quiz-utils";
+import { RichContentRenderer } from "@/components/ui/rich-content/RichContentRenderer";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import {
@@ -108,6 +109,12 @@ export function SessionResultsView({
 
   const shareUrl = shareToken ? `${baseUrl}/s/${shareToken}` : null;
 
+  const hardestMissedQuestion =
+    questions.find((q) => {
+      const attempt = userAttempts[q.question_id];
+      return attempt && !attempt.isCorrect;
+    }) || questions[0];
+
   const handleCopyShareLink = async () => {
     if (!shareUrl) return;
     try {
@@ -120,12 +127,33 @@ export function SessionResultsView({
     }
   };
 
-  const handleShareWhatsApp = () => {
-    if (!shareUrl) return;
-    const text = encodeURIComponent(
-      `I scored ${pct}% on ${examName || "Standardized Practice"} on AceThePrep! Can you beat my hardest question? Try the challenge here: ${shareUrl}`
-    );
-    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+  const handleCopyForumDoubt = async () => {
+    if (!hardestMissedQuestion) return;
+    const optionsFormatted = Object.entries(hardestMissedQuestion.options || {})
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([letter, text]) => `(${letter}) ${text}`)
+      .join("\n");
+
+    const markdown = `**[${examName || "Standardized Exam"} - ${hardestMissedQuestion.skill_domain || "Practice"}] Question Doubt**
+
+Can someone explain why the trap option fails and clarify the optimal approach?
+
+**Question:**
+${hardestMissedQuestion.question_text}
+
+${optionsFormatted}
+
+>!**Correct Answer:** Option ${hardestMissedQuestion.correct_option}!<
+>!**Explanation:** ${hardestMissedQuestion.explanation?.slice(0, 300)}...!<
+
+${shareUrl ? `*Live interactive breakdown & distractor matrix on AceThePrep: ${shareUrl}*` : ""}`;
+
+    try {
+      await navigator.clipboard.writeText(markdown);
+      toast.success("Forum doubt format copied (Reddit/Discord ready)!");
+    } catch {
+      toast.error("Failed to copy markdown");
+    }
   };
 
   return (
@@ -179,21 +207,21 @@ export function SessionResultsView({
           </div>
         </div>
 
-        {/* Viral Share & Challenge Card */}
+        {/* High-Utility Forum Doubt & Challenge Card */}
         {shareUrl && (
           <div className="p-4 sm:p-5 rounded-2xl border border-border/80 bg-card shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="space-y-1 text-center sm:text-left min-w-0">
               <div className="flex items-center justify-center sm:justify-start gap-1.5">
                 <Sparkles className="w-4 h-4 text-primary" />
                 <span className="text-xs font-bold uppercase tracking-wider text-primary">
-                  Study Challenge
+                  Study Group & Forum Doubt Export
                 </span>
               </div>
               <h4 className="font-bold text-sm sm:text-base text-foreground">
-                Challenge your study group with your hardest question
+                Discuss Hard Traps on Reddit / GMATClub
               </h4>
               <p className="text-xs text-muted-foreground">
-                Share a live interactive card showing your {pct}% accuracy. Anyone can attempt your hardest question without logging in.
+                Export spoiler-tagged question breakdowns formatted for study forums, or share the interactive challenge with peers.
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
@@ -201,10 +229,10 @@ export function SessionResultsView({
                 type="button"
                 size="sm"
                 variant="outline"
-                onClick={handleShareWhatsApp}
-                className="flex-1 sm:flex-initial text-xs border-border hover:bg-muted cursor-pointer"
+                onClick={handleCopyForumDoubt}
+                className="flex-1 sm:flex-initial text-xs border-primary/30 hover:bg-primary/10 text-primary font-medium cursor-pointer"
               >
-                WhatsApp
+                Copy Forum Markdown
               </Button>
               <Button
                 type="button"
@@ -220,7 +248,7 @@ export function SessionResultsView({
                 target="_blank"
                 className="inline-flex items-center justify-center rounded-lg bg-primary hover:bg-primary/90 px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-xs transition-all"
               >
-                <span>View Card &rarr;</span>
+                <span>Interactive Challenge &rarr;</span>
               </Link>
             </div>
           </div>
@@ -233,34 +261,46 @@ export function SessionResultsView({
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
                 <h4 className="font-bold text-sm text-foreground">
-                  {incorrectCount} Score Leak{incorrectCount > 1 ? "s" : ""} Detected
+                  {incorrectCount} Score Leak{incorrectCount > 1 ? "s" : ""} Recorded to Mistake Vault
                 </h4>
                 <Badge
                   variant="outline"
                   className="text-[10px] uppercase font-bold text-rose-600 dark:text-rose-400 border-rose-500/30 bg-rose-500/10"
                 >
-                  Targeted Fix
+                  Leitner Active Recall
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Mistakes detected in:{" "}
+                Traps detected in:{" "}
                 <strong className="text-foreground font-semibold">
                   {missedDomains.join(", ")}
                 </strong>
-                . Fix them now while test traps are fresh in memory.
+                . Calibrate them before the Leitner memory half-life decays.
               </p>
             </div>
-            {nextDomain && (
+            <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
               <Button
+                asChild
+                variant="outline"
                 size="sm"
-                onClick={onStartNextTopic}
-                disabled={startingNext}
-                className="cursor-pointer shrink-0 font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-xs"
+                className="border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 text-xs font-semibold"
               >
-                <Zap className="w-3.5 h-3.5 mr-1 fill-white" />
-                Drill Weak Spots (10Q)
+                <Link href="/mistakes">
+                  Mistake Vault &rarr;
+                </Link>
               </Button>
-            )}
+              {nextDomain && (
+                <Button
+                  size="sm"
+                  onClick={onStartNextTopic}
+                  disabled={startingNext}
+                  className="cursor-pointer font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-xs text-xs"
+                >
+                  <Zap className="w-3.5 h-3.5 mr-1 fill-white" />
+                  Practice Weak Spots (10Q)
+                </Button>
+              )}
+            </div>
           </div>
         )}
 
@@ -370,7 +410,7 @@ export function SessionResultsView({
                 {isExpanded && (
                   <div className="space-y-4 pt-2 border-t border-border">
                     <div className="text-sm font-medium leading-relaxed text-foreground">
-                      {renderMathContent(q.question_text)}
+                      <RichContentRenderer content={q.question_text} />
                     </div>
 
                     <div className="space-y-2">
@@ -426,7 +466,7 @@ export function SessionResultsView({
                         <span className="font-semibold text-foreground block mb-1">
                           Solution Derivation:
                         </span>
-                        {renderMathContent(q.explanation)}
+                        <RichContentRenderer content={q.explanation} />
                       </div>
                     )}
 

@@ -11,8 +11,8 @@ import StructuredData, {
 import {
   ShareResultCard,
   type MasteryDelta,
-  type HardestQuestion,
 } from "@/components/share/ShareResultCard";
+import type { QuizDuelQuestion } from "@/components/share/QuizDuelPlayer";
 
 interface PageProps {
   params: Promise<{ token: string }>;
@@ -26,8 +26,8 @@ interface CardData {
   mastery_delta?: MasteryDelta[];
   topics?: string[];
   time_taken?: number;
-  hardest_question?: HardestQuestion;
   mastered_domains?: string[];
+  questions: QuizDuelQuestion[];
 }
 
 export async function generateMetadata({
@@ -57,14 +57,14 @@ export async function generateMetadata({
     const total = cardData.total_questions ?? 0;
     const pct = total > 0 ? Math.round((score / total) * 100) : 0;
 
-    const description = `Scored ${pct}% on ${examName}. View topic mastery breakdown and detailed question explanations on AceThePrep.`;
+    const description = `A peer scored ${pct}% (${score}/${total}) on ${examName}. Can you beat their score? Take the quiz duel on AceThePrep.`;
     const ogImageUrl = `${baseUrl}/api/og/result-card?token=${token}`;
 
     return {
-      title: `${examName} Results (${pct}%)`,
+      title: `${examName} Quiz Duel — Beat ${pct}% (${score}/${total})`,
       description,
       openGraph: {
-        title: `${examName}: Scored ${pct}%`,
+        title: `${examName} Quiz Duel: Beat ${pct}%`,
         description,
         url: `${baseUrl}/s/${token}`,
         images: [{ url: ogImageUrl, width: 1200, height: 630 }],
@@ -73,7 +73,7 @@ export async function generateMetadata({
       },
       twitter: {
         card: "summary_large_image",
-        title: `${examName}: ${pct}%`,
+        title: `${examName} Quiz Duel: Beat ${pct}%`,
         description,
         images: [ogImageUrl],
       },
@@ -153,12 +153,15 @@ export default async function ShareCardPage({ params }: PageProps) {
     });
 
   const cd = card.card_data as CardData;
+  if (!cd || !Array.isArray(cd.questions) || cd.questions.length === 0) {
+    notFound();
+  }
+
   const examName = cd.exam_name || "Practice Session";
   const score = cd.correct_count ?? cd.score ?? 0;
   const total = cd.total_questions ?? 0;
   const pct = total > 0 ? Math.round((score / total) * 100) : 0;
   const masteryDelta: MasteryDelta[] = cd.mastery_delta ?? [];
-  const hardestQuestion = cd.hardest_question ?? null;
   const masteredDomains = cd.mastered_domains ?? null;
 
   const baseUrl =
@@ -166,7 +169,7 @@ export default async function ShareCardPage({ params }: PageProps) {
 
   const allDomains: string[] = [
     ...new Set([
-      ...(hardestQuestion ? [hardestQuestion.skill_domain] : []),
+      ...cd.questions.map((q) => q.skill_domain),
       ...(masteredDomains || []),
       ...masteryDelta.map((d) => d.domain),
     ]),
@@ -199,9 +202,9 @@ export default async function ShareCardPage({ params }: PageProps) {
           total={total}
           pct={pct}
           masteryDelta={masteryDelta}
-          hardestQuestion={hardestQuestion}
           masteredDomains={masteredDomains}
           shareToken={token}
+          questions={cd.questions}
         />
       </div>
     </>

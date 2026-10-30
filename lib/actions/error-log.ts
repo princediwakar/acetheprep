@@ -57,6 +57,7 @@ export async function submitTrapReviewAction(
 
   try {
     const result = await recordRetryResult(supabase, queueItemId, isCorrect);
+    revalidatePath("/mistakes");
     revalidatePath("/home");
     revalidatePath("/dashboard");
 
@@ -111,7 +112,9 @@ export async function postponeTrapReviewAction(
 
     if (error) throw error;
 
+    revalidatePath("/mistakes");
     revalidatePath("/home");
+    revalidatePath("/dashboard");
     return { success: true };
   } catch (err: any) {
     console.error("[postponeTrapReviewAction] Error:", err);

@@ -259,25 +259,46 @@ const isValidTableContent = (content: string | StructuredContent): boolean => {
          Array.isArray(content.headers) && Array.isArray(content.rows);
 };
 
-// ======================== Math Rendering ========================
+// ======================== Math & Rich Rendering ========================
+export {
+  RichContentRenderer,
+  renderRichContent,
+  protectCurrencyTokens,
+} from "@/components/ui/rich-content/RichContentRenderer";
+import { protectCurrencyTokens } from "@/components/ui/rich-content/RichContentRenderer";
+
 export const renderMathContent = (text: string): React.ReactNode[] => {
-  const parts = text.split(/(\$\$.*?\$\$|\$.*?\$)/g);
+  if (!text) return [];
+
+  const { protectedText, currencies } = protectCurrencyTokens(text);
+
+  const parts = protectedText.split(/(\$\$.*?\$\$|\$.*?\$)/g);
   return parts.map((part, idx) => {
     try {
       if (part.startsWith("$$") && part.endsWith("$$")) {
+        const math = part
+          .slice(2, -2)
+          .replace(/__CURRENCY_(\d+)__/g, (_, cIdx) => currencies[Number(cIdx)]);
         return React.createElement(Katex as React.ComponentType<KatexProps>, {
           key: idx,
-          math: part.slice(2, -2),
+          math,
           block: true,
         });
       }
       if (part.startsWith("$") && part.endsWith("$")) {
+        const math = part
+          .slice(1, -1)
+          .replace(/__CURRENCY_(\d+)__/g, (_, cIdx) => currencies[Number(cIdx)]);
         return React.createElement(Katex as React.ComponentType<KatexProps>, {
           key: idx,
-          math: part.slice(1, -1),
+          math,
         });
       }
-      return React.createElement("span", { key: idx }, part);
+      const restored = part.replace(
+        /__CURRENCY_(\d+)__/g,
+        (_, cIdx) => currencies[Number(cIdx)]
+      );
+      return React.createElement("span", { key: idx }, restored);
     } catch (error) {
       console.error(`Math render error for part: ${part}`, error);
       return React.createElement("span", { key: idx, className: "text-red-600 dark:text-red-400" }, part);

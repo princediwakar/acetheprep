@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { renderMathContent, extractPassageContent } from "@/lib/quiz-utils";
+import { RichContentRenderer } from "@/components/ui/rich-content/RichContentRenderer";
 import { cn } from "@/lib/utils";
 import {
   CheckCircle,
@@ -284,7 +285,7 @@ export function QuestionCard({
         </div>
 
         <div className="font-heading text-lg sm:text-xl font-normal leading-relaxed text-foreground tracking-normal">
-          {renderMathContent(prompt)}
+          <RichContentRenderer content={prompt} />
         </div>
       </div>
 
@@ -596,7 +597,7 @@ export function QuestionCard({
               <span className="font-semibold text-foreground block mb-1">
                 How to solve this:
               </span>
-              {renderMathContent(current.explanation)}
+              <RichContentRenderer content={current.explanation} />
             </div>
           )}
 

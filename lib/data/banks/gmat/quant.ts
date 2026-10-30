@@ -235,7 +235,7 @@ export const GMAT_QUANT_BANK: SeedQuestion[] = [
     subject: "Quantitative Reasoning",
     skill_domain: "Arithmetic",
     difficulty_tier: 2,
-    question_text: "A bank account earns 8% annual interest compounded quarterly. If an initial principal of $5,000$ is deposited, which expression gives the total balance in the account after 3 years?",
+    question_text: "A bank account earns 8% annual interest compounded quarterly. If an initial principal of $5,000 is deposited, which expression gives the total balance in the account after 3 years?",
     options: {
       A: "$5,000(1.08)^3$",
       B: "$5,000(1.02)^{12}$",

@@ -518,7 +518,17 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
     subject: "Data Insights",
     skill_domain: "Table Analysis",
     difficulty_tier: 2,
-    question_text: "A corporate dataset records the performance of five regional divisions:\n- Division A: Revenue $2.4M, Costs $1.8M, Headcount 40\n- Division B: Revenue $3.6M, Costs $2.4M, Headcount 60\n- Division C: Revenue $1.5M, Costs $0.9M, Headcount 20\n- Division D: Revenue $5.0M, Costs $4.2M, Headcount 80\n- Division E: Revenue $4.0M, Costs $2.8M, Headcount 50\n\nWhich division achieved the highest operating profit per employee?",
+    question_text: `A corporate dataset records the performance of five regional divisions:
+
+| Regional Division | Annual Revenue | Operating Costs | Headcount |
+| :--- | :--- | :--- | :--- |
+| Division A | $2.4M | $1.8M | 40 |
+| Division B | $3.6M | $2.4M | 60 |
+| Division C | $1.5M | $0.9M | 20 |
+| Division D | $5.0M | $4.2M | 80 |
+| Division E | $4.0M | $2.8M | 50 |
+
+Which division achieved the highest operating profit per employee?`,
     options: {
       A: "Division A ($15,000/employee)",
       B: "Division B ($20,000/employee)",
@@ -543,7 +553,16 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
     subject: "Data Insights",
     skill_domain: "Table Analysis",
     difficulty_tier: 2,
-    question_text: "A quality control table lists defect counts across four production shifts:\n- Shift 1: Total Units 10,000; Defective Units 150\n- Shift 2: Total Units 15,000; Defective Units 180\n- Shift 3: Total Units 8,000; Defective Units 120\n- Shift 4: Total Units 12,000; Defective Units 120\n\nWhich shift demonstrated the lowest defect rate percentage?",
+    question_text: `A quality control table lists defect counts across four production shifts:
+
+| Production Shift | Total Units | Defective Units |
+| :--- | :--- | :--- |
+| Shift 1 | 10,000 | 150 |
+| Shift 2 | 15,000 | 180 |
+| Shift 3 | 8,000 | 120 |
+| Shift 4 | 12,000 | 120 |
+
+Which shift demonstrated the lowest defect rate percentage?`,
     options: {
       A: "Shift 1",
       B: "Shift 2",
@@ -568,7 +587,17 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
     subject: "Data Insights",
     skill_domain: "Table Analysis",
     difficulty_tier: 3,
-    question_text: "A financial performance table tracks 5 tech startups:\n- Alpha: Revenue Growth +40%, Burn Rate $200k/mo, Cash Reserves $4.8M\n- Beta: Revenue Growth +65%, Burn Rate $450k/mo, Cash Reserves $5.4M\n- Gamma: Revenue Growth +25%, Burn Rate $100k/mo, Cash Reserves $3.0M\n- Delta: Revenue Growth +80%, Burn Rate $800k/mo, Cash Reserves $6.4M\n- Epsilon: Revenue Growth +30%, Burn Rate $150k/mo, Cash Reserves $4.5M\n\nWhich startup has both a runway (Reserves / Monthly Burn) of at least 24 months AND a revenue growth rate exceeding 35%?",
+    question_text: `A financial performance table tracks 5 tech startups:
+
+| Startup | Revenue Growth | Monthly Burn Rate | Cash Reserves |
+| :--- | :--- | :--- | :--- |
+| Alpha | +40% | $200k/mo | $4.8M |
+| Beta | +65% | $450k/mo | $5.4M |
+| Gamma | +25% | $100k/mo | $3.0M |
+| Delta | +80% | $800k/mo | $6.4M |
+| Epsilon | +30% | $150k/mo | $4.5M |
+
+Which startup has both a runway (Reserves / Monthly Burn) of at least 24 months AND a revenue growth rate exceeding 35%?`,
     options: {
       A: "Alpha",
       B: "Beta",
@@ -593,7 +622,16 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
     subject: "Data Insights",
     skill_domain: "Table Analysis",
     difficulty_tier: 2,
-    question_text: "A survey of customer satisfaction ratings across 4 branch locations (rated 1 to 5):\n- Downtown: Mean 4.2, Median 4.0, Std Dev 0.6\n- Uptown: Mean 3.8, Median 4.0, Std Dev 1.1\n- Suburb West: Mean 4.4, Median 5.0, Std Dev 0.8\n- Suburb East: Mean 4.1, Median 4.0, Std Dev 0.4\n\nWhich branch exhibited the most consistent ratings (lowest dispersion around the mean)?",
+    question_text: `A survey of customer satisfaction ratings across 4 branch locations (rated 1 to 5):
+
+| Branch Location | Mean | Median | Standard Deviation |
+| :--- | :--- | :--- | :--- |
+| Downtown | 4.2 | 4.0 | 0.6 |
+| Uptown | 3.8 | 4.0 | 1.1 |
+| Suburb West | 4.4 | 5.0 | 0.8 |
+| Suburb East | 4.1 | 4.0 | 0.4 |
+
+Which branch exhibited the most consistent ratings (lowest dispersion around the mean)?`,
     options: {
       A: "Downtown",
       B: "Uptown",
@@ -618,7 +656,17 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
     subject: "Data Insights",
     skill_domain: "Table Analysis",
     difficulty_tier: 3,
-    question_text: "A commercial airline tracks fuel consumption across 5 aircraft models:\n- Model V: 400 seats, 3.2 liters/100 passenger-km, Fleet size 12\n- Model W: 300 seats, 2.8 liters/100 passenger-km, Fleet size 20\n- Model X: 200 seats, 3.5 liters/100 passenger-km, Fleet size 15\n- Model Y: 150 seats, 3.1 liters/100 passenger-km, Fleet size 25\n- Model Z: 100 seats, 4.0 liters/100 passenger-km, Fleet size 8\n\nIf the airline replaces all 12 Model V aircraft with Model W aircraft, what is the change in fuel consumption per passenger-km for those replaced routes?",
+    question_text: `A commercial airline tracks fuel consumption across 5 aircraft models:
+
+| Aircraft Model | Passenger Seats | Fuel Consumption (L/100 p-km) | Fleet Size |
+| :--- | :--- | :--- | :--- |
+| Model V | 400 | 3.2 | 12 |
+| Model W | 300 | 2.8 | 20 |
+| Model X | 200 | 3.5 | 15 |
+| Model Y | 150 | 3.1 | 25 |
+| Model Z | 100 | 4.0 | 8 |
+
+If the airline replaces all 12 Model V aircraft with Model W aircraft, what is the change in fuel consumption per passenger-km for those replaced routes?`,
     options: {
       A: "12.5% decrease",
       B: "14.3% decrease",
@@ -643,7 +691,16 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
     subject: "Data Insights",
     skill_domain: "Table Analysis",
     difficulty_tier: 2,
-    question_text: "A retail inventory table records stock turnover ratios:\n- Dept 1: Cost of Goods Sold $1.2M, Average Inventory $300k\n- Dept 2: Cost of Goods Sold $2.5M, Average Inventory $500k\n- Dept 3: Cost of Goods Sold $800k, Average Inventory $100k\n- Dept 4: Cost of Goods Sold $3.6M, Average Inventory $900k\n\nWhich department has the highest inventory turnover ratio?",
+    question_text: `A retail inventory table records stock turnover ratios:
+
+| Department | Cost of Goods Sold | Average Inventory |
+| :--- | :--- | :--- |
+| Dept 1 | $1.2M | $300k |
+| Dept 2 | $2.5M | $500k |
+| Dept 3 | $800k | $100k |
+| Dept 4 | $3.6M | $900k |
+
+Which department has the highest inventory turnover ratio?`,
     options: {
       A: "Dept 1 (4.0)",
       B: "Dept 2 (5.0)",
@@ -668,7 +725,16 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
     subject: "Data Insights",
     skill_domain: "Table Analysis",
     difficulty_tier: 2,
-    question_text: "A municipal energy audit records power generation across 4 facilities:\n- Plant North: Solar, 50 MW capacity, 20% capacity factor\n- Plant South: Wind, 80 MW capacity, 35% capacity factor\n- Plant East: Hydro, 60 MW capacity, 60% capacity factor\n- Plant West: Gas, 100 MW capacity, 85% capacity factor\n\nRank the plants in order of actual average power generated (MW) from greatest to least:",
+    question_text: `A municipal energy audit records power generation across 4 facilities:
+
+| Generation Facility | Power Source | Nameplate Capacity | Capacity Factor |
+| :--- | :--- | :--- | :--- |
+| Plant North | Solar | 50 MW | 20% |
+| Plant South | Wind | 80 MW | 35% |
+| Plant East | Hydro | 60 MW | 60% |
+| Plant West | Gas | 100 MW | 85% |
+
+Rank the plants in order of actual average power generated (MW) from greatest to least:`,
     options: {
       A: "Plant West > Plant East > Plant South > Plant North",
       B: "Plant West > Plant South > Plant East > Plant North",
@@ -693,7 +759,16 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
     subject: "Data Insights",
     skill_domain: "Table Analysis",
     difficulty_tier: 3,
-    question_text: "A venture capital fund tracks deal flow metrics across 4 partners:\n- Partner P: 100 pitches reviewed, 12 investments made, 3 profitable exits\n- Partner Q: 80 pitches reviewed, 8 investments made, 2 profitable exits\n- Partner R: 150 pitches reviewed, 15 investments made, 5 profitable exits\n- Partner S: 60 pitches reviewed, 6 investments made, 1 profitable exit\n\nWhich partner achieved the highest conversion rate from initial investment to profitable exit?",
+    question_text: `A venture capital fund tracks deal flow metrics across 4 partners:
+
+| Partner | Pitches Reviewed | Investments Made | Profitable Exits |
+| :--- | :--- | :--- | :--- |
+| Partner P | 100 | 12 | 3 |
+| Partner Q | 80 | 8 | 2 |
+| Partner R | 150 | 15 | 5 |
+| Partner S | 60 | 6 | 1 |
+
+Which partner achieved the highest conversion rate from initial investment to profitable exit?`,
     options: {
       A: "Partner P",
       B: "Partner Q",
@@ -718,7 +793,16 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
     subject: "Data Insights",
     skill_domain: "Table Analysis",
     difficulty_tier: 2,
-    question_text: "A pharmaceutical stability test measures drug degradation after 6 months at 40°C:\n- Formulation A: Initial purity 99.2%, Final purity 97.4%\n- Formulation B: Initial purity 98.8%, Final purity 96.5%\n- Formulation C: Initial purity 99.5%, Final purity 98.1%\n- Formulation D: Initial purity 98.0%, Final purity 95.8%\n\nWhich formulation suffered the least absolute percentage degradation?",
+    question_text: `A pharmaceutical stability test measures drug degradation after 6 months at 40°C:
+
+| Drug Formulation | Initial Purity | Final Purity |
+| :--- | :--- | :--- |
+| Formulation A | 99.2% | 97.4% |
+| Formulation B | 98.8% | 96.5% |
+| Formulation C | 99.5% | 98.1% |
+| Formulation D | 98.0% | 95.8% |
+
+Which formulation suffered the least absolute percentage degradation?`,
     options: {
       A: "Formulation A",
       B: "Formulation B",
@@ -743,7 +827,16 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
     subject: "Data Insights",
     skill_domain: "Table Analysis",
     difficulty_tier: 2,
-    question_text: "A university admissions report shows yield rates across 4 departments:\n- Business: 800 admitted, 520 enrolled\n- Engineering: 1,000 admitted, 620 enrolled\n- Humanities: 400 admitted, 280 enrolled\n- Sciences: 600 admitted, 360 enrolled\n\nWhich department had the highest yield rate (Enrolled / Admitted)?",
+    question_text: `A university admissions report shows yield rates across 4 departments:
+
+| Academic Department | Students Admitted | Students Enrolled |
+| :--- | :--- | :--- |
+| Business | 800 | 520 |
+| Engineering | 1,000 | 620 |
+| Humanities | 400 | 280 |
+| Sciences | 600 | 360 |
+
+Which department had the highest yield rate (Enrolled / Admitted)?`,
     options: {
       A: "Business (65.0%)",
       B: "Engineering (62.0%)",
@@ -797,7 +890,24 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
     subject: "Data Insights",
     skill_domain: "Graphics Interpretation",
     difficulty_tier: 2,
-    question_text: "A cumulative frequency polygon (ogive) plots the distribution of employee salaries at a tech company. The horizontal axis represents salary in thousands of dollars, and the vertical axis represents cumulative percentage. The curve passes through the points $(60, 25\\%)$, $(85, 50\\%)$, and $(120, 75\\%)$. What is the interquartile range (IQR) of salaries at this company?",
+    question_text: `A cumulative frequency polygon (ogive) plots the distribution of employee salaries at a tech company:
+
+\`\`\`chart:line
+{
+  "title": "Employee Salary Cumulative Distribution (Ogive)",
+  "xAxis": "Salary",
+  "yAxis": "Cumulative %",
+  "data": [
+    { "Salary": "$40k", "Cumulative %": 5 },
+    { "Salary": "$60k", "Cumulative %": 25 },
+    { "Salary": "$85k", "Cumulative %": 50 },
+    { "Salary": "$120k", "Cumulative %": 75 },
+    { "Salary": "$160k", "Cumulative %": 95 }
+  ]
+}
+\`\`\`
+
+The horizontal axis represents salary in thousands of dollars, and the vertical axis represents cumulative percentage. The curve passes through the points $(60, 25\\%)$, $(85, 50\\%)$, and $(120, 75\\%)$. What is the interquartile range (IQR) of salaries at this company?`,
     options: {
       A: "$25,000$",
       B: "$35,000$",
@@ -897,12 +1007,28 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
     subject: "Data Insights",
     skill_domain: "Graphics Interpretation",
     difficulty_tier: 2,
-    question_text: "A pie chart illustrates global energy production by source. Petroleum accounts for 35%, Coal accounts for 25%, Natural Gas accounts for 20%, and the remainder is split equally between Nuclear and Renewables. What is the central angle in degrees of the sector representing Renewables?",
+    question_text: `A pie chart illustrates global energy production by source:
+
+\`\`\`chart:pie
+{
+  "title": "Global Energy Production by Source",
+  "data": [
+    { "name": "Petroleum", "value": 35 },
+    { "name": "Coal", "value": 25 },
+    { "name": "Natural Gas", "value": 20 },
+    { "name": "Nuclear", "value": 10 },
+    { "name": "Renewables", "value": 10 }
+  ]
+}
+\`\`\`
+
+Petroleum accounts for 35%, Coal accounts for 25%, Natural Gas accounts for 20%, and the remainder is split equally between Nuclear and Renewables. What is the central angle in degrees of the sector representing Renewables?`,
     options: {
       A: "$18^\\circ$",
       B: "$36^\\circ$",
       C: "$54^\\circ$",
       D: "$72^\\circ$",
+      E: "$90^\\circ$",
     },
     correct_option: "B",
     explanation: "Total percentage of fossil fuels = $35\\% + 25\\% + 20\\% = 80\\%$. Remainder for Nuclear and Renewables = $100\\% - 80\\% = 20\\%$. Since it is split equally, Renewables = $20\\% / 2 = 10\\%$. Total circle is $360^\\circ$. Central angle for Renewables = $10\\% \\times 360^\\circ = 0.10 \\times 360^\\circ = 36^\\circ$.",
@@ -911,6 +1037,7 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
       B: "Correct. 10% of 360 degrees = 36 degrees.",
       C: "Incorrect. Corresponds to 15%.",
       D: "Incorrect. Computed the combined angle for Nuclear and Renewables (20% * 360 = 72 degrees).",
+      E: "Incorrect. 90 degrees corresponds to 25%.",
     },
     misconception: "Calculating the combined sector angle for both remaining sources rather than dividing by 2 for Renewables alone.",
     time_estimate_seconds: 40,
@@ -920,7 +1047,23 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
     subject: "Data Insights",
     skill_domain: "Graphics Interpretation",
     difficulty_tier: 2,
-    question_text: "A line graph tracks quarterly revenue for a retail chain across 2023:\n- Q1: $120M\n- Q2: $150M\n- Q3: $180M\n- Q4: $225M\n\nWhat was the percentage increase in quarterly revenue from Q1 to Q4?",
+    question_text: `A line graph tracks quarterly revenue for a retail chain across 2023:
+
+\`\`\`chart:line
+{
+  "title": "Quarterly Retail Revenue Across 2023 ($M)",
+  "xAxis": "Quarter",
+  "yAxis": "Revenue ($M)",
+  "data": [
+    { "Quarter": "Q1", "Revenue": 120 },
+    { "Quarter": "Q2", "Revenue": 150 },
+    { "Quarter": "Q3", "Revenue": 180 },
+    { "Quarter": "Q4", "Revenue": 225 }
+  ]
+}
+\`\`\`
+
+What was the percentage increase in quarterly revenue from Q1 to Q4?`,
     options: {
       A: "75.0%",
       B: "87.5%",
@@ -970,7 +1113,23 @@ export const GMAT_DATA_INSIGHTS_BANK: SeedQuestion[] = [
     subject: "Data Insights",
     skill_domain: "Graphics Interpretation",
     difficulty_tier: 2,
-    question_text: "A Pareto chart shows defect categories in an electronics assembly line. The bar for 'Solder Bridging' represents 45% of total defects, and the bar for 'Component Misalignment' represents 35% of total defects. Together, these two categories account for what percentage of total defects on the cumulative line curve?",
+    question_text: `A Pareto defect distribution chart shows assembly flaws in an electronics plant:
+
+\`\`\`chart:bar
+{
+  "title": "Electronics Assembly Defect Breakdown",
+  "xAxis": "Defect Category",
+  "yAxis": "% of Total Defects",
+  "data": [
+    { "Defect Category": "Solder Bridging", "% of Total Defects": 45 },
+    { "Defect Category": "Component Misalignment", "% of Total Defects": 35 },
+    { "Defect Category": "Insufficient Flux", "% of Total Defects": 12 },
+    { "Defect Category": "Other Defects", "% of Total Defects": 8 }
+  ]
+}
+\`\`\`
+
+The bar for 'Solder Bridging' represents 45% of total defects, and the bar for 'Component Misalignment' represents 35% of total defects. Together, these two categories account for what percentage of total defects on the cumulative line curve?`,
     options: {
       A: "35%",
       B: "45%",

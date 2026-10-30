@@ -52,6 +52,13 @@ const TUTOR_SYSTEM_PROMPT = `You are a ruthless, elite competitive exam tutor (S
 - Provide an authentic, academic multi-paragraph passage of approximately 250 words (strictly 230 to 270 words) in the "passage" field. Short stubs under 200 words and bloated texts over 320 words are strictly forbidden. Every passage must be around 250 words long to match actual exam standards.
 - If multiple questions in the batch test the same passage, assign them the exact same "passage_id" and identical "passage" content so they form a cohesive passage set.
 - Provide ONLY the specific question stem in "question_text" (e.g. "What is the primary rhetorical purpose of paragraph 2?"). NEVER duplicate the passage text inside "question_text".
+6. TABLES & DATA VISUALIZATION MANDATE:
+- When generating questions involving tabular data (such as GMAT "Table Analysis", CFA "Financial Statement Analysis", SAT "Command of Evidence", or GRE "Data Interpretation"), you MUST format the dataset as a clean GitHub-Flavored Markdown table with explicit column headers:
+  | Column 1 | Column 2 | Column 3 |
+  | :--- | :---: | ---: |
+  | Row A | 1,200 | $18,000 |
+- STRICTLY FORBIDDEN: NEVER collapse tabular figures into run-on prose or semicolon-separated text (e.g. "Product P: 1,200 units sold; revenue $18,000 Product Q:...").
+- When generating questions that test graphical interpretation, embed an authentic chart code block (\`\`\`chart:bar, \`\`\`chart:line, or \`\`\`chart:pie) containing valid JSON with title, xAxis, yAxis, and data points.
 
 # OUTPUT INTERFACE
 Output ONLY raw JSON matching this schema. No markdown, no preambles.
@@ -128,13 +135,18 @@ export function buildTutorUserMessage(params: TutorPromptParams): string {
   const gmatDirective = isGMAT
     ? `\n\nGMAT FOCUS 2026 SPECIFICATION MANDATE:
 1. 5-CHOICE REQUIREMENT: Every single question MUST provide exactly 5 answer options (A, B, C, D, E) and corresponding distractor_analysis for all 5 choices (A through E).
-2. DATA SUFFICIENCY STEM FORMAT: For any "Data Sufficiency" questions, the options MUST adhere strictly to official GMAC canonical text:
+2. DATA INSIGHTS FORMATTING MANDATE:
+   - For "Table Analysis": The dataset MUST be formatted as a complete GitHub-Flavored Markdown table with explicit column headers and rows. Never collapse data into run-on sentences.
+   - For "Graphics Interpretation": Provide an authentic chart block (\`\`\`chart:bar, \`\`\`chart:line, or \`\`\`chart:pie) plotting the visual relationship.
+   - For "Multi-Source Reasoning": Format multi-source exhibits using explicit tabs: "Tab 1 (Source Name): ...\\nTab 2 (Source Name): ...\\n\\n[Question prompt]".
+   - For "Two-Part Analysis": Frame the problem with distinct criteria for both parts.
+3. DATA SUFFICIENCY STEM FORMAT: For any "Data Sufficiency" questions, the options MUST adhere strictly to official GMAC canonical text:
    - A: Statement (1) ALONE is sufficient, but statement (2) alone is not sufficient.
    - B: Statement (2) ALONE is sufficient, but statement (1) alone is not sufficient.
    - C: BOTH statements TOGETHER are sufficient, but NEITHER statement ALONE is sufficient.
    - D: EACH statement ALONE is sufficient.
    - E: Statements (1) and (2) TOGETHER are NOT sufficient.
-3. CRITICAL REASONING & TRAP LABELS: Formulate authentic GMAT reasoning structures (Premise, Unstated Assumption, Conclusion). In "misconception", classify the specific trap (e.g., "C-Trap in DS", "Reverse Causality", "Out of Scope", "Extreme Quantifier").`
+4. CRITICAL REASONING & TRAP LABELS: Formulate authentic GMAT reasoning structures (Premise, Unstated Assumption, Conclusion). In "misconception", classify the specific trap (e.g., "C-Trap in DS", "Reverse Causality", "Out of Scope", "Extreme Quantifier").`
     : "";
   const isGRE = /gre/i.test(examName);
   const greDirective = isGRE
