@@ -1,8 +1,7 @@
-// Path: components/billing/PricingCards.tsx
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Check, Loader2, Sparkles, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,7 @@ import { createCheckoutSession } from "@/lib/actions/billing";
 import { cn } from "@/lib/utils";
 import { CompactPaymentTrust } from "./PaymentTrustBadge";
 import { useUser } from "@/hooks/useUser";
+import { signInWithGoogle } from "@/lib/supabase/auth";
 
 interface PricingCardsProps {
   userEmail?: string | null;
@@ -19,17 +19,26 @@ interface PricingCardsProps {
 
 export function PricingCards({ userEmail: propEmail, isPro: propIsPro }: PricingCardsProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useUser();
   const userEmail = propEmail ?? user?.email ?? null;
   const isPro = propIsPro ?? false;
-  const [billingCycle, setBillingCycle] = useState<"quarterly" | "monthly">("monthly");
+
+  const urlPlan = searchParams.get("plan");
+  const autoCheckout = searchParams.get("checkout") === "true";
+
+  const [billingCycle, setBillingCycle] = useState<"quarterly" | "monthly">(
+    urlPlan === "monthly" ? "monthly" : "quarterly"
+  );
   const [loadingPlan, setLoadingPlan] = useState<"monthly" | "quarterly" | null>(null);
+  const checkoutInitiatedRef = useRef(false);
 
   const isQuarterly = billingCycle === "quarterly";
 
   async function handlePlanCheckout(planType: "monthly" | "quarterly") {
     if (!userEmail) {
-      router.push(`/setup?plan=${planType}`);
+      toast.info("Please sign in with Google to continue to secure checkout.");
+      await signInWithGoogle(`/pricing?plan=${planType}&checkout=true`);
       return;
     }
 
@@ -54,6 +63,15 @@ export function PricingCards({ userEmail: propEmail, isPro: propIsPro }: Pricing
       setLoadingPlan(null);
     }
   }
+
+  // Auto-launch checkout if returning from Google Auth with ?checkout=true
+  useEffect(() => {
+    if (autoCheckout && userEmail && !isPro && !checkoutInitiatedRef.current) {
+      checkoutInitiatedRef.current = true;
+      const targetPlan = urlPlan === "monthly" ? "monthly" : "quarterly";
+      handlePlanCheckout(targetPlan);
+    }
+  }, [autoCheckout, userEmail, isPro, urlPlan]);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -112,7 +130,7 @@ export function PricingCards({ userEmail: propEmail, isPro: propIsPro }: Pricing
               className="w-full font-semibold rounded-xl cursor-pointer"
               onClick={() => router.push(userEmail ? "/home" : "/setup")}
             >
-              {userEmail ? "Go to Home" : "Set Up Free Profile"}
+              {userEmail ? "Go to Study Dashboard" : "Start Free (No Credit Card)"}
             </Button>
           </div>
         </div>

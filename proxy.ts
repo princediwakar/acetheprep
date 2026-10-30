@@ -95,13 +95,12 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico, icon.ico
-     * - static assets with extensions (.svg, .png, .jpg, .jpeg, .gif, .webp, .ico, .txt, .xml)
-     */
-    "/((?!_next/static|_next/image|favicon.ico|icon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml)$).*)",
+    "/home/:path*",
+    "/dashboard/:path*",
+    "/analytics/:path*",
+    "/history/:path*",
+    "/create/:path*",
+    "/session/:path*",
+    "/edit/:path*",
   ],
 };

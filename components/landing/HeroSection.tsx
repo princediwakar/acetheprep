@@ -99,17 +99,30 @@ export function HeroSection({
         {/* Primary Product CTA: Create Exam Profile / Get Started */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
           <SignInButton
-            buttonText={`Get Started Free`}
+            buttonText={`Start Free Diagnostic`}
             returnUrl={`/setup?exam=${encodeURIComponent(examConfig.name)}`}
             size="lg"
             className="w-full sm:w-auto h-12 px-8 text-base font-semibold shadow-md bg-foreground text-background hover:bg-foreground/90 rounded-xl cursor-pointer"
           />
+          <a
+            href="#sample-question"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-foreground/85 hover:text-foreground bg-secondary/60 hover:bg-secondary rounded-xl transition-all border border-border/70 cursor-pointer"
+          >
+            <Sparkles className="h-4 w-4 text-primary shrink-0" />
+            <span>Try a sample question</span>
+            <ArrowRight className="h-4 w-4 shrink-0" />
+          </a>
+        </div>
+
+        {/* Direct verified topic drill fallback link */}
+        <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground pt-0.5">
+          <span>Direct practice bank:</span>
           <Link
             href={practiceUrl}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            className="font-medium text-foreground hover:underline inline-flex items-center gap-1"
           >
-            <span>Try a sample question</span>
-            <ArrowRight className="h-4 w-4" />
+            <span>{examConfig.shortName} Diagnostic Drill</span>
+            <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
 

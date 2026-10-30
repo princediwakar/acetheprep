@@ -120,7 +120,7 @@ export const EXAM_STUDENT_FAQS: Record<ExamKey, StudentFAQItem[]> = {
       question: "What is the exact distinction between 'FALSE' and 'NOT GIVEN' in IELTS Reading?",
       answer:
         "A statement is FALSE if the passage clearly contradicts or states the exact opposite of the prompt. A statement is NOT GIVEN if the text neither confirms nor contradicts the information because the specific detail is missing.",
-      drillUrl: "/practice/ielts-academic/reading/identifying-information-true-false-not-given",
+      drillUrl: "/practice/ielts-academic/reading/true-false-not-given",
       drillLabel: "Practice IELTS True/False/Not Given Drills",
     },
     {
@@ -136,7 +136,7 @@ export const EXAM_STUDENT_FAQS: Record<ExamKey, StudentFAQItem[]> = {
       question: "How do Sentence Insertion questions work on TOEFL iBT Reading?",
       answer:
         "You are given a sentence and four squares [■] inside a passage. You must choose the square where the sentence fits most naturally by tracking grammatical pronouns, chronological flow, and transition connectors (e.g. 'Therefore', 'In contrast').",
-      drillUrl: "/practice/toefl-ibt/reading/insert-text-questions",
+      drillUrl: "/practice/toefl-ibt/reading/insert-text",
       drillLabel: "Practice TOEFL Sentence Insertion",
     },
     {

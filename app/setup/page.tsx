@@ -37,13 +37,14 @@ export const metadata: Metadata = {
 export default async function SetupPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ exam?: string; edit?: string; next?: string }>;
+  searchParams?: Promise<{ exam?: string; edit?: string; next?: string; plan?: string }>;
 }) {
   const resolvedParams = searchParams ? await searchParams : {};
   const rawExam = resolvedParams.exam ? decodeURIComponent(resolvedParams.exam).trim() : undefined;
   const initialExam = rawExam ? (slugToExam(rawExam) || (TAXONOMY[rawExam] ? rawExam : undefined)) : undefined;
   const isExplicitEdit = resolvedParams.edit === "true";
   const next = resolvedParams.next;
+  const plan = resolvedParams.plan;
 
   return (
     <Suspense fallback={<SetupSkeleton />}>
@@ -51,6 +52,7 @@ export default async function SetupPage({
         initialExam={initialExam}
         isExplicitEdit={isExplicitEdit}
         next={next}
+        plan={plan}
       />
     </Suspense>
   );
@@ -80,10 +82,12 @@ async function SetupPageContent({
   initialExam,
   isExplicitEdit,
   next,
+  plan,
 }: {
   initialExam?: string;
   isExplicitEdit: boolean;
   next?: string;
+  plan?: string;
 }) {
   const supabase = await createClient();
   const {
@@ -91,7 +95,13 @@ async function SetupPageContent({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    const returnUrl = next ?? (initialExam ? `/setup?exam=${encodeURIComponent(initialExam)}` : "/home");
+    const returnUrl =
+      next ??
+      (plan
+        ? `/pricing?plan=${plan}&checkout=true`
+        : initialExam
+          ? `/setup?exam=${encodeURIComponent(initialExam)}`
+          : "/home");
     return (
       <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col items-center justify-center px-4 py-16 text-center">
         <Card className="w-full rounded-2xl border border-border/80 bg-card p-4 sm:p-6 shadow-xl">
@@ -100,12 +110,14 @@ async function SetupPageContent({
               <Sparkles className="h-6 w-6" />
             </div>
             <CardTitle className="text-2xl font-bold tracking-tight">
-              {initialExam ? `${initialExam} Study Plan` : "Welcome to AceThePrep"}
+              {plan ? "Upgrade to AceThePrep Pro" : initialExam ? `${initialExam} Study Plan` : "Welcome to AceThePrep"}
             </CardTitle>
             <CardDescription className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
-              {initialExam
-                ? `Sign in to practice ${initialExam} questions under real test conditions and track your progress.`
-                : "Sign in to practice exam questions under real test conditions and track your progress."}
+              {plan
+                ? "Sign in with Google to complete your Pro upgrade and unlock full mock exams."
+                : initialExam
+                  ? `Sign in to practice ${initialExam} questions under real test conditions and track your progress.`
+                  : "Sign in to practice exam questions under real test conditions and track your progress."}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pb-4">
@@ -117,17 +129,22 @@ async function SetupPageContent({
             <div className="grid grid-cols-2 gap-2 pt-2 text-[11px] text-muted-foreground border-t border-border/60">
               <span className="flex items-center justify-center gap-1">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                100% Free
+                100% Free Setup
               </span>
               <span className="flex items-center justify-center gap-1">
                 <Zap className="h-3.5 w-3.5 text-amber-500" />
-                1-Minute Setup
+                Instant Access
               </span>
             </div>
           </CardContent>
         </Card>
       </main>
     );
+  }
+
+  // If user signed in with intent to checkout a plan, redirect straight to pricing checkout
+  if (plan) {
+    redirect(`/pricing?plan=${plan}&checkout=true`);
   }
 
   // Load existing active profile

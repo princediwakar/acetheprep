@@ -1,6 +1,7 @@
 // Path: app/pricing/page.tsx
 import { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { PricingCards } from "@/components/billing/PricingCards";
 import { FullPaymentTrustBanner } from "@/components/billing/PaymentTrustBadge";
 import { Badge } from "@/components/ui/badge";
@@ -156,7 +157,16 @@ export default function PricingPage() {
       </div>
 
       {/* Pricing Cards */}
-      <PricingCards />
+      <Suspense
+        fallback={
+          <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch animate-pulse">
+            <div className="rounded-3xl border border-border/80 bg-card p-7 sm:p-8 h-[520px]" />
+            <div className="rounded-3xl border-2 border-primary/20 bg-card p-7 sm:p-8 h-[520px]" />
+          </div>
+        }
+      >
+        <PricingCards />
+      </Suspense>
 
       {/* Institutional Trust & Security Banner */}
       <div className="max-w-4xl mx-auto mt-12">
@@ -243,12 +253,18 @@ export default function PricingPage() {
         <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
           Take your first 10-question practice session in seconds. Zero credit card required to start.
         </p>
-        <div className="pt-2">
+        <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/setup"
             className="inline-flex items-center justify-center font-bold px-8 py-3.5 rounded-xl bg-primary text-primary-foreground shadow-md hover:bg-primary/90 transition-all text-sm"
           >
-            Set Up Free Profile
+            Start Free Diagnostic
+          </Link>
+          <Link
+            href="/practice"
+            className="inline-flex items-center justify-center font-semibold px-6 py-3.5 rounded-xl border border-border bg-card hover:bg-secondary transition-all text-sm text-foreground"
+          >
+            Browse Practice Banks
           </Link>
         </div>
       </div>

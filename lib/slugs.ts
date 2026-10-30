@@ -96,6 +96,24 @@ export function getAllTaxonomyEntries(): TaxonomyEntry[] {
 }
 
 
+export const EXAM_ALIASES: Record<string, string> = {
+  gmat: "GMAT Focus",
+  "gmat-focus": "GMAT Focus",
+  "gmat-focus-edition": "GMAT Focus",
+  sat: "SAT",
+  "digital-sat": "SAT",
+  gre: "GRE",
+  "gre-general": "GRE",
+  cfa: "CFA Level 1",
+  "cfa-1": "CFA Level 1",
+  "cfa-level-1": "CFA Level 1",
+  "cfa-level-i": "CFA Level 1",
+  ielts: "IELTS Academic",
+  "ielts-academic": "IELTS Academic",
+  toefl: "TOEFL iBT",
+  "toefl-ibt": "TOEFL iBT",
+};
+
 /**
  * Maps raw exam name to kebab-case slug.
  */
@@ -108,6 +126,9 @@ export function examToSlug(exam: string): string {
  */
 export function slugToExam(slug: string): string | null {
   const normalized = slug.toLowerCase().trim();
+  if (EXAM_ALIASES[normalized]) {
+    return EXAM_ALIASES[normalized];
+  }
   return slugToExamMap.get(normalized) || null;
 }
 
@@ -181,11 +202,26 @@ export function resolvePracticeParams(rawExam: string, rawSubject: string, rawDo
     }
   }
 
-  if (!domainName) {
-    for (const [canonical, slug] of domainSlugMap.entries()) {
-      if (canonical.toLowerCase() === decodedDomain.toLowerCase()) {
-        domainName = canonical;
-        break;
+  // Verify domain within the resolved exam and subject taxonomy
+  if (examName && subjectName && taxonomy[examName]?.[subjectName]) {
+    const validDomains = taxonomy[examName][subjectName];
+    if (!domainName || !validDomains.includes(domainName)) {
+      // 1. Try exact slug match against domains in this subject
+      const targetSlug = slugify(decodedDomain);
+      const exactMatch = validDomains.find((d) => slugify(d) === targetSlug);
+      if (exactMatch) {
+        domainName = exactMatch;
+      } else {
+        // 2. Try partial / keyword match in this subject
+        const partialMatch = validDomains.find(
+          (d) => slugify(d).includes(targetSlug) || targetSlug.includes(slugify(d))
+        );
+        if (partialMatch) {
+          domainName = partialMatch;
+        } else if (validDomains.length > 0) {
+          // 3. Graceful fallback to first topic in this subject
+          domainName = validDomains[0];
+        }
       }
     }
   }

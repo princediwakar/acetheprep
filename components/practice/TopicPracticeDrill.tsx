@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
+import Link from "next/link";
 import type { Question } from "@/lib/schemas/quiz";
 import { renderMathContent, extractPassageContent } from "@/lib/quiz-utils";
 import { signInWithGoogle } from "@/lib/supabase/auth";
@@ -319,7 +320,15 @@ export function TopicPracticeDrill({
             </span>
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
+            <Link
+              href="/pricing"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Unlock timed full mocks with Pro →</span>
+            </Link>
+            <span className="hidden sm:inline text-border">|</span>
             <button
               type="button"
               onClick={handleReset}

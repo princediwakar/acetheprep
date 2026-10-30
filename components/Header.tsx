@@ -51,18 +51,25 @@ export const Header = memo(() => {
             <div className="hidden md:flex items-center space-x-1 text-sm font-medium">
               {NAV_ITEMS.map((item) => {
                 const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(`${item.href}/`));
+                const isPricing = item.href === "/pricing";
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "px-3 py-1.5 rounded-md transition-colors",
+                      "px-3 py-1.5 rounded-md transition-colors inline-flex items-center gap-1.5",
                       isActive
                         ? "text-foreground font-semibold bg-secondary/80"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/40",
+                      isPricing && !isActive && "text-foreground/90 font-medium"
                     )}
                   >
-                    {item.label}
+                    <span>{item.label}</span>
+                    {isPricing && (
+                      <span className="rounded-full bg-primary/15 text-primary text-[10px] font-bold px-1.5 py-0.2 border border-primary/25">
+                        Pro
+                      </span>
+                    )}
                   </Link>
                 );
               })}
@@ -82,10 +89,10 @@ export const Header = memo(() => {
             />
           ) : (
             <SignInButton
-              buttonText="Get Started"
-              returnUrl={pathname !== "/" ? pathname : "/home"}
+              buttonText="Start Free"
+              returnUrl={pathname === "/" ? "/setup" : pathname}
               size="sm"
-              className="text-sm font-semibold px-4 py-2 h-9"
+              className="text-sm font-semibold px-4 py-2 h-9 bg-foreground text-background hover:bg-foreground/90 shadow-xs cursor-pointer rounded-xl"
             />
           )}
 

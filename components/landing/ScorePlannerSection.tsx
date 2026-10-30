@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight, Calculator, Clock, Target, CheckCircle2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LANDING_EXAMS, type ExamKey } from "./landing-data";
+import { SignInButton } from "@/components/SignInButton";
 
 export interface ScorePlannerSectionProps {
   activeExam: ExamKey;
@@ -210,6 +211,24 @@ export function ScorePlannerSection({ activeExam }: ScorePlannerSectionProps) {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Action CTA Bar */}
+          <div className="pt-5 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="space-y-0.5 text-center sm:text-left">
+              <span className="text-xs font-semibold text-foreground">
+                Targeting {targetScore} {scale.unit} on the {examConfig.shortName}?
+              </span>
+              <p className="text-[11px] text-muted-foreground">
+                Set up your personalized study schedule to lock in daily spaced repetition.
+              </p>
+            </div>
+            <SignInButton
+              buttonText="Create Free Study Plan"
+              returnUrl={`/setup?exam=${encodeURIComponent(examConfig.name)}`}
+              size="default"
+              className="w-full sm:w-auto font-semibold px-5 py-2.5 rounded-xl bg-foreground text-background hover:bg-foreground/90 shadow-xs cursor-pointer text-xs"
+            />
           </div>
         </div>
       </div>
