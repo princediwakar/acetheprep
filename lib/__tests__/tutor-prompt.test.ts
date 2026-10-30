@@ -43,7 +43,7 @@ describe("buildTutorUserMessage — Uniqueness and Negative Constraints", () => 
 
     const message = buildTutorUserMessage({
       examName: "SAT",
-      examYear: "2025",
+      examYear: "2026",
       timeMode: "triage",
       daysRemaining: 30,
       targetDomains: [dummyDomain],
@@ -81,8 +81,8 @@ describe("buildTutorUserMessage — Uniqueness and Negative Constraints", () => 
     };
 
     const message = buildTutorUserMessage({
-      examName: "CAT",
-      examYear: "2025",
+      examName: "GRE",
+      examYear: "2026",
       timeMode: "acceleration",
       daysRemaining: 45,
       targetDomains: [rcDomain],

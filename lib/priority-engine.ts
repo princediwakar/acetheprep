@@ -15,7 +15,7 @@ export interface ExamTopicWeight {
   topic: string;
   skill_domain: string;
   difficulty_tier: DifficultyTier;
-  exam_weight: number;           // From JEE past-10-year question frequency
+  exam_weight: number;           // Historical question frequency weight for this domain
   question_frequency_10yr: number; // Raw question count
   c_tier_cap: number | null;     // 75th percentile completion time (minutes)
   estimated_minutes_to_mastery: number | null;

@@ -5,7 +5,7 @@ import Link from "next/link";
 export function ProductImpactSection() {
   return (
     <section className="relative py-16 sm:py-24 border-t border-border/80 px-4 sm:px-6">
-      <div className="mx-auto max-w-5xl space-y-16">
+      <div className="mx-auto max-w-5xl space-y-14">
         {/* Section Header */}
         <div className="text-center space-y-3 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/60 px-3.5 py-1 text-xs font-medium text-foreground">
@@ -17,13 +17,13 @@ export function ProductImpactSection() {
             Four AI engines designed to cut your study time in half.
           </h2>
 
-          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Standard test prep gives you a massive bank of 2,000 random questions and leaves you on your own.
-            AceThePrep uses purposeful AI to guide every single minute of your practice.
+          <p className="text-base sm:text-lg text-foreground/85 leading-relaxed">
+            Standard test prep leaves you solving thousands of random questions.
+            AceThePrep focuses every study minute on the exact concepts holding your score back.
           </p>
         </div>
 
-        {/* 4 Simple, Visual AI Impact Cards */}
+        {/* 4 Clean, Visual AI Impact Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Card 1: AI Score Leak Detection */}
           <div className="rounded-2xl border border-border/80 bg-card p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-xs hover:border-foreground/30 transition-all">
@@ -32,42 +32,40 @@ export function ProductImpactSection() {
                 <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-mono font-bold text-sm">
                   01
                 </div>
-                <span className="text-[11px] font-mono uppercase text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                <span className="text-xs font-mono uppercase text-foreground/70 bg-muted px-2.5 py-1 rounded-md">
                   Diagnostic AI
                 </span>
               </div>
 
               <div>
-                <h3 className="font-heading text-lg sm:text-xl font-medium text-foreground">
-                  AI Score Leak Detection
+                <h3 className="font-heading text-xl sm:text-2xl font-medium text-foreground">
+                  Score Leak Detection
                 </h3>
-                <p className="text-xs font-medium text-muted-foreground mt-0.5">
-                  Find weak spots in 10 minutes instead of solving 1,500 random questions.
+                <p className="text-sm font-medium text-muted-foreground mt-0.5">
+                  Find weak spots in 10 minutes instead of solving 1,500 random problems.
                 </p>
               </div>
 
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Most students waste weeks practicing problems they already understand. Our AI evaluates
-                your response patterns against 10 years of official exam data to isolate the exact 15% of
-                concepts holding your score down.
+              <p className="text-sm sm:text-base text-foreground/85 leading-relaxed">
+                Most students waste weeks repeating questions they already know. Our AI analyzes your responses to isolate the exact 15% of high-yield concepts capping your score.
               </p>
 
               {/* Simple Visual Comparison */}
-              <div className="rounded-xl border border-border/60 bg-muted/30 p-3.5 space-y-2 text-xs font-mono">
+              <div className="rounded-xl border border-border/60 bg-muted/30 p-3.5 space-y-2 text-xs sm:text-sm font-mono">
                 <div className="flex justify-between items-center text-muted-foreground">
-                  <span>Random Prep:</span>
-                  <span className="line-through text-rose-500/80">1,500 questions (80 hrs wasted)</span>
+                  <span>Random Question Banks:</span>
+                  <span className="line-through text-rose-500/80">1,500 problems (80 hrs)</span>
                 </div>
                 <div className="flex justify-between items-center text-foreground font-semibold">
                   <span>AceThePrep AI:</span>
-                  <span className="text-emerald-600 dark:text-emerald-400">12 high-yield targeted drills</span>
+                  <span className="text-emerald-600 dark:text-emerald-400">12 targeted diagnostic drills</span>
                 </div>
               </div>
             </div>
 
-            <div className="pt-2 text-xs text-muted-foreground flex items-center gap-2">
-              <CheckCircle2 className="h-3.5 w-3.5 text-foreground/70 shrink-0" />
-              <span>Spend 60% less time studying</span>
+            <div className="pt-2 text-xs sm:text-sm text-foreground/80 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span>Cut unnecessary study hours by 60%</span>
             </div>
           </div>
 
@@ -78,130 +76,127 @@ export function ProductImpactSection() {
                 <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-mono font-bold text-sm">
                   02
                 </div>
-                <span className="text-[11px] font-mono uppercase text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                <span className="text-xs font-mono uppercase text-foreground/70 bg-muted px-2.5 py-1 rounded-md">
                   Distractor Intelligence
                 </span>
               </div>
 
               <div>
-                <h3 className="font-heading text-lg sm:text-xl font-medium text-foreground">
-                  AI Trap Answer Forensics
+                <h3 className="font-heading text-xl sm:text-2xl font-medium text-foreground">
+                  Trap Answer Forensics
                 </h3>
-                <p className="text-xs font-medium text-muted-foreground mt-0.5">
+                <p className="text-sm font-medium text-muted-foreground mt-0.5">
                   Understand why you fell for the trap, not just that you were wrong.
                 </p>
               </div>
 
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Competitive exams don&apos;t just test facts—test-makers write specific trap answers to exploit
-                common cognitive missteps. Our AI analyzes your wrong choice and explains the psychological trick behind it.
+              <p className="text-sm sm:text-base text-foreground/85 leading-relaxed">
+                Standard exams are designed with deliberate trap options targeting common cognitive reflexes. Our AI breaks down the test-maker&apos;s trick so you spot it instantly on test day.
               </p>
 
               {/* Simple Visual Comparison */}
-              <div className="rounded-xl border border-border/60 bg-muted/30 p-3.5 space-y-2 text-xs">
-                <div className="text-muted-foreground text-[11px]">
-                  <span className="font-semibold text-rose-500">Other platforms:</span> &ldquo;Incorrect. Option B is correct.&rdquo;
+              <div className="rounded-xl border border-border/60 bg-muted/30 p-3.5 space-y-2 text-xs sm:text-sm">
+                <div className="text-muted-foreground">
+                  <span className="font-semibold text-rose-500">Other tools:</span> &ldquo;Incorrect. Option B is the right answer.&rdquo;
                 </div>
-                <div className="text-foreground text-[11px] font-medium border-t border-border/60 pt-1.5">
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">AceThePrep AI:</span> Explains why Trap C was tempting &amp; the 10-second rule to spot it.
+                <div className="text-foreground font-medium border-t border-border/60 pt-1.5">
+                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">AceThePrep:</span> Explains why Trap C looked tempting and how to rule it out in 10s.
                 </div>
               </div>
             </div>
 
-            <div className="pt-2 text-xs text-muted-foreground flex items-center gap-2">
-              <CheckCircle2 className="h-3.5 w-3.5 text-foreground/70 shrink-0" />
-              <span>Turn your recurring mistakes into test-day instinct</span>
+            <div className="pt-2 text-xs sm:text-sm text-foreground/80 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span>Turn repeated mistakes into automatic test instincts</span>
             </div>
           </div>
 
-          {/* Card 3: AI Socratic Hinting */}
+          {/* Card 3: AI Socratic Guidance */}
           <div className="rounded-2xl border border-border/80 bg-card p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-xs hover:border-foreground/30 transition-all">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-mono font-bold text-sm">
                   03
                 </div>
-                <span className="text-[11px] font-mono uppercase text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                <span className="text-xs font-mono uppercase text-foreground/70 bg-muted px-2.5 py-1 rounded-md">
                   Interactive Co-Pilot
                 </span>
               </div>
 
               <div>
-                <h3 className="font-heading text-lg sm:text-xl font-medium text-foreground">
-                  AI Socratic Guidance
+                <h3 className="font-heading text-xl sm:text-2xl font-medium text-foreground">
+                  Socratic Guidance
                 </h3>
-                <p className="text-xs font-medium text-muted-foreground mt-0.5">
-                  Guided hints that teach you how to think, not just the final answer.
+                <p className="text-sm font-medium text-muted-foreground mt-0.5">
+                  Hints that teach you how to think, not just the final answer.
                 </p>
               </div>
 
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                When you get stuck, immediately looking at the full solution robs your brain of learning.
-                Our AI provides progressive step-by-step hints that guide you to derive the solution yourself.
+              <p className="text-sm sm:text-base text-foreground/85 leading-relaxed">
+                Immediately reading the answer robs your brain of retention. Our AI gives progressive clues that prompt you to derive the solution step by step.
               </p>
 
               {/* Simple Visual Comparison */}
-              <div className="rounded-xl border border-border/60 bg-muted/30 p-3.5 space-y-2 text-xs">
-                <div className="text-muted-foreground text-[11px]">
-                  <span className="font-semibold text-rose-500">Traditional:</span> Passive reading of a 20-line math proof.
+              <div className="rounded-xl border border-border/60 bg-muted/30 p-3.5 space-y-2 text-xs sm:text-sm">
+                <div className="text-muted-foreground">
+                  <span className="font-semibold text-rose-500">Traditional:</span> Passively reading a static 20-line derivation.
                 </div>
-                <div className="text-foreground text-[11px] font-medium border-t border-border/60 pt-1.5">
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">AceThePrep AI:</span> Socratic cues that trigger your own active problem-solving.
+                <div className="text-foreground font-medium border-t border-border/60 pt-1.5">
+                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">AceThePrep:</span> Step-by-step cues that activate your own reasoning.
                 </div>
               </div>
             </div>
 
-            <div className="pt-2 text-xs text-muted-foreground flex items-center gap-2">
-              <CheckCircle2 className="h-3.5 w-3.5 text-foreground/70 shrink-0" />
-              <span>Build genuine confidence under exam pressure</span>
+            <div className="pt-2 text-xs sm:text-sm text-foreground/80 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span>Build genuine exam-day confidence under time pressure</span>
             </div>
           </div>
 
-          {/* Card 4: AI Spaced Memory Recall */}
+          {/* Card 4: Spaced Retention */}
           <div className="rounded-2xl border border-border/80 bg-card p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-xs hover:border-foreground/30 transition-all">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-mono font-bold text-sm">
                   04
                 </div>
-                <span className="text-[11px] font-mono uppercase text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                <span className="text-xs font-mono uppercase text-foreground/70 bg-muted px-2.5 py-1 rounded-md">
                   Retention Engine
                 </span>
               </div>
 
               <div>
-                <h3 className="font-heading text-lg sm:text-xl font-medium text-foreground">
-                  AI Spaced Memory Recall
+                <h3 className="font-heading text-xl sm:text-2xl font-medium text-foreground">
+                  Spaced Retention
                 </h3>
-                <p className="text-xs font-medium text-muted-foreground mt-0.5">
-                  Lock concepts permanently right before memory fades.
+                <p className="text-sm font-medium text-muted-foreground mt-0.5">
+                  Lock concepts permanently before memory decays.
                 </p>
               </div>
 
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Cognitive science proves that students forget 70% of reviewed solutions within two weeks.
-                Our AI tracks your forgetting curve and schedules 2-minute refresher drills at the exact optimal moment.
+              <p className="text-sm sm:text-base text-foreground/85 leading-relaxed">
+                Students naturally forget 70% of reviewed problems within two weeks. Our SM-2 engine schedules 2-minute refreshers at the exact optimal moment to lock concepts into long-term memory.
               </p>
 
               {/* Simple Visual Comparison */}
-              <div className="rounded-xl border border-border/60 bg-muted/30 p-3.5 space-y-1.5 text-xs font-mono">
-                <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                  <span>Day 1: Solve problem</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">✓</span>
+              <div className="rounded-xl border border-border/60 bg-muted/30 p-3.5 space-y-1.5 text-xs sm:text-sm font-mono">
+                <div className="flex items-center justify-between text-muted-foreground">
+                  <span>Day 1: Initial Drill</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">✓ Complete</span>
                 </div>
-                <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                  <span>Day 5: 2-min AI refresher</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">✓</span>
+                <div className="flex items-center justify-between text-muted-foreground">
+                  <span>Day 5: 2-Min Refresher</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">✓ Reinforced</span>
                 </div>
-                <div className="flex items-center justify-between text-[11px] text-foreground font-semibold">
-                  <span>Test Day: Locked in memory</span>
-                  <span className="text-emerald-600 dark:text-emerald-400">95% Recall Rate</span>
+                <div className="flex items-center justify-between text-foreground font-semibold">
+                  <span>Test Day: Long-term Recall</span>
+                  <span className="text-emerald-600 dark:text-emerald-400">95% Retention</span>
                 </div>
               </div>
             </div>
 
-            <div className="pt-2 text-xs text-muted-foreground flex items-center gap-2">
-              <CheckCircle2 className="h-3.5 w-3.5 text-foreground/70 shrink-0" />
+            <div className="pt-2 text-xs sm:text-sm text-foreground/80 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span>Ensure what you study stays locked in for test day</span>
             </div>
           </div>

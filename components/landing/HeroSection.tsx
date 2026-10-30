@@ -2,9 +2,10 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Sparkles, Brain, Target, ShieldCheck, Zap, RotateCcw } from "lucide-react";
+import { ArrowRight, Sparkles, Target, ShieldCheck, Zap, RotateCcw } from "lucide-react";
 import { PageHero, HeroBadge } from "@/components/shared/PageHero";
 import { ExamSelectorStrip } from "@/components/shared/ExamSelectorStrip";
+import { SignInButton } from "@/components/SignInButton";
 import { InstantTopicSearch } from "./InstantTopicSearch";
 import { LANDING_EXAMS, type ExamKey } from "./landing-data";
 
@@ -25,37 +26,37 @@ const EXAM_HERO_COPY: Record<
     org: "GMAC GMAT Focus",
     headline: "Adaptive AI test prep for the GMAT Focus.",
     subhead:
-      "Our AI pinpoints your exact score leaks in 10 minutes, breaks down why tempting trap answers fool you, and schedules quick reviews before you forget.",
+      "Find your score leaks in 10 minutes. Learn why tempting trap answers look right and retain what you study.",
   },
   sat: {
     org: "College Board Digital SAT",
     headline: "Hit 1500+ on the Digital SAT with adaptive AI.",
     subhead:
-      "Target your highest-yield weak spots across Reading, Writing, and Math. Built with Desmos integration and real-time AI mistake explanations.",
+      "Target your highest-yield weak spots across Reading, Writing, and Math with instant AI mistake explanations.",
   },
   gre: {
     org: "ETS GRE General",
     headline: "Break your GRE score plateau in half the time.",
     subhead:
-      "Stop repeating the same careless mistakes on Quant Comparison and Text Completion. Learn how test-makers design traps using AI diagnostics.",
+      "Stop repeating careless mistakes on Quant Comparison and Text Completion with AI diagnostics.",
   },
   cfa: {
     org: "CFA Institute Level 1",
     headline: "Master high-weight CFA Level 1 topics with AI.",
     subhead:
-      "Zero in on Financial Statement Analysis and Quant Methods with step-by-step formula derivations and smart spaced repetition.",
+      "Zero in on Financial Statement Analysis and Quant Methods with formula derivations and spaced repetition.",
   },
   ielts: {
     org: "British Council & IDP",
     headline: "Reach Band 8.0+ with real-time AI feedback.",
     subhead:
-      "Demystify True / False / Not Given reading traps, master acoustic distractors, and get instant human-grade essay evaluations.",
+      "Demystify True / False / Not Given reading traps and get instant human-grade essay evaluations.",
   },
   toefl: {
     org: "ETS TOEFL iBT",
     headline: "Precision TOEFL iBT practice powered by AI.",
     subhead:
-      "Master fast-paced academic reading inferences and listening traps with instant step-by-step AI feedback and speaking rubrics.",
+      "Master fast-paced academic reading inferences and listening traps with instant AI feedback.",
   },
 };
 
@@ -81,13 +82,9 @@ export function HeroSection({
         {/* Dynamic Exam-Specific Hero Messaging */}
         <PageHero
           badge={
-            <HeroBadge className="border-border bg-muted/60 text-foreground/80 font-medium flex-wrap">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>AI-Powered Adaptive Engine</span>
-              <span className="text-muted-foreground/40">•</span>
-              <span>GMAT, SAT, GRE &amp; CFA</span>
-              <span className="text-muted-foreground/40">•</span>
-              <span>100% Free Practice</span>
+            <HeroBadge className="border-border bg-muted/60 text-foreground/90 font-medium text-xs sm:text-sm px-3.5 py-1">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Adaptive AI Engine • 100% Free Practice</span>
             </HeroBadge>
           }
           title={heroCopy.headline}
@@ -99,56 +96,61 @@ export function HeroSection({
           </div>
         </PageHero>
 
-        {/* Primary Product CTA */}
+        {/* Primary Product CTA: Create Exam Profile / Get Started */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+          <SignInButton
+            buttonText={`Get Started Free`}
+            returnUrl={`/setup?exam=${encodeURIComponent(examConfig.name)}`}
+            size="lg"
+            className="w-full sm:w-auto h-12 px-8 text-base font-semibold shadow-md bg-foreground text-background hover:bg-foreground/90 rounded-xl cursor-pointer"
+          />
           <Link
             href={practiceUrl}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-foreground text-background px-6 py-3.5 text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
-            <Sparkles className="h-4 w-4 text-emerald-400" />
-            <span>Start Free {examConfig.shortName} AI Diagnostic Drill</span>
+            <span>Try a sample question</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 
         {/* 4 Clean AI Product Value Badges */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-6 border-t border-border/70 text-xs">
-          <div className="rounded-xl border border-border/80 bg-card p-4 space-y-1 hover:border-foreground/20 transition-colors">
-            <div className="flex items-center gap-1.5 text-foreground font-semibold">
-              <Target className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>AI Score Leak Detection</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-6 border-t border-border/70">
+          <div className="rounded-xl border border-border/80 bg-card p-4 space-y-1.5 hover:border-foreground/20 transition-colors">
+            <div className="flex items-center gap-2 text-foreground font-semibold text-sm sm:text-base">
+              <Target className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span>Score Leak Detection</span>
             </div>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
+            <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
               Finds your high-yield weak spots in 10 minutes instead of solving 1,500 random questions.
             </p>
           </div>
 
-          <div className="rounded-xl border border-border/80 bg-card p-4 space-y-1 hover:border-foreground/20 transition-colors">
-            <div className="flex items-center gap-1.5 text-foreground font-semibold">
-              <Zap className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+          <div className="rounded-xl border border-border/80 bg-card p-4 space-y-1.5 hover:border-foreground/20 transition-colors">
+            <div className="flex items-center gap-2 text-foreground font-semibold text-sm sm:text-base">
+              <Zap className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
               <span>AI Trap Forensics</span>
             </div>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
-              Explains why you picked the wrong option and teaches the instinct to avoid it.
+            <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
+              Explains why you picked the wrong option and teaches the instinct to avoid test traps.
             </p>
           </div>
 
-          <div className="rounded-xl border border-border/80 bg-card p-4 space-y-1 hover:border-foreground/20 transition-colors">
-            <div className="flex items-center gap-1.5 text-foreground font-semibold">
-              <RotateCcw className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-              <span>AI Spaced Retention</span>
+          <div className="rounded-xl border border-border/80 bg-card p-4 space-y-1.5 hover:border-foreground/20 transition-colors">
+            <div className="flex items-center gap-2 text-foreground font-semibold text-sm sm:text-base">
+              <RotateCcw className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
+              <span>Spaced Retention</span>
             </div>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
+            <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
               Schedules 2-minute refresher drills right before concepts fade from memory.
             </p>
           </div>
 
-          <div className="rounded-xl border border-border/80 bg-card p-4 space-y-1 hover:border-foreground/20 transition-colors">
-            <div className="flex items-center gap-1.5 text-foreground font-semibold">
-              <ShieldCheck className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
-              <span>100% Free Fundamentals</span>
+          <div className="rounded-xl border border-border/80 bg-card p-4 space-y-1.5 hover:border-foreground/20 transition-colors">
+            <div className="flex items-center gap-2 text-foreground font-semibold text-sm sm:text-base">
+              <ShieldCheck className="h-4 w-4 text-purple-600 dark:text-purple-400 shrink-0" />
+              <span>Free Fundamentals</span>
             </div>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
+            <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
               Diagnostic drills and full step-by-step solutions are always free with zero paywall.
             </p>
           </div>

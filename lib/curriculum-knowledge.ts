@@ -480,19 +480,19 @@ export function getDomainKnowledge(
   const faqs = [
     {
       question: `What makes ${domainName} questions in ${examName} so difficult for students?`,
-      answer: `Students typically memorize formulas or rules for ${domainName} without testing boundary conditions. In ${examName}, examination writers specifically build distractor choices around ${archetype.trapName.toLowerCase()}, which catches over ${archetype.failureRate}% of unprepared candidates.`,
+      answer: `Most students lose points to ${archetype.trapName.toLowerCase()} traps rather than missing core concepts. Official questions are specifically designed to catch test-takers who rely on intuition without checking boundary conditions.`,
     },
     {
       question: `How should I time my review of ${domainName} to prevent forgetting?`,
-      answer: `According to the Ebbinghaus forgetting curve, recall for complex multi-step reasoning decays by ~70% within 6 days. AceThePrep's spaced repetition engine recommends completing a 5-question retrieval drill 24 hours, 72 hours, and 14 days after your initial study session.`,
+      answer: `Review this topic with a 5-question retrieval drill at 24 hours and 7 days. Spaced review locks concepts into memory with significantly less total study time than cramming.`,
     },
     {
       question: `Are these ${domainName} practice problems aligned with the latest ${examName} syllabus?`,
-      answer: `Yes. All questions and distractor decompositions strictly mirror the current official taxonomy and examination patterns for ${examName} (${subjectName}), verified against past paper psychometrics.`,
+      answer: `Yes. Every question mirrors the current official ${examName} (${subjectName}) curriculum and test specifications.`,
     },
     {
       question: `Why does AceThePrep show why wrong options are incorrect?`,
-      answer: `Understanding distractor mechanics produces up to 4.2x higher concept retention. When you know why 70%+ of students incorrectly choose a specific trap answer, you build cognitive immunity against making the same mistake in the real exam.`,
+      answer: `Top scores come from recognizing distractor patterns quickly. Deconstructing why common traps look correct prevents you from repeating those same mistakes on test day.`,
     },
   ];
 

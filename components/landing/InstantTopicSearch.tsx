@@ -192,8 +192,8 @@ export function InstantTopicSearch({
           }}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder="Search 400+ topics, formulas & traps (e.g. 'Parabolas', 'Data Sufficiency', 'Extraneous Roots', 'DuPont')..."
-          className="w-full rounded-xl border border-border bg-card/90 pl-10 pr-10 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-foreground/20 focus:border-foreground transition-all shadow-xs"
+          placeholder="Search topics, formulas, or traps (e.g. 'Data Sufficiency', 'Parabolas')..."
+          className="w-full rounded-xl border border-border bg-card/90 pl-10 pr-10 py-3 text-sm sm:text-base text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-foreground/20 focus:border-foreground transition-all shadow-xs"
           aria-label="Search topics, formulas, and traps"
         />
         {query ? (

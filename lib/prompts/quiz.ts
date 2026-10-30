@@ -193,7 +193,7 @@ ${searchContext ? searchContext + '\n\n' : ''}
 REQUIREMENTS:
 - Generate exactly ${remaining} questions
 - Match the sophistication level implied by the request (Default: Difficult / High-Stakes Exam-Grade)
-- If this is for a specific exam (GMAT, SAT, JEE, etc.), create questions that genuinely mirror actual exam difficulty
+- If this is for a specific exam (GMAT, SAT, GRE, CFA, etc.), create questions that genuinely mirror actual exam difficulty
 - UNIQUENESS MANDATE: Formulate original questions with non-standard scenarios and novel numerical values. Do not repeat standard textbook clichés.
 - Session ID: ${uniqueToken}
 

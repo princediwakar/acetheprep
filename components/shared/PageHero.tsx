@@ -43,7 +43,7 @@ export function PageHero({
         {title}
       </h1>
       {subtitle && (
-        <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+        <p className="text-base sm:text-lg text-foreground/85 max-w-2xl mx-auto leading-relaxed">
           {subtitle}
         </p>
       )}

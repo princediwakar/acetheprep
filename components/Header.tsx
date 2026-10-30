@@ -85,7 +85,7 @@ export const Header = memo(() => {
               buttonText="Get Started"
               returnUrl={pathname !== "/" ? pathname : "/home"}
               size="sm"
-              className="text-xs font-semibold px-3 py-1.5 h-9"
+              className="text-sm font-semibold px-4 py-2 h-9"
             />
           )}
 

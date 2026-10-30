@@ -350,7 +350,7 @@ export function extractPassageContent(
     }
   }
 
-  // Pattern 2: Prompt followed by passage (CAT style: "According to the passage, ... is that:\n\nJoseph Schumpeter...")
+  // Pattern 2: Prompt followed by passage (RC-style: "According to the passage, ... is that:\n\nJoseph Schumpeter...")
   const promptFirstRegex = /^([A-Z][\s\S]+?\?|According to the passage[\s\S]+?:\s*|Which of the following[\s\S]+?:\s*|Based on the passage[\s\S]+?:\s*)\n\n+([\s\S]+)$/i;
   const promptFirstMatch = questionText.match(promptFirstRegex);
   if (promptFirstMatch && promptFirstMatch[1] && promptFirstMatch[2]) {
