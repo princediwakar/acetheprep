@@ -2,11 +2,9 @@
 import Link from "next/link";
 import {
   ArrowRight,
-  TrendingUp,
   Award,
   Target,
   CheckCircle2,
-  Swords,
 } from "lucide-react";
 import { QuizDuelPlayer, type QuizDuelQuestion } from "./QuizDuelPlayer";
 
@@ -27,30 +25,6 @@ export interface ShareResultCardProps {
   questions: QuizDuelQuestion[];
 }
 
-function getScoreGradient(pct: number) {
-  if (pct >= 80) return "from-emerald-500 to-emerald-400";
-  if (pct >= 60) return "from-amber-500 to-amber-400";
-  return "from-rose-500 to-rose-400";
-}
-
-function getScoreTextColor(pct: number) {
-  if (pct >= 80) return "text-emerald-400";
-  if (pct >= 60) return "text-amber-400";
-  return "text-rose-400";
-}
-
-function getScoreGlow(pct: number) {
-  if (pct >= 80) return "shadow-emerald-500/25";
-  if (pct >= 60) return "shadow-amber-500/25";
-  return "shadow-rose-500/25";
-}
-
-function getScoreRing(pct: number) {
-  if (pct >= 80) return "border-emerald-500/30 bg-emerald-500/5";
-  if (pct >= 60) return "border-amber-500/30 bg-amber-500/5";
-  return "border-rose-500/30 bg-rose-500/5";
-}
-
 export function ShareResultCard({
   examName,
   score,
@@ -61,108 +35,107 @@ export function ShareResultCard({
   shareToken,
   questions,
 }: ShareResultCardProps) {
-  const improvedTopics = masteryDelta.filter((d) => d.after > d.before);
-
   return (
-    <div className="w-full max-w-lg">
-      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/50 shadow-2xl">
-        <div className={`h-1.5 w-full bg-gradient-to-r ${getScoreGradient(pct)}`} />
-
-        <div className="p-6 sm:p-8">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
-              <Award className="w-5 h-5 text-indigo-400" />
+    <div className="w-full max-w-2xl mx-auto space-y-6">
+      {/* Challenger Benchmark Bar - Clean, dignified, no alarmist red glows */}
+      <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 sm:p-6 backdrop-blur-sm shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
+              <Award className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-400">Practice Session</p>
-              <h1 className="text-xl font-bold text-white">{examName}</h1>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  {examName}
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/25">
+                  Quiz Duel
+                </span>
+              </div>
+              <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                Peer Challenge Drill
+              </h1>
             </div>
           </div>
 
-          {/* Challenger Benchmark Score Header */}
-          <div
-            className={`rounded-xl border p-6 mb-8 ${getScoreRing(pct)} ${getScoreGlow(pct)} shadow-lg`}
-          >
-            <div className="flex items-end justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="text-sm font-semibold text-slate-300">Challenger Benchmark</p>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                    Peer Score
-                  </span>
-                </div>
-                <div className="flex items-baseline gap-1">
-                  <span
-                    className={`text-5xl font-bold tracking-tight ${getScoreTextColor(pct)}`}
-                  >
-                    {pct}%
-                  </span>
-                </div>
-                <p className="text-sm text-slate-500 mt-1">
-                  {score} / {total} correct on this drill
-                </p>
-              </div>
-              <div
-                className={`w-16 h-16 rounded-full border-2 flex items-center justify-center ${getScoreRing(pct)}`}
-              >
-                <Target className={`w-7 h-7 ${getScoreTextColor(pct)}`} />
-              </div>
+          <div className="flex items-center gap-4 bg-slate-800/50 border border-slate-700/60 rounded-xl px-4 py-2.5 self-start sm:self-auto">
+            <div className="text-right">
+              <p className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+                Benchmark To Beat
+              </p>
+              <p className="text-lg font-bold text-white leading-tight">
+                {score} / {total}{" "}
+                <span className="text-xs font-normal text-slate-400">
+                  ({pct}%)
+                </span>
+              </p>
             </div>
-          </div>
-
-          {/* Interactive Quiz Duel: Take the entire quiz to beat the score */}
-          {questions && questions.length > 0 && (
-            <QuizDuelPlayer
-              questions={questions}
-              challengerScore={score}
-              totalQuestions={total}
-              examName={examName}
-              shareToken={shareToken}
-            />
-          )}
-
-          {masteredDomains && masteredDomains.length > 0 && (
-            <div className="mb-8">
-              <div className="flex items-center gap-2 mb-4">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
-                  Topics Mastered
-                </h2>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {masteredDomains.map((domain) => (
-                  <span
-                    key={domain}
-                    className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20"
-                  >
-                    {domain}
-                  </span>
-                ))}
-              </div>
+            <div className="w-9 h-9 rounded-lg bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-300">
+              <Target className="w-5 h-5" />
             </div>
-          )}
-
-          <div className="space-y-3">
-            <Link
-              href="/setup"
-              className="flex items-center justify-center gap-2 w-full py-3 px-6 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-base hover:from-indigo-400 hover:to-purple-500 transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-[0.98]"
-            >
-              Start your free prep
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-            <p className="text-xs text-slate-500 text-center">
-              Master your exam topics with AI-powered practice on AceThePrep
-            </p>
           </div>
         </div>
       </div>
 
-      <div className="mt-8 text-center">
+      {/* Interactive Quiz Duel Player: Isolated Hero Component */}
+      {questions && questions.length > 0 && (
+        <QuizDuelPlayer
+          questions={questions}
+          challengerScore={score}
+          totalQuestions={total}
+          examName={examName}
+          shareToken={shareToken}
+        />
+      )}
+
+      {/* Mastered Topics (if present from original challenger run) */}
+      {masteredDomains && masteredDomains.length > 0 && (
+        <div className="rounded-xl border border-slate-800/80 bg-slate-900/40 p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <h2 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+              Challenger Mastered Domains
+            </h2>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {masteredDomains.map((domain) => (
+              <span
+                key={domain}
+                className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700"
+              >
+                {domain}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Disjointed Secondary CTA: Physically separated from the question navigation */}
+      <div className="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+        <div className="space-y-0.5">
+          <p className="text-sm font-semibold text-slate-200">
+            Want to build your own custom {examName} drills?
+          </p>
+          <p className="text-xs text-slate-400">
+            Practice AI-targeted questions, identify traps, and build your Mistake Vault.
+          </p>
+        </div>
+        <Link
+          href="/setup"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-slate-200 hover:text-white font-medium text-xs transition-all shadow-sm shrink-0 active:scale-95"
+        >
+          <span>Start free prep</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </div>
+
+      <div className="text-center pt-2">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-400 transition-colors"
+          className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-slate-400 transition-colors"
         >
-          <Award className="w-4 h-4" />
+          <Award className="w-3.5 h-3.5" />
           <span>Powered by AceThePrep</span>
         </Link>
       </div>

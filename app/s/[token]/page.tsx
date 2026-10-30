@@ -195,7 +195,7 @@ export default async function ShareCardPage({ params }: PageProps) {
           },
         ])}
       />
-      <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 py-8 sm:py-12">
+      <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-start px-4 py-8 sm:py-12">
         <ShareResultCard
           examName={examName}
           score={score}
