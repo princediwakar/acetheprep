@@ -1,7 +1,7 @@
 // Path: components/tutor/DashboardView.tsx
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import type { DashboardPageData, SyllabusDomain } from "@/app/home/page";
@@ -39,21 +39,8 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
     return () => clearInterval(interval);
   }, [isLaunching]);
 
-  const [isLinearMode, setIsLinearMode] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradeReason, setUpgradeReason] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    const savedLinear = localStorage.getItem("acetheprep_linear_mode") ?? localStorage.getItem("gibbi_linear_mode");
-    if (savedLinear) {
-      setIsLinearMode(savedLinear === "true");
-    }
-  }, []);
-
-  const handleToggleLinear = useCallback((checked: boolean) => {
-    setIsLinearMode(checked);
-    localStorage.setItem("acetheprep_linear_mode", String(checked));
-  }, []);
 
   async function startSession(intent: string, focusDomains?: string[], count: number = modalQuestionCount) {
     const body: Record<string, unknown> = {
@@ -155,9 +142,9 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
   return (
     <div className="max-w-5xl mx-auto space-y-6 px-4 py-4 sm:py-6">
       {/* Header Slot: Status Strip Collapsed into Top Header */}
-      <HeaderPortal>
-        <div className="flex items-center gap-2">
-          {!data.isPro && (
+      {!data.isPro && (
+        <HeaderPortal>
+          <div className="flex items-center gap-2">
             <Button
               type="button"
               variant="outline"
@@ -166,25 +153,15 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
                 setUpgradeReason("Upgrade to AceThePrep Pro for unlimited daily sessions, full 50Q mock tests, and detailed step-by-step solutions.");
                 setShowUpgradeModal(true);
               }}
-              className="h-8 px-2.5 text-xs font-bold border-primary/30 text-primary hover:bg-primary/10 gap-1 rounded-lg shadow-2xs cursor-pointer"
+              className="h-8 px-2.5 text-xs font-bold border-primary/30 text-primary hover:bg-primary/10 gap-1 rounded-lg cursor-pointer"
             >
               <Zap className="w-3.5 h-3.5 fill-primary" />
               <span className="hidden sm:inline">Upgrade to Pro</span>
               <span className="sm:hidden">Pro</span>
             </Button>
-          )}
-
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-card border border-border/80 shadow-2xs">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
-              Readiness
-            </span>
-            <span className="font-extrabold text-foreground tabular-nums text-xs sm:text-sm">
-              {data.readinessIndex}
-              <span className="text-muted-foreground text-[10px] font-normal">/100</span>
-            </span>
           </div>
-        </div>
-      </HeaderPortal>
+        </HeaderPortal>
+      )}
 
       {/* Active In-Progress Sessions Banner */}
       {data.activeSessions && data.activeSessions.length > 0 && (
@@ -193,7 +170,13 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
 
       {/* Score Prediction Hero */}
       {data.prediction && (
-        <ProjectionHero prediction={data.prediction} examName={data.examName} />
+        <ProjectionHero
+          prediction={data.prediction}
+          examName={data.examName}
+          readinessIndex={data.readinessIndex}
+          streak={data.quickStats?.streak}
+          daysRemaining={data.daysRemaining}
+        />
       )}
 
       {/* Section 2: Smart Start Strip */}
@@ -208,8 +191,6 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
       {/* Section 3: Syllabus Grid */}
       <SyllabusMap
         syllabus={data.syllabus}
-        isLinearMode={isLinearMode}
-        onToggleLinear={handleToggleLinear}
         onDomainPractice={handleDomainPractice}
       />
 

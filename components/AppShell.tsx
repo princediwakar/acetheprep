@@ -22,17 +22,20 @@ import {
   Home,
   Calendar,
   Flame,
+  BookmarkCheck,
 } from "lucide-react";
 
 export interface SidebarData {
   examName: string;
   daysRemaining: number;
   streak: number;
+  dueMistakesCount?: number;
 }
 
 const mainItems = [
-  { title: "Home", url: "/home", icon: Home },
-  { title: "History", url: "/history", icon: History },
+  { title: "Home", url: "/home", icon: Home, badgeKey: undefined },
+  { title: "Mistake Vault", url: "/mistakes", icon: BookmarkCheck, badgeKey: "dueMistakesCount" },
+  { title: "History", url: "/history", icon: History, badgeKey: undefined },
 ];
 
 export function AppShell({ children, sidebarData: initialSidebarData }: { children: React.ReactNode; sidebarData?: SidebarData | null }) {
@@ -43,7 +46,7 @@ export function AppShell({ children, sidebarData: initialSidebarData }: { childr
   const [mounted, setMounted] = useState(false);
   const [sidebarData, setSidebarData] = useState<SidebarData | null>(initialSidebarData || null);
 
-  const showOnRoutes = ["/create", "/quizzes", "/home", "/dashboard", "/history", "/setup"];
+  const showOnRoutes = ["/create", "/quizzes", "/home", "/dashboard", "/history", "/setup", "/mistakes"];
   const shouldShowSidebar = showOnRoutes.includes(pathname) && !!user;
 
   useEffect(() => {
@@ -65,7 +68,7 @@ export function AppShell({ children, sidebarData: initialSidebarData }: { childr
         const [profileRes, answersRes] = await Promise.all([
           supabase
             .from("exam_profiles")
-            .select("exam_name, target_date")
+            .select("profile_id, exam_name, target_date")
             .eq("user_id", userId)
             .eq("is_active", true)
             .maybeSingle(),
@@ -88,10 +91,20 @@ export function AppShell({ children, sidebarData: initialSidebarData }: { childr
             (answersRes.data || []) as { answered_at: string }[]
           );
 
+          // Fetch active profile mistake queue count
+          const { count: dueMistakesCount } = await supabase
+            .from("comeback_queue_items")
+            .select("id", { count: "exact", head: true })
+            .eq("user_id", userId)
+            .eq("exam_profile_id", profileRes.data.profile_id)
+            .eq("cleared", false)
+            .lte("stage_deadline", now.toISOString());
+
           setSidebarData({
             examName: profileRes.data.exam_name,
             daysRemaining,
             streak,
+            dueMistakesCount: dueMistakesCount || 0,
           });
         }
       } catch {
@@ -117,6 +130,7 @@ export function AppShell({ children, sidebarData: initialSidebarData }: { childr
 
   const headerTitle =
     pathname === "/home" || pathname === "/dashboard" ? "Home" :
+    pathname === "/mistakes" ? "Mistake Vault" :
     pathname === "/history" ? "History" :
     pathname === "/setup" ? "Settings" :
     pathname === "/create" ? "Create a Quiz" :
@@ -172,18 +186,30 @@ export function AppShell({ children, sidebarData: initialSidebarData }: { childr
             <div className="space-y-1">
               {mainItems.map((item) => {
                 const isActive = pathname === item.url;
+                const badgeCount =
+                  item.badgeKey === "dueMistakesCount"
+                    ? sidebarData?.dueMistakesCount
+                    : undefined;
+
                 return (
                   <Link
                     key={item.title}
                     href={item.url}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                    className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
                       isActive
                         ? "bg-muted text-foreground font-semibold"
                         : "hover:bg-muted/60 text-muted-foreground hover:text-foreground font-medium"
                     }`}
                   >
-                    <item.icon className="w-4 h-4" />
-                    <span>{item.title}</span>
+                    <div className="flex items-center gap-3">
+                      <item.icon className="w-4 h-4" />
+                      <span>{item.title}</span>
+                    </div>
+                    {Boolean(badgeCount && badgeCount > 0) && (
+                      <span className="font-mono text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                        {badgeCount}
+                      </span>
+                    )}
                   </Link>
                 );
               })}
@@ -204,7 +230,7 @@ export function AppShell({ children, sidebarData: initialSidebarData }: { childr
                     }`}
                   >
                     <PlusCircle className="w-4 h-4" />
-                    Create a Quiz
+                    Create Quiz
                   </Link>
                   <Link
                     href="/quizzes"

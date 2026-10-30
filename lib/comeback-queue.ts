@@ -21,6 +21,7 @@ export interface ComebackItem {
   cleared: boolean
   lostProjectedPoints: number
   originalSessionId: string | null
+  createdAt: Date | null
 }
 
 // ---- Helpers ----
@@ -85,6 +86,7 @@ function mapRow(row: Record<string, unknown>): ComebackItem {
     cleared: (row.cleared as boolean) ?? false,
     lostProjectedPoints: row.lost_projected_points as number,
     originalSessionId: row.original_session_id as string | null,
+    createdAt: row.created_at ? new Date(row.created_at as string) : null,
   }
 }
 
@@ -250,16 +252,22 @@ export async function recordRetryResult(
 export async function getDueComebacks(
   supabase: SupabaseClient<Database>,
   userId: string,
+  examProfileId?: string,
 ): Promise<ComebackItem[]> {
   const now = new Date().toISOString()
 
-  const { data, error } = await supabase
+  let query = supabase
     .from('comeback_queue_items')
     .select('*')
     .eq('user_id', userId)
     .eq('cleared', false)
     .lte('stage_deadline', now)
-    .order('stage_deadline', { ascending: true })
+
+  if (examProfileId) {
+    query = query.eq('exam_profile_id', examProfileId)
+  }
+
+  const { data, error } = await query.order('stage_deadline', { ascending: true })
 
   if (error) throw error
 

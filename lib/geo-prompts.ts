@@ -11,14 +11,14 @@ const PRACTICE_SYSTEM_PROMPT = `You are an elite exam question writer creating p
 2. DISTRACTORS: Every wrong answer must represent a specific, calculable student error (sign mistake, formula misapplication, conceptual trap). No filler.
 3. EXPLANATIONS: Prove the correct answer. Deconstruct each distractor — explain exactly what error leads to each wrong choice.
 4. SELF-CONTAINED: Explanations must be complete and standalone — assume the reader found this page via Google search and has no other context.
-5. READING COMPREHENSION & PASSAGES: For Reading Comprehension domains, provide an authentic, multi-paragraph passage (300 to 500 words for GMAT/GRE/SAT/IELTS/TOEFL) in the "passage" field. For questions testing the same passage, assign the identical "passage_id". Put only the question stem in "question_text".
+5. READING COMPREHENSION & PASSAGES: For Reading Comprehension domains, provide an authentic, multi-paragraph passage of approximately 250 words (strictly 230 to 270 words) in the "passage" field. Short fragments under 200 words are strictly forbidden. For questions testing the same passage, assign the identical "passage_id". Put only the question stem in "question_text".
 
 # OUTPUT INTERFACE
 Output ONLY raw JSON matching this schema. No markdown, no preambles.
 
 interface Response {
   questions: Array<{
-    passage?: string; // Multi-paragraph academic reading passage (300-500 words) for RC
+    passage?: string; // Multi-paragraph academic reading passage of around 250 words (230-270 words) for RC
     passage_id?: string; // Grouping ID for questions sharing the same passage
     question_text: string; // The question stem alone
     options: { A: string; B: string; C: string; D: string };
@@ -44,7 +44,7 @@ export function buildPracticeUserMessage(
 ): string {
   const isRC = /reading comprehension|verbal ability|comprehension/i.test(domain);
   const rcInstruction = isRC
-    ? `\n- Provide a rich, authentic multi-paragraph reading passage of 350-500 words in the "passage" field and link all questions under the same "passage_id". Provide only the question stem in "question_text".`
+    ? `\n- Provide a rich, authentic multi-paragraph reading passage of around 250 words (strictly 230-270 words) in the "passage" field and link all questions under the same "passage_id". Provide only the question stem in "question_text".`
     : "";
 
   return `Generate exactly ${questionCount} authentic ${examName} exam practice questions for the domain "${domain}" under the subject "${subject}".

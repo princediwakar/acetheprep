@@ -95,8 +95,8 @@ describe("buildTutorUserMessage — Uniqueness and Negative Constraints", () => 
       "Must include RC directive when domain is Reading Comprehension"
     );
     assert.ok(
-      message.includes("full authentic passage (350–500 words)"),
-      "Must specify 350-500 words authentic passage"
+      message.includes("full authentic passage of around 250 words (strictly 230–270 words)"),
+      "Must specify around 250 words authentic passage"
     );
     assert.ok(
       message.includes('identical "passage_id"'),

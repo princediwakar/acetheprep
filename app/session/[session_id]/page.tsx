@@ -120,7 +120,6 @@ export default async function SessionPage({ params, searchParams }: PageProps) {
   const concepts = conceptsRes.data || [];
 
   const initialUserAttempts: Record<string, QuestionAttemptRecord> = {};
-  let initialScore = 0;
   let initialTimeMs = 0;
 
   for (const a of rawAnswers) {
@@ -130,9 +129,10 @@ export default async function SessionPage({ params, searchParams }: PageProps) {
       wasRevealed: a.was_revealed,
       timeMs: a.time_to_answer_ms ?? 0,
     };
-    if (a.is_correct) initialScore += 1;
     initialTimeMs += a.time_to_answer_ms ?? 0;
   }
+
+  const initialScore = Object.values(initialUserAttempts).filter((a) => a.isCorrect).length;
 
   // If active, resume from the first unanswered question
   let initialIndex = 0;

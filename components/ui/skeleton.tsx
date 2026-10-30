@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function Skeleton({
   className,
@@ -6,10 +6,12 @@ function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
+      aria-hidden="true"
       className={cn(
-        "relative overflow-hidden rounded-lg bg-muted/60 dark:bg-muted/40",
+        "relative overflow-hidden rounded-md bg-muted dark:bg-muted/70",
         "before:absolute before:inset-0 before:-translate-x-full before:animate-shimmer",
-        "before:bg-gradient-to-r before:from-transparent before:via-foreground/5 dark:before:via-white/10 before:to-transparent",
+        "before:bg-gradient-to-r before:from-transparent before:via-foreground/[0.08] dark:before:via-white/[0.12] before:to-transparent",
+        "motion-reduce:before:hidden",
         className,
       )}
       {...props}
@@ -17,4 +19,4 @@ function Skeleton({
   );
 }
 
-export { Skeleton }
+export { Skeleton };

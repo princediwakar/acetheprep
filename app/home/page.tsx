@@ -18,6 +18,7 @@ import { computeTOEFLPrediction } from "@/lib/predictor/toefl-score-engine";
 import { getUserSubscriptionStatus, syncCheckoutSession } from "@/lib/billing";
 import { getSubjectForDomain } from "@/lib/services/taxonomy";
 import taxonomy from "@/lib/taxonomies.json";
+import { getDueComebacks, type ComebackItem } from "@/lib/comeback-queue";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -76,6 +77,7 @@ export interface DashboardPageData {
   isPro?: boolean;
   activeSessions: SessionRow[];
   topWeakSpots: WeakSpotItem[];
+  dueMistakesCount?: number;
 }
 
 export default async function HomePage({
@@ -154,6 +156,7 @@ async function HomePageContent({
     overdueCountRes,
     predictionRes,
     subscriptionStatus,
+    dueComebacksRes,
   ] = await Promise.all([
     supabase
       .from("concept_mastery")
@@ -202,7 +205,10 @@ async function HomePageContent({
           paymentId: typeof searchParams.payment_id === "string" ? searchParams.payment_id : undefined,
         })
       : getUserSubscriptionStatus(user.id),
+    getDueComebacks(supabase, user.id, profile.profile_id).catch(() => [] as ComebackItem[]),
   ]);
+
+  const dueComebacks = Array.isArray(dueComebacksRes) ? dueComebacksRes : [];
   const concepts = (conceptsRes.data || []) as ConceptRow[];
   const questionResults = (questionResultsRes.data || []) as {
     answered_at: string;
@@ -628,6 +634,7 @@ async function HomePageContent({
     isPro: subscriptionStatus.isPro,
     activeSessions,
     topWeakSpots,
+    dueMistakesCount: dueComebacks.length,
   };
 
   return <DashboardView data={data} />;

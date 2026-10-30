@@ -10,9 +10,9 @@ import "katex/dist/katex.min.css";
 
 const rawBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 const baseUrl =
-  rawBaseUrl && (rawBaseUrl.startsWith("http://") || rawBaseUrl.startsWith("https://"))
-    ? rawBaseUrl
-    : "https://acetheprep.com";
+    rawBaseUrl && (rawBaseUrl.startsWith("http://") || rawBaseUrl.startsWith("https://"))
+        ? rawBaseUrl
+        : "https://www.acetheprep.com";
 
 export const metadata: Metadata = {
     title: {

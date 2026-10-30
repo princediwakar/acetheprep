@@ -1,6 +1,6 @@
 import { useState, useCallback, memo, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2, X } from "lucide-react";
+import { Loader2, X, Paperclip, FileText } from "lucide-react";
 import { toast } from "sonner";
 import * as pdfjsLib from "pdfjs-dist";
 
@@ -31,14 +31,13 @@ export const PDFUploader = memo(({ onUpload, onClear, disabled }: PDFUploaderPro
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
         const content = await page.getTextContent();
-        // Use type assertion to PDFTextContentItem or a custom interface
         text += content.items
           .map((item) => (item as { str: string }).str)
           .join(" ") + " ";
       }
       setFileName(file.name);
       onUpload(text.trim());
-      toast.success(`PDF "${file.name}" processed successfully`);
+      toast.success(`PDF "${file.name}" attached`);
     } catch (error) {
       console.error("Error processing PDF:", error);
       toast.error("Failed to process PDF");
@@ -47,7 +46,8 @@ export const PDFUploader = memo(({ onUpload, onClear, disabled }: PDFUploaderPro
     }
   }, [onUpload]);
 
-  const handleClearFile = useCallback(() => {
+  const handleClearFile = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
     setFileName(null);
     onClear();
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -55,55 +55,60 @@ export const PDFUploader = memo(({ onUpload, onClear, disabled }: PDFUploaderPro
   }, [onClear]);
 
   const handleButtonClick = useCallback(() => {
-    if (!isLoading && !disabled && fileInputRef.current) fileInputRef.current.click();
+    if (!isLoading && !disabled && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   }, [isLoading, disabled]);
 
   return (
-    <div className="space-y-2">
-      <label className="cursor-pointer block">
-        <input
-          type="file"
-          accept="application/pdf"
-          onChange={handleFileChange}
-          disabled={isLoading || disabled}
-          className="hidden"
-          ref={fileInputRef}
-        />
+    <div className="flex items-center">
+      <input
+        type="file"
+        accept="application/pdf"
+        onChange={handleFileChange}
+        disabled={isLoading || disabled}
+        className="hidden"
+        ref={fileInputRef}
+      />
+      
+      {fileName ? (
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-muted border border-border/80 text-foreground">
+          <FileText className="h-3.5 w-3.5 text-primary shrink-0" />
+          <span className="truncate max-w-[160px] sm:max-w-[220px]">{fileName}</span>
+          <button
+            type="button"
+            onClick={handleClearFile}
+            disabled={disabled}
+            className="ml-1 p-0.5 rounded hover:bg-background/80 text-muted-foreground hover:text-foreground transition-colors"
+            title="Remove attachment"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        </div>
+      ) : (
         <Button
+          type="button"
           variant="outline"
+          size="sm"
           disabled={isLoading || disabled}
-          className="w-full h-10 flex items-center justify-between"
           onClick={handleButtonClick}
+          className="h-8 px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground border-border/80"
         >
-          <span className="flex-1 flex items-center min-w-0">
-            <span className="truncate overflow-hidden text-ellipsis whitespace-nowrap">
-              {isLoading ? (
-                <span className="flex items-center gap-1">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Processing...
-                </span>
-              ) : fileName ? (
-                `Processed: ${fileName}`
-              ) : (
-                "Upload PDF"
-              )}
-            </span>
-            {fileName && !isLoading && (
-              <span
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleClearFile();
-                }}
-                className="ml-2 shrink-0 inline-flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-100"
-              >
-                <X className="h-4 w-4" />
-              </span>
-            )}
-          </span>
+          {isLoading ? (
+            <>
+              <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+              Processing...
+            </>
+          ) : (
+            <>
+              <Paperclip className="h-3.5 w-3.5 mr-1.5" />
+              Attach PDF
+            </>
+          )}
         </Button>
-      </label>
+      )}
     </div>
   );
 });
+
 PDFUploader.displayName = "PDFUploader";

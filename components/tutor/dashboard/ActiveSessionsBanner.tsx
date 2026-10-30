@@ -52,7 +52,7 @@ export function ActiveSessionsBanner({ initialSessions }: ActiveSessionsBannerPr
   };
 
   return (
-    <Card className="border border-amber-500/30 bg-gradient-to-r from-amber-500/5 via-card to-amber-500/5 shadow-xs overflow-hidden">
+    <Card className="border border-amber-500/30 bg-gradient-to-r from-amber-500/5 via-card to-amber-500/5 overflow-hidden">
       <CardHeader className="py-2.5 px-4 border-b border-amber-500/20 flex flex-row items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
@@ -103,7 +103,7 @@ export function ActiveSessionsBanner({ initialSessions }: ActiveSessionsBannerPr
           return (
             <div
               key={session.id}
-              className="p-3 rounded-lg border border-border/80 bg-card flex items-center justify-between gap-3 shadow-2xs hover:border-amber-500/40 transition-colors"
+              className="p-3 rounded-lg border border-border/80 bg-card flex items-center justify-between gap-3 hover:border-amber-500/40 transition-colors"
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 mb-0.5">
@@ -130,7 +130,7 @@ export function ActiveSessionsBanner({ initialSessions }: ActiveSessionsBannerPr
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
-                <Button asChild size="sm" className="h-8 px-3 text-xs font-bold shadow-2xs cursor-pointer">
+                <Button asChild size="sm" className="h-8 px-3 text-xs font-bold cursor-pointer">
                   <Link href={`/session/${session.id}`}>
                     Resume
                     <ChevronRight className="w-3.5 h-3.5 ml-1" />

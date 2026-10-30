@@ -261,23 +261,59 @@ export default function CfaLevel1ScoreCalculatorPage() {
               </table>
             </div>
 
-            {/* CFA Practice CTA */}
-            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="space-y-1">
-                <h3 className="font-bold text-base text-foreground">
-                  Master the highest-failed CFA Level 1 formulas and traps
-                </h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Drill Ethics GIPS standards, FSA revenue recognition traps, and bond duration calculations with instant explanation feedback.
-                </p>
+            {/* CFA Practice & Insights CTAs */}
+            <div className="space-y-3">
+              <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <h3 className="font-bold text-base text-foreground">
+                    Master the highest-failed CFA Level 1 formulas and traps
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Drill Ethics GIPS standards, FSA revenue recognition traps, and bond duration calculations with instant explanation feedback.
+                  </p>
+                </div>
+                <Link
+                  href="/practice/cfa-level-1"
+                  className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs sm:text-sm font-semibold text-primary-foreground hover:opacity-95 transition-all shrink-0"
+                >
+                  <span>Start CFA Level 1 Drill</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
               </div>
-              <Link
-                href="/practice/cfa-level-1"
-                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs sm:text-sm font-semibold text-primary-foreground hover:opacity-95 transition-all shrink-0"
-              >
-                <span>Start CFA Level 1 Drill</span>
-                <ChevronRight className="h-4 w-4" />
-              </Link>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Link
+                  href="/insights/cfa-level-1/hardest-topics"
+                  className="group rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-all flex items-center justify-between"
+                >
+                  <div>
+                    <div className="text-xs font-semibold text-primary uppercase tracking-wider">Benchmark Insights</div>
+                    <div className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+                      Top 10 Hardest CFA Traps &rarr;
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      Empirical failure rates & distractor traps
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                </Link>
+
+                <Link
+                  href="/predictor?exam=cfa-level-1"
+                  className="group rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-all flex items-center justify-between"
+                >
+                  <div>
+                    <div className="text-xs font-semibold text-primary uppercase tracking-wider">Interactive Study Plan</div>
+                    <div className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+                      CFA MPS Gap Predictor &rarr;
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      Calculate study hours & Minimum Passing Score
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                </Link>
+              </div>
             </div>
 
             {/* FAQs */}

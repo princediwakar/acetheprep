@@ -32,7 +32,7 @@ export function UpgradeModal({
   reason = "Unlock extended practice sets, official full mock tests, and unlimited daily practice.",
   examName,
 }: UpgradeModalProps) {
-  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "quarterly">("quarterly");
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "quarterly">("monthly");
   const [loading, setLoading] = useState(false);
   const [testActivating, setTestActivating] = useState(false);
 
@@ -114,6 +114,30 @@ export function UpgradeModal({
         {/* Plan Cards */}
         <div className="p-6 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            {/* Monthly Plan */}
+            <div
+              onClick={() => setSelectedPlan("monthly")}
+              className={cn(
+                "cursor-pointer rounded-2xl p-4 border transition-all relative flex flex-col justify-between",
+                selectedPlan === "monthly"
+                  ? "border-primary bg-primary/10 ring-2 ring-primary/20 shadow-md"
+                  : "border-border hover:border-border/80 bg-background/50 text-muted-foreground"
+              )}
+            >
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Monthly Pro
+                </span>
+                <div className="flex items-baseline gap-1 mt-1 mb-1">
+                  <span className="text-2xl font-black text-foreground">$29</span>
+                  <span className="text-xs text-muted-foreground">/ month</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-normal">
+                  Flexible month-to-month access. Cancel anytime in 1 click.
+                </p>
+              </div>
+            </div>
+
             {/* Quarterly Plan (Highlight) */}
             <div
               onClick={() => setSelectedPlan("quarterly")}
@@ -140,30 +164,6 @@ export function UpgradeModal({
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-normal">
                   Full 90-day cycle ($23/mo). Ideal for GMAT, CFA, and SAT candidates.
-                </p>
-              </div>
-            </div>
-
-            {/* Monthly Plan */}
-            <div
-              onClick={() => setSelectedPlan("monthly")}
-              className={cn(
-                "cursor-pointer rounded-2xl p-4 border transition-all relative flex flex-col justify-between",
-                selectedPlan === "monthly"
-                  ? "border-primary bg-primary/10 ring-2 ring-primary/20 shadow-md"
-                  : "border-border hover:border-border/80 bg-background/50 text-muted-foreground"
-              )}
-            >
-              <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Monthly Pro
-                </span>
-                <div className="flex items-baseline gap-1 mt-1 mb-1">
-                  <span className="text-2xl font-black text-foreground">$29</span>
-                  <span className="text-xs text-muted-foreground">/ month</span>
-                </div>
-                <p className="text-[11px] text-muted-foreground leading-normal">
-                  Flexible month-to-month access. Cancel anytime in 1 click.
                 </p>
               </div>
             </div>

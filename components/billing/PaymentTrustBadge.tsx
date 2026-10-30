@@ -156,7 +156,7 @@ export function CompactPaymentTrust({ className }: { className?: string }) {
       <div className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground text-center">
         <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
         <span>
-          256-bit SSL • Processed by <b>Dodo Payments</b> (Merchant of Record)
+          256-bit SSL • Processed by trusted payment gateway.
         </span>
       </div>
     </div>

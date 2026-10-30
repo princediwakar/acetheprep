@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { Question } from "@/lib/schemas/quiz";
 import { renderMathContent, extractPassageContent } from "@/lib/quiz-utils";
 import { signInWithGoogle } from "@/lib/supabase/auth";
+import { useUser } from "@/hooks/useUser";
 import {
   CheckCircle2,
   XCircle,
@@ -35,40 +36,13 @@ interface AttemptRecord {
   isCorrect: boolean;
 }
 
-// Persist drill state to localStorage so it survives the OAuth redirect
-function persistDrillState(
-  examName: string,
-  subjectName: string,
-  domainName: string,
-  score: number,
-  total: number,
-  incorrectDomains: string[],
-) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(
-      "pending_drill_result",
-      JSON.stringify({
-        examName,
-        subjectName,
-        domainName,
-        score,
-        total,
-        incorrectDomains,
-        timestamp: Date.now(),
-      }),
-    );
-  } catch {
-    // storage unavailable — no-op
-  }
-}
-
 export function TopicPracticeDrill({
   questions,
   examName,
   subjectName,
   domainName,
 }: TopicPracticeDrillProps) {
+  const { user } = useUser();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [attempts, setAttempts] = useState<Record<number, AttemptRecord>>({});
   const [showFloatingBar, setShowFloatingBar] = useState(false);
@@ -136,26 +110,14 @@ export function TopicPracticeDrill({
     setShowFloatingBar(false);
   };
 
-  const handleSignIn = useCallback(
-    (source: "completion" | "floating" | "wrong_answer") => {
-      // Persist what the user just did so we can hydrate it post-auth
-      persistDrillState(
-        examName,
-        subjectName,
-        domainName,
-        score,
-        attemptedCount,
-        incorrectDomains,
-      );
-      // Encode context into the return URL so the callback can auto-provision
-      const returnUrl =
-        typeof window !== "undefined"
-          ? `${window.location.pathname}?onboarded=1&exam=${encodeURIComponent(examName)}`
-          : "/home";
-      signInWithGoogle(returnUrl);
-    },
-    [examName, subjectName, domainName, score, attemptedCount, incorrectDomains],
-  );
+  const handleSignIn = useCallback(() => {
+    // Route to practice page with onboarded flag so callback can auto-provision for new users
+    const returnUrl =
+      typeof window !== "undefined"
+        ? `${window.location.pathname}?onboarded=1&exam=${encodeURIComponent(examName)}`
+        : "/home";
+    signInWithGoogle(returnUrl);
+  }, [examName]);
 
   if (!currentQuestion) {
     return null;
@@ -174,15 +136,14 @@ export function TopicPracticeDrill({
   // ── Completion state copy ─────────────────────────────────────────────────
   const completionHeadline =
     accuracyPct >= 80
-      ? "Strong result — but top scorers don't stop here."
+      ? "Strong instincts on this topic preview."
       : accuracyPct >= 50
-        ? "You're building instincts. Solidify them before the exam."
-        : "Score leaks detected. AI can pinpoint exactly where to fix them.";
+        ? "Good baseline — but exam traps can drain points."
+        : "Score leaks detected in this topic preview.";
 
-  const completionSubtext =
-    incorrectDomains.length > 0
-      ? `Without scheduled review, you'll forget ${domainName} patterns in 48 hours. Sign in to lock in your progress.`
-      : `Memory decay starts within 48 hours. Sign in to schedule a free spaced repetition review before this topic fades.`;
+  const completionSubtext = user
+    ? `You completed the ${domainName} preview (${score} of ${totalQuestions} correct). Continue to your study dashboard to take adaptive drills, review mistakes, and calibrate your score prediction.`
+    : `You completed the ${domainName} preview (${score} of ${totalQuestions} correct). Start your free ${examName} study plan to take the full AI diagnostic, track score predictions, and lock in adaptive review reminders.`;
 
   // ── DRILL COMPLETE SCREEN ─────────────────────────────────────────────────
   if (isDrillComplete) {
@@ -290,35 +251,47 @@ export function TopicPracticeDrill({
           </div>
 
           {/* Primary CTA */}
-          <button
-            type="button"
-            onClick={() => handleSignIn("completion")}
-            className="w-full inline-flex items-center justify-center gap-2.5 rounded-xl bg-foreground px-6 py-3.5 text-sm font-bold text-background hover:opacity-90 active:scale-[0.99] transition-all shadow-sm cursor-pointer"
-          >
-            <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
-              <path
-                d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
-                fill="currentColor"
-              />
-            </svg>
-            <span>Save Results & Unlock AI Adaptive Drills — Free</span>
-            <ArrowRight className="h-4 w-4 shrink-0" />
-          </button>
+          {user ? (
+            <Link
+              href="/home"
+              className="w-full inline-flex items-center justify-center gap-2.5 rounded-xl bg-foreground px-6 py-3.5 text-sm font-bold text-background hover:opacity-90 active:scale-[0.99] transition-all shadow-sm cursor-pointer"
+            >
+              <span>Continue on Study Dashboard</span>
+              <ArrowRight className="h-4 w-4 shrink-0" />
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={handleSignIn}
+              className="w-full inline-flex items-center justify-center gap-2.5 rounded-xl bg-foreground px-6 py-3.5 text-sm font-bold text-background hover:opacity-90 active:scale-[0.99] transition-all shadow-sm cursor-pointer"
+            >
+              <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
+                <path
+                  d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
+                  fill="currentColor"
+                />
+              </svg>
+              <span>Start Free {examName} AI Diagnostic</span>
+              <ArrowRight className="h-4 w-4 shrink-0" />
+            </button>
+          )}
 
-          <div className="flex items-center justify-center gap-4 text-[11px] text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <CheckCircle2 className="h-3 w-3 text-emerald-500" />
-              100% Free
-            </span>
-            <span className="flex items-center gap-1">
-              <CheckCircle2 className="h-3 w-3 text-emerald-500" />
-              No credit card
-            </span>
-            <span className="flex items-center gap-1">
-              <CheckCircle2 className="h-3 w-3 text-emerald-500" />
-              30-second setup
-            </span>
-          </div>
+          {!user && (
+            <div className="flex items-center justify-center gap-4 text-[11px] text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                100% Free
+              </span>
+              <span className="flex items-center gap-1">
+                <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                No credit card
+              </span>
+              <span className="flex items-center gap-1">
+                <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                30-second setup
+              </span>
+            </div>
+          )}
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
             <Link
@@ -633,21 +606,33 @@ export function TopicPracticeDrill({
                   <Lock className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                   <div className="space-y-0.5">
                     <p className="text-xs font-bold text-foreground">
-                      AI Weak-Spot Queue
+                      AI Weak-Spot Remediation
                     </p>
                     <p className="text-[11px] text-muted-foreground leading-relaxed">
-                      Sign in to add <strong>{domainName}</strong> to your personalized AI remediation queue and get targeted questions on this exact mistake.
+                      {user
+                        ? `Targeted adaptive questions on ${domainName} are available in your personalized study queue.`
+                        : `Start your free ${examName} plan to add ${domainName} to your personalized AI remediation queue and practice targeted questions.`}
                     </p>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleSignIn("wrong_answer")}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity cursor-pointer shrink-0 whitespace-nowrap"
-                >
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Fix This Weakness
-                </button>
+                {user ? (
+                  <Link
+                    href="/home"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity cursor-pointer shrink-0 whitespace-nowrap"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Open Study Queue
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleSignIn}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity cursor-pointer shrink-0 whitespace-nowrap"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Fix This Weakness
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -667,18 +652,28 @@ export function TopicPracticeDrill({
                   {examName} • {domainName}
                 </p>
                 <p className="text-[10px] text-muted-foreground">
-                  {attemptedCount}/{totalQuestions} answered · {score} correct
+                  {attemptedCount}/{totalQuestions} preview questions · {score} correct
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => handleSignIn("floating")}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-foreground px-3.5 py-2 text-[11px] font-bold text-background hover:opacity-90 transition-opacity cursor-pointer shrink-0 whitespace-nowrap"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              Save Progress
-            </button>
+            {user ? (
+              <Link
+                href="/home"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-foreground px-3.5 py-2 text-[11px] font-bold text-background hover:opacity-90 transition-opacity cursor-pointer shrink-0 whitespace-nowrap"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                Dashboard
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSignIn}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-foreground px-3.5 py-2 text-[11px] font-bold text-background hover:opacity-90 transition-opacity cursor-pointer shrink-0 whitespace-nowrap"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                Start Free Diagnostic
+              </button>
+            )}
           </div>
         </div>
       )}

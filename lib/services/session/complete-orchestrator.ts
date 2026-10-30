@@ -144,18 +144,16 @@ export async function processSessionCompletion(
       questionResults: diagnosticResults as any,
     });
 
+    const totalSessionQuestions = questions.length > 0 ? questions.length : (questionResults || []).length;
+    const correctCount = (questionResults || []).filter((qr) => qr.is_correct).length;
     const cardData = {
       exam_name: examProfile.exam_name,
       session_date: nowIso,
-      total_questions: (questionResults || []).length,
-      correct_count: (questionResults || []).filter((qr) => qr.is_correct).length,
+      total_questions: totalSessionQuestions,
+      correct_count: correctCount,
       score_pct:
-        (questionResults || []).length > 0
-          ? Math.round(
-              ((questionResults || []).filter((qr) => qr.is_correct).length /
-                (questionResults || []).length) *
-                100,
-            )
+        totalSessionQuestions > 0
+          ? Math.round((correctCount / totalSessionQuestions) * 100)
           : 0,
       time_mode: examProfile.time_mode,
       domains_covered: [...new Set((questionResults || []).map((qr) => qr.skill_domain))],
@@ -378,7 +376,7 @@ export async function processSessionCompletion(
   const readinessAfter = calculateReadinessIndex(afterScores, allDomains);
 
   const results = questionResults || [];
-  const totalQuestions = results.length;
+  const totalQuestions = questions.length > 0 ? questions.length : results.length;
   const correctCount = results.filter((qr) => qr.is_correct).length;
   const domainsCovered = [...new Set(results.map((qr) => qr.skill_domain))];
 

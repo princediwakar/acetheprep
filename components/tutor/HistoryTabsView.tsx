@@ -103,7 +103,7 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
             value="quizzes"
             className="rounded-lg px-4 py-1.5 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm font-semibold text-xs sm:text-sm text-muted-foreground transition-all"
           >
-            Community Quizzes
+            Public Quizzes
           </TabsTrigger>
         </TabsList>
 

@@ -2,7 +2,7 @@
 
 import type { Metadata } from "next";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.acetheprep.com";
 
 export const metadata: Metadata = {
   title: {

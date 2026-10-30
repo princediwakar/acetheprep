@@ -57,6 +57,7 @@ export function SessionPlayer(props: SessionPlayerProps) {
     sessionComplete,
     setSessionComplete,
     startingNext,
+    completeResult,
     userAttempts,
     answeredCount,
     totalTimeElapsed,
@@ -170,6 +171,7 @@ export function SessionPlayer(props: SessionPlayerProps) {
         flaggedQuestions={flaggedQuestions}
         nextDomain={nextDomain}
         startingNext={startingNext}
+        shareToken={completeResult?.share_token}
         onBackToDashboard={handleBackToDashboard}
         onStartNextTopic={handleStartNextTopic}
         formatTime={formatTime}

@@ -111,7 +111,7 @@ CONTENT SOPHISTICATION REQUIREMENTS:
 - Match the intellectual level appropriate to the subject matter
 - Use authentic, professional-quality content
 - Ensure questions would be valuable for serious test preparation
-- Create supporting materials (passages, data, graphs) that are substantial and meaningful
+- Create supporting materials (passages, data, graphs) that are substantial and authentic. Any reading passage MUST be approximately 250 words long (strictly 230 to 270 words); short fragments under 200 words are strictly prohibited.
   `;
 }
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { PricingCards } from "@/components/billing/PricingCards";
 import { FullPaymentTrustBanner } from "@/components/billing/PaymentTrustBadge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import {
   Accordion,
@@ -159,9 +160,39 @@ export default function PricingPage() {
       {/* Pricing Cards */}
       <Suspense
         fallback={
-          <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch animate-pulse">
-            <div className="rounded-3xl border border-border/80 bg-card p-7 sm:p-8 h-[520px]" />
-            <div className="rounded-3xl border-2 border-primary/20 bg-card p-7 sm:p-8 h-[520px]" />
+          <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch" aria-hidden="true">
+            <div className="rounded-3xl border border-border/80 bg-card p-7 sm:p-8 h-[520px] flex flex-col justify-between shadow-xs">
+              <div className="space-y-4">
+                <Skeleton className="h-5 w-24 rounded-full" />
+                <Skeleton className="h-8 w-48 rounded-lg" />
+                <Skeleton className="h-4 w-64 rounded" />
+                <Skeleton className="h-10 w-28 rounded-lg mt-4" />
+                <div className="space-y-2 pt-6">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Skeleton key={i} className="h-4 w-full rounded" />
+                  ))}
+                </div>
+              </div>
+              <Skeleton className="h-12 w-full rounded-xl" />
+            </div>
+
+            <div className="rounded-3xl border-2 border-primary/20 bg-card p-7 sm:p-8 h-[520px] flex flex-col justify-between shadow-md">
+              <div className="space-y-4">
+                <Skeleton className="h-5 w-32 rounded-full" />
+                <Skeleton className="h-8 w-52 rounded-lg" />
+                <Skeleton className="h-4 w-72 rounded" />
+                <div className="grid grid-cols-2 gap-2 mt-4">
+                  <Skeleton className="h-14 rounded-xl" />
+                  <Skeleton className="h-14 rounded-xl" />
+                </div>
+                <div className="space-y-2 pt-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Skeleton key={i} className="h-4 w-full rounded" />
+                  ))}
+                </div>
+              </div>
+              <Skeleton className="h-12 w-full rounded-xl" />
+            </div>
           </div>
         }
       >

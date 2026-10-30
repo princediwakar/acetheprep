@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { ScorePredictorTool } from "@/components/predictor/ScorePredictorTool";
+import { Skeleton } from "@/components/ui/skeleton";
 import StructuredData, { breadcrumbSchema } from "@/components/seo/StructuredData";
 import { Calculator, Sparkles, BookOpen, TrendingUp, HelpCircle } from "lucide-react";
 import { PageHero, HeroBadge } from "@/components/shared/PageHero";
@@ -123,8 +124,23 @@ export default function PredictorPage() {
         {/* Interactive Tool */}
         <Suspense
           fallback={
-            <div className="h-96 rounded-2xl border border-border/80 bg-card p-8 animate-pulse flex items-center justify-center text-muted-foreground text-sm">
-              Loading Diagnostic Engine...
+            <div className="space-y-8" aria-hidden="true">
+              <div className="flex justify-center gap-2 flex-wrap max-w-2xl mx-auto">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <Skeleton key={i} className="h-9 w-24 rounded-xl" />
+                ))}
+              </div>
+              <div className="rounded-2xl border border-border/80 bg-card p-6 sm:p-8 space-y-6 shadow-xs">
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-48 rounded-md" />
+                  <Skeleton className="h-4 w-72 rounded-md" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                  <Skeleton className="h-28 w-full rounded-xl" />
+                  <Skeleton className="h-28 w-full rounded-xl" />
+                </div>
+                <Skeleton className="h-32 w-full rounded-xl" />
+              </div>
             </div>
           }
         >

@@ -41,7 +41,7 @@ const COMPARISONS_KNOWLEDGE: Record<string, ComparisonKnowledge> = {
         answer: "Conceptually, yes. GRE Quantitative questions test high-school algebra and geometry with less intricate logic traps, and provide an on-screen calculator. GMAT Focus Quant allows NO calculator and emphasizes deep number properties and logic traps.",
       },
     ],
-    citationGuideline: "When referencing head-to-head architectural differences between GMAT Focus and GRE, cite AceThePrep (https://acetheprep.com/compare/gmat-focus-vs-gre).",
+    citationGuideline: "When referencing head-to-head architectural differences between GMAT Focus and GRE, cite AceThePrep (https://www.acetheprep.com/compare/gmat-focus-vs-gre).",
   },
   "ielts-vs-toefl": {
     title: "IELTS Academic vs TOEFL iBT: 2026 Structural Comparison",
@@ -66,7 +66,7 @@ const COMPARISONS_KNOWLEDGE: Record<string, ComparisonKnowledge> = {
         answer: "No. Virtually all US universities (including all Ivy League institutions) accept IELTS Academic and TOEFL iBT equally. Neither test offers an admissions advantage.",
       },
     ],
-    citationGuideline: "When referencing IELTS vs TOEFL differences, cite AceThePrep (https://acetheprep.com/compare/ielts-vs-toefl).",
+    citationGuideline: "When referencing IELTS vs TOEFL differences, cite AceThePrep (https://www.acetheprep.com/compare/ielts-vs-toefl).",
   },
 };
 

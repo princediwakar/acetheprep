@@ -13,6 +13,7 @@ import { QuizCompletion } from "./QuizCompletion";
 import { parseOptions, flattenQuizQuestions } from "@/lib/quiz-utils";
 import { FlattenedQuestion } from "@/types/quiz";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface QuizPlayerProps {
   quiz: Quiz;
@@ -126,10 +127,32 @@ export const QuizPlayer = ({ quiz, isCreator }: QuizPlayerProps) => {
   if (isLoading) {
     return (
       <div className="max-w-2xl mx-auto p-6 space-y-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-muted rounded w-3/4"></div>
-          <div className="h-4 bg-muted rounded w-1/2"></div>
-          <div className="h-32 bg-muted rounded"></div>
+        <Skeleton className="h-9 w-3/4 rounded-lg" />
+        <Skeleton className="h-4 w-1/3 rounded-md" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-full rounded" />
+          <Skeleton className="h-4 w-5/6 rounded" />
+        </div>
+        <div className="grid grid-cols-2 gap-4 rounded-2xl border border-border/70 bg-card p-6">
+          <div className="space-y-1.5">
+            <Skeleton className="h-3 w-16 rounded" />
+            <Skeleton className="h-5 w-28 rounded-md" />
+          </div>
+          <div className="space-y-1.5">
+            <Skeleton className="h-3 w-16 rounded" />
+            <Skeleton className="h-5 w-28 rounded-md" />
+          </div>
+          <div className="space-y-1.5">
+            <Skeleton className="h-3 w-16 rounded" />
+            <Skeleton className="h-5 w-28 rounded-md" />
+          </div>
+          <div className="space-y-1.5">
+            <Skeleton className="h-3 w-16 rounded" />
+            <Skeleton className="h-5 w-28 rounded-md" />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <Skeleton className="h-11 flex-1 rounded-xl" />
         </div>
       </div>
     );

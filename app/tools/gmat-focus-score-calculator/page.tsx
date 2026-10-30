@@ -240,23 +240,59 @@ export default function GmatScoreCalculatorPage() {
             </div>
           </section>
 
-          {/* Interlinked Curriculum Section */}
-          <section className="rounded-2xl border border-primary/20 bg-primary/5 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <h3 className="font-bold text-base text-foreground">
-                Targeting a 655+ or 705+ on your GMAT Focus?
-              </h3>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                Practice high-yield Data Sufficiency, Critical Reasoning, and Quantitative drills with real cognitive distractor analysis.
-              </p>
+          {/* Interlinked Curriculum Section & Diagnostic Hubs */}
+          <section className="space-y-4">
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <h3 className="font-bold text-base text-foreground">
+                  Targeting a 655+ or 705+ on your GMAT Focus?
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+                  Practice high-yield Data Sufficiency, Critical Reasoning, and Quantitative drills with real cognitive distractor analysis.
+                </p>
+              </div>
+              <Link
+                href="/practice/gmat-focus"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs sm:text-sm font-semibold text-primary-foreground hover:opacity-95 transition-all shrink-0"
+              >
+                <span>Explore GMAT Focus Syllabus</span>
+                <ChevronRight className="h-4 w-4" />
+              </Link>
             </div>
-            <Link
-              href="/practice/gmat-focus"
-              className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs sm:text-sm font-semibold text-primary-foreground hover:opacity-95 transition-all shrink-0"
-            >
-              <span>Explore GMAT Focus Syllabus</span>
-              <ChevronRight className="h-4 w-4" />
-            </Link>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Link
+                href="/insights/gmat-focus/hardest-topics"
+                className="group rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-all flex items-center justify-between"
+              >
+                <div>
+                  <div className="text-xs font-semibold text-primary uppercase tracking-wider">Benchmark Insights</div>
+                  <div className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+                    Hardest GMAT Focus Traps &rarr;
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    Data Sufficiency traps & C vs E failure analytics
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+              </Link>
+
+              <Link
+                href="/predictor?exam=gmat-focus"
+                className="group rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-all flex items-center justify-between"
+              >
+                <div>
+                  <div className="text-xs font-semibold text-primary uppercase tracking-wider">Interactive Study Plan</div>
+                  <div className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+                    GMAT Score Gap Predictor &rarr;
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    Calculate study hours from current to 705+ target
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+              </Link>
+            </div>
           </section>
         </div>
       </main>

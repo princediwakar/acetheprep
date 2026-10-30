@@ -46,7 +46,7 @@ export async function createCheckoutSession(params: {
     const headerList = await headers();
     const host = headerList.get("host") || "";
     const proto = headerList.get("x-forwarded-proto") || (host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https");
-    const dynamicOrigin = host ? `${proto}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || "https://acetheprep.com");
+    const dynamicOrigin = host ? `${proto}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || "https://www.acetheprep.com");
     const returnUrl = parsed.data.redirectUrl || `${dynamicOrigin}/home?upgrade=success`;
 
     const session = await dodo.checkoutSessions.create({
@@ -83,7 +83,7 @@ export async function createCheckoutSession(params: {
  * Instantly activates Pro membership for the authenticated user without requiring
  * external gateway processing. Strictly guarded to test_mode or non-production environments.
  */
-export async function activateTestPro(planType: "monthly" | "quarterly" = "quarterly") {
+export async function activateTestPro(planType: "monthly" | "quarterly" = "monthly") {
   const isTestAllowed =
     process.env.DODO_PAYMENTS_ENVIRONMENT === "test_mode" ||
     process.env.NODE_ENV !== "production";

@@ -5,9 +5,9 @@ import {
   TrendingUp,
   Award,
   Target,
-  Brain,
   CheckCircle2,
 } from "lucide-react";
+import { InteractiveChallenge } from "./InteractiveChallenge";
 
 export interface MasteryDelta {
   domain: string;
@@ -33,6 +33,7 @@ export interface ShareResultCardProps {
   masteryDelta: MasteryDelta[];
   hardestQuestion: HardestQuestion | null;
   masteredDomains: string[] | null;
+  shareToken?: string;
 }
 
 function getScoreGradient(pct: number) {
@@ -67,6 +68,7 @@ export function ShareResultCard({
   masteryDelta,
   hardestQuestion,
   masteredDomains,
+  shareToken,
 }: ShareResultCardProps) {
   const improvedTopics = masteryDelta.filter((d) => d.after > d.before);
 
@@ -161,62 +163,13 @@ export function ShareResultCard({
           )}
 
           {hardestQuestion && (
-            <div className="mb-8">
-              <div className="flex items-center gap-2 mb-4">
-                <Brain className="w-4 h-4 text-purple-400" />
-                <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
-                  The Hardest Question
-                </h2>
-              </div>
-              <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
-                <p className="text-sm text-slate-200 leading-relaxed mb-4">
-                  {hardestQuestion.question_text}
-                </p>
-
-                <div className="space-y-2 mb-4">
-                  {Object.entries(hardestQuestion.options).map(([letter, text]) => {
-                    const isCorrect = letter === hardestQuestion.correct_option;
-                    return (
-                      <div
-                        key={letter}
-                        className={`flex items-start gap-2 px-3 py-2 rounded-lg text-sm ${
-                          isCorrect
-                            ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300"
-                            : "bg-slate-800/50 border border-transparent text-slate-400"
-                        }`}
-                      >
-                        <span
-                          className={`font-semibold mt-0.5 ${
-                            isCorrect ? "text-emerald-400" : "text-slate-500"
-                          }`}
-                        >
-                          {letter}.
-                        </span>
-                        <span>{text}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <details className="group">
-                  <summary className="cursor-pointer text-sm font-medium text-indigo-400 hover:text-indigo-300">
-                    See explanation
-                  </summary>
-                  <div className="mt-3 text-sm text-slate-300 leading-relaxed">
-                    {hardestQuestion.distractor_analysis?.[hardestQuestion.correct_option] ?? ""}
-                  </div>
-                </details>
-
-                <div className="flex flex-wrap items-center gap-2 mt-4">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                    {hardestQuestion.skill_domain}
-                  </span>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30 capitalize">
-                    Tier {hardestQuestion.difficulty_tier}
-                  </span>
-                </div>
-              </div>
-            </div>
+            <InteractiveChallenge
+              hardestQuestion={hardestQuestion}
+              examName={examName}
+              shareToken={shareToken}
+              peerScore={score}
+              totalQuestions={total}
+            />
           )}
 
           {masteredDomains && masteredDomains.length > 0 && (

@@ -267,10 +267,10 @@ export const QuizHistory = ({ activeExamName }: QuizHistoryProps) => {
     <div className="space-y-4">
       {subjects.length > 0 && (
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4 flex flex-wrap h-auto w-full justify-start gap-1.5 bg-transparent p-0">
+          <TabsList className="mb-4 flex flex-wrap h-auto w-full justify-start gap-1.5 bg-transparent p-0 border-0 shadow-none">
             <TabsTrigger 
               value="all"
-              className="flex-none rounded-lg px-3 py-1.5 text-xs font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border bg-muted/40"
+              className="flex-none rounded-lg px-3 py-1.5 text-xs font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-border/70 bg-muted/40 hover:bg-muted transition-colors"
             >
               All Quizzes
             </TabsTrigger>
@@ -280,7 +280,7 @@ export const QuizHistory = ({ activeExamName }: QuizHistoryProps) => {
                 <TabsTrigger 
                   key={sub} 
                   value={sub}
-                  className="flex-none rounded-lg px-3 py-1.5 text-xs font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border bg-muted/40"
+                  className="flex-none rounded-lg px-3 py-1.5 text-xs font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-border/70 bg-muted/40 hover:bg-muted transition-colors"
                 >
                   {sub}
                   {isActiveExam && (

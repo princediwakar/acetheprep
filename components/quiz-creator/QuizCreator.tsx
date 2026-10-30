@@ -5,8 +5,6 @@ import { useState, useCallback, memo, useEffect, useRef } from "react";
 import { useUser } from "@/hooks/useUser";
 import { Quiz } from "@/types/quiz";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -14,31 +12,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 import { LANGUAGES } from "@/lib/constants/languages";
 import { QUIZ_CONFIG } from "@/lib/constants/quiz";
 import { PromptInput } from "./PromptInput";
 import { PDFUploader } from "./PDFUploader";
-import { SignInModal } from "../SignInModal";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useRouter } from "next/navigation";
 
-const { MAX_QUESTION_COUNT, DEFAULT_QUESTION_COUNT, DEFAULT_DIFFICULTY } = QUIZ_CONFIG;
+const { DEFAULT_QUESTION_COUNT, DEFAULT_DIFFICULTY } = QUIZ_CONFIG;
+
+const QUESTION_COUNT_OPTIONS = [5, 10, 15, 20];
+const QUICK_PRESETS = [
+  "Data Sufficiency",
+  "Critical Reasoning",
+  "Sentence Correction",
+  "Arithmetic & Algebra",
+  "Reading Comprehension",
+];
 
 interface QuizCreatorProps {
-  onQuizCreated: (quiz: Quiz) => void;
+  onQuizCreated?: (quiz: Quiz) => void;
 }
 
 export const QuizCreator = memo(({ onQuizCreated }: QuizCreatorProps) => {
   const router = useRouter();
-  const [step, setStep] = useState(1);
   const [prompt, setPrompt] = useState("");
   const [language, setLanguage] = useState("Auto");
   const [questionCount, setQuestionCount] = useState(DEFAULT_QUESTION_COUNT);
   const [difficulty, setDifficulty] = useState(DEFAULT_DIFFICULTY);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const [pdfText, setPdfText] = useState<string>("");
   const { user, accessToken, isUserLoading } = useUser();
   const abortRef = useRef<AbortController | null>(null);
@@ -49,30 +53,21 @@ export const QuizCreator = memo(({ onQuizCreated }: QuizCreatorProps) => {
     toast.info("Generation cancelled.");
   }, []);
 
-  const handleQuestionCount = useCallback((value: string) => {
-    const num = parseInt(value, 10);
-    if (isNaN(num) || num < 1) return toast.warning("Please enter a number greater than 0");
-    if (num > MAX_QUESTION_COUNT) {
-      toast.warning(`Maximum is ${MAX_QUESTION_COUNT} questions`);
-      setQuestionCount(MAX_QUESTION_COUNT);
-    } else {
-      setQuestionCount(num);
-    }
-  }, []);
-
   const handleGenerateQuiz = useCallback(async () => {
-    if (!prompt.trim() && !pdfText) return toast.warning("Please enter a prompt or upload a PDF file");
+    if (!prompt.trim() && !pdfText) {
+      return toast.warning("Please enter a topic or attach a PDF");
+    }
     if (isUserLoading) return;
-    if (!user || !accessToken) return setIsSignInModalOpen(true);
+    if (!user || !accessToken) {
+      return toast.error("Please sign in to generate quizzes");
+    }
 
     setIsLoading(true);
-    setPrompt("");
 
     const controller = new AbortController();
     abortRef.current = controller;
 
     const content = pdfText ? (prompt.trim() ? `${prompt}\n\n${pdfText}` : pdfText) : prompt;
-
     const toastId = toast.loading("Starting quiz generation...");
 
     try {
@@ -94,18 +89,21 @@ export const QuizCreator = memo(({ onQuizCreated }: QuizCreatorProps) => {
           const data = JSON.parse(event.data);
           switch (data.type) {
             case "connected":
-              toast.loading("Starting quiz generation...", { id: toastId });
+              toast.loading("Generating test questions...", { id: toastId });
               break;
             case "progress":
-              toast.loading(`Generating question ${data.done} of ${data.total}...`, { id: toastId });
+              toast.loading(`Drafting question ${data.done} of ${data.total}...`, { id: toastId });
               break;
             case "complete":
-              toast.success("Quiz generated!", { id: toastId });
+              toast.success("Quiz generated successfully!", { id: toastId });
               setIsLoading(false);
+              if (onQuizCreated && data.quiz) {
+                onQuizCreated(data.quiz);
+              }
               router.push(`/quiz/${data.quiz?.slug || data.quiz_id}`);
               break;
             case "partial":
-              toast.warning(`Generated ${data.generated} of ${data.requested}.`, { id: toastId });
+              toast.warning(`Generated ${data.generated} of ${data.requested} questions.`, { id: toastId });
               setIsLoading(false);
               router.push(`/quiz/${data.quiz_id}`);
               break;
@@ -129,7 +127,7 @@ export const QuizCreator = memo(({ onQuizCreated }: QuizCreatorProps) => {
       setPdfText("");
       abortRef.current = null;
     }
-  }, [prompt, pdfText, user, accessToken, isUserLoading, questionCount, difficulty, language, router]);
+  }, [prompt, pdfText, user, accessToken, isUserLoading, questionCount, difficulty, language, router, onQuizCreated]);
 
   useEffect(() => {
     return () => abortRef.current?.abort();
@@ -148,92 +146,144 @@ export const QuizCreator = memo(({ onQuizCreated }: QuizCreatorProps) => {
     }
   }, []);
 
-  const handleNext = useCallback(() => {
-    if (!prompt.trim() && !pdfText) {
-      toast.warning("Please enter a prompt or upload a PDF file");
-      return;
-    }
-
-    if (isUserLoading) return;
-    if (!user || !accessToken) {
-      localStorage.setItem("quizPrompt", prompt);
-      setIsSignInModalOpen(true);
-      return;
-    }
-
-    setStep(2);
-  }, [prompt, pdfText, user, accessToken, isUserLoading]);
-
-
   return (
-    <div className="max-w-2xl w-full mx-auto">
-      <div className="min-h-[275px] flex flex-col space-y-6">
-        <h2 className="text-3xl sm:text-5xl font-bold text-center">{step === 1 ? "What are you studying?" : "Customize Your Practice Test"}</h2>
-        <div className="flex-1 space-y-4">
-          {step === 1 ? (
-            <div className="space-y-2">
-              <PromptInput value={prompt} onChange={setPrompt} disabled={isLoading} />
-              <PDFUploader onUpload={setPdfText} onClear={() => setPdfText("")} disabled={isLoading} />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="questionCount">No. of Questions</Label>
-                <Input
-                  id="questionCount"
-                  type="number"
-                  min="1"
-                  max={MAX_QUESTION_COUNT}
-                  value={questionCount}
-                  onChange={(e) => handleQuestionCount(e.target.value)}
-                  disabled={isLoading}
-                  className="w-full"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="difficulty">Difficulty Level</Label>
-                <Select value={difficulty} onValueChange={setDifficulty} disabled={isLoading}>
-                  <SelectTrigger id="difficulty" className="w-full">
-                    <SelectValue placeholder="Select difficulty" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {QUIZ_CONFIG.DIFFICULTY_LEVELS.map((level) => (
-                      <SelectItem key={level} value={level}>{level}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="language">Language (Optional)</Label>
-                <Select value={language} onValueChange={setLanguage} disabled={isLoading}>
-                  <SelectTrigger id="language" className="w-full">
-                    <SelectValue placeholder="Select language" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {LANGUAGES.map(({ code, name }) => (
-                      <SelectItem key={code} value={code}>{name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          )}
+    <div className="w-full rounded-xl border border-border/80 bg-card p-5 shadow-2xs space-y-4">
+      {/* Studio Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/60">
+        <div>
+          <h2 className="text-base font-semibold text-foreground tracking-tight flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-primary" />
+            AI Quiz Studio
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Generate calibrated practice questions from topics or uploaded syllabus notes.
+          </p>
         </div>
-        <div className="flex gap-4">
-          {step === 2 && <Button variant="outline" onClick={() => setStep(1)} disabled={isLoading} className="w-full">Back</Button>}
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <PDFUploader onUpload={setPdfText} onClear={() => setPdfText("")} disabled={isLoading} />
+        </div>
+      </div>
+
+      {/* Main Text Prompt */}
+      <PromptInput
+        value={prompt}
+        onChange={setPrompt}
+        disabled={isLoading}
+        onSubmit={handleGenerateQuiz}
+      />
+
+      {/* Quick Topic Chips */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <span className="text-[11px] font-medium text-muted-foreground/80">Presets:</span>
+        {QUICK_PRESETS.map((preset) => (
+          <button
+            key={preset}
+            type="button"
+            onClick={() => setPrompt(preset)}
+            disabled={isLoading}
+            className="text-[11px] px-2 py-0.5 rounded-md bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground border border-border/40 transition-colors"
+          >
+            {preset}
+          </button>
+        ))}
+      </div>
+
+      {/* Control Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-border/60">
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          {/* Question Count */}
+          <div className="flex items-center gap-1">
+            <span className="text-muted-foreground text-[11px]">Questions:</span>
+            <Select
+              value={questionCount.toString()}
+              onValueChange={(val) => setQuestionCount(Number(val))}
+              disabled={isLoading}
+            >
+              <SelectTrigger className="h-8 w-18 text-xs bg-background">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {QUESTION_COUNT_OPTIONS.map((count) => (
+                  <SelectItem key={count} value={count.toString()} className="text-xs">
+                    {count}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Difficulty */}
+          <div className="flex items-center gap-1">
+            <span className="text-muted-foreground text-[11px]">Difficulty:</span>
+            <Select
+              value={difficulty}
+              onValueChange={setDifficulty}
+              disabled={isLoading}
+            >
+              <SelectTrigger className="h-8 w-24 text-xs bg-background">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {QUIZ_CONFIG.DIFFICULTY_LEVELS.map((level) => (
+                  <SelectItem key={level} value={level} className="text-xs">
+                    {level}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Language */}
+          <div className="flex items-center gap-1">
+            <span className="text-muted-foreground text-[11px]">Language:</span>
+            <Select
+              value={language}
+              onValueChange={setLanguage}
+              disabled={isLoading}
+            >
+              <SelectTrigger className="h-8 w-24 text-xs bg-background">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="max-h-56">
+                {LANGUAGES.map(({ code, name }) => (
+                  <SelectItem key={code} value={code} className="text-xs">
+                    {name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Action Button */}
+        <div className="flex items-center gap-2 self-end sm:self-auto">
           {isLoading ? (
-            <Button variant="outline" onClick={handleCancel} className="w-full">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleCancel}
+              className="h-9 px-3 text-xs"
+            >
+              <X className="w-3.5 h-3.5 mr-1" />
               Cancel
             </Button>
           ) : (
-            <Button onClick={step === 1 ? handleNext : handleGenerateQuiz} className="w-full">
-              {step === 1 ? "Next" : "Generate Quiz"}
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleGenerateQuiz}
+              disabled={isLoading || (!prompt.trim() && !pdfText)}
+              className="h-9 px-4 text-xs font-medium"
+            >
+              <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+              Generate Quiz
             </Button>
           )}
         </div>
       </div>
-      <SignInModal open={isSignInModalOpen} onOpenChange={setIsSignInModalOpen} isLoading={isLoading} />
     </div>
   );
 });
+
 QuizCreator.displayName = "QuizCreator";

@@ -5,14 +5,14 @@ interface QuizProgressProps {
 
 export const QuizProgress = ({ current, total }: QuizProgressProps) => (
   <>
-    <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+    <div className="w-full bg-muted rounded-full h-2 mb-6 overflow-hidden">
       <div
-        className="bg-primary h-2.5 rounded-full"
-        style={{ width: `${(current / total) * 100}%` }} // Removed +1 here
+        className="bg-primary h-full rounded-full transition-all duration-300"
+        style={{ width: `${(current / total) * 100}%` }}
       ></div>
     </div>
-    <div className="text-sm text-muted-foreground mb-6">
-      Question {current} of {total} {/* Removed +1 here */}
+    <div className="text-xs text-muted-foreground mb-6 font-mono">
+      Question {current} of {total}
     </div>
   </>
 );

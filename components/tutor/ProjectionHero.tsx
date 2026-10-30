@@ -1,7 +1,6 @@
 "use client";
 
-import { Target, Lock } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Target, Lock, Flame } from "lucide-react";
 
 interface PredictionBand {
   overallPercentile: number;
@@ -20,23 +19,9 @@ interface PredictionBand {
 export interface ProjectionHeroProps {
   prediction: PredictionBand | null;
   examName?: string;
-}
-
-function getBandColor(width: number) {
-  if (width <= 4 || width <= 30) return "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400";
-  if (width <= 8 || width <= 70) return "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400";
-  return "border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-400";
-}
-
-function getCalibrationBadge(source: string) {
-  switch (source) {
-    case "fully_calibrated":
-    case "proprietary": return "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30";
-    case "blended": return "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30";
-    case "gmac_focus_tables": return "bg-indigo-500/15 text-indigo-700 dark:text-indigo-400 border-indigo-500/30";
-    case "ets_gre_tables": return "bg-cyan-500/15 text-cyan-700 dark:text-cyan-400 border-cyan-500/30";
-    default: return "bg-muted text-muted-foreground border-border";
-  }
+  readinessIndex?: number;
+  streak?: number;
+  daysRemaining?: number;
 }
 
 function formatSecondaryLabel(label?: string) {
@@ -55,12 +40,18 @@ function formatSecondaryLabel(label?: string) {
   });
 }
 
-export function ProjectionHero({ prediction, examName }: ProjectionHeroProps) {
+export function ProjectionHero({
+  prediction,
+  examName,
+  readinessIndex,
+  streak,
+  daysRemaining,
+}: ProjectionHeroProps) {
   if (!prediction) {
     return (
-      <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-dashed border-border/80 bg-card/60 dark:border-white/10 dark:bg-slate-900/50 text-xs">
+      <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-dashed border-border/80 dark:border-white/10 text-xs text-muted-foreground">
         <Target className="w-4 h-4 text-primary shrink-0" />
-        <span className="text-muted-foreground">
+        <span>
           No projection yet — complete your first session to calibrate your {examName || "exam"} score band.
         </span>
       </div>
@@ -71,72 +62,77 @@ export function ProjectionHero({ prediction, examName }: ProjectionHeroProps) {
   const halfBand = Math.round(bandWidth / 2);
 
   return (
-    <div
-      className={cn(
-        "relative rounded-xl border border-border/80 bg-card/80 backdrop-blur-xs px-4 py-3 sm:px-5 shadow-2xs transition-all",
-        "dark:border-white/10 dark:bg-slate-900/80",
-        prediction.isFrozen && "ring-1 ring-amber-500/30"
-      )}
-    >
-      <div className="flex items-center gap-3.5">
-        <div className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-          <Target className="w-4 h-4 text-primary" />
-        </div>
+    <div className="relative py-1 sm:py-2 px-0.5 sm:px-0 transition-all">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* Left: Projected Score & Tolerance */}
+        <div className="space-y-1 min-w-0">
+          <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+            {prediction.metricLabel || `Projected ${examName ? `${examName} ` : ""}Score`}
+          </span>
 
-        <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
-          {/* Top Row: Metric Label on Left, Sessions & Calibration on Right */}
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold truncate">
-              {prediction.metricLabel || `Projected ${examName ? `${examName} ` : ""}Score`}
-            </span>
-
-            <div className="flex items-center gap-2 text-xs text-muted-foreground shrink-0">
-              <span className="tabular-nums font-medium text-[11px]">
-                {prediction.totalTrackedSessions} session{prediction.totalTrackedSessions !== 1 ? "s" : ""}
-              </span>
-              <span className="text-border dark:text-slate-700">•</span>
-              {prediction.calibrationSource !== "proprietary" && prediction.calibrationSource !== "fully_calibrated" ? (
-                <span
-                  className={cn(
-                    "px-2 py-0.5 rounded-md border text-[11px] font-medium leading-none",
-                    getCalibrationBadge(prediction.calibrationSource)
-                  )}
-                >
-                  {prediction.calibrationSource === "public_nta"
-                    ? "NTA Prior"
-                    : prediction.calibrationSource === "gmac_focus_tables"
-                    ? "GMAC Norms"
-                    : prediction.calibrationSource === "ets_gre_tables"
-                    ? "ETS Norms"
-                    : "Blended"}
-                </span>
-              ) : (
-                <span className="px-2 py-0.5 rounded-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[11px] font-medium leading-none">
-                  Calibrated
-                </span>
-              )}
-              {prediction.isFrozen && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium bg-amber-500/10 text-amber-700 border border-amber-500/25 dark:text-amber-400 leading-none">
-                  <Lock className="w-3 h-3" />
-                  Locked
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Bottom Row: Score, Tolerance, and Percentile */}
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground tabular-nums leading-none">
+          <div className="flex items-baseline gap-2.5 flex-wrap">
+            <span className="text-2xl sm:text-3xl font-black tracking-tight text-foreground tabular-nums leading-none">
               {prediction.displayValue || `${prediction.overallBandLower}–${prediction.overallBandUpper}`}
             </span>
-            <span className={cn("text-[11px] font-semibold px-2 py-0.5 rounded-full border leading-none", getBandColor(bandWidth))}>
+            <span className="text-xs font-semibold text-muted-foreground font-mono">
               ±{halfBand} pts
             </span>
             {prediction.secondaryLabel && (
-              <span className="text-xs font-medium text-muted-foreground font-mono leading-none">
-                {formatSecondaryLabel(prediction.secondaryLabel)}
+              <span className="text-xs text-muted-foreground font-mono">
+                &middot; {formatSecondaryLabel(prediction.secondaryLabel)}
               </span>
             )}
+            <span className="text-[11px] text-muted-foreground/75 font-mono">
+              ({prediction.calibrationSource === "proprietary" || prediction.calibrationSource === "fully_calibrated" ? "Calibrated" : "Blended"})
+            </span>
+            {prediction.isFrozen && (
+              <span className="inline-flex items-center gap-1 text-[11px] text-amber-500 font-mono">
+                <Lock className="w-2.5 h-2.5" /> Locked
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Right: Unified Telemetry Cluster (Readiness, Streak, Tracked Sessions) */}
+        <div className="flex items-center gap-5 sm:gap-8 pt-2 md:pt-0 shrink-0">
+          {readinessIndex !== undefined && (
+            <div className="flex flex-col">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+                Readiness
+              </span>
+              <div className="flex items-baseline gap-1 mt-0.5">
+                <span className="text-xl sm:text-2xl font-black text-foreground tabular-nums leading-none">
+                  {readinessIndex}
+                </span>
+                <span className="text-xs text-muted-foreground font-medium">/100</span>
+              </div>
+            </div>
+          )}
+
+          {Boolean(streak && streak > 0) && (
+            <div className="flex flex-col">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+                Streak
+              </span>
+              <div className="flex items-center gap-1 mt-0.5">
+                <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500 shrink-0" />
+                <span className="text-xl sm:text-2xl font-black text-foreground tabular-nums leading-none">
+                  {streak}d
+                </span>
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-col">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+              Sessions
+            </span>
+            <div className="flex items-baseline gap-1 mt-0.5">
+              <span className="text-xl sm:text-2xl font-black text-foreground tabular-nums leading-none">
+                {prediction.totalTrackedSessions}
+              </span>
+              <span className="text-xs text-muted-foreground font-medium">done</span>
+            </div>
           </div>
         </div>
       </div>

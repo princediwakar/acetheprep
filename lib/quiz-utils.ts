@@ -355,7 +355,7 @@ export function extractPassageContent(
   const promptFirstMatch = questionText.match(promptFirstRegex);
   if (promptFirstMatch && promptFirstMatch[1] && promptFirstMatch[2]) {
     const candidatePassage = promptFirstMatch[2].trim();
-    if (candidatePassage.split(/\s+/).length >= 35) {
+    if (candidatePassage.split(/\s+/).length >= 180) {
       return {
         passage: candidatePassage,
         prompt: promptFirstMatch[1].trim(),
@@ -364,8 +364,10 @@ export function extractPassageContent(
     }
   }
 
-  // Pattern 3: Generic multi-paragraph where paragraph 1 is a long reading passage (>= 40 words)
+  // Pattern 3: Generic multi-paragraph where leading paragraphs form an authentic reading passage (~250 words)
   // and the final paragraph is the question stem.
+  // Note: Standard exam arguments (such as GMAT Critical Reasoning or math word problems) typically contain 35-120 words
+  // and must NOT be extracted into a separate "READING PASSAGE" split layout.
   const paragraphs = questionText.split(/\n\n+/);
   if (paragraphs.length >= 2) {
     const lastParagraph = paragraphs[paragraphs.length - 1].trim();
@@ -375,7 +377,7 @@ export function extractPassageContent(
       lastParagraph.endsWith(":") ||
       /^(what|which|why|how|according|it can be inferred|the author)/i.test(lastParagraph);
 
-    if (leadingParagraphs.split(/\s+/).length >= 35 && isQuestionEnding) {
+    if (leadingParagraphs.split(/\s+/).length >= 180 && isQuestionEnding) {
       const isAudio = /audio transcript/i.test(leadingParagraphs);
       return {
         passage: leadingParagraphs.replace(/^['"]|['"]$/g, ""),

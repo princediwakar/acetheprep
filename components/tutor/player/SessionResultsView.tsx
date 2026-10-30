@@ -2,11 +2,13 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/ThemeToggleButton";
 import { renderMathContent } from "@/lib/quiz-utils";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import {
   CheckCircle,
   XCircle,
@@ -16,6 +18,10 @@ import {
   ChevronRight,
   Flag,
   Zap,
+  Sparkles,
+  Share2,
+  Copy,
+  Check,
 } from "lucide-react";
 import type { SessionQuestion } from "@/types/tutor";
 import type { QuestionAttemptRecord } from "../SessionPlayer";
@@ -32,6 +38,7 @@ interface SessionResultsViewProps {
   flaggedQuestions: Set<number>;
   nextDomain: string | null;
   startingNext: boolean;
+  shareToken?: string;
   onBackToDashboard: () => void;
   onStartNextTopic: () => void;
   formatTime: (sec: number) => string;
@@ -47,18 +54,22 @@ export function SessionResultsView({
   flaggedQuestions,
   nextDomain,
   startingNext,
+  shareToken,
   onBackToDashboard,
   onStartNextTopic,
   formatTime,
 }: SessionResultsViewProps) {
   const [reviewFilter, setReviewFilter] = useState<"all" | "flagged" | "incorrect" | "traps" | "correct">("all");
   const [expandedQuestions, setExpandedQuestions] = useState<Record<string, boolean>>({});
+  const [copiedLink, setCopiedLink] = useState(false);
 
-  const attemptedCount = Object.keys(userAttempts).length;
-  const effectiveTotal = attemptedCount > 0 ? attemptedCount : total;
-  const pct = effectiveTotal > 0 ? Math.round((score / effectiveTotal) * 100) : 0;
+  const correctCount = Object.values(userAttempts).filter((a) => a.isCorrect).length;
   const incorrectCount = Object.values(userAttempts).filter((a) => !a.isCorrect).length;
-  const trapsCaughtCount = Object.values(userAttempts).filter((a) => !a.isCorrect && !a.wasRevealed).length;
+  const pct = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+  const trapsCaughtCount = questions.filter((q) => {
+    const attempt = userAttempts[q.question_id];
+    return Boolean(attempt?.selected && !attempt.isCorrect && q.distractor_analysis?.[attempt.selected]);
+  }).length;
   const flaggedCount = flaggedQuestions.size;
   const missedDomains = Array.from(
     new Set(
@@ -75,11 +86,11 @@ export function SessionResultsView({
     const attempt = userAttempts[q.question_id];
     if (reviewFilter === "all") return true;
     if (reviewFilter === "flagged") return flaggedQuestions.has(idx);
-    if (reviewFilter === "incorrect") return attempt ? !attempt.isCorrect : true;
+    if (reviewFilter === "incorrect") return Boolean(attempt && !attempt.isCorrect);
     if (reviewFilter === "traps") {
-      return attempt?.selected && !attempt.isCorrect && Boolean(q.distractor_analysis?.[attempt.selected]);
+      return Boolean(attempt?.selected && !attempt.isCorrect && q.distractor_analysis?.[attempt.selected]);
     }
-    if (reviewFilter === "correct") return attempt?.isCorrect;
+    if (reviewFilter === "correct") return Boolean(attempt?.isCorrect);
     return true;
   });
 
@@ -88,6 +99,33 @@ export function SessionResultsView({
       ...prev,
       [qId]: !(prev[qId] ?? true),
     }));
+  };
+
+  const baseUrl =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com";
+
+  const shareUrl = shareToken ? `${baseUrl}/s/${shareToken}` : null;
+
+  const handleCopyShareLink = async () => {
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopiedLink(true);
+      toast.success("Challenge link copied to clipboard!");
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch {
+      toast.error("Failed to copy link");
+    }
+  };
+
+  const handleShareWhatsApp = () => {
+    if (!shareUrl) return;
+    const text = encodeURIComponent(
+      `I scored ${pct}% on ${examName || "Standardized Practice"} on AceThePrep! Can you beat my hardest question? Try the challenge here: ${shareUrl}`
+    );
+    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
   };
 
   return (
@@ -122,7 +160,7 @@ export function SessionResultsView({
         {/* Metric Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
           <div className="rounded-xl border border-border bg-card p-4 shadow-xs">
-            <div className="text-2xl font-bold font-mono text-foreground">{score}/{effectiveTotal}</div>
+            <div className="text-2xl font-bold font-mono text-foreground">{correctCount}/{total}</div>
             <div className="text-xs text-muted-foreground mt-1">Score</div>
           </div>
           <div className="rounded-xl border border-border bg-card p-4 shadow-xs">
@@ -140,6 +178,53 @@ export function SessionResultsView({
             <div className="text-xs text-muted-foreground mt-1">Traps Missed</div>
           </div>
         </div>
+
+        {/* Viral Share & Challenge Card */}
+        {shareUrl && (
+          <div className="p-4 sm:p-5 rounded-2xl border border-border/80 bg-card shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="space-y-1 text-center sm:text-left min-w-0">
+              <div className="flex items-center justify-center sm:justify-start gap-1.5">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span className="text-xs font-bold uppercase tracking-wider text-primary">
+                  Study Challenge
+                </span>
+              </div>
+              <h4 className="font-bold text-sm sm:text-base text-foreground">
+                Challenge your study group with your hardest question
+              </h4>
+              <p className="text-xs text-muted-foreground">
+                Share a live interactive card showing your {pct}% accuracy. Anyone can attempt your hardest question without logging in.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleShareWhatsApp}
+                className="flex-1 sm:flex-initial text-xs border-border hover:bg-muted cursor-pointer"
+              >
+                WhatsApp
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleCopyShareLink}
+                className="flex-1 sm:flex-initial text-xs border-border hover:bg-muted cursor-pointer"
+              >
+                {copiedLink ? "Copied!" : "Copy Link"}
+              </Button>
+              <Link
+                href={`/s/${shareToken}`}
+                target="_blank"
+                className="inline-flex items-center justify-center rounded-lg bg-primary hover:bg-primary/90 px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-xs transition-all"
+              >
+                <span>View Card &rarr;</span>
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Score Leak Elimination Alert */}
         {missedDomains.length > 0 && (
@@ -234,7 +319,7 @@ export function SessionResultsView({
                 reviewFilter === "correct" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground",
               )}
             >
-              Correct ({score})
+              Correct ({correctCount})
             </button>
           </div>
         </div>
@@ -348,11 +433,25 @@ export function SessionResultsView({
                     {q.misconception && (
                       <div className="text-xs text-muted-foreground border-t border-border pt-2.5">
                         <span className="font-semibold text-amber-600 dark:text-amber-400 block mb-0.5">
-                          Exam-Setter Trap:
+                          Key Takeaway:
                         </span>
                         {q.misconception}
                       </div>
                     )}
+
+                    <div className="flex items-center justify-between pt-2.5 border-t border-border/60 text-xs">
+                      <span className="text-[11px] text-muted-foreground">
+                        Want to see how other students solved this?
+                      </span>
+                      <Link
+                        href={`/q/${q.question_id}`}
+                        target="_blank"
+                        className="inline-flex items-center gap-1 font-semibold text-xs text-primary hover:underline transition-colors"
+                      >
+                        <span>Discuss Question with Peers</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
                   </div>
                 )}
               </div>

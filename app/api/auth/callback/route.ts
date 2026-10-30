@@ -161,39 +161,39 @@ export async function GET(request: Request) {
       let destination = next
 
       if (user) {
-        // ── Path A: User arrived from a practice drill page ───────────────
-        // Detect the exam from the returnUrl and auto-provision their profile,
-        // skipping the /setup form entirely.
-        const examFromUrl = extractExamFromPracticeUrl(next)
+        // 1. Check for existing active profile first
+        const { data: existingActiveProfile } = await supabase
+          .from('exam_profiles')
+          .select('profile_id, exam_name')
+          .eq('user_id', user.id)
+          .eq('is_active', true)
+          .maybeSingle()
 
-        if (examFromUrl && next.startsWith('/practice/')) {
-          const profileId = await autoProvisionProfile(supabase, user.id, examFromUrl)
-
-          if (profileId) {
-            // Route to /home dashboard — they are fully onboarded
-            destination = '/home?onboarded=1'
-          } else {
-            // Provisioning failed gracefully — fall back to setup
-            destination = `/setup?exam=${encodeURIComponent(examFromUrl)}`
-          }
+        if (existingActiveProfile) {
+          // Returning student with an established mission:
+          // NEVER hijack or deactivate their active study plan!
+          // Send them straight to /home with zero disruption.
+          destination = '/home'
         } else {
-          // ── Path B: User came from a non-practice page ──────────────────
-          // Check for existing active profile. If they already have one, send
-          // them straight to /home. If not, send to /setup.
-          const { data: profile } = await supabase
-            .from('exam_profiles')
-            .select('profile_id')
-            .eq('user_id', user.id)
-            .eq('is_active', true)
-            .maybeSingle()
+          // 2. Brand new student or user without an active profile:
+          const examFromUrl = extractExamFromPracticeUrl(next)
 
-          if (
-            profile &&
-            (destination === '/' ||
-              destination === '/setup' ||
-              destination.startsWith('/setup?'))
-          ) {
-            destination = '/home'
+          if (examFromUrl && next.startsWith('/practice/')) {
+            const profileId = await autoProvisionProfile(supabase, user.id, examFromUrl)
+
+            if (profileId) {
+              // Route to /home dashboard — they are fully onboarded
+              destination = '/home?onboarded=1'
+            } else {
+              // Provisioning failed gracefully — fall back to setup
+              destination = `/setup?exam=${encodeURIComponent(examFromUrl)}`
+            }
+          } else {
+            // Came from non-practice page without active profile -> send to setup
+            destination =
+              destination === '/' || destination === '/setup' || destination.startsWith('/setup?')
+                ? '/setup'
+                : destination
           }
         }
       }

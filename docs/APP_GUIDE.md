@@ -633,7 +633,7 @@ NEXT_PUBLIC_DODO_PRODUCT_MONTHLY=pdt_monthly_pro
 NEXT_PUBLIC_DODO_PRODUCT_QUARTERLY=pdt_quarterly_pass
 
 # Application URLs & Email
-NEXT_PUBLIC_BASE_URL=https://acetheprep.com
+NEXT_PUBLIC_BASE_URL=https://www.acetheprep.com
 RESEND_API_KEY=re_...
 ```
 

@@ -1,28 +1,56 @@
 // Path: app/insights/loading.tsx
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function InsightsLoading() {
   return (
-    <div className="min-h-[calc(100vh-4rem)] px-4 py-8 sm:py-12 bg-background">
-      <div className="max-w-4xl mx-auto space-y-10">
-        <div className="text-center space-y-3 max-w-md mx-auto">
-          <div className="w-12 h-12 rounded-xl bg-muted animate-pulse mx-auto" />
-          <div className="h-8 w-64 bg-muted rounded-lg animate-pulse mx-auto" />
-          <div className="h-4 w-80 bg-muted/70 rounded animate-pulse mx-auto" />
+    <div className="min-h-screen pt-8 sm:pt-10 pb-20 px-4 sm:px-6 lg:px-8 bg-background">
+      <div className="max-w-5xl mx-auto space-y-10">
+        {/* Page Hero Skeleton */}
+        <div className="text-center space-y-3 max-w-2xl mx-auto">
+          <Skeleton className="h-6 w-64 rounded-full mx-auto" />
+          <Skeleton className="h-9 sm:h-10 w-full max-w-md rounded-xl mx-auto" />
+          <Skeleton className="h-4 w-full max-w-lg rounded mx-auto" />
         </div>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+
+        {/* Exam Tabs Strip Skeleton */}
+        <div className="flex justify-center gap-2 flex-wrap max-w-2xl mx-auto pt-2">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="rounded-2xl border border-border/80 bg-card p-6 space-y-4 shadow-sm"
-            >
-              <div className="h-6 w-32 bg-muted rounded animate-pulse" />
-              <div className="h-3 w-24 bg-muted/70 rounded animate-pulse" />
-              <div className="space-y-2 pt-2">
-                <div className="h-4 w-40 bg-muted rounded animate-pulse" />
-                <div className="h-4 w-32 bg-muted rounded animate-pulse" />
-              </div>
-            </div>
+            <Skeleton key={i} className="h-9 w-24 rounded-xl" />
           ))}
+        </div>
+
+        {/* Active Exam Spotlight Skeleton Card */}
+        <div className="rounded-2xl border border-border/80 bg-card p-6 sm:p-8 space-y-8 shadow-xs max-w-4xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/70">
+            <div className="space-y-2 flex-1">
+              <Skeleton className="h-5 w-44 rounded-full" />
+              <Skeleton className="h-8 w-80 max-w-full rounded-lg" />
+              <Skeleton className="h-4 w-96 max-w-full rounded" />
+            </div>
+            <Skeleton className="h-9 w-36 rounded-xl shrink-0" />
+          </div>
+
+          {/* Hardest Topics Rows */}
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-border/70 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              >
+                <div className="space-y-2 flex-1">
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-5 w-6 rounded-md" />
+                    <Skeleton className="h-5 w-56 rounded-md" />
+                  </div>
+                  <Skeleton className="h-3.5 w-72 rounded" />
+                </div>
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-8 w-20 rounded-lg" />
+                  <Skeleton className="h-8 w-28 rounded-xl" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

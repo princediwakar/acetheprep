@@ -246,23 +246,60 @@ export default function GreToGmatConverterPage() {
             </div>
           </section>
 
-          {/* Comparison CTA */}
-          <section className="rounded-2xl border border-primary/20 bg-primary/5 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <h3 className="font-bold text-base text-foreground">
-                Still deciding between the GMAT Focus and the GRE?
-              </h3>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                Read our in-depth 2026 head-to-head comparison on calculator rules, section adaptivity, and MBA acceptance.
-              </p>
+          {/* Comparison & Practice Hub CTAs */}
+          <section className="space-y-4">
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <h3 className="font-bold text-base text-foreground">
+                  Still deciding between the GMAT Focus and the GRE?
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+                  Read our in-depth 2026 head-to-head comparison on calculator rules, section adaptivity, and MBA acceptance.
+                </p>
+              </div>
+              <Link
+                href="/compare/gmat-focus-vs-gre"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs sm:text-sm font-semibold text-primary-foreground hover:opacity-95 transition-all shrink-0"
+              >
+                <span>Read GMAT vs GRE Breakdown</span>
+                <ChevronRight className="h-4 w-4" />
+              </Link>
             </div>
-            <Link
-              href="/compare/gmat-focus-vs-gre"
-              className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs sm:text-sm font-semibold text-primary-foreground hover:opacity-95 transition-all shrink-0"
-            >
-              <span>Read GMAT vs GRE Breakdown</span>
-              <ChevronRight className="h-4 w-4" />
-            </Link>
+
+            {/* Direct Syllabi Practice Links */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Link
+                href="/practice/gmat"
+                className="group rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-all flex items-center justify-between"
+              >
+                <div>
+                  <div className="text-xs font-semibold text-primary uppercase tracking-wider">Official Curriculum</div>
+                  <div className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+                    Practice GMAT Focus Questions &rarr;
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    Data Insights, Quant & Verbal trap drills
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+              </Link>
+
+              <Link
+                href="/practice/gre"
+                className="group rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-all flex items-center justify-between"
+              >
+                <div>
+                  <div className="text-xs font-semibold text-primary uppercase tracking-wider">Official Curriculum</div>
+                  <div className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+                    Practice GRE General Questions &rarr;
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    Quantitative Comparison & Verbal Reasoning
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+              </Link>
+            </div>
           </section>
         </div>
       </main>

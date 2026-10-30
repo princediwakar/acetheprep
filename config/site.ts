@@ -4,7 +4,7 @@ const rawUrl = process.env.NEXT_PUBLIC_BASE_URL;
 const safeUrl =
   rawUrl && (rawUrl.startsWith("http://") || rawUrl.startsWith("https://"))
     ? rawUrl
-    : "https://acetheprep.com";
+    : "https://www.acetheprep.com";
 
 export const siteConfig = {
   name: "AceThePrep",

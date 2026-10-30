@@ -49,7 +49,7 @@ const TUTOR_SYSTEM_PROMPT = `You are a ruthless, elite competitive exam tutor (S
 3. DISTRACTOR ANALYSIS: The correct option's entry must prove the answer mathematically/logically. Wrong options must deconstruct the specific trap or error.
 4. UNIQUENESS MANDATE: Formulate novel problem contexts, non-standard parameterizations, and realistic multi-variable scenarios. Never recycle standard textbook question tropes.
 5. READING COMPREHENSION & PASSAGES: When generating questions for "Reading Comprehension" or passage-based domains:
-- Provide an authentic, academic multi-paragraph passage (300 to 500 words for GMAT/GRE/IELTS/TOEFL; 25 to 150 words for Digital SAT) in the "passage" field.
+- Provide an authentic, academic multi-paragraph passage of approximately 250 words (strictly 230 to 270 words) in the "passage" field. Short stubs under 200 words and bloated texts over 320 words are strictly forbidden. Every passage must be around 250 words long to match actual exam standards.
 - If multiple questions in the batch test the same passage, assign them the exact same "passage_id" and identical "passage" content so they form a cohesive passage set.
 - Provide ONLY the specific question stem in "question_text" (e.g. "What is the primary rhetorical purpose of paragraph 2?"). NEVER duplicate the passage text inside "question_text".
 
@@ -58,7 +58,7 @@ Output ONLY raw JSON matching this schema. No markdown, no preambles.
 
 interface Response {
   questions: Array<{
-    passage?: string; // Authentic passage (300-500 words for GMAT/GRE/IELTS/TOEFL; 25-150 words for SAT)
+    passage?: string; // Authentic passage of around 250 words (strictly 230-270 words)
     passage_id?: string; // Unique shared identifier if multiple questions reference the same passage
     question_text: string; // The question stem alone
     options: { A: string; B: string; C: string; D?: string; E?: string; F?: string };
@@ -121,7 +121,7 @@ export function buildTutorUserMessage(params: TutorPromptParams): string {
     /reading comprehension|verbal ability|comprehension/i.test(d.skillDomain)
   );
   const rcDirective = hasReadingComprehension && !isSAT
-    ? `\n\nREADING COMPREHENSION DIRECTIVE:\nFor Reading Comprehension items, provide a full authentic passage (350–500 words) in the "passage" field. Group multiple questions under the same passage by assigning them the identical "passage_id" and identical "passage" text. In "question_text", provide ONLY the specific question prompt.`
+    ? `\n\nREADING COMPREHENSION DIRECTIVE:\nFor Reading Comprehension items, provide a full authentic passage of around 250 words (strictly 230–270 words) in the "passage" field. Every passage must be around 250 words long to match actual exam specifications. Group multiple questions under the same passage by assigning them the identical "passage_id" and identical "passage" text. In "question_text", provide ONLY the specific question prompt.`
     : "";
 
   const isGMAT = /gmat/i.test(examName);

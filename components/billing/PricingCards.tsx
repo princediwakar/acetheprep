@@ -27,8 +27,8 @@ export function PricingCards({ userEmail: propEmail, isPro: propIsPro }: Pricing
   const urlPlan = searchParams.get("plan");
   const autoCheckout = searchParams.get("checkout") === "true";
 
-  const [billingCycle, setBillingCycle] = useState<"quarterly" | "monthly">(
-    urlPlan === "monthly" ? "monthly" : "quarterly"
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "quarterly">(
+    urlPlan === "quarterly" ? "quarterly" : "monthly"
   );
   const [loadingPlan, setLoadingPlan] = useState<"monthly" | "quarterly" | null>(null);
   const checkoutInitiatedRef = useRef(false);
@@ -68,7 +68,7 @@ export function PricingCards({ userEmail: propEmail, isPro: propIsPro }: Pricing
   useEffect(() => {
     if (autoCheckout && userEmail && !isPro && !checkoutInitiatedRef.current) {
       checkoutInitiatedRef.current = true;
-      const targetPlan = urlPlan === "monthly" ? "monthly" : "quarterly";
+      const targetPlan = urlPlan === "quarterly" ? "quarterly" : "monthly";
       handlePlanCheckout(targetPlan);
     }
   }, [autoCheckout, userEmail, isPro, urlPlan]);
@@ -159,6 +159,30 @@ export function PricingCards({ userEmail: propEmail, isPro: propIsPro }: Pricing
             <div className="p-1 rounded-2xl bg-muted/60 border border-border/80 grid grid-cols-2 gap-1.5">
               <button
                 type="button"
+                onClick={() => setBillingCycle("monthly")}
+                className={cn(
+                  "p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between relative",
+                  !isQuarterly
+                    ? "border-primary bg-background shadow-xs ring-1 ring-primary/20"
+                    : "border-transparent hover:bg-background/50 text-muted-foreground"
+                )}
+              >
+                <div className="flex items-center justify-between gap-1">
+                  <span className={cn("font-bold text-xs", !isQuarterly ? "text-foreground" : "text-muted-foreground")}>
+                    Monthly
+                  </span>
+                  <span className="text-[9px] text-muted-foreground font-medium">Sprint</span>
+                </div>
+                <div className="mt-1 flex items-baseline gap-1">
+                  <span className={cn("text-base font-extrabold tracking-tight", !isQuarterly ? "text-foreground" : "text-muted-foreground")}>
+                    $29
+                  </span>
+                  <span className="text-[10px] text-muted-foreground">/mo</span>
+                </div>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setBillingCycle("quarterly")}
                 className={cn(
                   "p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between relative",
@@ -178,30 +202,6 @@ export function PricingCards({ userEmail: propEmail, isPro: propIsPro }: Pricing
                 <div className="mt-1 flex items-baseline gap-1">
                   <span className={cn("text-base font-extrabold tracking-tight", isQuarterly ? "text-foreground" : "text-muted-foreground")}>
                     $23
-                  </span>
-                  <span className="text-[10px] text-muted-foreground">/mo</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setBillingCycle("monthly")}
-                className={cn(
-                  "p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between relative",
-                  !isQuarterly
-                    ? "border-primary bg-background shadow-xs ring-1 ring-primary/20"
-                    : "border-transparent hover:bg-background/50 text-muted-foreground"
-                )}
-              >
-                <div className="flex items-center justify-between gap-1">
-                  <span className={cn("font-bold text-xs", !isQuarterly ? "text-foreground" : "text-muted-foreground")}>
-                    Monthly
-                  </span>
-                  <span className="text-[9px] text-muted-foreground font-medium">Sprint</span>
-                </div>
-                <div className="mt-1 flex items-baseline gap-1">
-                  <span className={cn("text-base font-extrabold tracking-tight", !isQuarterly ? "text-foreground" : "text-muted-foreground")}>
-                    $29
                   </span>
                   <span className="text-[10px] text-muted-foreground">/mo</span>
                 </div>

@@ -50,7 +50,6 @@ export function useSessionEngine({
   const [answerState, setAnswerState] = useState<"pending" | "answered">("pending");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [, setIsRevealed] = useState(false);
-  const [score, setScore] = useState(initialScore ?? 0);
   const [, setNextEnabled] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(isReviewMode);
   const [completing, setCompleting] = useState(false);
@@ -92,6 +91,10 @@ export function useSessionEngine({
   const [showPalette, setShowPalette] = useState(false);
 
   const answeredCount = useMemo(() => Object.keys(userAttempts).length, [userAttempts]);
+  const score = useMemo(
+    () => Object.values(userAttempts).filter((a) => a.isCorrect).length,
+    [userAttempts],
+  );
   const submittingRef = useRef(false);
 
   const total = questions.length;
@@ -196,7 +199,6 @@ export function useSessionEngine({
       setIsCorrect(correct);
       setIsRevealed(revealed);
       const timeMs = getQuestionDurationMs();
-      if (correct) setScore((prev) => prev + 1);
 
       setUserAttempts((prev) => ({
         ...prev,
@@ -297,7 +299,11 @@ export function useSessionEngine({
   }, [currentIndex, total, loadQuestionAt]);
 
   const handleNext = useCallback(() => {
-    if (mode === "exam" && selectedOption) {
+    if (
+      mode === "exam" &&
+      selectedOption &&
+      userAttempts[current.question_id]?.selected !== selectedOption
+    ) {
       const correct = selectedOption === current.correct_option;
       lockInAnswer(selectedOption, correct, false);
     }
@@ -308,7 +314,7 @@ export function useSessionEngine({
     } else {
       setShowSectionReview(true);
     }
-  }, [mode, selectedOption, current, lockInAnswer, currentIndex, total, loadQuestionAt]);
+  }, [mode, selectedOption, current, lockInAnswer, currentIndex, total, loadQuestionAt, userAttempts]);
 
   const handlePrev = useCallback(() => {
     if (currentIndex <= 0) return;

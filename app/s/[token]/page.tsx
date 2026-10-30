@@ -35,7 +35,7 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { token } = await params;
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com";
+    process.env.NEXT_PUBLIC_BASE_URL || "https://www.acetheprep.com";
 
   try {
     const { data: card, error } = await supabaseAdmin
@@ -162,7 +162,7 @@ export default async function ShareCardPage({ params }: PageProps) {
   const masteredDomains = cd.mastered_domains ?? null;
 
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com";
+    process.env.NEXT_PUBLIC_BASE_URL || "https://www.acetheprep.com";
 
   const allDomains: string[] = [
     ...new Set([
@@ -201,6 +201,7 @@ export default async function ShareCardPage({ params }: PageProps) {
           masteryDelta={masteryDelta}
           hardestQuestion={hardestQuestion}
           masteredDomains={masteredDomains}
+          shareToken={token}
         />
       </div>
     </>

@@ -1,0 +1,55 @@
+name: Daily Comeback Queue Dispatch
+
+on:
+  schedule:
+    # Runs daily at 02:30 UTC (08:00 AM IST / 07:30 PM PDT)
+    - cron: '30 2 * * *'
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Base URL to target (leave empty to use secret or default)'
+        required: false
+        default: ''
+
+jobs:
+  dispatch:
+    name: Dispatch Spaced Repetition Emails
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Trigger Comeback Dispatch Endpoint
+        run: |
+          TARGET_URL="${{ inputs.base_url || secrets.APP_BASE_URL || 'https://www.acetheprep.com' }}"
+          ENDPOINT="${TARGET_URL%/}/api/cron/comeback-dispatch"
+
+          echo "=========================================="
+          echo "Triggering Comeback Dispatch"
+          echo "Endpoint: $ENDPOINT"
+          echo "Timestamp: $(date -u)"
+          echo "=========================================="
+
+          # Execute POST request with bearer authorization and capture HTTP status
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$ENDPOINT" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --connect-timeout 15 \
+            --max-time 120)
+
+          HTTP_BODY=$(echo "$RESPONSE" | sed '$d')
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
+
+          echo "HTTP Status Code: $HTTP_STATUS"
+          echo "Response Payload:"
+          echo "$HTTP_BODY"
+          echo "=========================================="
+
+          # Assert HTTP 200 OK
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+            echo "✓ Comeback Queue successfully dispatched."
+            exit 0
+          else
+            echo "✗ Comeback Queue dispatch failed with status: $HTTP_STATUS"
+            exit 1
+          fi
+
