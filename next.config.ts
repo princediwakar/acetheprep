@@ -62,6 +62,22 @@ const nextConfig = {
 		  source: "/sitemap-insights/:id.xml",
 		  destination: "/sitemap-insights/:id",
 		},
+		{
+		  source: "/sitemap-questions.xml",
+		  destination: "/sitemap-questions/1",
+		},
+		{
+		  source: "/sitemap-questions/:id.xml",
+		  destination: "/sitemap-questions/:id",
+		},
+		{
+		  source: "/sitemap-quizzes.xml",
+		  destination: "/sitemap-quizzes/1",
+		},
+		{
+		  source: "/sitemap-quizzes/:id.xml",
+		  destination: "/sitemap-quizzes/:id",
+		},
 	  ];
 	},
   };

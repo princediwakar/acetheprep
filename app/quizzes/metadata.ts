@@ -1,42 +1,46 @@
 // app/quizzes/metadata.ts
 import { Metadata } from "next";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com";
 const ogImageUrl = `${baseUrl}/api/og?type=home`;
 
 export const metadata: Metadata = {
-  title: "Practice Tests",
+  title: "Public Practice Quizzes & Subject Mock Tests | AceThePrep",
   description:
-    "Explore practice tests on any topic. Find what you don't know before exam day.",
+    "Explore community-shared and AI-curated practice quizzes across competitive exams, quantitative reasoning, verbal ability, and data insights.",
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: `${baseUrl}/quizzes`,
   },
   keywords: [
-
     "practice tests",
-    "exam prep",
-    "practice questions",
-    "AI study",
-    "learning",
-    "education",
+    "public quizzes",
+    "competitive exam prep",
+    "quantitative reasoning tests",
+    "verbal reasoning quiz",
+    "data insights practice",
+    "AI quiz generator",
+    "free test prep",
   ],
   openGraph: {
-    title: "Practice Tests | AceThePrep",
-    description: "Explore practice tests on any topic",
+    title: "Public Practice Quizzes & Subject Mock Tests | AceThePrep",
+    description: "Explore curated practice tests and drills shared by the test-prep community.",
     url: `${baseUrl}/quizzes`,
     images: [
       {
         url: ogImageUrl,
         width: 1200,
         height: 630,
-        alt: "AceThePrep Practice Tests",
+        alt: "AceThePrep Public Practice Tests",
       },
     ],
   },
   twitter: {
-    title: "Practice Tests | AceThePrep",
-    description: "Explore practice tests on any topic",
+    title: "Public Practice Quizzes & Subject Mock Tests | AceThePrep",
+    description: "Explore curated practice tests and drills shared by the test-prep community.",
     images: [ogImageUrl],
   },
 };

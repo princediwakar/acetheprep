@@ -26,6 +26,14 @@ export async function GET() {
     <loc>${baseUrl}/sitemap-insights.xml</loc>
     <lastmod>${lastModified}</lastmod>
   </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/sitemap-questions.xml</loc>
+    <lastmod>${lastModified}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/sitemap-quizzes.xml</loc>
+    <lastmod>${lastModified}</lastmod>
+  </sitemap>
 </sitemapindex>`;
 
   return new Response(xml, {

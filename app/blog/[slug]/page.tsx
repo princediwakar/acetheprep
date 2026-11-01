@@ -361,16 +361,17 @@ export default async function BlogPostPage({ params }: PageProps) {
 
           <div className="mt-6 flex flex-col sm:flex-row items-center gap-4">
             <Link
-              href="/setup"
-              className="w-full sm:w-auto text-center rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow transition hover:opacity-90"
+              href={practiceSlug ? `/practice/${practiceSlug}` : "/practice"}
+              className="w-full sm:w-auto text-center rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow transition hover:opacity-90 inline-flex items-center justify-center gap-2"
             >
-              Set Up Your Exam Free
+              <span>{targetExamName ? `Practice ${targetExamName} Questions Free` : "Explore Practice Questions Free"}</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              href="/practice"
+              href="/tools"
               className="w-full sm:w-auto text-center rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-muted transition"
             >
-              Explore Practice Questions
+              Score Calculators &amp; Converters
             </Link>
           </div>
         </div>

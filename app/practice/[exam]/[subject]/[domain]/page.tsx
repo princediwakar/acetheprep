@@ -22,7 +22,7 @@ import {
 import { siteConfig } from "@/config/site";
 import taxonomyRaw from "@/lib/taxonomies.json";
 import demoQuestionsRaw from "@/lib/demo-questions.json";
-import { ALL_BANKS } from "@/lib/data/banks";
+import { ALL_BANKS, getBankQuestionsForDomain } from "@/lib/data/banks";
 import { getDomainKnowledge } from "@/lib/curriculum-knowledge";
 import {
   CheckCircle2,
@@ -31,6 +31,8 @@ import {
   ArrowLeft,
   Sparkles,
   BookOpen,
+  Calculator,
+  HelpCircle,
 } from "lucide-react";
 import { getGuidesForCurriculum } from "@/lib/mdx";
 import { DomainCorePrinciples } from "@/components/practice/DomainCorePrinciples";
@@ -278,6 +280,38 @@ export default async function PracticePage({ params }: PracticePageProps) {
   // In-memory retrieval of authoritative psychometric guides for this curriculum track (0ms latency)
   const relatedGuides = await getGuidesForCurriculum(examName, domainName, 2);
 
+  // High-yield individual questions for deep-dive crawlability and practice
+  const deepDiveQuestions = getBankQuestionsForDomain(examName, domainName, 8);
+
+  // Contextual score calculator / converter tool link for internal linking mesh
+  const EXAM_TOOL_MAP: Record<string, { title: string; href: string }> = {
+    "GMAT Focus": {
+      title: "GMAT Focus Score Calculator & Percentile Calibrator",
+      href: "/tools/gmat-focus-score-calculator",
+    },
+    SAT: {
+      title: "Digital SAT Score Calculator & Adaptive Routing Simulator",
+      href: "/tools/digital-sat-score-calculator",
+    },
+    GRE: {
+      title: "Official GRE to GMAT Focus Score Concordance Converter",
+      href: "/tools/gre-to-gmat-converter",
+    },
+    "CFA Level 1": {
+      title: "CFA Level 1 Score Calculator & Minimum Passing Score (MPS) Model",
+      href: "/tools/cfa-level-1-score-calculator",
+    },
+    "IELTS Academic": {
+      title: "IELTS Band Score Calculator & Official Rounding Simulator",
+      href: "/tools/ielts-band-score-calculator",
+    },
+    "TOEFL iBT": {
+      title: "TOEFL iBT to IELTS Band Concordance Converter",
+      href: "/tools/toefl-to-ielts-converter",
+    },
+  };
+  const matchingTool = EXAM_TOOL_MAP[examName];
+
   // Build breadcrumb items with clean canonical URLs
   const breadcrumbItems = [
     { name: "Home", url: baseUrl },
@@ -478,6 +512,85 @@ export default async function PracticePage({ params }: PracticePageProps) {
             primaryDistractorTrap={knowledge.primaryDistractorTrap}
           />
         </div>
+
+        {/* Individual Exam Question Leaf Pages & Trap Dissections */}
+        {deepDiveQuestions.length > 0 && (
+          <div className="mb-10 rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+              <div>
+                <div className="flex items-center gap-1.5 text-primary text-xs font-mono font-bold uppercase tracking-wider mb-1">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Verified Question Bank</span>
+                </div>
+                <h3 className="text-base font-bold text-foreground">
+                  Individual {domainName} Exam Questions &amp; Traps
+                </h3>
+              </div>
+              <span className="text-xs text-muted-foreground font-mono">
+                {deepDiveQuestions.length} practice problems
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              {deepDiveQuestions.map((item, idx) => (
+                <Link
+                  key={item.slug}
+                  href={`/q/${item.slug}`}
+                  className="group rounded-xl border border-border/70 bg-background/50 p-4 hover:border-primary/50 hover:bg-background transition-all flex flex-col justify-between"
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className="font-mono font-semibold px-2 py-0.5 rounded bg-primary/10 text-primary">
+                        Tier {item.question.difficulty_tier} • {item.question.exam_name}
+                      </span>
+                      <span className="text-muted-foreground font-mono">Q#{idx + 1}</span>
+                    </div>
+                    <p className="text-xs font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors leading-relaxed">
+                      {item.question.question_text.slice(0, 110)}...
+                    </p>
+                  </div>
+                  <div className="mt-3 pt-2 border-t border-border/50 flex items-center justify-between text-[11px] text-muted-foreground">
+                    <span className="text-[10px] text-amber-500 font-medium">
+                      {item.question.misconception ? "Contains Examiner Trap" : "Verified Solution"}
+                    </span>
+                    <span className="inline-flex items-center gap-1 font-semibold text-primary group-hover:translate-x-0.5 transition-transform">
+                      Inspect Trap <ArrowRight className="w-3 h-3" />
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Contextual Score Calculator / Psychometric Tool Mesh */}
+        {matchingTool && (
+          <div className="mb-10 rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/5 via-background to-primary/10 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/25 flex items-center justify-center shrink-0 text-primary">
+                <Calculator className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-[10px] font-mono uppercase font-bold text-primary tracking-wider block">
+                  Official Psychometric Calculator
+                </span>
+                <p className="text-sm font-bold text-foreground">
+                  {matchingTool.title}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Simulate official score concordance, percentile bands, and target university admission percentiles.
+                </p>
+              </div>
+            </div>
+            <Link
+              href={matchingTool.href}
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition shrink-0"
+            >
+              <span>Launch Tool</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        )}
 
         {/* Topological Cross-Links: Related Domains in Subject */}
 

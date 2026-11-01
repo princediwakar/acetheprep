@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { Metadata } from "next";
 import { Quiz } from "@/types/quiz";
+import StructuredData, { practiceQuizSchema, breadcrumbSchema } from "@/components/seo/StructuredData";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -46,9 +47,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       quiz.title
     )}&topic=${encodeURIComponent(quiz.topic || "General")}`;
 
+    const isIndexable = Boolean(quiz.is_public && quiz.status === "ready");
+
     return {
-      title: quiz.title,
-      description: `${quiz.description}`,
+      title: `${quiz.title} | AceThePrep Practice Test`,
+      description: quiz.description || `Practice ${quiz.title} on AceThePrep with active cognitive feedback and instant explanations.`,
       keywords: [
         quiz.title,
         quiz.topic,
@@ -56,15 +59,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         quiz.difficulty,
         "quiz",
         "test",
-        "knowledge",
+        "practice questions",
+        "knowledge test",
       ].filter(Boolean) as string[],
-      robots: {
-        index: false,
-        follow: false,
+      robots: isIndexable
+        ? {
+            index: true,
+            follow: true,
+          }
+        : {
+            index: false,
+            follow: false,
+          },
+      alternates: {
+        canonical: `${baseUrl}/quiz/${slug}`,
       },
       openGraph: {
-        title: quiz.title,
-        description: `${quiz.description}`,
+        title: `${quiz.title} | AceThePrep`,
+        description: quiz.description || `Test your knowledge with ${quiz.title}.`,
         url: `${baseUrl}/quiz/${slug}`,
         images: [
           {
@@ -76,15 +88,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         ],
       },
       twitter: {
-        title: quiz.title,
-        description: `${quiz.description}`,
+        title: `${quiz.title} | AceThePrep`,
+        description: quiz.description || `Test your knowledge with ${quiz.title}.`,
         images: [ogImageUrl],
       },
     };
   } catch (error) {
     console.error("Error generating metadata for quiz:", error);
     return {
-      title: "Quiz",
+      title: "Practice Quiz | AceThePrep",
       description: "Take quizzes and test your knowledge",
       robots: {
         index: false,
@@ -232,7 +244,44 @@ export default async function QuizPage({ params }: PageProps) {
     };
 
     const isCreator = user?.id === quiz.creator_id;
-    return <QuizPlayer quiz={quiz} isCreator={isCreator} />;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://acetheprep.com";
+
+    const quizUrl = `${baseUrl}/quiz/${slug}`;
+    const quizSchema = quiz.is_public && quiz.questions.length > 0
+      ? practiceQuizSchema({
+          url: quizUrl,
+          examName: quiz.topic || quiz.subject || "Competitive Exam",
+          domain: quiz.title,
+          subject: quiz.subject || "General",
+          description: quiz.description || `Practice ${quiz.title} on AceThePrep with active cognitive feedback and instant explanations.`,
+          questions: quiz.questions.slice(0, 10).map((q) => {
+            const opts = typeof q.options === "object" && q.options
+              ? Object.entries(q.options).map(([k, v]) => ({ label: k, text: String(v) }))
+              : [];
+            return {
+              questionText: q.question_text,
+              options: opts,
+              correctOption: q.correct_option,
+              correctText: (q.options as Record<string, string>)?.[q.correct_option] || q.correct_option,
+              explanation: q.explanation || "Detailed step-by-step reasoning on AceThePrep.",
+            };
+          }),
+        })
+      : null;
+
+    const breadcrumbs = breadcrumbSchema([
+      { name: "Home", url: baseUrl },
+      { name: "Public Quizzes", url: `${baseUrl}/quizzes` },
+      { name: quiz.title, url: quizUrl },
+    ]);
+
+    return (
+      <>
+        {quizSchema && <StructuredData schema={quizSchema} />}
+        <StructuredData schema={breadcrumbs} />
+        <QuizPlayer quiz={quiz} isCreator={isCreator} />
+      </>
+    );
     
   } catch (error) {
     console.error("Error in QuizPage:", error);

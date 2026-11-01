@@ -3,14 +3,27 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { ALL_BANKS } from "@/lib/data/banks";
+import {
+  ALL_BANK_ENTRIES,
+  getBankQuestionBySlug,
+  getBankQuestionsForDomain,
+} from "@/lib/data/banks";
 import { QuestionCard } from "@/components/debate/QuestionCard";
 import StructuredData, { breadcrumbSchema } from "@/components/seo/StructuredData";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { examToSlug, subjectToSlug, domainToSlug } from "@/lib/slugs";
 
 interface PageProps {
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ answer?: string; ref?: string }>;
+}
+
+export const revalidate = 86400;
+
+export async function generateStaticParams() {
+  return ALL_BANK_ENTRIES.map((entry) => ({
+    id: entry.slug,
+  }));
 }
 
 interface QuestionRecord {
@@ -57,30 +70,24 @@ async function findQuestion(id: string): Promise<QuestionRecord | null> {
     }
   }
 
-  // 2. Lookup in compiled master question bank by index, slug, or matching seed
-  const lowerId = id.toLowerCase();
-  for (let i = 0; i < ALL_BANKS.length; i++) {
-    const q = ALL_BANKS[i];
-    const examSlug = q.exam_name.toLowerCase().replace(/[^a-z0-9]/g, "-");
-    const domainSlug = q.skill_domain.toLowerCase().replace(/[^a-z0-9]/g, "-");
-    const candidateSlug = `${examSlug}-${domainSlug}-${i + 1}`;
-
-    if (id === candidateSlug || id === `seed_${i + 1}` || id === String(i + 1)) {
-      return {
-        id,
-        exam_name: q.exam_name,
-        subject: q.subject,
-        skill_domain: q.skill_domain,
-        difficulty_tier: q.difficulty_tier,
-        question_text: q.question_text,
-        passage: q.passage,
-        options: q.options as Record<string, string>,
-        correct_option: q.correct_option,
-        explanation: q.explanation,
-        distractor_analysis: q.distractor_analysis as Record<string, string>,
-        misconception: q.misconception,
-      };
-    }
+  // 2. High-speed O(1) in-memory lookup in compiled master question bank
+  const entry = getBankQuestionBySlug(id);
+  if (entry) {
+    const q = entry.question;
+    return {
+      id: entry.slug,
+      exam_name: q.exam_name,
+      subject: q.subject,
+      skill_domain: q.skill_domain,
+      difficulty_tier: q.difficulty_tier,
+      question_text: q.question_text,
+      passage: q.passage,
+      options: q.options as Record<string, string>,
+      correct_option: q.correct_option,
+      explanation: q.explanation || "",
+      distractor_analysis: (q.distractor_analysis as Record<string, string>) || {},
+      misconception: q.misconception || null,
+    };
   }
 
   return null;
@@ -176,14 +183,25 @@ export default async function QuestionPage({ params, searchParams }: PageProps) 
     ],
   };
 
+  const relatedQuestions = getBankQuestionsForDomain(
+    question.exam_name,
+    question.skill_domain,
+    6
+  ).filter((r) => r.slug !== question.id);
+
+  const examSlug = examToSlug(question.exam_name);
+  const subjectSlug = subjectToSlug(question.subject || "General");
+  const domainSlug = domainToSlug(question.skill_domain);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <StructuredData schema={questionSchema} />
       <StructuredData
         schema={breadcrumbSchema([
           { name: "Home", url: baseUrl },
-          { name: question.exam_name, url: `${baseUrl}/practice` },
-          { name: question.skill_domain, url: `${baseUrl}/q/${id}` },
+          { name: question.exam_name, url: `${baseUrl}/practice/${examSlug}` },
+          { name: question.skill_domain, url: `${baseUrl}/practice/${examSlug}/${subjectSlug}/${domainSlug}` },
+          { name: `Question ${id}`, url: `${baseUrl}/q/${id}` },
         ])}
       />
 
@@ -191,11 +209,11 @@ export default async function QuestionPage({ params, searchParams }: PageProps) 
       <header className="border-b border-border/80 bg-background/95 backdrop-blur-sm sticky top-0 z-30">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link
-            href="/home"
+            href={isAuthenticated ? "/home" : `/practice/${examSlug}/${subjectSlug}/${domainSlug}`}
             className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Dashboard</span>
+            <span>{isAuthenticated ? "Back to Dashboard" : `Explore ${question.exam_name} Drills`}</span>
           </Link>
 
           <Link href="/" className="flex items-center gap-1.5 font-bold text-sm tracking-tight">
@@ -207,10 +225,10 @@ export default async function QuestionPage({ params, searchParams }: PageProps) 
           </Link>
 
           <Link
-            href="/practice"
+            href={`/practice/${examSlug}`}
             className="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
           >
-            Practice Drills &rarr;
+            {question.exam_name} Hub &rarr;
           </Link>
         </div>
       </header>
@@ -234,6 +252,58 @@ export default async function QuestionPage({ params, searchParams }: PageProps) 
           isPeerChallenge={isPeerChallenge}
           initialSelectedOption={initialSelectedOption}
         />
+
+        {/* Cross-Link Bridge to Interactive Topic Practice */}
+        <section className="mt-12 pt-8 border-t border-border/80 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl border border-primary/25 bg-gradient-to-r from-primary/5 via-card to-primary/10 shadow-xs">
+            <div className="space-y-1">
+              <span className="text-[10px] font-mono uppercase font-bold tracking-wider text-primary">
+                Full Curriculum Drill
+              </span>
+              <h2 className="text-base font-bold text-foreground">
+                Practice More {question.exam_name} {question.skill_domain} Questions
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                Take the interactive diagnostic drill with real-time distractor analysis, Desmos calculator, and SM-2 spaced repetition.
+              </p>
+            </div>
+            <Link
+              href={`/practice/${examSlug}/${subjectSlug}/${domainSlug}`}
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition shrink-0"
+            >
+              <span>Start Topic Drill</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {relatedQuestions.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground font-mono">
+                More {question.skill_domain} Questions in {question.exam_name}
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {relatedQuestions.map((rel) => (
+                  <Link
+                    key={rel.slug}
+                    href={`/q/${rel.slug}`}
+                    className="p-3.5 rounded-xl border border-border/70 bg-card hover:border-primary/40 hover:bg-muted/30 transition group space-y-1.5 block"
+                  >
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className="font-mono text-primary font-semibold">Tier {rel.question.difficulty_tier}</span>
+                      <span className="text-muted-foreground uppercase">{rel.question.exam_name}</span>
+                    </div>
+                    <p className="text-xs font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                      {rel.question.question_text.slice(0, 110)}...
+                    </p>
+                    <span className="text-[10px] text-primary/80 font-medium inline-flex items-center gap-1 group-hover:text-primary">
+                      Inspect distractor trap <ArrowRight className="w-2.5 h-2.5" />
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
       </main>
     </div>
   );

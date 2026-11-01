@@ -18,6 +18,10 @@ Allow: /tools/
 Allow: /compare/
 Allow: /insights/
 Allow: /blog/
+Allow: /quizzes
+Allow: /quizzes/
+Allow: /quiz/
+Allow: /q/
 Allow: /privacy
 Allow: /terms
 Allow: /api/og
@@ -32,8 +36,6 @@ Disallow: /history/
 Disallow: /edit/
 Disallow: /analytics/
 Disallow: /create
-Disallow: /quiz/
-Disallow: /quizzes/
 Disallow: /api/
 
 # OpenAI Real-Time Search & Browsing Bots
@@ -44,6 +46,10 @@ Allow: /tools/
 Allow: /compare/
 Allow: /insights/
 Allow: /blog/
+Allow: /quizzes
+Allow: /quizzes/
+Allow: /quiz/
+Allow: /q/
 Allow: /pricing
 Allow: /predictor
 Allow: /api/knowledge/
@@ -55,8 +61,6 @@ Disallow: /session/
 Disallow: /setup
 Disallow: /history/
 Disallow: /edit/
-Disallow: /quiz/
-Disallow: /quizzes/
 Disallow: /api/
 
 User-agent: ChatGPT-User
@@ -66,6 +70,10 @@ Allow: /tools/
 Allow: /compare/
 Allow: /insights/
 Allow: /blog/
+Allow: /quizzes
+Allow: /quizzes/
+Allow: /quiz/
+Allow: /q/
 Allow: /pricing
 Allow: /predictor
 Allow: /api/knowledge/
@@ -77,8 +85,6 @@ Disallow: /session/
 Disallow: /setup
 Disallow: /history/
 Disallow: /edit/
-Disallow: /quiz/
-Disallow: /quizzes/
 Disallow: /api/
 
 # AI Crawlers & Generative Search Engines
@@ -89,6 +95,10 @@ Allow: /tools/
 Allow: /compare/
 Allow: /insights/
 Allow: /blog/
+Allow: /quizzes
+Allow: /quizzes/
+Allow: /quiz/
+Allow: /q/
 Allow: /pricing
 Allow: /predictor
 Allow: /api/knowledge/
@@ -100,8 +110,6 @@ Disallow: /session/
 Disallow: /setup
 Disallow: /history/
 Disallow: /edit/
-Disallow: /quiz/
-Disallow: /quizzes/
 Disallow: /api/
 
 User-agent: PerplexityBot
@@ -111,6 +119,10 @@ Allow: /tools/
 Allow: /compare/
 Allow: /insights/
 Allow: /blog/
+Allow: /quizzes
+Allow: /quizzes/
+Allow: /quiz/
+Allow: /q/
 Allow: /pricing
 Allow: /predictor
 Allow: /api/knowledge/
@@ -122,8 +134,6 @@ Disallow: /session/
 Disallow: /setup
 Disallow: /history/
 Disallow: /edit/
-Disallow: /quiz/
-Disallow: /quizzes/
 Disallow: /api/
 
 User-agent: ClaudeBot
@@ -133,6 +143,10 @@ Allow: /tools/
 Allow: /compare/
 Allow: /insights/
 Allow: /blog/
+Allow: /quizzes
+Allow: /quizzes/
+Allow: /quiz/
+Allow: /q/
 Allow: /pricing
 Allow: /predictor
 Allow: /api/knowledge/
@@ -144,8 +158,6 @@ Disallow: /session/
 Disallow: /setup
 Disallow: /history/
 Disallow: /edit/
-Disallow: /quiz/
-Disallow: /quizzes/
 Disallow: /api/
 
 User-agent: Claude-Web
@@ -155,6 +167,10 @@ Allow: /tools/
 Allow: /compare/
 Allow: /insights/
 Allow: /blog/
+Allow: /quizzes
+Allow: /quizzes/
+Allow: /quiz/
+Allow: /q/
 Allow: /pricing
 Allow: /predictor
 Allow: /api/knowledge/
@@ -166,8 +182,6 @@ Disallow: /session/
 Disallow: /setup
 Disallow: /history/
 Disallow: /edit/
-Disallow: /quiz/
-Disallow: /quizzes/
 Disallow: /api/
 
 User-agent: Google-Extended
@@ -177,6 +191,10 @@ Allow: /tools/
 Allow: /compare/
 Allow: /insights/
 Allow: /blog/
+Allow: /quizzes
+Allow: /quizzes/
+Allow: /quiz/
+Allow: /q/
 Allow: /pricing
 Allow: /predictor
 Allow: /api/knowledge/
@@ -188,8 +206,6 @@ Disallow: /session/
 Disallow: /setup
 Disallow: /history/
 Disallow: /edit/
-Disallow: /quiz/
-Disallow: /quizzes/
 Disallow: /api/
 
 User-agent: Applebot-Extended
@@ -199,6 +215,10 @@ Allow: /tools/
 Allow: /compare/
 Allow: /insights/
 Allow: /blog/
+Allow: /quizzes
+Allow: /quizzes/
+Allow: /quiz/
+Allow: /q/
 Allow: /pricing
 Allow: /predictor
 Allow: /api/knowledge/
@@ -210,8 +230,6 @@ Disallow: /session/
 Disallow: /setup
 Disallow: /history/
 Disallow: /edit/
-Disallow: /quiz/
-Disallow: /quizzes/
 Disallow: /api/
 
 Sitemap: ${baseUrl}/sitemap.xml
