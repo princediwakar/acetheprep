@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { ArrowRight, Sparkles, Target, ShieldCheck, Zap, RotateCcw } from "lucide-react";
 import { PageHero, HeroBadge } from "@/components/shared/PageHero";
-import { ExamSelectorStrip } from "@/components/shared/ExamSelectorStrip";
+import { ExamSelectorStrip, EXAM_TABS } from "@/components/shared/ExamSelectorStrip";
 import { SignInButton } from "@/components/SignInButton";
 import { InstantTopicSearch } from "./InstantTopicSearch";
 import { LANDING_EXAMS, type ExamKey } from "./landing-data";
@@ -12,6 +12,7 @@ import { LANDING_EXAMS, type ExamKey } from "./landing-data";
 interface HeroSectionProps {
   activeExam: ExamKey;
   onExamChange: (exam: ExamKey) => void;
+  selectorRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 const EXAM_HERO_COPY: Record<
@@ -63,6 +64,7 @@ const EXAM_HERO_COPY: Record<
 export function HeroSection({
   activeExam,
   onExamChange,
+  selectorRef,
 }: HeroSectionProps) {
   const examConfig = LANDING_EXAMS[activeExam] || LANDING_EXAMS.gmat;
   const heroCopy = EXAM_HERO_COPY[activeExam] || EXAM_HERO_COPY.gmat;
@@ -75,8 +77,12 @@ export function HeroSection({
     <section className="relative pt-6 pb-12 sm:pt-10 sm:pb-16 px-4 sm:px-6">
       <div className="mx-auto max-w-5xl space-y-8">
         {/* Exam Selector Switcher */}
-        <div id="exam-selector">
-          <ExamSelectorStrip activeExam={activeExam} onExamChange={onExamChange} />
+        <div id="exam-selector" ref={selectorRef}>
+          <ExamSelectorStrip
+            activeExam={activeExam}
+            onExamChange={onExamChange}
+            label="Select your target exam:"
+          />
         </div>
 
         {/* Dynamic Exam-Specific Hero Messaging */}
@@ -84,7 +90,7 @@ export function HeroSection({
           badge={
             <HeroBadge className="border-border bg-muted/60 text-foreground/90 font-medium text-xs sm:text-sm px-3.5 py-1">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Adaptive AI Engine • 100% Free Practice</span>
+              <span>Adaptive AI Engine for 6 Global Exams • 100% Free Practice</span>
             </HeroBadge>
           }
           title={heroCopy.headline}
@@ -107,6 +113,23 @@ export function HeroSection({
           <p className="text-xs text-muted-foreground pt-1">
             5 quick questions to find your score leaks • 100% free • No credit card
           </p>
+
+          {/* Quick exam links to eliminate any misconception that AceThePrep is only for GMAT */}
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs text-muted-foreground">
+            <span className="font-medium">Also preparing for:</span>
+            <div className="flex flex-wrap items-center justify-center gap-1.5">
+              {EXAM_TABS.filter((t) => t.key !== activeExam).map((tab) => (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => onExamChange(tab.key)}
+                  className="rounded-md bg-secondary/60 hover:bg-secondary hover:text-foreground px-2 py-0.5 text-[11px] font-medium transition-colors cursor-pointer border border-border/60"
+                >
+                  {tab.title}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* 4 Clean AI Product Value Badges */}

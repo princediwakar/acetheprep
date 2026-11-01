@@ -6,13 +6,15 @@ import Link from "next/link";
 import { ArrowRight, Calculator, Clock, Target, CheckCircle2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LANDING_EXAMS, type ExamKey } from "./landing-data";
+import { EXAM_TABS } from "@/components/shared/ExamSelectorStrip";
 import { SignInButton } from "@/components/SignInButton";
 
 export interface ScorePlannerSectionProps {
   activeExam: ExamKey;
+  onExamChange?: (exam: ExamKey) => void;
 }
 
-export function ScorePlannerSection({ activeExam }: ScorePlannerSectionProps) {
+export function ScorePlannerSection({ activeExam, onExamChange }: ScorePlannerSectionProps) {
   const examConfig = LANDING_EXAMS[activeExam] || LANDING_EXAMS.gmat;
   const scale = examConfig.scoreScale;
   const gapLogic = examConfig.scoreGapLogic;
@@ -58,6 +60,35 @@ export function ScorePlannerSection({ activeExam }: ScorePlannerSectionProps) {
 
         {/* Inputs Card */}
         <div className="rounded-2xl border border-border/80 bg-card p-6 sm:p-8 shadow-xs space-y-8">
+          {/* Exam Switcher Tab Pills */}
+          {onExamChange && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-border/60">
+              <span className="text-xs font-mono font-medium text-muted-foreground uppercase tracking-wider">
+                Select Exam:
+              </span>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {EXAM_TABS.map((tab) => {
+                  const isSelected = activeExam === tab.key;
+                  return (
+                    <button
+                      key={tab.key}
+                      type="button"
+                      onClick={() => onExamChange(tab.key)}
+                      className={cn(
+                        "rounded-lg px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
+                        isSelected
+                          ? "bg-foreground text-background font-semibold shadow-xs"
+                          : "border border-border/70 bg-secondary/30 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                      )}
+                    >
+                      {tab.title}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Quick Presets */}
           <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-border/60">
             <span className="text-xs font-mono text-muted-foreground">

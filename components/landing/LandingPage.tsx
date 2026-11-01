@@ -1,10 +1,11 @@
 // Path: components/landing/LandingPage.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
 import { HeroSection } from "./HeroSection";
+import { StickyExamBar } from "./StickyExamBar";
 import { ProductImpactSection } from "./ProductImpactSection";
 import { AIWritingShowcase } from "./AIWritingShowcase";
 import { ScorePlannerSection } from "./ScorePlannerSection";
@@ -31,6 +32,7 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
       : "gmat";
 
   const [activeExam, setActiveExam] = useState<ExamKey>(validExam);
+  const heroSelectorRef = useRef<HTMLDivElement>(null);
 
   // Instant client-side redirect for authenticated returning students
   useEffect(() => {
@@ -39,12 +41,17 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
     }
   }, [user, isUserLoading, router]);
 
-  // Keep state in sync if SSR initialExam changes or URL changes externally
+  // Handle browser Back / Forward history navigation cleanly without state tearing
   useEffect(() => {
-    if (paramExam && LANDING_EXAMS[paramExam] && paramExam !== activeExam) {
-      setActiveExam(paramExam);
-    }
-  }, [paramExam, activeExam]);
+    const handlePopState = () => {
+      const currentParam = new URLSearchParams(window.location.search).get("exam")?.toLowerCase() as ExamKey | undefined;
+      const valid: ExamKey = currentParam && LANDING_EXAMS[currentParam] ? currentParam : "gmat";
+      setActiveExam(valid);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   // Sync URL query string cleanly without full page reloads for instant 0ms transitions
   const handleExamChange = (newExam: ExamKey) => {
@@ -63,10 +70,18 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
 
   return (
     <div className="min-h-screen bg-background text-foreground antialiased selection:bg-foreground/10 selection:text-foreground">
+      {/* Persistent Floating Exam Dock (Reveals when Hero Selector is scrolled out of view) */}
+      <StickyExamBar
+        activeExam={activeExam}
+        onExamChange={handleExamChange}
+        targetRef={heroSelectorRef}
+      />
+
       {/* 1. Clear, Human Product Hero with 6-Exam Switcher */}
       <HeroSection
         activeExam={activeExam}
         onExamChange={handleExamChange}
+        selectorRef={heroSelectorRef}
       />
 
       {/* 2. The 4 AI Engines (Score Leak Diagnostic, Trap Forensics, Socratic Hinting, Spaced Retention) */}
@@ -75,14 +90,20 @@ export default function LandingPage({ initialExam }: LandingPageProps) {
       {/* 3. Live Proof: Real-Time AI Essay & Writing Evaluation */}
       <AIWritingShowcase />
 
-      {/* 4. Interactive Score Estimator & AI Study Planner */}
-      <ScorePlannerSection activeExam={activeExam} />
+      {/* 4. Interactive Score Estimator & AI Study Planner with in-situ Exam Switcher */}
+      <ScorePlannerSection
+        activeExam={activeExam}
+        onExamChange={handleExamChange}
+      />
 
       {/* 5. System Architecture: How It Works Under The Hood */}
       <AITechnologySection />
 
       {/* 6. The 6 Global Exam Standards */}
-      <GlobalExamsSection onSelectExam={handleExamChange} />
+      <GlobalExamsSection
+        activeExam={activeExam}
+        onSelectExam={handleExamChange}
+      />
 
       {/* 7. Minimal, Honest Call To Action */}
       <SimpleCTASection />

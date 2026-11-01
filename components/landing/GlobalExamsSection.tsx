@@ -2,14 +2,16 @@
 import Link from "next/link";
 import { Clock, HelpCircle, Layers, ArrowRight, BookOpen, Compass, CheckCircle2 } from "lucide-react";
 import { LANDING_EXAMS, type ExamKey } from "./landing-data";
+import { cn } from "@/lib/utils";
 
 interface GlobalExamsSectionProps {
+  activeExam?: ExamKey;
   onSelectExam?: (exam: ExamKey) => void;
 }
 
 import { EXAM_KEYS as EXAMS_ORDER } from "@/lib/constants/exams";
 
-export function GlobalExamsSection({ onSelectExam }: GlobalExamsSectionProps) {
+export function GlobalExamsSection({ activeExam, onSelectExam }: GlobalExamsSectionProps) {
   return (
     <section id="curriculum" className="relative py-16 sm:py-24 border-t border-border/80 px-4 sm:px-6 scroll-mt-14">
       <div className="mx-auto max-w-6xl space-y-12">
@@ -34,11 +36,17 @@ export function GlobalExamsSection({ onSelectExam }: GlobalExamsSectionProps) {
             const curr = config.curriculum;
             const drillUrl = curr.diagnosticDrillUrl;
             const blueprintUrl = curr.blueprintUrl;
+            const isCurrentActive = activeExam === key;
 
             return (
               <div
                 key={key}
-                className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs flex flex-col justify-between space-y-6 transition-all hover:border-foreground/30 hover:shadow-sm"
+                className={cn(
+                  "rounded-2xl border bg-card p-6 shadow-xs flex flex-col justify-between space-y-6 transition-all hover:shadow-sm",
+                  isCurrentActive
+                    ? "border-foreground/70 ring-1 ring-foreground/20 shadow-md"
+                    : "border-border/80 hover:border-foreground/30"
+                )}
               >
                 <div className="space-y-4">
                   {/* Card Header */}
@@ -46,9 +54,16 @@ export function GlobalExamsSection({ onSelectExam }: GlobalExamsSectionProps) {
                     <span className="font-mono text-xs font-semibold text-foreground/80 uppercase tracking-wider">
                       {config.shortName}
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-border bg-muted/60 text-muted-foreground">
-                      {config.officialBadge}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      {isCurrentActive && (
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-foreground text-background font-semibold">
+                          Active
+                        </span>
+                      )}
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-border bg-muted/60 text-muted-foreground">
+                        {config.officialBadge}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Title & Format */}
@@ -112,6 +127,16 @@ export function GlobalExamsSection({ onSelectExam }: GlobalExamsSectionProps) {
                     <span>Start {config.shortName} Diagnostic Drill</span>
                     <ArrowRight className="h-3 w-3" />
                   </Link>
+
+                  {!isCurrentActive && onSelectExam && (
+                    <button
+                      type="button"
+                      onClick={() => onSelectExam(key)}
+                      className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-border/80 bg-secondary/40 px-4 py-2 text-xs font-medium text-foreground hover:bg-secondary transition-colors cursor-pointer"
+                    >
+                      <span>Switch Landing Page to {config.shortName}</span>
+                    </button>
+                  )}
 
                   <Link
                     href={blueprintUrl}
