@@ -31,7 +31,7 @@ export function SmartStartStrip({
           <div className="space-y-3.5">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-base text-foreground tracking-tight">
-                Today&apos;s Focus
+                Daily Review
               </h3>
               <span className="text-xs text-muted-foreground font-mono">10 Questions</span>
             </div>
@@ -65,7 +65,7 @@ export function SmartStartStrip({
             className="w-full cursor-pointer font-bold mt-auto h-9"
             onClick={onAlgorithmicReview}
           >
-            <Play className="mr-1.5 h-3.5 w-3.5 fill-current" /> Start Focus Set (10Q)
+            <Play className="mr-1.5 h-3.5 w-3.5 fill-current" /> Start Today's Practice
           </Button>
         </CardContent>
       </Card>
@@ -76,7 +76,7 @@ export function SmartStartStrip({
           <div className="space-y-3.5">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-base text-foreground tracking-tight">
-                Curriculum Pace
+                Current Topic
               </h3>
               {nextLinearDomain && (
                 <span className="text-xs text-muted-foreground font-mono tabular-nums">

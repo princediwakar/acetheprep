@@ -2,8 +2,10 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Loader2, Sparkles, Zap, ShieldCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Check, Loader2, Sparkles, Zap, ShieldCheck, Users, MessageCircle, Copy, Terminal } from "lucide-react";
 import { toast } from "sonner";
+import { useUser } from "@/hooks/useUser";
 import {
   Dialog,
   DialogContent,
@@ -15,9 +17,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BILLING_PLANS } from "@/lib/constants/billing";
 import { createCheckoutSession, activateTestPro } from "@/lib/actions/billing";
-import { Copy, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { VisaBadge, MastercardBadge, ApplePayBadge, GooglePayBadge, UpiBadge } from "./PaymentTrustBadge";
+import { useSidebarTelemetry } from "@/components/shared/SidebarContext";
 
 interface UpgradeModalProps {
   open: boolean;
@@ -35,6 +37,37 @@ export function UpgradeModal({
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "quarterly">("monthly");
   const [loading, setLoading] = useState(false);
   const [testActivating, setTestActivating] = useState(false);
+  const router = useRouter();
+  const { user } = useUser();
+  const { setSidebarData } = useSidebarTelemetry();
+  const [copiedReferral, setCopiedReferral] = useState(false);
+
+  const baseUrl =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : process.env.NEXT_PUBLIC_BASE_URL || "https://www.acetheprep.com";
+
+  const referralUrl = user
+    ? `${baseUrl}/setup?ref=${user.id}${examName ? `&exam=${encodeURIComponent(examName)}` : ""}`
+    : `${baseUrl}/setup`;
+
+  const handleCopyReferral = async () => {
+    try {
+      await navigator.clipboard.writeText(referralUrl);
+      setCopiedReferral(true);
+      toast.success("Study Partner invite link copied to clipboard!");
+      setTimeout(() => setCopiedReferral(false), 2500);
+    } catch {
+      toast.error("Failed to copy link");
+    }
+  };
+
+  const handleWhatsAppReferral = () => {
+    const text = encodeURIComponent(
+      `Hey! I'm practicing for ${examName || "standardized exams"} on AceThePrep. Sign up with my study link and we both get 7 Days of Free Pro practice: ${referralUrl}`
+    );
+    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+  };
 
   const isTestMode =
     process.env.NEXT_PUBLIC_DODO_PAYMENTS_ENVIRONMENT === "test_mode" ||
@@ -53,7 +86,9 @@ export function UpgradeModal({
         toast.error(res.error);
       } else {
         toast.success("Test Pro activated successfully! Refreshing dashboard...");
+        setSidebarData((prev) => (prev ? { ...prev, isPro: true } : prev));
         onOpenChange(false);
+        router.refresh();
       }
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Failed to activate test Pro.");
@@ -180,6 +215,46 @@ export function UpgradeModal({
                 <span>{feat}</span>
               </div>
             ))}
+          </div>
+
+          {/* Quota-Unlock Alternative: Study Partner Pass */}
+          <div className="rounded-xl border border-indigo-500/30 bg-gradient-to-br from-indigo-950/40 via-purple-950/20 to-background p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-indigo-400" />
+                <span className="text-xs font-bold uppercase tracking-wider text-indigo-300">
+                  Study Partner Pass &middot; Unlock 7 Days Free
+                </span>
+              </div>
+              <Badge variant="outline" className="text-[10px] bg-indigo-500/10 text-indigo-300 border-indigo-500/30">
+                Give 7, Get 7
+              </Badge>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Don&apos;t want to subscribe today? Invite a study partner. When they sign up and start prep, <strong>both of you unlock 7 Days of Unlimited Pro</strong> (unlimited questions, full mock sets, AI distractor debate).
+            </p>
+            <div className="flex items-center gap-2 pt-1">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleWhatsAppReferral}
+                className="text-xs border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-300 gap-1.5 h-8 flex-1 sm:flex-initial"
+              >
+                <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Invite on WhatsApp</span>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleCopyReferral}
+                className="text-xs border-border hover:bg-muted text-foreground gap-1.5 h-8 flex-1 sm:flex-initial"
+              >
+                <Copy className="w-3.5 h-3.5 text-muted-foreground" />
+                <span>{copiedReferral ? "Link Copied!" : "Copy Study Link"}</span>
+              </Button>
+            </div>
           </div>
 
           {/* Dodo Sandbox Test Mode Banner */}

@@ -586,7 +586,7 @@ export function QuestionCard({
             current.distractor_analysis?.[selectedOption] && (
               <div className="rounded-lg p-3.5 bg-rose-500/10 border border-rose-500/20 text-xs text-foreground/90 leading-relaxed">
                 <span className="font-semibold text-rose-700 dark:text-rose-400 block mb-1">
-                  Why Option {selectedOption} is a trap:
+                  Why Option ({selectedOption}) is wrong:
                 </span>
                 {renderMathContent(current.distractor_analysis[selectedOption])}
               </div>

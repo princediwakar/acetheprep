@@ -10,7 +10,8 @@ import type { Metadata } from "next";
 import type { SelfAssessment } from "@/types/tutor";
 import taxonomy from "@/lib/taxonomies.json";
 import { slugToExam, GLOBAL_EXAM_PRIORITY } from "@/lib/slugs";
-import { Sparkles, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
+import { Sparkles, CheckCircle2, ShieldCheck, Zap, Users } from "lucide-react";
+import { claimReferralPassAction } from "@/lib/actions/referral";
 
 const TAXONOMY = taxonomy as unknown as Record<string, Record<string, string[]>>;
 const EXAM_NAMES = Object.keys(TAXONOMY)
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
 export default async function SetupPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ exam?: string; edit?: string; next?: string; plan?: string }>;
+  searchParams?: Promise<{ exam?: string; edit?: string; next?: string; plan?: string; ref?: string }>;
 }) {
   const resolvedParams = searchParams ? await searchParams : {};
   const rawExam = resolvedParams.exam ? decodeURIComponent(resolvedParams.exam).trim() : undefined;
@@ -45,6 +46,7 @@ export default async function SetupPage({
   const isExplicitEdit = resolvedParams.edit === "true";
   const next = resolvedParams.next;
   const plan = resolvedParams.plan;
+  const ref = resolvedParams.ref;
 
   return (
     <Suspense fallback={<SetupSkeleton />}>
@@ -53,6 +55,7 @@ export default async function SetupPage({
         isExplicitEdit={isExplicitEdit}
         next={next}
         plan={plan}
+        refCode={ref}
       />
     </Suspense>
   );
@@ -83,11 +86,13 @@ async function SetupPageContent({
   isExplicitEdit,
   next,
   plan,
+  refCode,
 }: {
   initialExam?: string;
   isExplicitEdit: boolean;
   next?: string;
   plan?: string;
+  refCode?: string;
 }) {
   const supabase = await createClient();
   const {
@@ -100,8 +105,10 @@ async function SetupPageContent({
       (plan
         ? `/pricing?plan=${plan}&checkout=true`
         : initialExam
-          ? `/setup?exam=${encodeURIComponent(initialExam)}`
-          : "/home");
+          ? `/setup?exam=${encodeURIComponent(initialExam)}${refCode ? `&ref=${encodeURIComponent(refCode)}` : ""}&autostart=first_test`
+          : refCode
+            ? `/setup?ref=${encodeURIComponent(refCode)}&autostart=first_test`
+            : "/home?autostart=first_test");
     return (
       <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col items-center justify-center px-4 py-16 text-center">
         <Card className="w-full rounded-2xl border border-border/80 bg-card p-4 sm:p-6 shadow-xl">
@@ -109,15 +116,25 @@ async function SetupPageContent({
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
               <Sparkles className="h-6 w-6" />
             </div>
+
+            {refCode && (
+              <div className="mx-auto inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 text-xs font-semibold text-emerald-400">
+                <Users className="h-3.5 w-3.5" />
+                <span>Study Partner Pass &middot; 7 Days Pro Included</span>
+              </div>
+            )}
+
             <CardTitle className="text-2xl font-bold tracking-tight">
-              {plan ? "Upgrade to AceThePrep Pro" : initialExam ? `${initialExam} Study Plan` : "Welcome to AceThePrep"}
+              {plan ? "Upgrade to AceThePrep Pro" : "Take your first test"}
             </CardTitle>
             <CardDescription className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
-              {plan
+              {refCode
+                ? "Sign in with Google to claim your 7 Days of Free Pro access and start your test."
+                : plan
                 ? "Sign in with Google to complete your Pro upgrade and unlock full mock exams."
                 : initialExam
-                  ? `Sign in to practice ${initialExam} questions under real test conditions and track your progress.`
-                  : "Sign in to practice exam questions under real test conditions and track your progress."}
+                  ? `Sign in to take your 5-minute ${initialExam} test and see where you stand.`
+                  : "Sign in to take your 5-minute test and find your score leaks. 100% free."}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pb-4">
@@ -145,6 +162,15 @@ async function SetupPageContent({
   // If user signed in with intent to checkout a plan, redirect straight to pricing checkout
   if (plan) {
     redirect(`/pricing?plan=${plan}&checkout=true`);
+  }
+
+  // Claim referral if refCode provided and user is authenticated
+  if (refCode && refCode !== user.id) {
+    try {
+      await claimReferralPassAction({ referrerId: refCode });
+    } catch (e) {
+      console.warn("[SetupPage] Referral claim warning:", e);
+    }
   }
 
   // Load existing active profile

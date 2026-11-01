@@ -26,6 +26,7 @@ import {
   postponeTrapReviewAction,
 } from "@/lib/actions/error-log";
 import { TrapTaxonomyRadar } from "./TrapTaxonomyRadar";
+import { useSidebarTelemetry, useSyncSidebarData } from "@/components/shared/SidebarContext";
 
 export interface HydratedDueTrap {
   queueItemId: string;
@@ -88,6 +89,27 @@ export function ZeroClickDrillView({
   const [timerActive, setTimerActive] = useState(true);
   const [clearedTrapsCount, setClearedTrapsCount] = useState(0);
   const [salvagedPointsTotal, setSalvagedPointsTotal] = useState(0);
+  const { updateMistakesCount, setSidebarData } = useSidebarTelemetry();
+
+  useEffect(() => {
+    setSidebarData((prev) => {
+      const nextName = examName || prev?.examName || "";
+      if (
+        prev &&
+        prev.examName === nextName &&
+        (prev.dueMistakesCount || 0) === initialTraps.length
+      ) {
+        return prev;
+      }
+      return {
+        examName: nextName,
+        daysRemaining: prev?.daysRemaining || 0,
+        streak: prev?.streak || 0,
+        dueMistakesCount: initialTraps.length,
+        isPro: prev?.isPro,
+      };
+    });
+  }, [examName, initialTraps.length, setSidebarData]);
 
   const currentTrap = traps[currentIndex];
   const totalRemaining = traps.length - currentIndex;
@@ -152,7 +174,7 @@ export function ZeroClickDrillView({
         correctOption: currentTrap.question.correct_option,
       });
       if (res?.success) {
-        window.dispatchEvent(new CustomEvent("mistake-vault-updated"));
+        updateMistakesCount(-1);
       }
     });
   };
@@ -175,7 +197,7 @@ export function ZeroClickDrillView({
         queueItemId: currentTrap.queueItemId,
       });
       if (res?.success) {
-        window.dispatchEvent(new CustomEvent("mistake-vault-updated"));
+        updateMistakesCount(-1);
       }
     });
 
@@ -208,8 +230,8 @@ export function ZeroClickDrillView({
 
             <p className="text-sm text-muted-foreground max-w-md mx-auto">
               You reviewed all{" "}
-              <span className="font-bold text-foreground">{initialTraps.length}</span> question traps
-              in your vault today. Your Leitner memory curve has been reset.
+              <span className="font-bold text-foreground">{initialTraps.length}</span> missed questions
+              today. You're all caught up!
             </p>
 
             {/* Compounding Payoff Metrics */}
@@ -219,7 +241,7 @@ export function ZeroClickDrillView({
                   +{salvagedPointsTotal > 0 ? salvagedPointsTotal : Math.max(5, clearedTrapsCount * 5)} pts
                 </span>
                 <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-                  Score Leaks Plugged
+                  Points Recovered
                 </span>
               </div>
               <div className="rounded-2xl border border-border bg-secondary/30 p-3.5 text-center">
@@ -227,13 +249,13 @@ export function ZeroClickDrillView({
                   {clearedTrapsCount}/{initialTraps.length}
                 </span>
                 <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-                  Traps Cleared
+                  Questions Cleared
                 </span>
               </div>
             </div>
 
-            <p className="text-xs text-muted-foreground italic">
-              Next micro-review will only trigger when Leitner retention decays below threshold.
+            <p className="text-xs text-muted-foreground">
+              We'll remind you automatically when it's time to review these again.
             </p>
 
             <div className="pt-2 flex items-center justify-center gap-3">

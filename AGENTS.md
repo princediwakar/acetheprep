@@ -32,6 +32,7 @@ Execute all work through this 5-step algorithm:
 * **Server-First Reality:** The server is physically closer to the database than the client. Therefore, `page.tsx` is always a Server Component. Initial data loads happen on the server. Client components (`"use client"`) are pushed to the absolute edges of the tree solely for interactivity.
 * **Latency is the Enemy:** A 300ms server response is a failure. But if you must wait, mask it. Mandate `useOptimistic` for any user action. The UI must instantly reflect the action; the server validates in the background. Perceived latency must be 0ms.
 * **Data Flow:** All mutations route strictly through Next.js Server Actions. Auth check first → Zod validation second → Database mutation third → Revalidate path last.
+* **Next.js 16 Edge Interception (`proxy.ts`):** This codebase runs Next.js 16 (`^16.2.x`). Request interception and edge guards are powered strictly by `proxy.ts` at the repository root exporting `export async function proxy(request: NextRequest)`. DO NOT rename `proxy.ts` to `middleware.ts` or attempt to introduce `middleware.ts`. All edge cookie validation, session refresh, and route protections live in `proxy.ts`.
 
 ### STEP 4: ACCELERATE CYCLE TIME
 

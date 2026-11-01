@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { LogOut, Settings, ChevronsUpDown } from "lucide-react";
+import { LogOut, Settings, ChevronsUpDown, Zap, CreditCard, Sparkles } from "lucide-react";
 import { User } from "@/types/quiz";
 import { useRouter } from "next/navigation";
 
@@ -25,9 +25,11 @@ interface UserMenuProps {
   onOpenChange: (open: boolean) => void;
   onSignOut: () => Promise<void>;
   variant?: "header" | "sidebar";
+  isPro?: boolean;
+  onUpgrade?: () => void;
 }
 
-export const UserMenu = memo(({ user, isOpen, onOpenChange, onSignOut, variant = "header" }: UserMenuProps) => {
+export const UserMenu = memo(({ user, isOpen, onOpenChange, onSignOut, variant = "header", isPro, onUpgrade }: UserMenuProps) => {
   const initials = user?.user_metadata?.name?.[0] || "U";
   const avatarUrl = user?.user_metadata?.avatar_url;
   const userName = user?.user_metadata?.name || user?.email?.split("@")[0] || "User";
@@ -89,9 +91,47 @@ export const UserMenu = memo(({ user, isOpen, onOpenChange, onSignOut, variant =
         </div>
         
         <DropdownMenuSeparator />
+
+        {!isPro ? (
+          <DropdownMenuItem
+            onClick={() => {
+              onOpenChange(false);
+              if (onUpgrade) {
+                onUpgrade();
+              } else {
+                router.push("/pricing");
+              }
+            }}
+            className="cursor-pointer text-primary focus:text-primary focus:bg-primary/10 font-semibold"
+          >
+            <Zap className="mr-2 h-4 w-4 fill-primary" />
+            <span>Upgrade to Pro</span>
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem
+            className="cursor-pointer text-emerald-600 dark:text-emerald-400 focus:text-emerald-700 font-semibold"
+          >
+            <Sparkles className="mr-2 h-4 w-4 text-emerald-500" />
+            <span>AceThePrep Pro Active</span>
+          </DropdownMenuItem>
+        )}
+
+        <DropdownMenuItem
+          onClick={() => {
+            onOpenChange(false);
+            router.push("/pricing");
+          }}
+          className="cursor-pointer"
+        >
+          <CreditCard className="mr-2 h-4 w-4" />
+          <span>Pricing & Plans</span>
+        </DropdownMenuItem>
         
         <DropdownMenuItem
-          onClick={() => router.push("/setup?edit=true")}
+          onClick={() => {
+            onOpenChange(false);
+            router.push("/setup?edit=true");
+          }}
           className="cursor-pointer"
         >
           <Settings className="mr-2 h-4 w-4" />

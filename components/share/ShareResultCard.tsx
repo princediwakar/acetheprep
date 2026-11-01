@@ -6,7 +6,7 @@ import {
   Target,
   CheckCircle2,
 } from "lucide-react";
-import { QuizDuelPlayer, type QuizDuelQuestion } from "./QuizDuelPlayer";
+import { QuizDuelPlayer, type QuizDuelQuestion, type DuelAttempt } from "./QuizDuelPlayer";
 
 export interface MasteryDelta {
   domain: string;
@@ -23,6 +23,7 @@ export interface ShareResultCardProps {
   masteredDomains: string[] | null;
   shareToken?: string;
   questions: QuizDuelQuestion[];
+  attempts?: DuelAttempt[];
 }
 
 function getExamSlug(name?: string): string {
@@ -45,6 +46,7 @@ export function ShareResultCard({
   masteredDomains,
   shareToken,
   questions,
+  attempts = [],
 }: ShareResultCardProps) {
   const examSlug = getExamSlug(examName);
   return (
@@ -98,6 +100,7 @@ export function ShareResultCard({
           totalQuestions={total}
           examName={examName}
           shareToken={shareToken}
+          initialAttempts={attempts}
         />
       )}
 

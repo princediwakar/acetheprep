@@ -12,7 +12,7 @@ import {
   ShareResultCard,
   type MasteryDelta,
 } from "@/components/share/ShareResultCard";
-import type { QuizDuelQuestion } from "@/components/share/QuizDuelPlayer";
+import type { QuizDuelQuestion, DuelAttempt } from "@/components/share/QuizDuelPlayer";
 
 interface PageProps {
   params: Promise<{ token: string }>;
@@ -28,6 +28,7 @@ interface CardData {
   time_taken?: number;
   mastered_domains?: string[];
   questions: QuizDuelQuestion[];
+  attempts?: DuelAttempt[];
 }
 
 export async function generateMetadata({
@@ -164,6 +165,7 @@ export default async function ShareCardPage({ params }: PageProps) {
           masteredDomains={masteredDomains}
           shareToken={token}
           questions={cd.questions}
+          attempts={cd.attempts || []}
         />
       </div>
     </>

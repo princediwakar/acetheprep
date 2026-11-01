@@ -36,26 +36,18 @@ export function SimpleCTASection() {
         {/* Buttons */}
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
           <SignInButton
-            buttonText="Start Free Diagnostic"
-            returnUrl="/setup"
+            buttonText="Take your first test"
+            returnUrl="/home?autostart=first_test"
             size="lg"
-            className="h-12 px-8 text-base font-semibold shadow-md bg-foreground text-background hover:bg-foreground/90 rounded-xl cursor-pointer"
+            className="h-13 px-10 text-base sm:text-lg font-bold shadow-lg shadow-foreground/10 bg-foreground text-background hover:bg-foreground/90 rounded-xl cursor-pointer"
           />
 
           <Link
             href="/pricing"
             className="inline-flex items-center gap-2 rounded-xl border border-primary/40 bg-primary/10 px-6 py-3 text-sm font-semibold text-primary hover:bg-primary/15 transition-colors"
           >
-            <span>Explore Pro Mock Mocks</span>
+            <span>Explore Pro Mock Exams</span>
             <ArrowRight className="h-4 w-4" />
-          </Link>
-
-          <Link
-            href="/practice"
-            className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-3 text-sm font-medium text-foreground/85 hover:bg-secondary transition-colors"
-          >
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-            <span>Browse All 6 Curricula</span>
           </Link>
         </div>
 

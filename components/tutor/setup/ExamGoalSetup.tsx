@@ -160,35 +160,35 @@ export function ExamGoalSetup({
           </div>
         )}
 
-        {/* Self-Assessment */}
+        {/* Optional Self-Assessment (Collapsible) */}
         {exam && subjects.length > 0 && (
-          <div className="space-y-3 pt-2 border-t border-border/50 animate-in fade-in slide-in-from-top-2 duration-300">
-            <div>
-              <Label className="text-sm font-medium">
-                Starting Level
-              </Label>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                All subjects start at Medium. Adjust any topic where you need extra practice or already feel strong.
+          <details className="pt-2 border-t border-border/50 group text-xs">
+            <summary className="cursor-pointer font-medium text-muted-foreground hover:text-foreground py-1 select-none flex items-center justify-between">
+              <span>Customize starting levels (optional &bull; balanced by default)</span>
+              <span className="text-[10px] text-muted-foreground group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <div className="space-y-2.5 pt-3">
+              <p className="text-[11px] text-muted-foreground">
+                All subjects start balanced. Adjust any topic where you need extra practice or already feel strong:
               </p>
+              <div className="space-y-2">
+                {subjects.map((subject) => (
+                  <div
+                    key={subject}
+                    className="flex items-center justify-between gap-4 rounded-lg border border-border/60 px-3 py-2"
+                  >
+                    <span className="text-xs font-medium truncate">
+                      {subject}
+                    </span>
+                    <SegmentedControl
+                      value={assessments[subject] ?? null}
+                      onChange={(level) => onAssessmentChange(subject, level)}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-
-            <div className="space-y-3">
-              {subjects.map((subject) => (
-                <div
-                  key={subject}
-                  className="flex items-center justify-between gap-4 rounded-lg border border-border/60 px-4 py-2.5"
-                >
-                  <span className="text-sm font-medium truncate">
-                    {subject}
-                  </span>
-                  <SegmentedControl
-                    value={assessments[subject] ?? null}
-                    onChange={(level) => onAssessmentChange(subject, level)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+          </details>
         )}
       </CardContent>
     </Card>

@@ -27,7 +27,7 @@ export function SyllabusMap({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <h2 className="text-xl font-bold tracking-tight">Syllabus Topics</h2>
+        <h2 className="text-xl font-bold tracking-tight">Practice Specific Topics</h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

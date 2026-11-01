@@ -182,15 +182,15 @@ export function SetupForm({ prefill, examNames, examSubjects }: SetupFormProps) 
       return;
     }
 
-    toast.success("Saved! Loading your dashboard...", { duration: 2000 });
-    router.push(TUTOR_ROUTES.DASHBOARD);
+    toast.success("Saved! Starting your test...", { duration: 2000 });
+    router.push(`${TUTOR_ROUTES.DASHBOARD}?autostart=first_test`);
   }, [saveProfile, router]);
 
   // ---- Page metadata ----
-  const pageTitle = isExisting ? "Update Study Plan" : "Set Up Your Study Plan";
+  const pageTitle = isExisting ? "Update Study Plan" : "Take your first test";
   const pageDescription = isExisting
     ? "Update your target exam, test date, or starting levels."
-    : "Choose your exam and test date to get a personalized study plan.";
+    : "Confirm your exam and jump straight into your test.";
 
   return (
     <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col justify-center px-4 py-10">
@@ -240,7 +240,7 @@ export function SetupForm({ prefill, examNames, examSubjects }: SetupFormProps) 
               </>
             ) : (
               <>
-                Start Practice
+                Take your first test
                 <ChevronRight className="ml-1.5 h-4 w-4" />
               </>
             )}

@@ -11,8 +11,9 @@ import { Header } from "./Header";
 import { UserMenu } from "./UserMenu";
 import { BrandLogo } from "@/components/shared/BrandLogo";
 import SiteFooter from "@/components/landing/SiteFooter";
-import { supabase } from "@/lib/supabase/client";
-import { computeStreak } from "@/lib/utils";
+import { SidebarProvider, useSidebarTelemetry, type SidebarTelemetry } from "@/components/shared/SidebarContext";
+import { Button } from "@/components/ui/button";
+import { UpgradeModal } from "@/components/billing/UpgradeModal";
 import {
   History,
   Compass,
@@ -23,14 +24,13 @@ import {
   Calendar,
   Flame,
   BookmarkCheck,
+  Zap,
+  Sparkles,
+  CreditCard,
+  X,
 } from "lucide-react";
 
-export interface SidebarData {
-  examName: string;
-  daysRemaining: number;
-  streak: number;
-  dueMistakesCount?: number;
-}
+export type SidebarData = SidebarTelemetry;
 
 const mainItems = [
   { title: "Home", url: "/home", icon: Home, badgeKey: undefined },
@@ -38,92 +38,46 @@ const mainItems = [
   { title: "History", url: "/history", icon: History, badgeKey: undefined },
 ];
 
-export function AppShell({ children, sidebarData: initialSidebarData }: { children: React.ReactNode; sidebarData?: SidebarData | null }) {
+export function AppShell({
+  children,
+  sidebarData: initialSidebarData,
+}: {
+  children: React.ReactNode;
+  sidebarData?: SidebarData | null;
+}) {
+  return (
+    <SidebarProvider initialData={initialSidebarData}>
+      <AppShellInner>{children}</AppShellInner>
+    </SidebarProvider>
+  );
+}
+
+function AppShellInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, isUserLoading } = useUser();
+  const { sidebarData } = useSidebarTelemetry();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
+  const [isProCardDismissed, setIsProCardDismissed] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [sidebarData, setSidebarData] = useState<SidebarData | null>(initialSidebarData || null);
 
   const showOnRoutes = ["/create", "/quizzes", "/home", "/dashboard", "/history", "/setup", "/mistakes"];
   const shouldShowSidebar = showOnRoutes.includes(pathname) && !!user;
 
   useEffect(() => {
     setMounted(true);
+    try {
+      if (localStorage.getItem("acetheprep_pro_card_dismissed") === "true") {
+        setIsProCardDismissed(true);
+      }
+    } catch {}
     const mql = window.matchMedia("(min-width: 1024px)");
     setSidebarOpen(mql.matches);
     const handler = (e: MediaQueryListEvent) => setSidebarOpen(e.matches);
     mql.addEventListener("change", handler);
     return () => mql.removeEventListener("change", handler);
   }, []);
-
-  useEffect(() => {
-    if (!user || !shouldShowSidebar) return;
-    const userId = user.id;
-    let cancelled = false;
-
-    async function fetchSidebarTelemetry() {
-      try {
-        const [profileRes, answersRes] = await Promise.all([
-          supabase
-            .from("exam_profiles")
-            .select("profile_id, exam_name, target_date")
-            .eq("user_id", userId)
-            .eq("is_active", true)
-            .maybeSingle(),
-          supabase
-            .from("session_answers")
-            .select("answered_at")
-            .eq("user_id", userId)
-            .order("answered_at", { ascending: false })
-            .limit(500),
-        ]);
-
-        if (!cancelled && profileRes.data) {
-          const now = new Date();
-          const targetDate = new Date(profileRes.data.target_date);
-          const daysRemaining = Math.max(
-            0,
-            Math.ceil((targetDate.getTime() - now.getTime()) / 86400000)
-          );
-          const streak = computeStreak(
-            (answersRes.data || []) as { answered_at: string }[]
-          );
-
-          // Fetch active profile mistake queue count
-          const { count: dueMistakesCount } = await supabase
-            .from("comeback_queue_items")
-            .select("id", { count: "exact", head: true })
-            .eq("user_id", userId)
-            .eq("exam_profile_id", profileRes.data.profile_id)
-            .eq("cleared", false)
-            .lte("stage_deadline", now.toISOString());
-
-          setSidebarData({
-            examName: profileRes.data.exam_name,
-            daysRemaining,
-            streak,
-            dueMistakesCount: dueMistakesCount || 0,
-          });
-        }
-      } catch {
-        // Fallback silently if offline or uninitialized
-      }
-    }
-
-    fetchSidebarTelemetry();
-
-    const handleVaultUpdate = () => {
-      fetchSidebarTelemetry();
-    };
-    window.addEventListener("mistake-vault-updated", handleVaultUpdate);
-
-    return () => {
-      cancelled = true;
-      window.removeEventListener("mistake-vault-updated", handleVaultUpdate);
-    };
-  }, [user, shouldShowSidebar, pathname]);
 
   const handleSignOut = async () => {
     try {
@@ -174,7 +128,14 @@ export function AppShell({ children, sidebarData: initialSidebarData }: { childr
       <aside className={`fixed left-0 top-0 h-screen w-64 border-r bg-background z-50 transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-4 h-full flex flex-col">
           <div className="mb-6">
-            <BrandLogo />
+            <div className="flex items-center justify-between">
+              <BrandLogo />
+              {sidebarData?.isPro && (
+                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-500 border border-emerald-500/30">
+                  PRO
+                </span>
+              )}
+            </div>
             {sidebarData && (
               <div className="mt-2">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -249,10 +210,64 @@ export function AppShell({ children, sidebarData: initialSidebarData }: { childr
                     <Compass className="w-4 h-4" />
                     Public Quizzes
                   </Link>
+                  <Link
+                    href="/pricing"
+                    className={`flex items-center gap-3 py-1.5 text-sm rounded-md px-2 transition-colors ${
+                      pathname === "/pricing"
+                        ? "text-foreground font-medium"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <CreditCard className="w-4 h-4" />
+                    Pricing & Plans
+                  </Link>
                 </div>
               </div>
             )}
           </nav>
+
+          {/* Pro Upgrade Sidebar Box (For free tier) */}
+          {user && !sidebarData?.isPro && !isProCardDismissed && (
+            <div className="relative p-3 my-2 rounded-2xl bg-gradient-to-b from-primary/10 via-primary/5 to-muted/20 border border-primary/20 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 font-bold text-xs text-foreground">
+                  <Sparkles className="w-3.5 h-3.5 text-primary" />
+                  <span>AceThePrep Pro</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">
+                    Upgrade
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsProCardDismissed(true);
+                      try {
+                        localStorage.setItem("acetheprep_pro_card_dismissed", "true");
+                      } catch {}
+                    }}
+                    className="p-1 -mr-1 text-muted-foreground hover:text-foreground rounded-md hover:bg-background/60 transition-colors cursor-pointer"
+                    aria-label="Dismiss Pro upgrade banner"
+                    title="Dismiss"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+              <p className="text-[11px] text-muted-foreground leading-snug">
+                Unlock full 50Q mock simulations, official section drills & spaced review.
+              </p>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setIsUpgradeOpen(true)}
+                className="w-full h-8 text-xs font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-xs cursor-pointer rounded-xl gap-1.5"
+              >
+                <Zap className="w-3.5 h-3.5 fill-current" />
+                <span>Upgrade to Pro</span>
+              </Button>
+            </div>
+          )}
 
           {/* Bottom user & streak section */}
           <div className="border-t pt-3 mt-auto space-y-2">
@@ -269,6 +284,8 @@ export function AppShell({ children, sidebarData: initialSidebarData }: { childr
                 onOpenChange={setIsDropdownOpen}
                 onSignOut={handleSignOut}
                 variant="sidebar"
+                isPro={sidebarData?.isPro}
+                onUpgrade={() => setIsUpgradeOpen(true)}
               />
             )}
           </div>
@@ -297,7 +314,24 @@ export function AppShell({ children, sidebarData: initialSidebarData }: { childr
           </div>
 
           <div className="ml-auto flex items-center gap-2.5">
-            <div id="header-actions-portal" className="flex items-center gap-2" />
+            {!sidebarData?.isPro ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setIsUpgradeOpen(true)}
+                className="h-8 px-2.5 text-xs font-bold border-primary/30 text-primary hover:bg-primary/10 gap-1.5 rounded-lg cursor-pointer"
+              >
+                <Zap className="w-3.5 h-3.5 fill-primary text-primary" />
+                <span className="hidden sm:inline">Upgrade to Pro</span>
+                <span className="sm:hidden">Pro</span>
+              </Button>
+            ) : (
+              <span className="hidden sm:inline-flex items-center gap-1 h-7 px-2 text-[11px] font-bold text-emerald-500 bg-emerald-500/10 border border-emerald-500/30 rounded-md">
+                <Sparkles className="w-3 h-3 text-emerald-500" />
+                Pro
+              </span>
+            )}
             <ThemeToggle />
           </div>
         </header>
@@ -306,6 +340,12 @@ export function AppShell({ children, sidebarData: initialSidebarData }: { childr
           {children}
         </div>
       </div>
+
+      <UpgradeModal
+        open={isUpgradeOpen}
+        onOpenChange={setIsUpgradeOpen}
+        examName={sidebarData?.examName}
+      />
     </div>
   );
 }

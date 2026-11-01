@@ -232,10 +232,10 @@ ${shareUrl ? `*Live interactive peer duel & distractor breakdown on AceThePrep: 
           {/* Header Title */}
           <div className="text-center space-y-1.5 pt-2">
             <h1 className="font-heading text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
-              Test Results & Diagnostic Review
+              Your Test Results
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto">
-              Inspect your answers, examine distractor traps, and calibrate missed concepts before memory half-life decays.
+              Review your answers below to see what you got right, what you missed, and how to solve each one.
             </p>
           </div>
 
@@ -298,7 +298,7 @@ ${shareUrl ? `*Live interactive peer duel & distractor breakdown on AceThePrep: 
                 {trapsCaughtCount}
               </div>
               <div className="text-xs text-muted-foreground mt-1 font-medium">
-                {trapsCaughtCount > 0 ? "Distractor Traps Triggered" : "Zero Traps Missed"}
+                {trapsCaughtCount > 0 ? "Common Traps Hit" : "No Traps Hit"}
               </div>
             </div>
           </div>
@@ -309,7 +309,7 @@ ${shareUrl ? `*Live interactive peer duel & distractor breakdown on AceThePrep: 
               <div className="flex items-center gap-2">
                 <Gauge className="w-3.5 h-3.5 text-muted-foreground" />
                 <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
-                  Question Matrix Navigator
+                  Questions
                 </span>
               </div>
               <button
@@ -342,7 +342,7 @@ ${shareUrl ? `*Live interactive peer duel & distractor breakdown on AceThePrep: 
                           ? "bg-amber-500/10 border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20"
                           : "bg-rose-500/10 border-rose-500/40 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20",
                     )}
-                    title={`Item ${idx + 1}: ${isCorrect ? "Correct" : isTrap ? "Distractor Trap" : "Incorrect"}`}
+                    title={`Question ${idx + 1}: ${isCorrect ? "Correct" : isTrap ? "Trap Hit" : "Incorrect"}`}
                   >
                     <span>{idx + 1}</span>
                     {isFlagged && (
@@ -354,85 +354,28 @@ ${shareUrl ? `*Live interactive peer duel & distractor breakdown on AceThePrep: 
             </div>
           </div>
 
-          {/* High-Utility Forum Doubt & Challenge Card */}
-          {shareUrl && (
-            <div className="p-4 sm:p-5 rounded-2xl border border-border/80 bg-card shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="space-y-1 text-center sm:text-left min-w-0">
-                <div className="flex items-center justify-center sm:justify-start gap-1.5">
-                  <Sparkles className="w-4 h-4 text-primary" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-primary">
-                    Peer Challenge & Study Group Export
-                  </span>
-                </div>
-                <h4 className="font-bold text-sm sm:text-base text-foreground">
-                  Challenge Study Partners or Discuss Traps on Forums
-                </h4>
-                <p className="text-xs text-muted-foreground">
-                  Send this 10-question duel to your peers, or copy spoiler-tagged breakdowns to Reddit / GMATClub.
-                </p>
-              </div>
-              <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 shrink-0 w-full sm:w-auto">
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={handleCopyForumDoubt}
-                  className="flex-1 sm:flex-initial text-xs border-primary/30 hover:bg-primary/10 text-primary font-medium cursor-pointer"
-                >
-                  Forum Doubt
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={handleShareWhatsApp}
-                  className="flex-1 sm:flex-initial text-xs border-border hover:bg-muted cursor-pointer gap-1"
-                >
-                  <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
-                  <span>WhatsApp</span>
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={handleCopyShareLink}
-                  className="flex-1 sm:flex-initial text-xs border-border hover:bg-muted cursor-pointer"
-                >
-                  {copiedLink ? "Copied!" : "Copy Invite"}
-                </Button>
-                <Link
-                  href={`/s/${shareToken}`}
-                  target="_blank"
-                  className="inline-flex items-center justify-center rounded-lg bg-primary hover:bg-primary/90 px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-xs transition-all w-full sm:w-auto"
-                >
-                  <span>Interactive Duel &rarr;</span>
-                </Link>
-              </div>
-            </div>
-          )}
-
-          {/* Score Leak Elimination Alert */}
+          {/* Score Leak Elimination Alert - Immediate Top Priority */}
           {missedDomains.length > 0 && (
-            <div className="p-4 rounded-xl border border-rose-500/25 bg-rose-500/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+            <div className="p-4 sm:p-5 rounded-2xl border border-rose-500/25 bg-rose-500/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
               <div className="space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
-                  <h4 className="font-bold text-sm text-foreground">
-                    {incorrectCount} Score Leak{incorrectCount > 1 ? "s" : ""} Recorded to Mistake Vault
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0" />
+                  <h4 className="font-bold text-sm sm:text-base text-foreground">
+                    {incorrectCount} Question{incorrectCount > 1 ? "s" : ""} to Review
                   </h4>
                   <Badge
                     variant="outline"
                     className="text-[10px] uppercase font-bold text-rose-600 dark:text-rose-400 border-rose-500/30 bg-rose-500/10"
                   >
-                    Leitner Active Recall
+                    Saved to Review List
                   </Badge>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Traps detected in:{" "}
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  Topics to brush up on:{" "}
                   <strong className="text-foreground font-semibold">
                     {missedDomains.join(", ")}
                   </strong>
-                  . Calibrate them before the Leitner memory half-life decays.
+                  . Check your answers below to see why the right choices work and where you got tripped up.
                 </p>
               </div>
               <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
@@ -443,7 +386,7 @@ ${shareUrl ? `*Live interactive peer duel & distractor breakdown on AceThePrep: 
                   className="border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 text-xs font-semibold"
                 >
                   <Link href="/mistakes">
-                    Mistake Vault &rarr;
+                    Error Log &rarr;
                   </Link>
                 </Button>
                 {nextDomain && (
@@ -454,7 +397,7 @@ ${shareUrl ? `*Live interactive peer duel & distractor breakdown on AceThePrep: 
                     className="cursor-pointer font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-xs text-xs"
                   >
                     <Zap className="w-3.5 h-3.5 mr-1 fill-white" />
-                    Practice Weak Spots (10Q)
+                    Practice Weak Topics
                   </Button>
                 )}
               </div>
@@ -556,7 +499,7 @@ ${shareUrl ? `*Live interactive peer duel & distractor breakdown on AceThePrep: 
                   >
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-bold text-sm text-foreground font-mono">
-                        Item {originalIndex + 1}
+                        Question {originalIndex + 1}
                       </span>
                       <Badge variant="outline" className="text-xs font-medium">
                         {q.skill_domain}
@@ -573,7 +516,7 @@ ${shareUrl ? `*Live interactive peer duel & distractor breakdown on AceThePrep: 
                         </span>
                       ) : isTrap ? (
                         <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">
-                          <AlertTriangle className="w-3.5 h-3.5" /> Distractor Trap
+                          <AlertTriangle className="w-3.5 h-3.5" /> Common Trap
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full">
@@ -660,21 +603,21 @@ ${shareUrl ? `*Live interactive peer duel & distractor breakdown on AceThePrep: 
                         })}
                       </div>
 
-                      {/* Distractor Trap Analysis */}
+                      {/* Why Selected Wrong Option Failed */}
                       {attempt?.selected && attempt.selected !== q.correct_option && q.distractor_analysis?.[attempt.selected] && (
                         <div className="rounded-xl p-3.5 bg-rose-500/10 border border-rose-500/25 text-xs text-foreground leading-relaxed">
                           <span className="font-semibold text-rose-700 dark:text-rose-400 block mb-1">
-                            Trap Breakdown (Option {attempt.selected}):
+                            Why Option ({attempt.selected}) is wrong:
                           </span>
                           {renderMathContent(q.distractor_analysis[attempt.selected])}
                         </div>
                       )}
 
-                      {/* Solution Derivation */}
+                      {/* Step-by-Step Solution */}
                       {q.explanation && (
                         <div className="rounded-xl p-3.5 bg-secondary/40 border border-border/80 text-xs text-foreground leading-relaxed">
                           <span className="font-semibold text-foreground block mb-1">
-                            Solution Derivation:
+                            Step-by-step solution:
                           </span>
                           <RichContentRenderer content={q.explanation} />
                         </div>
@@ -731,6 +674,45 @@ ${shareUrl ? `*Live interactive peer duel & distractor breakdown on AceThePrep: 
               Back to Dashboard
             </Button>
           </div>
+
+          {/* Secondary Footer Utility: Discuss with Study Partners */}
+          {shareUrl && (
+            <div className="pt-2 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span>Want to discuss tricky questions with study partners?</span>
+              </span>
+              <div className="flex items-center gap-1.5">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleCopyForumDoubt}
+                  className="h-7 px-2.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+                >
+                  Forum Markdown
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleShareWhatsApp}
+                  className="h-7 px-2.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+                >
+                  WhatsApp
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleCopyShareLink}
+                  className="h-7 px-2.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+                >
+                  {copiedLink ? "Copied!" : "Copy Link"}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>

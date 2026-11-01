@@ -13,11 +13,15 @@ import {
   MessageCircle,
   RotateCcw,
   Copy,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { renderMathContent } from "@/lib/quiz-utils";
 import { RichContentRenderer } from "@/components/ui/rich-content/RichContentRenderer";
+import { submitDuelAttemptAction, type DuelAttempt } from "@/lib/actions/duel";
+
+export type { DuelAttempt };
 
 export interface QuizDuelQuestion {
   question_id?: string;
@@ -38,6 +42,7 @@ interface QuizDuelPlayerProps {
   totalQuestions: number;
   examName: string;
   shareToken?: string;
+  initialAttempts?: DuelAttempt[];
 }
 
 export function QuizDuelPlayer({
@@ -46,12 +51,19 @@ export function QuizDuelPlayer({
   totalQuestions,
   examName,
   shareToken,
+  initialAttempts = [],
 }: QuizDuelPlayerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [userScore, setUserScore] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
+
+  // Live Duel Board State
+  const [contenderAttempts, setContenderAttempts] = useState<DuelAttempt[]>(initialAttempts);
+  const [peerNameInput, setPeerNameInput] = useState("");
+  const [hasRecordedScore, setHasRecordedScore] = useState(false);
+  const [isRecordingScore, setIsRecordingScore] = useState(false);
 
   const currentQ = questions[currentIndex];
   const isCorrect = selectedOption === currentQ?.correct_option;
@@ -109,6 +121,44 @@ export function QuizDuelPlayer({
       toast.success("Challenge invite & link copied to clipboard!");
     } catch {
       toast.error("Failed to copy challenge link.");
+    }
+  };
+
+  const handleSubmitDuelScore = async () => {
+    if (!shareToken || !peerNameInput.trim()) return;
+    setIsRecordingScore(true);
+
+    const nameToRecord = peerNameInput.trim();
+    const optimisticAttempt: DuelAttempt = {
+      id: crypto.randomUUID(),
+      peer_name: nameToRecord,
+      score: userScore,
+      total: questions.length,
+      pct: Math.round((userScore / questions.length) * 100),
+      created_at: new Date().toISOString(),
+    };
+
+    setContenderAttempts((prev) => [optimisticAttempt, ...prev]);
+    setHasRecordedScore(true);
+
+    try {
+      const res = await submitDuelAttemptAction({
+        shareToken,
+        peerName: nameToRecord,
+        score: userScore,
+        total: questions.length,
+      });
+
+      if (res.success && res.attempts) {
+        setContenderAttempts(res.attempts);
+        toast.success("Duel score recorded! Challenger notified via email.");
+      } else if (res.error) {
+        toast.error(res.error);
+      }
+    } catch {
+      toast.error("Failed to connect to duel service");
+    } finally {
+      setIsRecordingScore(false);
     }
   };
 
@@ -204,6 +254,96 @@ export function QuizDuelPlayer({
             </p>
           </div>
         </div>
+
+        {/* Score Recording Input & Live Loop Closing */}
+        {shareToken && !hasRecordedScore && (
+          <div className="p-4 rounded-xl bg-indigo-950/30 border border-indigo-500/30 space-y-2.5">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-indigo-400" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300">
+                Log Score on Challenger's Duel Board
+              </h3>
+            </div>
+            <p className="text-xs text-slate-300">
+              Enter your name to post your result to the head-to-head board and alert the challenger.
+            </p>
+            <div className="flex items-center gap-2 pt-1">
+              <input
+                type="text"
+                value={peerNameInput}
+                onChange={(e) => setPeerNameInput(e.target.value)}
+                placeholder="Enter your name or handle..."
+                maxLength={40}
+                className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && peerNameInput.trim()) {
+                    handleSubmitDuelScore();
+                  }
+                }}
+              />
+              <Button
+                size="sm"
+                onClick={handleSubmitDuelScore}
+                disabled={isRecordingScore || !peerNameInput.trim()}
+                className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs h-9 px-4 shrink-0 rounded-xl cursor-pointer"
+              >
+                {isRecordingScore ? "Posting..." : "Record Score"}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Live Head-to-Head Contender Board */}
+        {contenderAttempts.length > 0 && (
+          <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-3">
+            <div className="flex items-center justify-between text-xs pb-2 border-b border-slate-800/80">
+              <span className="font-semibold text-slate-300 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                <Trophy className="w-3.5 h-3.5 text-amber-400" />
+                Live Head-to-Head Duel Board ({contenderAttempts.length})
+              </span>
+              <span className="text-slate-500 text-[10px]">
+                Challenger Benchmark: {challengerScore}/{totalQuestions}
+              </span>
+            </div>
+            <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+              {contenderAttempts.map((att) => {
+                const attWon = att.score > challengerScore;
+                const attTie = att.score === challengerScore;
+                return (
+                  <div
+                    key={att.id}
+                    className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 text-xs"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div
+                        className={`w-2 h-2 rounded-full shrink-0 ${
+                          attWon ? "bg-emerald-400" : attTie ? "bg-indigo-400" : "bg-rose-400"
+                        }`}
+                      />
+                      <span className="font-medium text-slate-200 truncate">{att.peer_name}</span>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="font-mono text-slate-300 font-semibold">
+                        {att.score}/{att.total} ({att.pct}%)
+                      </span>
+                      <span
+                        className={`text-[10px] px-2 py-0.5 rounded font-medium ${
+                          attWon
+                            ? "bg-emerald-500/10 text-emerald-300 border border-emerald-500/20"
+                            : attTie
+                            ? "bg-indigo-500/10 text-indigo-300 border border-indigo-500/20"
+                            : "bg-slate-800 text-slate-400 border border-slate-700/60"
+                        }`}
+                      >
+                        {attWon ? "Beat Challenger" : attTie ? "Tied" : "Challenger Held"}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Action Buttons & Growth CTAs */}
         <div className="space-y-2.5 pt-2">

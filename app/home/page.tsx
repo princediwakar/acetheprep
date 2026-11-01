@@ -169,7 +169,7 @@ async function HomePageContent({
       .eq("user_id", user.id)
       .eq("exam_profile_id", profile.profile_id)
       .order("answered_at", { ascending: false })
-      .limit(500),
+      .limit(150),
     supabase
       .from("sessions")
       .select("id", { count: "exact", head: true })
@@ -614,6 +614,8 @@ async function HomePageContent({
     };
   }
 
+  const totalQuestionsAttempted = concepts.reduce((acc, c) => acc + (c.total_attempted || 0), 0);
+
   const data: DashboardPageData = {
     readinessIndex,
     daysRemaining,
@@ -621,7 +623,7 @@ async function HomePageContent({
     domainBreakdown,
     syllabus,
     quickStats: {
-      totalQuestions: questionResults.length,
+      totalQuestions: totalQuestionsAttempted > 0 ? totalQuestionsAttempted : questionResults.length,
       streak,
       sessionsCompleted,
     },

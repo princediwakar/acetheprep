@@ -1,7 +1,7 @@
 // Path: components/tutor/HistoryTabsView.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -12,8 +12,8 @@ import { discardSessionAction } from "@/lib/actions/tutor";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { SessionRow } from "@/types/tutor";
-import { HeaderPortal } from "@/components/shared/HeaderPortal";
 import { SessionHistoryRow } from "./SessionHistoryRow";
+import { useSidebarTelemetry } from "@/components/shared/SidebarContext";
 
 interface HistoryTabsViewProps {
   examName: string | null;
@@ -22,8 +22,24 @@ interface HistoryTabsViewProps {
 
 export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps) {
   const router = useRouter();
+  const { setSidebarData } = useSidebarTelemetry();
   const [activeTab, setActiveTab] = useState<string>("sessions");
   const [sessions, setSessions] = useState<SessionRow[]>(examSessions);
+
+  useEffect(() => {
+    if (examName) {
+      setSidebarData((prev) => {
+        if (prev?.examName === examName) return prev;
+        return {
+          examName,
+          daysRemaining: prev?.daysRemaining || 0,
+          streak: prev?.streak || 0,
+          dueMistakesCount: prev?.dueMistakesCount || 0,
+          isPro: prev?.isPro,
+        };
+      });
+    }
+  }, [examName, setSidebarData]);
 
   const completedSessions = sessions.filter((s) => s.status === "completed");
   const avgAccuracy =
@@ -51,9 +67,18 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
 
   return (
     <div className="space-y-4">
-      {/* Header Slot: Collapsed History Stats into Top Header */}
-      <HeaderPortal>
-        <div className="flex items-center gap-2">
+      {/* Page Title Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-border/40">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+            Test & Practice History
+          </h1>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Review your past tests, practice sessions, and mistake breakdowns.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 self-start sm:self-auto">
           {sessions.length > 0 && (
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-card border border-border/80 shadow-2xs text-xs font-mono">
               <span className="text-[10px] text-muted-foreground font-semibold uppercase">Sessions</span>
@@ -79,16 +104,6 @@ export function HistoryTabsView({ examName, examSessions }: HistoryTabsViewProps
             </div>
           )}
         </div>
-      </HeaderPortal>
-
-      {/* Page Title Row */}
-      <div className="pb-1 border-b border-border/40">
-        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-          Test & Practice History
-        </h1>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Review your past tests, practice sessions, and mistake breakdowns.
-        </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

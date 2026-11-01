@@ -14,14 +14,41 @@ const SLUG_TO_EXAM: Record<string, string> = {
 }
 
 /**
- * Extracts the exam name from a practice URL like /practice/cfa-level-1/...
- * Returns null if the URL doesn't match or the exam slug is unknown.
+ * Extracts the canonical exam name from a URL:
+ * 1. Checks for ?exam= query parameter (name or slug)
+ * 2. Checks practice path like /practice/cfa-level-1/...
+ * 3. Returns null if no exam pattern is found.
  */
-function extractExamFromPracticeUrl(url: string): string | null {
+function extractExamFromUrl(url: string): string | null {
+  try {
+    const dummyUrl = new URL(url, 'https://dummy.base')
+    const queryExam = dummyUrl.searchParams.get('exam')
+    if (queryExam) {
+      const decoded = decodeURIComponent(queryExam).trim()
+      const canonical = [
+        'GMAT Focus',
+        'Digital SAT',
+        'GRE',
+        'CFA Level 1',
+        'IELTS Academic',
+        'TOEFL iBT',
+      ]
+      if (canonical.includes(decoded)) {
+        return decoded
+      }
+      if (SLUG_TO_EXAM[decoded.toLowerCase()]) {
+        return SLUG_TO_EXAM[decoded.toLowerCase()]
+      }
+    }
+  } catch {}
+
   const m = url.match(/^\/practice\/([^/?#]+)/)
-  if (!m) return null
-  const slug = m[1]
-  return SLUG_TO_EXAM[slug] ?? null
+  if (m) {
+    const slug = m[1]
+    return SLUG_TO_EXAM[slug] ?? null
+  }
+
+  return null
 }
 
 /**
@@ -169,31 +196,39 @@ export async function GET(request: Request) {
           .eq('is_active', true)
           .maybeSingle()
 
+        const hasAutostart = next.includes('autostart=')
+
         if (existingActiveProfile) {
-          // Returning student with an established mission:
-          // NEVER hijack or deactivate their active study plan!
-          // Send them straight to /home with zero disruption.
-          destination = '/home'
+          // Returning student: preserve specific subpaths (like pricing, tools),
+          // otherwise send to home with autostart flag if requested
+          if (
+            next.startsWith('/pricing') ||
+            next.startsWith('/tools/') ||
+            next.startsWith('/q/') ||
+            next.startsWith('/session/')
+          ) {
+            destination = next
+          } else {
+            destination = hasAutostart ? '/home?autostart=first_test' : '/home'
+          }
         } else {
           // 2. Brand new student or user without an active profile:
-          const examFromUrl = extractExamFromPracticeUrl(next)
+          // Pre-emptively auto-provision chosen exam profile with zero setup friction
+          const examCandidate = extractExamFromUrl(next) || 'GMAT Focus'
+          const profileId = await autoProvisionProfile(supabase, user.id, examCandidate)
 
-          if (examFromUrl && next.startsWith('/practice/')) {
-            const profileId = await autoProvisionProfile(supabase, user.id, examFromUrl)
-
-            if (profileId) {
-              // Route to /home dashboard — they are fully onboarded
-              destination = '/home?onboarded=1'
+          if (profileId) {
+            if (
+              next.startsWith('/pricing') ||
+              next.startsWith('/tools/') ||
+              next.startsWith('/q/')
+            ) {
+              destination = next
             } else {
-              // Provisioning failed gracefully — fall back to setup
-              destination = `/setup?exam=${encodeURIComponent(examFromUrl)}`
+              destination = '/home?autostart=first_test'
             }
           } else {
-            // Came from non-practice page without active profile -> send to setup
-            destination =
-              destination === '/' || destination === '/setup' || destination.startsWith('/setup?')
-                ? '/setup'
-                : destination
+            destination = `/setup?exam=${encodeURIComponent(examCandidate)}`
           }
         }
       }

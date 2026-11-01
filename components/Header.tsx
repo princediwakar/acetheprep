@@ -89,8 +89,8 @@ export const Header = memo(() => {
             />
           ) : (
             <SignInButton
-              buttonText="Start Free"
-              returnUrl={pathname === "/" ? "/setup" : pathname}
+              buttonText="Take your first test"
+              returnUrl={pathname === "/" ? "/home?autostart=first_test" : pathname}
               size="sm"
               className="text-sm font-semibold px-4 py-2 h-9 bg-foreground text-background hover:bg-foreground/90 shadow-xs cursor-pointer rounded-xl"
             />
