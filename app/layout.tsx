@@ -3,6 +3,8 @@ import { ThemeProvider } from "@/components/ThemeProvider"
 import { AppShell } from "@/components/AppShell";
 import { Toaster } from "@/components/ui/sonner"
 import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
+import { PostHogProvider } from "@/components/providers/PostHogProvider";
+import { PostHogPageView } from "@/components/providers/PostHogPageView";
 import { Metadata, Viewport } from "next";
 import StructuredData, { websiteSchema, organizationSchema, educationalOrgSchema, educationalAppSchema } from "@/components/seo/StructuredData";
 import "./globals.css";
@@ -72,22 +74,25 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body suppressHydrationWarning>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                    disableTransitionOnChange
-                >
-                    <StructuredData schema={websiteSchema} />
-                    <StructuredData schema={organizationSchema} />
-                    <StructuredData schema={educationalOrgSchema} />
-                    <StructuredData schema={educationalAppSchema} />
-                    <AppShell>
-                        {children}
-                        <FeedbackWidget />
-                        <Toaster position="top-center" richColors />
-                    </AppShell>
-                </ThemeProvider>
+                <PostHogProvider>
+                    <PostHogPageView />
+                    <ThemeProvider
+                        attribute="class"
+                        defaultTheme="system"
+                        enableSystem
+                        disableTransitionOnChange
+                    >
+                        <StructuredData schema={websiteSchema} />
+                        <StructuredData schema={organizationSchema} />
+                        <StructuredData schema={educationalOrgSchema} />
+                        <StructuredData schema={educationalAppSchema} />
+                        <AppShell>
+                            {children}
+                            <FeedbackWidget />
+                            <Toaster position="top-center" richColors />
+                        </AppShell>
+                    </ThemeProvider>
+                </PostHogProvider>
             </body>
         </html>
     );

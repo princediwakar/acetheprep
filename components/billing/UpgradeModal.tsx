@@ -20,6 +20,7 @@ import { createCheckoutSession, activateTestPro } from "@/lib/actions/billing";
 import { cn } from "@/lib/utils";
 import { VisaBadge, MastercardBadge, ApplePayBadge, GooglePayBadge, UpiBadge } from "./PaymentTrustBadge";
 import { useSidebarTelemetry } from "@/components/shared/SidebarContext";
+import { trackEvent } from "@/lib/telemetry";
 
 interface UpgradeModalProps {
   open: boolean;
@@ -99,6 +100,12 @@ export function UpgradeModal({
 
   async function handleCheckout() {
     setLoading(true);
+    trackEvent("checkout_initiated", {
+      plan_type: selectedPlan,
+      source: "upgrade_modal",
+      reason,
+      exam: examName,
+    });
     try {
       const res = await createCheckoutSession({
         planType: selectedPlan,

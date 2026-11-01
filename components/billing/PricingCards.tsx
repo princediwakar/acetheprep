@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { CompactPaymentTrust } from "./PaymentTrustBadge";
 import { useUser } from "@/hooks/useUser";
 import { signInWithGoogle } from "@/lib/supabase/auth";
+import { trackEvent } from "@/lib/telemetry";
 
 interface PricingCardsProps {
   userEmail?: string | null;
@@ -48,6 +49,7 @@ export function PricingCards({ userEmail: propEmail, isPro: propIsPro }: Pricing
     }
 
     setLoadingPlan(planType);
+    trackEvent("checkout_initiated", { plan_type: planType });
     try {
       const res = await createCheckoutSession({ planType });
       if (res.error) {

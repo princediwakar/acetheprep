@@ -9,6 +9,7 @@ import { discardSessionAction } from "@/lib/actions/tutor";
 import type { SessionQuestion, SelectedOption } from "@/types/tutor";
 import type { QuestionAttemptRecord } from "@/components/tutor/SessionPlayer";
 import { useSessionTimer } from "./useSessionTimer";
+import { trackEvent } from "@/lib/telemetry";
 
 interface UseSessionEngineProps {
   sessionId: string;
@@ -211,6 +212,13 @@ export function useSessionEngine({
       }));
 
       recordAnswer(option, correct, revealed, timeMs, freeText);
+      trackEvent("question_answered", {
+        session_id: sessionId,
+        question_id: current.question_id,
+        is_correct: correct,
+        time_ms: timeMs,
+        domain: current.skill_domain,
+      });
       setNextEnabled(true);
     },
     [recordAnswer, current?.question_id, getQuestionDurationMs],

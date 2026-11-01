@@ -169,10 +169,10 @@ export function IeltsBandScoreCalculator() {
           </div>
 
           <Link
-            href="/practice/ielts-academic"
-            className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:opacity-95 transition-all shrink-0"
+            href="/home?autostart=first_test&exam=IELTS%20Academic"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:opacity-95 transition-all shrink-0 cursor-pointer"
           >
-            <span>Practice IELTS Traps</span>
+            <span>Take your first test</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>

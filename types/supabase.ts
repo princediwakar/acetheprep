@@ -647,6 +647,30 @@ export type Database = {
         }
         Relationships: []
       }
+      question_community_votes: {
+        Row: {
+          created_at: string | null
+          id: string
+          question_id: string
+          selected_option: string
+          voter_hash: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          question_id: string
+          selected_option: string
+          voter_hash: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          question_id?: string
+          selected_option?: string
+          voter_hash?: string
+        }
+        Relationships: []
+      }
       question_groups: {
         Row: {
           caption: string | null
@@ -1133,6 +1157,10 @@ export type Database = {
       update_quiz_question_count: {
         Args: { p_question_count: number; p_quiz_id: string }
         Returns: undefined
+      }
+      vote_question_trap: {
+        Args: { p_option: string; p_question_id: string; p_voter_hash: string }
+        Returns: Json
       }
     }
     Enums: {

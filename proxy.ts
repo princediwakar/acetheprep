@@ -8,6 +8,7 @@ const PROTECTED_PREFIXES = [
   "/history",
   "/create",
   "/session",
+  "/admin",
 ];
 
 interface CookieToSet {

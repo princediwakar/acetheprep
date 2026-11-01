@@ -1,12 +1,12 @@
 // Path: app/api/predictor/verify/route.ts
 import { NextRequest } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { PredictorVerifySchema } from "@/lib/predictor/validations";
 import { TUTOR_ERRORS } from "@/lib/constants/tutor";
 import crypto from "crypto";
 
 export async function POST(req: NextRequest) {
-  const supabase = await createClient();
+  const supabase = supabaseAdmin;
 
   let body: unknown;
   try {

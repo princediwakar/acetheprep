@@ -1,6 +1,6 @@
 // Path: app/api/predictor/start/route.ts
 import { NextRequest } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { PredictorStartSchema } from "@/lib/predictor/validations";
 import { TUTOR_ERRORS } from "@/lib/constants/tutor";
 import crypto from "crypto";
@@ -9,7 +9,7 @@ const OTP_EXPIRY_MINUTES = 5;
 const MAX_OTP_ATTEMPTS = 3;
 
 export async function POST(req: NextRequest) {
-  const supabase = await createClient();
+  const supabase = supabaseAdmin;
 
   let body: unknown;
   try {

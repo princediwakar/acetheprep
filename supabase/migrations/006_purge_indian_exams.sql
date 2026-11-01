@@ -43,8 +43,15 @@ WHERE exam_profile_id IN (SELECT profile_id FROM target_profiles);
 DELETE FROM predictions 
 WHERE exam_profile_id IN (SELECT profile_id FROM target_profiles);
 
-DELETE FROM comeback_queue 
-WHERE exam_profile_id IN (SELECT profile_id FROM target_profiles);
+DO $$
+BEGIN
+  IF to_regclass('public.comeback_queue') IS NOT NULL THEN
+    EXECUTE 'DELETE FROM public.comeback_queue WHERE exam_profile_id IN (SELECT profile_id FROM target_profiles)';
+  END IF;
+  IF to_regclass('public.comeback_queue_items') IS NOT NULL THEN
+    EXECUTE 'DELETE FROM public.comeback_queue_items WHERE exam_profile_id IN (SELECT profile_id FROM target_profiles)';
+  END IF;
+END $$;
 
 DELETE FROM predictor_sessions 
 WHERE exam_profile_id IN (SELECT profile_id FROM target_profiles)

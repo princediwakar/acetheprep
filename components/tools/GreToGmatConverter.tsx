@@ -195,23 +195,23 @@ export function GreToGmatConverter() {
       {/* Dual Drill CTAs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
-          href="/practice/gmat-focus"
-          className="rounded-2xl border border-primary/30 bg-primary/5 p-4 hover:border-primary/60 transition-all flex items-center justify-between group"
+          href="/home?autostart=first_test&exam=GMAT%20Focus"
+          className="rounded-2xl border border-primary/30 bg-primary/5 p-4 hover:border-primary/60 transition-all flex items-center justify-between group cursor-pointer"
         >
           <div className="space-y-0.5">
-            <span className="text-[11px] font-mono text-primary font-bold uppercase block">Prepare for GMAT</span>
-            <p className="text-xs sm:text-sm font-bold text-foreground">Practice GMAT Focus Drills</p>
+            <span className="text-[11px] font-mono text-primary font-bold uppercase block">GMAT Focus</span>
+            <p className="text-xs sm:text-sm font-bold text-foreground">Take your first GMAT test</p>
           </div>
           <ArrowRight className="h-4 w-4 text-primary group-hover:translate-x-0.5 transition-transform" />
         </Link>
 
         <Link
-          href="/practice/gre"
-          className="rounded-2xl border border-border bg-card p-4 hover:border-primary/50 transition-all flex items-center justify-between group"
+          href="/home?autostart=first_test&exam=GRE"
+          className="rounded-2xl border border-border bg-card p-4 hover:border-primary/50 transition-all flex items-center justify-between group cursor-pointer"
         >
           <div className="space-y-0.5">
-            <span className="text-[11px] font-mono text-muted-foreground font-bold uppercase block">Prepare for GRE</span>
-            <p className="text-xs sm:text-sm font-bold text-foreground">Practice GRE Trap Problems</p>
+            <span className="text-[11px] font-mono text-muted-foreground font-bold uppercase block">GRE General</span>
+            <p className="text-xs sm:text-sm font-bold text-foreground">Take your first GRE test</p>
           </div>
           <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-transform" />
         </Link>

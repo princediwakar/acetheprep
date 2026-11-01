@@ -16,6 +16,7 @@ import { ProjectionHero } from "@/components/tutor/ProjectionHero";
 import { useSyncSidebarData } from "@/components/shared/SidebarContext";
 import { Button } from "@/components/ui/button";
 import { Sparkles, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
+import { trackEvent } from "@/lib/telemetry";
 
 export { DashboardViewLoading, DashboardViewError };
 
@@ -85,6 +86,11 @@ export function DashboardView({ data }: { data: DashboardPageData }) {
       if (isLaunching) return;
       setIsLaunching(true);
       try {
+        trackEvent("first_test_started", {
+          exam: data.examName,
+          intent,
+          domain,
+        });
         const sessionId = await startSession(intent, domain ? [domain] : undefined, 5);
         router.push(`${TUTOR_ROUTES.SESSION(sessionId)}?mode=exam&autostart=true`);
       } catch (err: unknown) {

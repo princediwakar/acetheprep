@@ -1,5 +1,6 @@
 // Path: lib/services/question-bank-service.ts
 import { SupabaseClient } from "@supabase/supabase-js";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import type { SessionQuestion, DifficultyTier } from "@/types/tutor";
 import { getSubjectForDomain } from "@/lib/services/taxonomy";
 import { ALL_BANKS } from "@/lib/data/banks";
@@ -208,7 +209,8 @@ export async function saveQuestionsToBank(
   }));
 
   try {
-    const { error } = await supabase
+    const client = supabaseAdmin || supabase;
+    const { error } = await client
       .from("question_bank")
       .upsert(rows, { onConflict: "id", ignoreDuplicates: true });
 

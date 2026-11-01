@@ -96,10 +96,14 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     pathname === "/create" ? "Create a Quiz" :
     pathname === "/quizzes" ? "Public Quizzes" : "";
 
-  const isQuizPage = pathname.startsWith("/quiz/") || pathname.startsWith("/play/") || pathname.startsWith("/session/");
+  const isStandalonePage =
+    pathname.startsWith("/quiz/") ||
+    pathname.startsWith("/play/") ||
+    pathname.startsWith("/session/") ||
+    pathname.startsWith("/admin");
 
-  // On active exam/quiz sessions, grant 100% full-screen without website navbar or user menu
-  if (isQuizPage) {
+  // On active exam/quiz sessions or admin command center, grant 100% full-screen without website navbar or footer
+  if (isStandalonePage) {
     return <>{children}</>;
   }
 

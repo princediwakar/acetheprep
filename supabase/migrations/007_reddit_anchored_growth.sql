@@ -53,14 +53,17 @@ $$;
 -- RLS: Enable public anonymous reading and voting
 ALTER TABLE public.question_community_votes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public read access to community votes" ON public.question_community_votes;
 CREATE POLICY "Allow public read access to community votes"
   ON public.question_community_votes FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Allow public insert and update to community votes" ON public.question_community_votes;
 CREATE POLICY "Allow public insert and update to community votes"
   ON public.question_community_votes FOR INSERT
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow public update to community votes" ON public.question_community_votes;
 CREATE POLICY "Allow public update to community votes"
   ON public.question_community_votes FOR UPDATE
   USING (true);

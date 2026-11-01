@@ -1,7 +1,7 @@
 // Path: components/tutor/player/SessionResultsView.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import type { SessionQuestion } from "@/types/tutor";
 import type { QuestionAttemptRecord } from "../SessionPlayer";
+import { trackEvent } from "@/lib/telemetry";
 
 const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F"] as const;
 
@@ -75,6 +76,19 @@ export function SessionResultsView({
   }).length;
 
   const flaggedCount = flaggedQuestions.size;
+
+  // Track test completion event in PostHog
+  useEffect(() => {
+    trackEvent("test_completed", {
+      exam: examName,
+      total,
+      score: correctCount,
+      accuracy_pct: pct,
+      time_elapsed_sec: totalTimeElapsed,
+      traps_caught: trapsCaughtCount,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Pacing telemetry
   const avgSecondsPerQ = total > 0 ? Math.round(totalTimeElapsed / total) : 0;

@@ -1,11 +1,11 @@
 // Path: app/api/predictor/result/route.ts
 import { NextRequest } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { generatePrediction } from "@/lib/predictor/engine";
 import { TUTOR_ERRORS } from "@/lib/constants/tutor";
 
 export async function GET(req: NextRequest) {
-  const supabase = await createClient();
+  const supabase = supabaseAdmin;
 
   const { searchParams } = new URL(req.url);
   const sessionId = searchParams.get("session_id");

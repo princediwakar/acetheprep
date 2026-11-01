@@ -2,6 +2,16 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
+import { identifyUser, resetUser } from "@/lib/telemetry";
+
+const INTERNAL_EMAILS = new Set([
+	"princediwakar25@gmail.com",
+	"mental.alternate@gmail.com",
+	"rawkindepic@gmail.com",
+	"princediwakar.cjs@gmail.com",
+	"neurovisionranchi@gmail.com",
+	"prince@supersite.app",
+]);
 
 export function useUser() {
 	const [user, setUser] = useState<User | null>(null);
@@ -32,16 +42,31 @@ export function useUser() {
 		const {
 			data: { subscription },
 		} = supabase.auth.onAuthStateChange(
-			(_event, session) => {
+			(event, session) => {
+				if (event === "SIGNED_OUT") {
+					resetUser();
+				}
 				setSessionState(session);
 			}
 		);
 
 		function setSessionState(session: Session | null) {
 			if (cancelled) return;
-			setUser(session?.user ?? null);
+			const currentUser = session?.user ?? null;
+			setUser(currentUser);
 			setAccessToken(session?.access_token ?? null);
 			setIsUserLoading(false);
+
+			if (currentUser) {
+				const isInternal = Boolean(
+					currentUser.email &&
+					INTERNAL_EMAILS.has(currentUser.email.toLowerCase())
+				);
+				identifyUser(currentUser.id, {
+					email: currentUser.email,
+					is_internal: isInternal,
+				});
+			}
 		}
 
 		return () => {

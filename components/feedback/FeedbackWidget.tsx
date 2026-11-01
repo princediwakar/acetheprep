@@ -27,7 +27,11 @@ import { cn } from "@/lib/utils";
 
 export function FeedbackWidget() {
 	const pathname = usePathname();
-	const isSessionPage = pathname?.startsWith("/session/") || pathname?.startsWith("/quiz/") || pathname?.startsWith("/play/");
+	const isSessionPage =
+		pathname?.startsWith("/session/") ||
+		pathname?.startsWith("/quiz/") ||
+		pathname?.startsWith("/play/") ||
+		pathname?.startsWith("/admin");
 	const [isOpen, setIsOpen] = useState(false);
 	const [feedback, setFeedback] = useState("");
 	const [category, setCategory] = useState("feedback");
