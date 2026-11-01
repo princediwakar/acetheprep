@@ -224,10 +224,10 @@ export function ScorePlannerSection({ activeExam }: ScorePlannerSectionProps) {
               </p>
             </div>
             <SignInButton
-              buttonText="Create Free Study Plan"
-              returnUrl={`/setup?exam=${encodeURIComponent(examConfig.name)}`}
+              buttonText="Take your first test"
+              returnUrl={`/home?autostart=first_test&exam=${encodeURIComponent(examConfig.name)}`}
               size="default"
-              className="w-full sm:w-auto font-semibold px-5 py-2.5 rounded-xl bg-foreground text-background hover:bg-foreground/90 shadow-xs cursor-pointer text-xs"
+              className="w-full sm:w-auto font-bold px-6 py-2.5 rounded-xl bg-foreground text-background hover:bg-foreground/90 shadow-xs cursor-pointer text-xs sm:text-sm"
             />
           </div>
         </div>

@@ -112,11 +112,7 @@ export function TopicPracticeDrill({
   };
 
   const handleSignIn = useCallback(() => {
-    // Route to practice page with onboarded flag so callback can auto-provision for new users
-    const returnUrl =
-      typeof window !== "undefined"
-        ? `${window.location.pathname}?onboarded=1&exam=${encodeURIComponent(examName)}`
-        : "/home";
+    const returnUrl = `/home?autostart=first_test&exam=${encodeURIComponent(examName)}`;
     signInWithGoogle(returnUrl);
   }, [examName]);
 
@@ -254,10 +250,10 @@ export function TopicPracticeDrill({
           {/* Primary CTA */}
           {user ? (
             <Link
-              href="/home"
+              href={`/home?autostart=first_test&exam=${encodeURIComponent(examName)}`}
               className="w-full inline-flex items-center justify-center gap-2.5 rounded-xl bg-foreground px-6 py-3.5 text-sm font-bold text-background hover:opacity-90 active:scale-[0.99] transition-all shadow-sm cursor-pointer"
             >
-              <span>Continue on Study Dashboard</span>
+              <span>Take your first test</span>
               <ArrowRight className="h-4 w-4 shrink-0" />
             </Link>
           ) : (
@@ -272,7 +268,7 @@ export function TopicPracticeDrill({
                   fill="currentColor"
                 />
               </svg>
-              <span>Start Free {examName} AI Diagnostic</span>
+              <span>Take your first test</span>
               <ArrowRight className="h-4 w-4 shrink-0" />
             </button>
           )}

@@ -20,8 +20,8 @@ export function protectCurrencyTokens(text: string): { protectedText: string; cu
   if (!text) return { protectedText: "", currencies: [] };
 
   // Protect standalone currency tokens like $600, $200, $75, $1,450, $45,000, $4.8M
-  // Must NOT match LaTeX math formulas (e.g. $5,000(1.02)^{12}$ or math-mode $5,000$ or $7$)
-  const currencyRegex = /(?<=^|[\s("'`“\[])\$((?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:[kMB]|k\/mo)?)(?=$|\s|,(?!\d)|\.(?!\d)|[;:!?"'`”\)\]])/g;
+  // Must NOT match LaTeX math formulas (e.g. $5,000(1.02)^{12}$, math-mode $5,000$, $7$, or $2 - (-4) = 6$)
+  const currencyRegex = /(?<=^|[\s("'`“\[])\$((?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:[kMB]|k\/mo|\/(?:day|mo|yr|hr|week))?)(?=$|,(?!\d)|\.(?!\d)|[;:!?"'`”\)\]]|\s+(?![-+*/=<>~\\^|≤≥±×÷\(\[\{]|\\[a-zA-Z]+|[a-zA-Z]\b))/g;
   const currencies: string[] = [];
   const protectedText = text.replace(currencyRegex, (match) => {
     currencies.push(match);
