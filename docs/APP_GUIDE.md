@@ -560,10 +560,10 @@ AceThePrep implements high-performance programmatic SEO architectures:
 
 ---
 
-### 5.12 Viral Growth Loop (`/s/[token]`) & Dynamic Result Cards
-- Generates a shareable **Result Card** with a unique 30-day TTL token upon session completion.
-- Displays percentile forecast, mastery delta, and hardest question conquered.
-- Features dynamic OpenGraph card generation via Next.js Edge Route `/api/og`.
+### 5.12 Viral Growth Loop (`/s/[token]`) & Evergreen Quiz Duels
+- Generates a shareable **Result Card** with an evergreen token upon session completion (`expires_at` far-future, no 7-day lockout decay).
+- Displays challenger benchmark, peer head-to-head score comparison, distractor trap breakdowns, and dynamic OpenGraph image generation via `/api/og/result-card`.
+- High-conversion peer actions: Direct WhatsApp challenge invites, Reddit / GMATClub spoiler-tagged forum doubt export, 1-click tailored exam onboarding (`/setup?exam=${slug}`), and direct syllabus access (`/practice/${slug}`).
 
 ---
 

@@ -12,8 +12,10 @@ import {
   Trophy,
   MessageCircle,
   RotateCcw,
+  Copy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { renderMathContent } from "@/lib/quiz-utils";
 import { RichContentRenderer } from "@/components/ui/rich-content/RichContentRenderer";
 
@@ -100,12 +102,35 @@ export function QuizDuelPlayer({
     window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
   };
 
+  const handleCopyChallenge = async () => {
+    try {
+      const challengeMsg = `Can you beat my ${challengerScore}/${totalQuestions} score on this ${examName} quiz? Challenge yourself on AceThePrep: ${shareUrl}`;
+      await navigator.clipboard.writeText(challengeMsg);
+      toast.success("Challenge invite & link copied to clipboard!");
+    } catch {
+      toast.error("Failed to copy challenge link.");
+    }
+  };
+
   // ----- Duel Completed Screen -----
   if (isCompleted) {
     const userPct = Math.round((userScore / questions.length) * 100);
     const challengerPct = Math.round((challengerScore / totalQuestions) * 100);
     const hasWon = userScore > challengerScore;
     const isTie = userScore === challengerScore;
+
+    const getExamSlug = (name?: string): string => {
+      const n = (name || "").toLowerCase();
+      if (n.includes("sat")) return "sat";
+      if (n.includes("gmat")) return "gmat-focus";
+      if (n.includes("gre")) return "gre";
+      if (n.includes("cfa")) return "cfa-level-1";
+      if (n.includes("ielts")) return "ielts-academic";
+      if (n.includes("toefl")) return "toefl-ibt";
+      return "sat";
+    };
+
+    const examSlug = getExamSlug(examName);
 
     return (
       <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 sm:p-8 shadow-2xl space-y-6 backdrop-blur-sm animate-in fade-in duration-300">
@@ -180,32 +205,47 @@ export function QuizDuelPlayer({
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="space-y-3 pt-2">
+        {/* Action Buttons & Growth CTAs */}
+        <div className="space-y-2.5 pt-2">
           <Link
-            href="/setup"
+            href={`/setup?exam=${examSlug}`}
             className="flex items-center justify-center gap-2 w-full py-3 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all shadow-md shadow-indigo-950/40 active:scale-[0.98]"
           >
-            <span>Start Your Free Prep & Mistake Vault</span>
+            <span>Start Free {examName} Prep & Mistake Vault</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
 
-          <div className="grid grid-cols-2 gap-2">
+          <Link
+            href={`/practice/${examSlug}`}
+            className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 text-slate-200 hover:text-white font-medium text-xs transition-all active:scale-[0.98]"
+          >
+            <span>Practice Full {examName} Question Bank (No Signup Required) &rarr;</span>
+          </Link>
+
+          <div className="grid grid-cols-3 gap-2 pt-1">
             <Button
               variant="outline"
               onClick={shareToWhatsApp}
-              className="border-slate-800 hover:bg-slate-800/80 text-slate-300 text-xs h-10 gap-1.5"
+              className="border-slate-800 hover:bg-slate-800/80 text-slate-300 text-xs h-9 gap-1.5 px-2"
             >
-              <MessageCircle className="w-4 h-4 text-emerald-400" />
-              <span>Share on WhatsApp</span>
+              <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="truncate">WhatsApp</span>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleCopyChallenge}
+              className="border-slate-800 hover:bg-slate-800/80 text-slate-300 text-xs h-9 gap-1.5 px-2"
+            >
+              <Copy className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="truncate">Copy Invite</span>
             </Button>
             <Button
               variant="outline"
               onClick={handleRestart}
-              className="border-slate-800 hover:bg-slate-800/80 text-slate-300 text-xs h-10 gap-1.5"
+              className="border-slate-800 hover:bg-slate-800/80 text-slate-300 text-xs h-9 gap-1.5 px-2"
             >
-              <RotateCcw className="w-4 h-4" />
-              <span>Retry Quiz Duel</span>
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span className="truncate">Retry Duel</span>
             </Button>
           </div>
         </div>

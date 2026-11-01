@@ -4,7 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Lock } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import StructuredData, {
   breadcrumbSchema,
 } from "@/components/seo/StructuredData";
@@ -102,48 +102,7 @@ export default async function ShareCardPage({ params }: PageProps) {
     notFound();
   }
 
-  // ----- Token Expiry Check (Viral Security) -----
-  const now = new Date();
-  const expiresAt = card.expires_at ? new Date(card.expires_at) : null;
-  if (expiresAt && now > expiresAt) {
-    return (
-      <>
-        <StructuredData schema={{}} />
-        <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 py-8">
-          <div className="w-full max-w-md text-center">
-            <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-rose-500/10 flex items-center justify-center">
-              <Lock className="w-8 h-8 text-rose-400" />
-            </div>
-            <h1 className="text-2xl font-bold text-white mb-3">
-              Link Expired
-            </h1>
-            <p className="text-slate-400 mb-2">
-              This share link expired on{" "}
-              <span className="text-white font-medium">
-                {expiresAt.toLocaleDateString("en-IN", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })}
-              </span>
-              .
-            </p>
-            <p className="text-sm text-slate-500 mb-8">
-              Share links expire after 7 days to protect your practice data.
-            </p>
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold hover:from-indigo-400 hover:to-purple-500 transition-all shadow-lg shadow-indigo-500/25"
-            >
-              Start your free prep
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-      </>
-    );
-  }
-
+  // Increment view count for viral engagement analytics
   supabaseAdmin
     .from("result_cards")
     .update({ view_count: (card.view_count ?? 0) + 1 })

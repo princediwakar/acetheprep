@@ -174,7 +174,7 @@ export async function processSessionCompletion(
       })),
     };
 
-    const sevenDays = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const evergreenExpiry = new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000).toISOString();
 
     const { data: cardRows } = await supabaseAdmin
       .from("result_cards")
@@ -182,7 +182,7 @@ export async function processSessionCompletion(
         user_id: userId,
         card_type: "session",
         card_data: cardData,
-        expires_at: sevenDays,
+        expires_at: evergreenExpiry,
       })
       .select("share_token")
       .single();
@@ -481,7 +481,7 @@ export async function processSessionCompletion(
     }
   }
 
-  const sevenDays = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const evergreenExpiry = new Date(now.getTime() + 100 * 365 * 24 * 60 * 60 * 1000).toISOString();
 
   const { data: cardRows, error: cardError } = await supabaseAdmin
     .from("result_cards")
@@ -489,7 +489,7 @@ export async function processSessionCompletion(
       user_id: userId,
       card_type: "session",
       card_data: cardData,
-      expires_at: sevenDays,
+      expires_at: evergreenExpiry,
     })
     .select("share_token")
     .single();

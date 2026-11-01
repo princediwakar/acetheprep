@@ -25,6 +25,17 @@ export interface ShareResultCardProps {
   questions: QuizDuelQuestion[];
 }
 
+function getExamSlug(name?: string): string {
+  const n = (name || "").toLowerCase();
+  if (n.includes("sat")) return "sat";
+  if (n.includes("gmat")) return "gmat-focus";
+  if (n.includes("gre")) return "gre";
+  if (n.includes("cfa")) return "cfa-level-1";
+  if (n.includes("ielts")) return "ielts-academic";
+  if (n.includes("toefl")) return "toefl-ibt";
+  return "sat";
+}
+
 export function ShareResultCard({
   examName,
   score,
@@ -35,6 +46,7 @@ export function ShareResultCard({
   shareToken,
   questions,
 }: ShareResultCardProps) {
+  const examSlug = getExamSlug(examName);
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
       {/* Challenger Benchmark Bar - Clean, dignified, no alarmist red glows */}
@@ -121,13 +133,21 @@ export function ShareResultCard({
             Practice AI-targeted questions, identify traps, and build your Mistake Vault.
           </p>
         </div>
-        <Link
-          href="/setup"
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-slate-200 hover:text-white font-medium text-xs transition-all shadow-sm shrink-0 active:scale-95"
-        >
-          <span>Start free prep</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
+        <div className="flex items-center gap-2 shrink-0">
+          <Link
+            href={`/practice/${examSlug}`}
+            className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 text-slate-300 hover:text-white font-medium text-xs transition-all active:scale-95"
+          >
+            <span>Explore Syllabus</span>
+          </Link>
+          <Link
+            href={`/setup?exam=${examSlug}`}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs transition-all shadow-sm active:scale-95"
+          >
+            <span>Start free prep</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
       </div>
 
       <div className="text-center pt-2">
